@@ -20,6 +20,7 @@ Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Network.FTP.Client,
     MissingH.Network.FTP.Parser,
   MissingH.Parsec,
+  MissingH.Printf, MissingH.Printf.Types, MissingH.Printf.Printer,
   MissingH.Bits,
   MissingH.Wash.Mail.Email,
     MissingH.Wash.Mail.EmailConfig,
@@ -45,5 +46,6 @@ Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Wash.Utility.URLCoding,
     MissingH.Wash.Utility.Unique
 HS-Source-Dir: libsrc
-Extensions: ExistentialQuantification
+Extensions: ExistentialQuantification, AllowOverlappingInstances,
+    AllowUndecidableInstances
 Build-Depends: haskell-src, network, unix, parsec
