@@ -166,7 +166,7 @@ class (HVIOGeneric a) => HVIOWriter a where
 
     vPrint h s = vPutStrLn h (show s)
                  
-    vFlush _ = return ()
+    vFlush = vTestOpen
 
 {- | Seekable items.  Implementators must provide all functions.
 
@@ -267,7 +267,9 @@ instance HVIOReader StreamReader where
 -- Pipes
 ----------------------------------------------------------------------
 
--- newPipe :: (PipeReader, PipeWriter)
+newPipe :: IO (PipeReader, PipeWriter)
+newPipe = do mv <- newEmptyMVar
+             return (PipeReader (True, mv), PipeWriter (True, mv))
 
 data PipeBit = PipeBit Char 
              | PipeEOF
@@ -275,6 +277,10 @@ data PipeBit = PipeBit Char
 
 newtype PipeReader = PipeReader (VIOCloseSupport (MVar PipeBit))
 newtype PipeWriter = PipeWriter (VIOCloseSupport (MVar PipeBit))
+
+------------------------------
+-- Pipe Reader
+------------------------------
 
 prv (PipeReader x) = x
 
@@ -308,3 +314,28 @@ instance HVIOReader PipeReader where
         in do vTestEOF h
               loop
                         
+------------------------------
+-- Pipe Writer
+------------------------------
+
+pwv (PipeWriter x) = x
+
+instance Show PipeWriter where
+    show x = "<PipeWriter>"
+
+instance HVIOGeneric PipeWriter where
+    vClose h = do o <- vIsOpen h
+                  if o then do
+                            mv <- vioc_get (pwv h)
+                            putMVar mv PipeEOF
+                            vioc_close (pwv h)
+                     else return ()
+    vIsOpen = vioc_isopen . pwv
+    vIsEOF h = vTestOpen h
+               return False
+
+instance HVIOWriter PipeWriter where
+    vPutChar h c = do vTestOpen h
+                      mv <- voic_get (pwv h)
+                      putMVar mv (PipeBit c)
+
