@@ -55,6 +55,14 @@ module MissingH.ConfigParser
      -- ** Case Sensitivity
      -- $casesens
 
+     -- * Usage Examples
+     -- $usage
+
+     -- ** Non-Monadic Usage
+     -- $usagenomonad
+
+     -- ** Error Monad Usage
+
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
      CPErrorData(..), CPError, CPResult,
@@ -519,11 +527,54 @@ comment character at the start of the line.
 By default, section names are case-sensitive but option names are
 not. The latter can be adjusted by adjusting 'optionxform'.  -}
 
-{- $initialization
+{- $usage
 
-The variable 'emptyCP' is exported, and contains a default empty
-'ConfigParser'.
+The basic theory of working with ConfigParser is this:
+
+ 1. Parse or build a 'ConfigParser' object
+ 
+ 2. Work with it in one of several ways
+
+ 3. To make changes, you discard the original object and use a new one.
+    Changes can be "chained" through one of several monads.
+
+The default 'ConfigParser' object that you always start with is 'emptyCP'.
+From here, you load data into it (merging data into the empty object),
+set up structures yourself, or adjust options.
+
+Let's take a look at some basic use cases.
+
 -}
+
+{- $usagenomonad
+You'll notice that many functions in this module return a 'CPResult' over some
+type.  Although its definition is not this simple, you can consider this to
+hold:
+
+@type 'CPResult' a = Either 'CPError' a@
+
+That is, these functions will return @Left error@ if there's a problem
+or @Right result@ if things are fine.  The documentation for individual
+functions describes the specific circumstances in which an error may occur in
+more detail.
+
+Some people find it annoying to have to deal with errors manually.
+You can transform errors into exceptions in your code by using 
+'MissingH.Either.forceEither'.  Here's an example of this style of programming:
+
+> import MissingH.Either
+> do
+>    val <- readfile emptyCP "/etc/foo.cfg"
+>    let cp = forceEither val
+>    putStrLn "Your setting is:"
+>    putStrLn $ forceEither $ get cp "sect1" "opt1"
+
+In short, you can just put @forceEither $@ in front of every call that returns
+a 'CPResult'.  This is still a pure functional call, so it can be used outside
+of any monads.
+
+-}
+
 
 {- $reading
 

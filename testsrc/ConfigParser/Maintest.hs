@@ -22,7 +22,10 @@ import MissingH.ConfigParser
 import MissingH.Either
 import Testutil
 import Control.Exception
+import System.IO
 
+nullfile = openFile "/dev/null" ReadWriteMode
+testfile = "testsrc/ConfigParser/test.cfg"
 p inp = forceEither $ readstring emptyCP inp
 f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv (p inp))
 f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
@@ -97,8 +100,19 @@ test_nodefault =
       -- default float
       -- default bool
       ]
+
+test_ex_nomonad = 
+    do 
+       fh <- nullfile
+       val <- readfile emptyCP testfile
+       let cp = forceEither val
+       hPutStr fh "Your setting is:"
+       hPutStr fh $ forceEither $ get cp "file1" "location"
+
+                 
      
 
 tests = TestList [TestLabel "test_basic" (TestList test_basic),
                  TestLabel "test_defaults" (TestList test_defaults),
-                 TestLabel "test_nodefault" (TestList test_nodefault)]
+                 TestLabel "test_nodefault" (TestList test_nodefault),
+                 TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad)]
