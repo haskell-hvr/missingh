@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-21 16:17:59 GMT	John Goerzen <jgoerzen@complete.org>	patch-124
+
+    Summary:
+      Setting up infrastructure for FTP server
+    Revision:
+      missingh--head--0.7--patch-124
+
+
+    new files:
+     libsrc/MissingH/Network/FTP/ParserServer.hs
+
+    modified files:
+     ChangeLog debian/changelog
+     libsrc/MissingH/Network/FTP/Client.hs
+     libsrc/MissingH/Network/FTP/ParserClient.hs
+     libsrc/MissingH/Network/FTP/Server.hs
+
+    renamed files:
+     libsrc/MissingH/Network/FTP/Parser.hs
+       ==> libsrc/MissingH/Network/FTP/ParserClient.hs
+
+
 2004-12-21 16:11:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-123
 
     Summary:

@@ -1,4 +1,4 @@
-{- arch-tag: FTP protocol parser
+{- arch-tag: FTP protocol parser for servers
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Network.FTP.Parser
+   Module     : MissingH.Network.FTP.ParserServer
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -27,14 +27,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Portability: systems with networking
 
 This module provides a parser that is used internally by
-"MissingH.Network.FTP.Client".  You almost certainly do not want to use
-this module directly.  Use "MissingH.Network.FTP.Client" instead.
+"MissingH.Network.FTP.Server".  You almost certainly do not want to use
+this module directly.  Use "MissingH.Network.FTP.Server" instead.
 
 Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
+module MissingH.Network.FTP.ParserServer(
+                                         parseReply, parseGoodReply,
                                    toPortString, fromPortString,
                                    debugParseGoodReply,
                                    respToSockAddr,
@@ -45,7 +46,7 @@ module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
                                   forceioresp,
                                   parseDirName)
 where
-
+import MissingH.Network.FTP.ParserClient
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
 import MissingH.List

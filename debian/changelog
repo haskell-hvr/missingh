@@ -3,6 +3,9 @@ missingh (0.8.0) unstable; urgency=low
   * New HVIO, HVFS modules.
   * Expanded MissingH.Path thanks to code from Volker Wysk's 
     HsShellScript.
+  * Renamed MissingH.Network.FTP.Parser to
+    MissingH.Network.FTP.ParserClient.
+  * New FTP server modules.
 
  -- John Goerzen <jgoerzen@complete.org>  Mon, 20 Dec 2004 13:47:04 -0600
 

@@ -62,4 +62,3 @@ sendReply h codei text =
                                  writethis xs
         in 
         writethis (map (rstrip) (lines text))
-        
