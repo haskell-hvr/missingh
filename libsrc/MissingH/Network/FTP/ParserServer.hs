@@ -46,9 +46,10 @@ import MissingH.Str
 import MissingH.Logging.Logger
 import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
 import System.IO(Handle, hGetContents)
-import System.IO.Unsafe
+import System.IO(hGetLine)
 import Text.Regex
 import Data.Word
+import MissingH.Hsemail.Rfc2234(alpha)
 type FTPResult = (Int, [String])
 
 logit :: String -> IO ()
@@ -58,3 +59,29 @@ logit m = debugM "MissingH.Network.FTP.ParserServer" ("FTP received: " ++ m)
 -- Utilities
 ----------------------------------------------------------------------
 
+word = many1 alpha
+
+args :: Parser String
+args = try (do char ' '
+               r <- many anyChar
+               eof 
+               return r)
+       <|> return ""
+       
+
+command :: Parser (String, String)
+command = do
+          x <- word
+          y <- args
+          eof
+          return (x, y)
+
+
+parseCommand :: Handle -> IO (String, String)
+parseCommand h =
+    do input <- hGetLine h
+       case parse command "(unknown)" (rstrip input) of
+          Left err -> fail ("FTP: " ++ (show err))
+          Right reply -> return reply
+
+       
