@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 16:19:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-84
+
+    Summary:
+      Added hCopy stuff
+    Revision:
+      missingh--head--1.0--patch-84
+
+
+    new files:
+     libsrc/MissingH/Network.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO.hs
+
+
 2004-10-20 15:43:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-83
 
     Summary:

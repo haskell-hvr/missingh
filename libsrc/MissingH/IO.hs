@@ -35,7 +35,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.IO(-- * Entire File\/Handle Utilities
                        -- ** Opened Handle Data Copying
-                       hLineCopy, lineCopy,
+                       hCopy, hCopyProgress, hLineCopy, lineCopy,
                        -- ** Disk File Data Copying
                        copyFileLinesToFile,
                        -- * Line Processing Utilities
@@ -49,6 +49,7 @@ module MissingH.IO(-- * Entire File\/Handle Utilities
 
 import System.IO.Unsafe
 import System.IO
+import Data.List
 
 {- | Given a list of strings, output a line containing each item, adding
 newlines as appropriate.  The list is not expected to have newlines already.
@@ -136,6 +137,43 @@ hLineInteract finput foutput func =
     do
     lines <- hGetLines finput
     hPutStrLns foutput (func lines)
+
+{- | Copies from one handle to another in raw mode (using
+hGetContents).
+-}
+hCopy :: Handle -> Handle -> IO ()
+hCopy hin hout = do
+                 c <- hGetContents hin
+                 hPutStr hout c
+
+{- | Copies from one handle to another in raw mode (using hGetContents).
+Takes a function to provide progress updates to the user.
+-}
+
+hCopyProgress :: Integral a => Handle        -- ^ Input handle
+                 -> Handle              -- ^ Output handle
+                 -> (Maybe a -> Integer -> Bool -> IO ()) -- ^ Progress function -- the bool is always False unless this is the final call
+                 -> Int                 -- Block size
+                 -> Maybe a             -- Estimated file size (passed to func)
+                 -> IO Integer                -- Number of bytes copied
+hCopyProgress hin hout func bsize estsize =
+    let copyFunc :: String -> Integer -> IO Integer
+        copyFunc [] count = return count
+        copyFunc indata count =
+            let block = take bsize indata
+                remainder = drop bsize indata
+                newcount = count + (genericLength block)
+                in
+                do
+                hPutStr hout block
+                func estsize count False
+                copyFunc remainder newcount
+        in
+        do
+        c <- hGetContents hin
+        bytes <- copyFunc c 0
+        func estsize bytes True
+        return bytes
 
 {- | Copies from one handle to another in text mode (with lines).
 Like 'hBlockCopy', this implementation is nice:
