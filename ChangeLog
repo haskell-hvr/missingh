@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 03:59:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-52
+
+    Summary:
+      Finishing up initial write of the mail parser
+    Revision:
+      missingh--head--0.7--patch-52
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Email/Parser.hs
+
+    renamed files:
+     libsrc/MissingH/Email/MailParser.hs
+       ==> libsrc/MissingH/Email/Parser.hs
+
+
 2004-12-09 03:26:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-51
 
     Summary:
