@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-03-15 15:19:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-207
+
+    Summary:
+      checkpointing
+    Revision:
+      missingh--head--0.7--patch-207
+
+
+    modified files:
+     ChangeLog MissingH.cabal MissingH/Debian/ControlParser.hs
+     debian/changelog
+
+
 2005-03-15 01:04:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-206
 
     Summary:

@@ -35,6 +35,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Debian.ControlParser(control, depPart)
     where
 import Text.ParserCombinators.Parsec
+import MissingH.Str
 
 eol = (try (string "\r\n"))
       <|> string "\n" <?> "EOL"
@@ -65,6 +66,13 @@ depPart = do packagename <- many1 (noneOf " (")
                             char ')'
                             return $ Just (op, vers)
                         ) <|> return Nothing
-             return (packagename, version)
+             archs <- (do many (char ' ')
+                          char '['
+                          t <- many1 (noneOf "]")
+                          many (char ' ')
+                          char ']'
+                          return (split " " t)
+                      ) <|> return []
+             return (packagename, version, archs)
 
              
