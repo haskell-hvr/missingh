@@ -89,7 +89,7 @@ module MissingH.ConfigParser
      readfile, readhandle, readstring,
 
      -- * Accessing Data
-     get, getbool, getnum,
+     Get_C(..),
      sections, has_section,
      options, has_option,
      items,
@@ -371,39 +371,23 @@ has_option cp s o =
                return $ elemFM (optionxform cp $ o) secthash
         in maybe False id v
 
-
-class Get_C a where 
-    get :: MonadError CPError m => ConfigParser -> SectionSpec -> OptionSpec -> m a
-                           
-{- | Retrieves a string from the configuration file.
-
-Returns an error if no such section\/option could be found.
+{- | The class representing the data types that can be returned by "get".
 -}
-instance Get_C String where
-    get cp s o = eitherToMonadError $ (accessfunc cp) cp s o
+class Get_C a where 
+    {- | Retrieves a string from the configuration file.
 
-instance Get_C Bool where
-    get = getbool
+When used in a context where a String is expected, returns that string verbatim.
 
-instance Read t => Get_C t where
-    get cp s o = get cp s o >>= return . read
+When used in a context where a Bool is expected, parses the string to
+a Boolean value (see logic below).
 
-{- | Retrieves a string from the configuration file and attempts to parse it
-as a number.  Returns an error if no such option could be found.
-An exception may be raised if it
-could not be parsed as the destination number. -}
--- FIXME delete this
-getnum :: (Read a, Num a,  MonadError CPError m) => 
-          ConfigParser -> SectionSpec -> OptionSpec -> m a
-getnum cp s o = get cp s o >>= return . read
+When used in a context where anything that is an instance of Read is expected,
+calls read to parse the item.
 
-{- | Retrieves a string from the configuration file and attempts to parse
-it as a boolean.  
+An error will be returned of no such option could be found or if it could
+not be parsed as a boolean (when returning a Bool).
 
-Returns an error if no such option could be found or
-if it could not be parsed as a boolean.
-
-Strings are case-insentively converted as follows:
+When parsing to a Bool, strings are case-insentively converted as follows:
 
 The following will produce a True value:
 
@@ -427,10 +411,18 @@ The following will produce a False value:
 
  * disabled
 
- *false
+ * false -}
+    get :: MonadError CPError m => ConfigParser -> SectionSpec -> OptionSpec -> m a
+                           
+instance Get_C String where
+    get cp s o = eitherToMonadError $ (accessfunc cp) cp s o
 
- -}
--- FIXME don't export
+instance Get_C Bool where
+    get = getbool
+
+instance Read t => Get_C t where
+    get cp s o = get cp s o >>= return . read
+
 getbool ::  MonadError CPError m =>
             ConfigParser -> SectionSpec -> OptionSpec -> m Bool
 getbool cp s o = 
