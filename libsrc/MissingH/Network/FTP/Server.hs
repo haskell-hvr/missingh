@@ -66,10 +66,14 @@ data AuthState = NoAuth
               | User String
               | Authenticated String
                 deriving (Eq, Show)
+data DataChan = NoChannel
+              | PassiveMode Socket SockAddr
+              | PortMode SockAddr
 data FTPState = FTPState
               { auth :: IORef AuthState,
                 datatype :: IORef DataType,
-                rename :: IORef (Maybe String)}
+                rename :: IORef (Maybe String),
+                datachan :: IORef DataChan}
 
 data FTPServer = forall a. HVFS a => FTPServer Handle a FTPState
 
@@ -102,8 +106,9 @@ anonFtpHandler f h sa =
           do authr <- newIORef (NoAuth)
              typer <- newIORef ASCII
              renamer <- newIORef (Nothing::Maybe String)
+             chanr <- newIORef (NoChannel)
              let s = serv (FTPState {auth = authr, datatype = typer,
-                                    rename = renamer})
+                                    rename = renamer, datachan = chanr})
              sendReply s 220 "Welcome to MissingH.Network.FTP.Server."
              commandLoop s sa
 

@@ -69,10 +69,15 @@ data InetServerOptions  = InetServerOptions {listenQueueSize :: Int,
                                             }
     deriving (Eq, Show)
 
-type HandlerT = Socket                  -- ^ The socket to use for communication
-              -> SockAddr               -- ^ Address of the remote
-              -> SockAddr               -- ^ Local address
-              -> IO ()
+{- | The main handler type.
+
+The first parameter is the socket itself.
+
+The second is the address of the remote endpoint.
+
+The third is the address of the local endpoint.
+-}
+type HandlerT = Socket -> SockAddr -> SockAddr -> IO ()
                      
 {- | Get Default options.  You can always modify it later. -}
 simpleTCPOptions :: Int                -- ^ Port Number
