@@ -35,6 +35,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Network.FTP.ParserServer(
+                                         parseCommand
                                         )
 where
 import MissingH.Network.FTP.ParserClient
@@ -50,7 +51,7 @@ import System.IO(hGetLine)
 import Text.Regex
 import Data.Word
 import MissingH.Hsemail.Rfc2234(alpha)
-type FTPResult = (Int, [String])
+import Data.Char
 
 logit :: String -> IO ()
 logit m = debugM "MissingH.Network.FTP.ParserServer" ("FTP received: " ++ m)
@@ -74,14 +75,12 @@ command = do
           x <- word
           y <- args
           eof
-          return (x, y)
+          return (map toUpper x, y)
 
 
-parseCommand :: Handle -> IO (String, String)
+parseCommand :: Handle -> IO (Either ParseError (String, String))
 parseCommand h =
     do input <- hGetLine h
-       case parse command "(unknown)" (rstrip input) of
-          Left err -> fail ("FTP: " ++ (show err))
-          Right reply -> return reply
+       return $ parse command "(unknown)" (rstrip input)
 
        

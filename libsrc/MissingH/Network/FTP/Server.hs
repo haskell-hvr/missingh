@@ -34,6 +34,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Network.FTP.Server(
+                                   ftpHandler
                                   )
 where
 import MissingH.Network.FTP.ParserServer
@@ -46,11 +47,14 @@ import MissingH.Network
 import MissingH.Str
 import MissingH.Printf
 import MissingH.IO.HVIO
+import Data.Char
+import MissingH.Printf
 
 s_crlf = "\r\n"
 ftpPutStrLn :: Handle -> String -> IO ()
 ftpPutStrLn h text =
-    hPutStr h (text ++ s_crlf)
+    do hPutStr h (text ++ s_crlf)
+       hFlush h
 
 {- | Send a reply code, handling multi-line text as necessary. -}
 sendReply :: Handle -> Int -> String -> IO ()
@@ -62,3 +66,81 @@ sendReply h codei text =
                                  writethis xs
         in 
         writethis (map (rstrip) (lines text))
+
+{- | Main FTP handler; pass this to 
+'MissingH.Network.SocketServer.handleHandler' -}
+
+ftpHandler :: Handle -> SockAddr -> IO ()
+ftpHandler h sa =
+    traplogging "MissingH.Network.FTP.Server" NOTICE "" $
+       do sendReply h 220 "Welcome to MissingH.Network.FTP.Server."
+          commandLoop h sa
+
+type CommandHandler = Handle -> SockAddr -> String -> IO Bool
+
+commands :: [(String, (CommandHandler, (String, String)))]
+commands =
+    [("HELP", (cmd_help, help_help))
+    ]
+
+commandLoop :: Handle -> SockAddr -> IO ()
+commandLoop h sa =
+    let errorhandler e = do noticeM "MissingH.Network.FTP.Server"
+                                    ("Closing due to error: " ++ (show e))
+                            hClose h
+                            return False
+        in do continue <- (flip catch) errorhandler 
+               (do x <- parseCommand h
+                   case x of
+                     Left err -> do sendReply h 500 $
+                                      "Couldn't parse command: " ++ (show err)
+                                    return True
+                     Right (cmd, args) -> 
+                         case lookup cmd commands of
+                            Nothing -> do sendReply h 500 $
+                                           "Unrecognized command " ++ cmd
+                                          return True
+                            Just hdlr -> (fst hdlr) h sa args
+               )
+              if continue
+                 then commandLoop h sa
+                 else return ()
+
+help_help =
+    ("Display help on available commands",
+     "When called without arguments, shows a summary of available system\n"
+     ++ "commands.  When called with an argument, shows detailed information\n"
+     ++ "on that specific command.")
+
+cmd_help :: CommandHandler
+cmd_help h sa args =
+    let genericreply addr = unlines $
+          ["Welcome to the FTP server, " ++ addr ++ "."
+          ,"This server is implemented as the MissingH.Network.FTP.Server"
+          ,"component of the MissingH library.  The MissingH library"
+          ,"is available from http://quux.org/devel/missingh."
+          ,""
+          ,""
+          ,"I know of the following commands:"
+          ,concatMap (\ (name, (_, (summary, _))) -> vsprintf "%-10s %s\n" name summary)
+              commands
+          ,""
+          ,"You may type \"HELP command\" for more help on a specific command."
+          ]
+        in
+        if args == ""
+           then do sastr <- showSockAddr sa
+                   sendReply h 214 (genericreply sastr)
+                   return True
+           else let newargs = map toUpper args
+                    in case lookup newargs commands of
+                         Nothing -> do 
+                                    sendReply h 214 $ "No help for \"" ++ newargs
+                                      ++ "\" is available.\nPlese send HELP"
+                                      ++ " without arguments for a list of\n"
+                                      ++ "valid commands."
+                                    return True
+                         Just (_, (summary, detail)) ->
+                             do sendReply h 214 $ newargs ++ ": " ++ summary ++ 
+                                               "\n\n" ++ detail
+                                return True
