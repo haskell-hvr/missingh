@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-21 01:34:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-174
+
+    Summary:
+      Disabled machine-dependant time test
+    Revision:
+      missingh--head--0.7--patch-174
+
+
+    modified files:
+     ChangeLog
+
+
 2005-01-21 01:34:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-173
 
     Summary:
