@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-15 02:18:33 GMT	John Goerzen <jgoerzen@complete.org>	patch-68
+
+    Summary:
+      Added dep on haskell-src
+    Revision:
+      missingh--head--1.0--patch-68
+
+
+    modified files:
+     ChangeLog Setup.description
+
+
 2004-10-14 15:50:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-67
 
     Summary:

@@ -12,3 +12,4 @@ Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Str
 HS-Source-Dir: libsrc
 Extensions: ExistentialQuantification
+Build-Depends: haskell-src
