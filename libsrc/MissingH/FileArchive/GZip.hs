@@ -89,7 +89,7 @@ read_section s =
            let (crc32str, rem) = splitAt 4 remainder
            let (sizestr, rem2) = splitAt 4 rem
            let filecrc32 = fromBytes $
-                           map (fromIntegral . ord) crc32str
+                           map (fromIntegral . ord) $ reverse crc32str
            
            if filecrc32 == crc32 
               then return $ (fst x, decompressed, rem2)

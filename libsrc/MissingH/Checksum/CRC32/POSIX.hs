@@ -17,7 +17,7 @@
 -- 	$Id: crc32.hs,v 1.2 2003/03/24 00:08:55 eris Exp $	
 
 {- |
-   Module     : MissingH.Checksum.CRC32
+   Module     : MissingH.Checksum.CRC32.POSIX
    Copyright  : Copyright (C) 2002 HardCore SoftWare, Doug Hoyte
    License    : GNU GPL
 
@@ -39,7 +39,7 @@ Modified December, 2004 by John Goerzen:
  * Updated things that didn't compile any more
 -}
 
-module MissingH.Checksum.CRC32 where
+module MissingH.Checksum.CRC32.POSIX where
 
 import Data.Array
 import Data.Bits
@@ -120,3 +120,4 @@ crctab  = array (0,255) (zip [0..255]
          0x933eb0bb, 0x97ffad0c, 0xafb010b1, 0xab710d06, 0xa6322bdf,
          0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
          ])
+

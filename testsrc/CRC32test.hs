@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module CRC32test(tests) where
+module CRC32POSIXtest(tests) where
 import HUnit
-import MissingH.Checksum.CRC32
+import MissingH.Checksum.CRC32.POSIX
 
 test_crc32 =
     let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" exp (crc32 inp) in

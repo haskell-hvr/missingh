@@ -2,6 +2,31 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 01:58:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-29
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-29
+
+
+    new files:
+     libsrc/MissingH/Checksum/CRC32/.arch-ids/=id
+     libsrc/MissingH/Checksum/CRC32/GZip.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Checksum/CRC32/POSIX.hs
+     libsrc/MissingH/FileArchive/GZip.hs testsrc/CRC32test.hs
+
+    renamed files:
+     libsrc/MissingH/Checksum/CRC32.hs
+       ==> libsrc/MissingH/Checksum/CRC32/POSIX.hs
+
+    new directories:
+     libsrc/MissingH/Checksum/CRC32
+     libsrc/MissingH/Checksum/CRC32/.arch-ids
+
+
 2004-12-04 01:27:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-28
 
     Summary:
