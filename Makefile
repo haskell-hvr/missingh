@@ -27,4 +27,12 @@ libmissingH.a: $(OBJS)
 %.o: %.hs
 	ghc -c -o $@ $<
 
+doc:
+	-rm -f html
+	mkdir html
+	haddock -h -o html $(SOURCES)
+
+clean:
+	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
+		`find . -name "*~"` *.a
 

@@ -51,5 +51,5 @@ lstrip s = case s of
                             else s
 
 -- | Same as strip, but applies only to the right side of the string.
-rstrip s = reverse . lstrip . reverse
+rstrip = reverse . lstrip . reverse
 
