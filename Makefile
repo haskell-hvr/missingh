@@ -38,5 +38,16 @@ doc:
 clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
-		`find . -name "*~"` *.a setup dist
+		`find . -name "*~"` *.a setup dist testsrc/runtests
+
+testsrc/runtests: all $(shell find testsrc -name "*.hs")
+	ghc6 -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
+
+test-ghc6: testsrc/runtests
+	testsrc/runtests
+
+test-hugs:
+	runhugs -P:$(PWD)/libsrc:$(PWD)/testsrc testsrc/runtests.hs
+
+test: test-ghc6 test-hugs
 

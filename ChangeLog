@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 01:26:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-35
+
+    Summary:
+      Added basic test infrastructure
+    Revision:
+      missingh--head--1.0--patch-35
+
+
+    new files:
+     testsrc/.arch-ids/=id testsrc/Tests.hs testsrc/runtests.hs
+
+    modified files:
+     ChangeLog Makefile debian/control
+
+    new directories:
+     testsrc testsrc/.arch-ids
+
+
 2004-10-07 01:04:20 GMT	John Goerzen <jgoerzen@complete.org>	patch-34
 
     Summary:
