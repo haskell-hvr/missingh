@@ -120,7 +120,7 @@ module MissingH.IO.HVIO(-- * Implementation Classes
                      -- * Standard Virtual IO features
                      -- | Note: Handle is a member of all classes by default.
                      StreamReader, newStreamReader,
-                     MemoryBuffer, newMemoryBuffer,
+                     MemoryBuffer, newMemoryBuffer, getMemoryBuffer,
                      PipeReader, PipeWriter, newHVIOPipe
                     )
 where
@@ -130,10 +130,16 @@ import System.IO.Error
 import Control.Concurrent.MVar
 import Data.IORef
 
-{- | The HVIOGeneric class.
+{- | This is the generic I\/O support class.  All objects that are to be used
+in the HVIO system must provide an instance of 'HVIOGeneric'.
 
-Implementators must provide 'vClose', 'vIsEOF', and either
-'vIsOpen' or 'vIsClosed'. -}
+Functions in this class provide an interface with the same specification as
+the similar functions in System.IO.  Please refer to that documentation
+for a more complete specification than is provided here.
+
+Instances of 'HVIOGeneric' must provide 'vClose', 'vIsEOF', and either
+'vIsOpen' or 'vIsClosed'.
+-}
 class (Show a) => HVIOGeneric a where
     -- | Close a file
     vClose :: a -> IO ()
@@ -142,9 +148,12 @@ class (Show a) => HVIOGeneric a where
     -- | Test if a file is closed
     vIsClosed :: a -> IO Bool
     -- | Raise an error if the file is not open.
+    -- This is a new HVIO function and is implemented in terms of
+    -- 'vIsOpen'.
     vTestOpen :: a -> IO ()
     -- | Whether or not we're at EOF.  This may raise on exception
     -- on some items, most notably write-only Handles such as stdout.
+    -- In general, this is most reliable on items opened for reading.
     -- vIsEOF implementations must implicitly call vTestOpen.
     vIsEOF :: a -> IO Bool
     -- | Detailed show output.
@@ -158,7 +167,8 @@ class (Show a) => HVIOGeneric a where
     vGetFP :: a -> IO (Maybe FilePath)
     -- | Throw an isEOFError if we're at EOF; returns nothing otherwise.
     -- If an implementation overrides the default, make sure that it
-    -- calls vTestOpen at some point.
+    -- calls vTestOpen at some point.  The default implementation is
+    -- a wrapper around a call to 'vIsEOF'.
     vTestEOF :: a -> IO ()
 
     vShow x = return (show x)
@@ -182,19 +192,51 @@ class (Show a) => HVIOGeneric a where
                      if e then vThrow h illegalOperationErrorType
                         else return ()
 
-{- | Readers.  Implementators must provide at least 'vGetChar'.
+{- | This class defines reading functions.  Any object that can provide
+reading capabilities should define an instance of this type class.
+
+Functions in this class provide an interface with the same specification as
+the similar functions in System.IO.  Please refer to that documentation
+for a more complete specification than is provided here.
+
+Implementators must provide at least 'vGetChar'.
 An implementation of 'vGetContents' is also highly suggested, since
-the default cannot implement quick closing.
+the default cannot implement proper partial closing semantics.
+
+Being a member of the 'HVIOReader' class only means that an object, in general,
+has reading capabilities -- and not that any particular one supports reading.
+For instance, Handle implements HVIOReader, but a Handle could be open
+write-only, and thus read attempts on it would fail.  You may use 'vIsReadable'
+to ensure that a particular instance is open for reading.
 -}
 class (HVIOGeneric a) => HVIOReader a where
     -- | Read one character
     vGetChar :: a -> IO Char
     -- | Read one line
     vGetLine :: a -> IO String
-    -- | Get the remaining contents.  
+    {- | Get the remaining contents.  Please note that as a user of this
+       function, the same partial-closing semantics as are used in the
+       standard 'hGetContents' are /encouraged/ from implementators,
+       but are not /required/.  That means that, for instance,
+       a 'vGetChar' after a 'vGetContents' may return some undefined
+       result instead of the error you would normally get.  You should
+       use caution to make sure your code doesn't fall into that trap,
+       or make sure to test your code with Handle or one of the 
+       default instances defined in this module.  Also, some implementations
+       may essentially provide a complete close after a call to 'vGetContents'.
+       The bottom line: after a call to 'vGetContents', you should do nothing
+       else with the object save closing it with 'vClose'.
+       
+       For implementators, you are highly encouraged to provide a correct
+       implementation. -}
     vGetContents :: a -> IO String
     -- | Indicate whether at least one item is ready for reading.
+    -- This will always be True for a great many implementations.
     vReady :: a -> IO Bool
+    -- | Indicate whether a particular item is available for reading.
+    vIsReadable :: a -> IO Bool
+
+    vIsReadable _ = return True
 
     vGetLine h = 
         let loop accum = 
@@ -224,7 +266,21 @@ class (HVIOGeneric a) => HVIOReader a where
     vReady h = do vTestEOF h
                   return True
 
-{- | Writers.  Implementators must provide at least 'vPutChar'. -}
+{- | Objects that implement 'HVIOWriter' provide writing capabilities.
+Any object that can handle output should define an instance of this class.
+
+Functions in this class provide an interface with the same specification as
+the similar functions in System.IO.  Please refer to that documentation
+for a more complete specification than is provided here.
+
+Implementators of 'HVIOWriter' objects must provide at least 'vPutChar'.
+
+Being a member of the 'HVIOWriter' class only means that an object, in general,
+has writing capabilities -- and not that any particular one supports writing.
+For instance, Handle implements HVIOWriter, but a Handle could be open
+read-only, and thus write attempts on it would fail.  You may use 'vIsWritable'
+to ensure that a particular instance is open for reading.
+ -}
 
 class (HVIOGeneric a) => HVIOWriter a where
     -- | Write one character
@@ -236,9 +292,14 @@ class (HVIOGeneric a) => HVIOWriter a where
     -- | Write a string representation of the argument, plus a newline.
     vPrint :: Show b => a -> b -> IO ()
     -- | Flush any output buffers.
-    -- Note: implementations should assure that a vFlush is performed
+    -- Note: implementations should assure that a vFlush is automatically 
+    -- performed
     -- on file close, if necessary to ensure all data sent is written.
     vFlush :: a -> IO ()
+    -- | Indicate whether or not this particular object supports writing.
+    vIsWritable :: a -> IO Bool
+
+    vIsWritable _ = return True
 
     vPutStr _ [] = return ()
     vPutStr h (x:xs) = do vPutChar h x
@@ -250,7 +311,21 @@ class (HVIOGeneric a) => HVIOWriter a where
                  
     vFlush = vTestOpen
 
-{- | Seekable items.  Implementators must provide all functions.
+{- | This class defines seekable (random-access) objects.  Anything that is
+a member of this class can have its file pointer repositioned forwards or
+backwards.
+
+Implementators must provide at least 'vTell' and 'vSeek'.
+
+Functions in this class provide an interface with the same specification as
+the similar functions in System.IO.  Please refer to that documentation
+for a more complete specification than is provided here.
+
+Being a member of the 'HVIOSeeker' class only means that an object, in general,
+has seeker capabilities -- and not that any particular one supports writing.
+For instance, Handle implements HVIOSeeker, but a Handle could be open
+on a terminal device, and thus seek attempts on it would fail.  You may use
+'vIsSeekable' to ensure that a particular instance supports seeking.
 
 -}
 
@@ -261,10 +336,16 @@ class (HVIOGeneric a) => HVIOSeeker a where
     -- | Get the current position.
     vTell :: a -> IO Integer
 
+    -- | Indicate whether this instance supports seeking.
+    vIsSeekable :: a -> IO Bool
+
+    vIsSeekable _ = return True
+
 ----------------------------------------------------------------------
 -- Handle instances
 ----------------------------------------------------------------------
 
+-- | FOO2
 instance HVIOGeneric Handle where
     vClose = hClose
     vIsEOF = hIsEOF
@@ -277,6 +358,7 @@ instance HVIOReader Handle where
     vGetLine = hGetLine
     vGetContents = hGetContents
     vReady = hReady
+    vIsReadable = hIsReadable
 
 instance HVIOWriter Handle where
     vPutChar = hPutChar
@@ -284,10 +366,12 @@ instance HVIOWriter Handle where
     vPutStrLn = hPutStrLn
     vPrint = hPrint
     vFlush = hFlush
+    vIsWritable = hIsWritable
 
 instance HVIOSeeker Handle where
     vSeek = hSeek
     vTell = hTell
+    vIsSeekable = hIsSeekable
 
 ----------------------------------------------------------------------
 -- VIO Support
