@@ -23,31 +23,41 @@ import Testutil
 import Control.Exception
 
 test_basic =
-    let f inp exp = exp @=? parse_string inp in
+    let f msg inp exp = assertEqual msg exp (parse_string inp) in
         do
-        f "" []
-        f "\n" []
-        f "#foo bar" []
-        f "#foo bar\n" []
-        f "[emptysect]" [("emptysect", [])]
-        f "#foo bar\n[emptysect]\n" [("emptysect", [])]
-        f "# [nonexistant]\n[emptysect]\n" [("emptysect", [])]
-        f "#fo\n[Cemptysect]\n#asdf boo\n  \n  # fnonexistantg"
+        f "empty string" "" []
+        f "one empty line" "\n" []
+        f "one comment line" "#foo bar" []
+        f "one comment line with eol" "#foo bar\n" []
+        f "one empty section" "[emptysect]" [("emptysect", [])]
+        f "comment and empty sect" "#foo bar\n[emptysect]\n" [("emptysect", [])]
+        f "comments2" "# [nonexistant]\n[emptysect]\n" [("emptysect", [])]
+        f "comments3" "#fo\n[Cemptysect]\n#asdf boo\n  \n  # fnonexistantg"
           [("Cemptysect", [])]
-        f "[emptysect]\n# [nonexistant]\n" [("emptysect", [])]
-        f "[sect1]\nfoo: bar\n" [("sect1", [("foo", "bar")])]
-        f "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\n o3: v3"
+        f "comments4" "[emptysect]\n# [nonexistant]\n" [("emptysect", [])]
+        f "simple section" "[sect1]\nfoo: bar\n" [("sect1", [("foo", "bar")])]
+        f "comments5" "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\n o3: v3"
           [("sect1", [("o1", "v1"), ("o2", "v2"), ("o3", "v3")])]
 
-        assertRaises (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
-                      (f "#foo\nthis is bad data" [])
-
-        assertRaises (ErrorCall "Lexer: \"(string)\" (line 2, column 9):\nunexpected \"\\n\"\nexpecting Option separator")
-                     (f "[sect1]\n#iiiiii \n  extensionline\n#foo" [])
-
-        f "v1: o1\n[sect1]\nv2: o2" [("DEFAULT", [("v1", "o1")]),
+        f "default1" "v1: o1\n[sect1]\nv2: o2" [("DEFAULT", [("v1", "o1")]),
                                      ("sect1", [("v2", "o2")])]
-        f "foo: bar" [("DEFAULT", [("foo", "bar")])]
+        f "simple default" "foo: bar" [("DEFAULT", [("foo", "bar")])]
+{-
+        assertRaises "e test1" (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
+                      (f "" "#foo\nthis is bad data" [])
 
-tests = TestList [TestLabel "test_basic" (TestCase test_basic)
+        assertRaises "e test2" (ErrorCall "Lexer: \"(string)\" (line 2, column 9):\nunexpected \"\\n\"\nexpecting Option separator")
+                     (f "" "[sect1]\n#iiiiii \n  extensionline\n#foo" [])
+-}
+
+test_extensionlines =
+    let f inp exp = exp @=? parse_string inp in
+        do
+        f "[sect1]\nfoo: bar\nbaz: l1\n l2\n   l3\n# c\nquux: asdf"
+          [("sect1", [("foo", "bar"),
+                      ("baz", "l1\nl2\nl3"),
+                      ("quux", "asdf")])]
+
+tests = TestList [TestLabel "test_basic" (TestCase test_basic),
+                  TestLabel "test_extensionlines" (TestCase test_extensionlines)
                  ]

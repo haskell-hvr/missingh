@@ -20,16 +20,16 @@ module Testutil(assertRaises, mapassertEqual) where
 import HUnit
 import qualified Control.Exception
 
-assertRaises :: Show a => Control.Exception.Exception -> IO a -> IO ()
-assertRaises selector action =
+assertRaises :: Show a => String -> Control.Exception.Exception -> IO a -> IO ()
+assertRaises msg selector action =
     let thetest e = if e == selector then return ()
-                    else assertFailure $ "Received unexpected exception: "
+                    else assertFailure $ msg ++ "\nReceived unexpected exception: "
                              ++ (show e) ++ "\ninstead of exception: " ++ (show selector)
         in do
            r <- Control.Exception.try action
            case r of
                   Left e -> thetest e
-                  Right x -> assertFailure $ "Received no exception, but was expecting exception: " ++ (show selector)
+                  Right x -> assertFailure $ msg ++ "\nReceived no exception, but was expecting exception: " ++ (show selector)
 
 mapassertEqual :: (Show b, Eq b) => String -> (a -> b) -> [(a, b)] -> Assertion
 mapassertEqual descrip func [] = return ()

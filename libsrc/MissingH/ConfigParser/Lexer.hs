@@ -88,9 +88,9 @@ loken =
     <|> try (do {empty_line; loken})
     
     -- Real stuff
-    <|> do {sname <- sectheader; next <- loken; return $ NEWSECTION sname : next}
-    <|> do {pair <- optionpair; next <- loken; return $ NEWOPTION pair : next}
-    <|> do {extension <- extension_line; next <- loken; return $ EXTENSIONLINE extension : next}
+    <|> (do {sname <- sectheader; next <- loken; return $ NEWSECTION sname : next})
+    <|> try (do {pair <- optionpair; next <- loken; return $ NEWOPTION pair : next})
+    <|> (do {extension <- extension_line; next <- loken; return $ EXTENSIONLINE extension : next})
     <|> do {eof; return [EOFTOK]}
     <?> "Invalid syntax in configuration file"
         
