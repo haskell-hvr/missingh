@@ -42,6 +42,7 @@ test_vsprintf_generics =
     "fe" @=? vsprintf "%x" (254::Int)
     "FE" @=? vsprintf "%X" (254::Int)
     "10" @=? vsprintf "%o" (8::Int)
+    "10 3.140" @=? sprintf "%d %.3f" [v (10::Int), v (3.14::Float)]
 
 test_vsprintf_strings =
     do
