@@ -35,8 +35,10 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
-                                  toPortString, fromPortString,
-                                  debugParseGoodReplyHandle)
+                                   toPortString, fromPortString,
+                                   debugParseGoodReply,
+                                   debugParseGoodReplyHandle,
+                                   FTPResult)
 where
 
 import Text.ParserCombinators.Parsec
@@ -47,6 +49,9 @@ import MissingH.Str
 import MissingH.Logging.Logger
 import Network.Socket(SockAddr(..), PortNumber(..))
 import System.IO(Handle, hGetContents)
+import System.IO.Unsafe
+type FTPResult = (Int, [String])
+
 -- import Control.Exception(Exception(PatternMatchFail), throw)
 
 logit :: String -> IO ()
@@ -123,7 +128,7 @@ multiReplyComponent = (try (do
                            )
                       ) <|> return []
 
-multiReply :: Parser (Int, [String])
+multiReply :: Parser FTPResult
 multiReply = try (do
                   x <- singleReplyLine
                   return (fst x, [snd x])
@@ -141,7 +146,7 @@ multiReply = try (do
 
 -- | Parse a FTP reply.  Returns a (result code, text) pair.
 
-parseReply :: String -> (Int, [String])
+parseReply :: String -> FTPResult
 parseReply input =
     case parse multiReply "(unknown)" input of
          Left err -> error (show err)
@@ -151,7 +156,7 @@ parseReply input =
 -- If the result code indicates an error, raise an exception instead
 -- of just passing it back.
 
-parseGoodReply :: String -> (Int, [String])
+parseGoodReply :: String -> FTPResult
 parseGoodReply input =
     let reply = parseReply input
         in
@@ -160,7 +165,7 @@ parseGoodReply input =
         else reply
 
 -- | Parse a FTP reply.  Logs debug messages.
-debugParseGoodReply :: String -> IO (Int, [String])
+debugParseGoodReply :: String -> IO FTPResult
 debugParseGoodReply contents =
     let logPlugin :: String -> String -> IO String
         logPlugin [] [] = return []
@@ -170,10 +175,10 @@ debugParseGoodReply contents =
         logPlugin (x:xs) accum = 
             case x of
                    '\n' -> do logit (strip (accum))
-                              next <- logPlugin xs []
+                              next <- unsafeInterleaveIO $ logPlugin xs []
                               return (x : next)
                    y -> do
-                        next <- logPlugin xs (accum ++ [x])
+                        next <- unsafeInterleaveIO $ logPlugin xs (accum ++ [x])
                         return (x : next)
         in
         do
@@ -181,7 +186,7 @@ debugParseGoodReply contents =
         return (parseGoodReply loggedStr)
 
 -- | Parse a FTP reply.  Log debug messages.
-debugParseGoodReplyHandle :: Handle -> IO (Int, [String])
+debugParseGoodReplyHandle :: Handle -> IO FTPResult
 debugParseGoodReplyHandle h = do
                               c <- hGetContents h
                               debugParseGoodReply c

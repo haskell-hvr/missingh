@@ -98,7 +98,7 @@ In other words:
 hInteract :: Handle -> Handle -> (String -> String) -> IO ()
 hInteract finput foutput func = do
                                 content <- hGetContents finput
-                                hPutStr stdout (func content)
+                                hPutStr foutput (func content)
 
 {- | Line-based interaction.  This is similar to wrapping your
 interact functions with 'lines' and 'unlines'.  This equality holds:

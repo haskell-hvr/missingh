@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-23 16:06:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-105
+
+    Summary:
+      Playing around with basics
+    Revision:
+      missingh--head--1.0--patch-105
+
+
+    removed files:
+     debian/libghc6-missingh-dev.postinst.debhelper
+     debian/libghc6-missingh-dev.prerm.debhelper
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO.hs
+     libsrc/MissingH/Network/FTP/Client.hs
+     libsrc/MissingH/Network/FTP/Parser.hs
+
+
 2004-10-23 15:32:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-104
 
     Summary:

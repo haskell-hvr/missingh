@@ -51,5 +51,37 @@ Useful standards:
 module MissingH.Network.FTP.Client(
                        )
 where
+import MissingH.Network.FTP.Parser
+import Network.Socket
+import qualified Network
+import System.IO
+import MissingH.Logging.Logger
 
--- nothing yet
+type FTPConnection = Handle
+
+{-
+getresp h = do c <- hGetContents h
+               return (parseGoodReply c)
+-}
+
+getresp = debugParseGoodReplyHandle
+
+sendcmd h c = hPutStr h (c ++ "\r\n")
+
+{- | Connect to the remote FTP server and read but discard
+   the welcome.  Assumes
+   default FTP port, 21, on remote. -}
+easyConnectTo :: Network.HostName -> IO Handle
+easyConnectTo h = do x <- connectTo h (Network.PortNumber 21)
+                     return (fst x)
+
+{- | Connect to remote FTP server and read the welcome. -}
+connectTo :: Network.HostName -> Network.PortID -> IO (Handle, FTPResult)
+connectTo h p =
+    do
+    updateGlobalLogger "MissingH.Network.FTP.Parser" (setLevel DEBUG)
+    h <- Network.connectTo h p
+    hSetBuffering h LineBuffering
+    r <- getresp h
+    --r `seq` return (h, r)
+    return (h, r)
