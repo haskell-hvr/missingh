@@ -55,7 +55,8 @@ test_inflate =
         ,f "empty.gz" "" inflate_string
         --,f "zeros.gz" 10485760 (length . inflate_string)
         -- BAD BAD ,f "zeros.gz" (replicate (10 * 1048576) '\0') inflate_string
-        ,f "zeros.gz" True (\x -> (replicate 10485760 '\0') == inflate_string x)
+        -- This line tests Igloo's code:
+        --,f "zeros.gz" True (\x -> (replicate 10485760 '\0') == inflate_string x)
         ]
 
 test_header =
@@ -78,9 +79,12 @@ test_gunzip =
          f "t1.gz" ("Test 1", Nothing)
         ,f "t1bad.gz" ("Test 1", Just CRCError)
         ,f "t2.gz" ("Test 1Test 2", Nothing)
+        -- The following tests my code
+         {-
         ,mf "zeros.gz" True (\x -> case decompress x of
                              (y, _) -> y == replicate 10485760 '\0'
                             )
+         -}
         ]
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),

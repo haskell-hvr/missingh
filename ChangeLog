@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 19:18:00 GMT	John Goerzen <jgoerzen@complete.org>	patch-47
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-47
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/FileArchive/GZip.hs
+     testsrc/GZiptest.hs
+
+
 2004-12-04 19:07:11 GMT	John Goerzen <jgoerzen@complete.org>	patch-46
 
     Summary:

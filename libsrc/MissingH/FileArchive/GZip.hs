@@ -35,8 +35,10 @@ The GZip format is described in RFC1952.
 module MissingH.FileArchive.GZip (
                                   -- * GZip Files
                                   -- $gzipfiles
+
                                   -- * Types
-                                  Header(..), Section, GZipError(..), Footer(..),
+                                  Header(..), Section, GZipError(..),
+                                  Footer(..),
                                   -- * Whole-File Processing
                                   decompress,
                                   read_sections,
