@@ -32,16 +32,18 @@ files and programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Debian.ControlParser(control)
+module MissingH.Debian.ControlParser(control, depPart)
     where
 import Text.ParserCombinators.Parsec
 
 eol = (try (string "\r\n"))
       <|> string "\n" <?> "EOL"
 
-extline = do char ' '
-             content <- many (noneOf "\r\n")
-             eol
+extline = try (do char ' '
+                  content <- many (noneOf "\r\n")
+                  eol
+                  return content
+              )
 
 entry = do key <- many1 (noneOf ":\r\n")
            char ':'
@@ -50,4 +52,19 @@ entry = do key <- many1 (noneOf ":\r\n")
            exts <- many extline
            return (key, unlines ([val] ++ exts))
 
+{- | Main parser for the control file -}
 control = many entry
+
+depPart = do packagename <- many1 (noneOf " (")
+             version <- (do many (char ' ')
+                            char '('
+                            op <- many1 (oneOf "<>=")
+                            many (char ' ')
+                            vers <- many1 (noneOf ") ")
+                            many (char ' ')
+                            char ')'
+                            return $ Just (op, vers)
+                        ) <|> return Nothing
+             return (packagename, version)
+
+             
