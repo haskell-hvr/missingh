@@ -28,7 +28,7 @@ libmissingH.a: $(OBJS)
 	ar q libmissingH.a $(OBJS)
 
 %.o: %.hs
-	ghc -c -o $@ $<
+	ghc -ilibsrc -c -o $@ $<
 
 doc:
 	-rm -rf html
