@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 02:03:07 GMT	John Goerzen <jgoerzen@complete.org>	patch-31
+
+    Summary:
+      Gzip is working now.
+    Revision:
+      missingh--head--0.7--patch-31
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/FileArchive/GZip.hs
+
+
 2004-12-04 02:01:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-30
 
     Summary:

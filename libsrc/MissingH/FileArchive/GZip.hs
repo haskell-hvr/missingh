@@ -25,7 +25,7 @@ module MissingH.FileArchive.GZip (
 where
 
 import MissingH.Compression.Inflate
-import MissingH.Checksum.CRC32.POSIX
+import MissingH.Checksum.CRC32.GZip
 import Data.List
 import Data.Bits
 import Control.Monad.Error
@@ -100,17 +100,17 @@ read_section s =
     
 
 -- | Read the file's compressed data, returning
--- (Decompressed, CRC32, Remainder)
+-- (Decompressed, Calculated CRC32, Remainder)
 read_data :: String -> (String, Word32, String)
 read_data x = 
     let (decompressed1, remainder) = inflate_string_remainder x
-        (decompressed, crc32) = read_data_internal decompressed1 0 0
+        (decompressed, crc32) = read_data_internal decompressed1 0
         in
         (decompressed, crc32, remainder)
     where
-    read_data_internal [] ck l = ([], calc_crc32 [] ck l)
-    read_data_internal (x:xs) ck l =
-        let n = read_data_internal xs (iter_crc32 ck x) (l+1)
+    read_data_internal [] ck = ([], ck)
+    read_data_internal (x:xs) ck =
+        let n = read_data_internal xs (update_crc ck x)
             in
             (x : fst n, snd n)
     
