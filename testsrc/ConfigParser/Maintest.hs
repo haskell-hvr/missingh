@@ -28,10 +28,12 @@ nullfile = openFile "/dev/null" ReadWriteMode
 testfile = "testsrc/ConfigParser/test.cfg"
 p inp = forceEither $ readstring emptyCP inp
 f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv (p inp))
+
 f2s :: String -> Either CPError String -> Either CPError String -> Test
 f2s msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
 f2b :: String -> Either CPError Bool -> Either CPError Bool -> Test
 f2b msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
+
 f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
 f3 msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
 
@@ -99,11 +101,11 @@ test_nodefault =
     let cp = (p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes\n[sect4]\ndef: different"){usedefault = False} in
       [
        f2s "default item" (Left (NoOption "def", "get")) (get cp "sect1" "def")
-      ,f2s "normal item" (Right "bar") (get cp "sect1" "foo")
+      ,f2 "normal item" (Right "bar") (get cp "sect1" "foo")
       ,f2s "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
       ,f2s "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
       ,f2s "default from bad sect" (Left (NoSection "sect2", "get")) (get cp "sect2" "def")
-      ,f2s "overriding default" (Right "different") (get cp "sect4" "def")
+      ,f2 "overriding default" (Right "different") (get cp "sect4" "def")
       -- not in haskell: ,f2 "using default feature"
       -- default int
       -- default float
@@ -113,7 +115,8 @@ test_nodefault =
 test_instances = 
     let cp = p "[x]\na: true\nb: 1\nbad: never"
 	in [f2 "bool 1st" (Right True) (get cp "x" "a"),
-	    f2 "bool 1nd" (Right True) (get cp "x" "b")
+	    f2 "bool 1nd" (Right True) (get cp "x" "b"),
+            f2b "bad bool" (Left (ParseError "Couldn't parse bool never from x/bad", "getbool")) (get cp "x" "bad")
 	   ]
 
 
@@ -198,10 +201,10 @@ test_interp =
         cp = (forceEither $ (readstring emptyCP interpdoc)){ accessfunc = interpolatingAccess 5}
         in
         [
-         f2s "basic" (Right "i386") (get cp "DEFAULT" "arch")
-        ,f2s "filename" (Right "test_i386.c") (get cp "builder" "filename")
-        ,f2s "dir" (Right "/usr/src/test_i386.c") (get cp "builder" "dir")
-        ,f2s "percents" (Right "5%") (get cp "builder" "percent")
+         f2 "basic" (Right "i386") (get cp "DEFAULT" "arch")
+        ,f2 "filename" (Right "test_i386.c") (get cp "builder" "filename")
+        ,f2 "dir" (Right "/usr/src/test_i386.c") (get cp "builder" "dir")
+        ,f2 "percents" (Right "5%") (get cp "builder" "percent")
         ,f2s "error" (Left (InterpolationError "unresolvable interpolation reference to \"nonexistent\"", "interpolatingAccess")) (get cp "builder" "bad")
         ,f2s "recursive" (Left (InterpolationError "maximum interpolation depth exceeded", "interpolatingAccess"))
                         (get cp "builder" "recursive")
