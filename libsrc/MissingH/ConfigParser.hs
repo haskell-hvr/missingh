@@ -42,19 +42,28 @@ module MissingH.ConfigParser
      -- $reading
      readfile, readhandle, readstring,
 
+     -- * Accessing Data
+     get, getbool, getnum,
+
+     -- * Setting Data
+     set, setshow,
+
      -- * Meta-queries
      sections, has_section,
      options, has_option,
+     items,
 
-     -- * Miscellaneous anipulation
-     merge
+     -- * Miscellaneous Manipulation
+     add_section, merge
 ) where
 import MissingH.ConfigParser.Types
 import MissingH.ConfigParser.Parser
 import MissingH.FiniteMap
+import MissingH.Str
 import Data.FiniteMap
 import Data.List
 import System.IO(Handle)
+import Data.Char
 
 {- | Combines two 'ConfigParser's into one.
 
@@ -128,6 +137,15 @@ No special @DEFAULT@ processing is done. -}
 has_section :: ConfigParser -> SectionSpec -> Bool
 has_section cp x = elemFM x (content cp)
 
+{- | Adds the specified section name.  Raises an exception if the
+section was already present.  Otherwise, returns the new 
+'ConfigParser' object.-}
+add_section :: ConfigParser -> SectionSpec -> ConfigParser
+add_section cp s =
+    if has_section cp s
+       then error ("add_section: section " ++ s ++ " already exists")
+       else cp {content = addToFM (content cp) s emptyFM}
+
 {- | Returns a list of the names of all the options present in the
 given section.
 
@@ -147,6 +165,60 @@ has_option cp s o =
                 elemFM (optionxform cp $ o)
                        (forceLookupFM "ConfigParser.has_option" c s) 
                            
+{- | Retrieves a string from the configuration file.  Raises an exception if
+no such option could be found. -}
+get :: ConfigParser -> SectionSpec -> OptionSpec -> String
+get cp s o = 
+    case (accessfunc cp) s o of
+         Nothing -> error $ "get: no option " ++ s ++ "/" ++ o
+         Just x -> x
+
+{- | Retrieves a string from the configuration file and attempts to parse it
+as a number.  Raises an exception if no such option could be found or if it
+could not be parsed as the destination number. -}
+getnum :: Num a => ConfigParser -> SectionSpec -> OptionSpec -> a
+getnum = read . get
+
+{- | Retrieves a string from the configuration file and attempts to parse
+it as a boolean.  Raises an exception if no such option could be found or
+if it could not be parsed as a boolean. -}
+getbool :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
+getbool cp s o = 
+    case map toLower . strip . get $ cp s o of
+         "1" -> True
+         "yes" -> True
+         "on" -> True
+         "enabled" -> True
+         "0" -> False
+         "no" -> False
+         "off" -> False
+         "disabled" -> False
+         _ -> error ("getbool: couldn't parse " ++ get cp s o ++ " from " ++
+                     s ++ "/" ++ o)
+
+{- | Returns a list of @(optionname, value)@ pairs representing the content
+of the given section.  Raises an error if the section is invalid. -}
+items :: ConfigParser -> SectionSpec -> [(OptionSpec, String)]
+items cp s = fmToList (forceLookupFM "ConfigParser.items" (content cp) s)
+
+{- | Sets the option to a new value, replacing an existing one if it exists.
+Raises an error if the section does not exist. -}
+set :: ConfigParser -> SectionSpec -> OptionSpec -> String -> ConfigParser
+set cp s passedo val = 
+    cp { content = newmap}
+    where newmap = addToFM (content cp) s newsect
+          newsect = addToFM sectmap o val
+          sectmap = forceLookupFM "ConfigParser.set" (content cp) s
+          o = (optionxform cp) cp passedo
+
+{- | Sets the option to a new value, replacing an existing one if it exists.
+It requires only a showable value as its parameter.
+This can be used with bool values, as well as numeric ones.  Raises
+an error if the section does not exist. -}
+setshow :: Show a => ConfigParser -> SectionSpec -> OptionSpec -> a -> ConfigParser
+setshow cp s o val = set cp s o (show val)
+
+
 
 ----------------------------------------------------------------------
 -- Docs

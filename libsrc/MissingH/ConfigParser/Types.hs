@@ -61,10 +61,15 @@ data ConfigParser = ConfigParser
       content :: CPData,
       -- | How to transform an option into a standard representation
       optionxform :: (OptionSpec -> OptionSpec),
-      --defaulthandler :: (ConfigParser -> String -> String),
+      -- | Function to look up an option, considering a default value
+      -- | if 'usedefault' is True; or ignoring a default value otherwise.
+      defaulthandler :: (ConfigParser -> SectionSpec -> OptionSpec -> Maybe String),
       -- | Whether or not to seek out a default action when no match
       -- is found.
-      usedefault :: Bool
+      usedefault :: Bool,
+      -- | Function that is used to perform lookups, do optional
+      -- interpolation, etc.
+      accessfunc :: (ConfigParser -> SectionSpec -> OptionSpec -> Maybe String)
     }
 
 {- | The default empty 'MissingH.ConfigParser' object.
