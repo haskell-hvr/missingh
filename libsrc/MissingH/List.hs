@@ -39,6 +39,9 @@ module MissingH.List(-- * Tests
                      provide an interface similar to "Data.FiniteMap"
                      for association lists. -}
                      addToAL, delFromAL, flipAL,
+                     -- ** Association List Conversions
+                     strFromAL,
+                     strToAL,
                      -- * Conversions
                      split, join, replace, genericJoin, takeWhileList,
                      dropWhileList, spanList, breakList,
@@ -200,6 +203,34 @@ flipAL oldl =
                                 Just y -> worker xs (addToAL accum v (k:y))
         in
         worker oldl []
+
+{- | Converts an association list to a string.  The string will have
+one pair per line, with the key and value both represented as a Haskell string.
+
+This function is designed to work with [(String, String)] association lists,
+but may work with other types as well. -}
+
+strFromAL :: (Show a, Show b) => [(a, b)] -> String
+strFromAL inp =
+    let worker (key, val) = show key ++ "," ++ show val
+        in unlines . map worker $ inp
+
+{- | The inverse of 'strFromAL', this function reads a string and outputs the
+appropriate association list. 
+
+Like 'strFromAL', this is designed to work with [(String, String)] association
+lists but may also work with other objects with simple representations.
+-}
+strToAL :: (Read a, Read b) => String -> [(a, b)]
+strToAL inp = 
+    let worker line =
+            case reads line of
+               [(key, remainder)] -> case remainder of
+                     ',':valstr -> (key, read valstr)
+                     _ -> error "MissingH.List.strToAL: Parse error on value"
+               _ -> error "MissingH.List.strToAL: Parse error on key"
+        in map worker (lines inp)
+
 
 {- FIXME TODO: sub -}
 

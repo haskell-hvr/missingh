@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-01 21:22:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-182
+
+    Summary:
+      Adding AnyDBM features
+    Revision:
+      missingh--head--0.7--patch-182
+
+
+    new files:
+     libsrc/MissingH/AnyDBM.hs
+
+    modified files:
+     ChangeLog Makefile MissingH.cabal libsrc/MissingH/FiniteMap.hs
+     libsrc/MissingH/List.hs testsrc/Listtest.hs
+
+
 2005-01-28 17:43:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-181
 
     Summary:

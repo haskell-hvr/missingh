@@ -144,6 +144,21 @@ test_alwaysElemRIndex =
         ,f 'f' ['f', 'b', 'f', 'f', 'b'] 3
         ]
 
+test_strToAL =
+    let f inp exp = TestLabel (show inp) $ TestCase $ do let r = strFromAL inp
+                                                         exp @=? r
+                                                         inp @=? strToAL r
+        in
+        [
+         f ([]::[(String, String)]) ""
+        ,f [("foo", "bar")] "\"foo\",\"bar\"\n"
+        ,f [("foo", "bar"), ("baz", "quux")] "\"foo\",\"bar\"\n\"baz\",\"quux\"\n"
+        ,f [(1::Int, 2::Int), (3, 4)] "1,2\n3,4\n"
+        ,f [(1::Int, "one"), (2, "two")] "1,\"one\"\n2,\"two\"\n"
+        ,f [("one", 1::Double), ("n\nl", 2::Double)]
+           "\"one\",1.0\n\"n\\nl\",2.0\n"
+        ]
+
 tests = TestList [TestLabel "delFromAL" (TestList test_delFromAL),
                   TestLabel "addToAL" (TestList test_addToAL),
                   TestLabel "split" (TestList test_split),
@@ -154,7 +169,8 @@ tests = TestList [TestLabel "delFromAL" (TestList test_delFromAL),
                   TestLabel "elemRIndex" (TestList test_elemRIndex),
                   TestLabel "alwaysElemRIndex" (TestList test_alwaysElemRIndex),
                   TestLabel "replace" (TestList test_replace),
-                  TestLabel "contains" (TestList test_contains)]
+                  TestLabel "contains" (TestList test_contains),
+                  TestLabel "strFromAL & strToAL" (TestList test_strToAL)]
 
 
 

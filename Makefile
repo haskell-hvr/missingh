@@ -38,6 +38,7 @@ libmissingH.a: $(OBJS)
 %.o: %.lhs
 	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
 
+.PHONY: doc
 doc:
 	-rm -rf html
 	mkdir html

@@ -65,7 +65,8 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Wash.Utility.Shell,
     MissingH.Wash.Utility.SimpleParser,
     MissingH.Wash.Utility.URLCoding,
-    MissingH.Wash.Utility.Unique
+    MissingH.Wash.Utility.Unique,
+  MissingH.AnyDBM
 HS-Source-Dir: libsrc
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances

@@ -34,11 +34,41 @@ In addition to the functions exported, this module also makes a FiniteMap
 showable.
 -}
 
-module MissingH.FiniteMap (flipFM, flippedLookupFM, forceLookupFM)
+module MissingH.FiniteMap (-- * Basic Utilities
+                           flipFM, flippedLookupFM, forceLookupFM,
+                           -- * Conversions
+                           strToFM,
+                           strFromFM
+                          )
 where
 
 import Data.FiniteMap
-import MissingH.List(flipAL)
+import MissingH.List(flipAL, strToAL, strFromAL)
+
+{- | Converts a String, String FiniteMap into a string representation.
+See 'MissingH.List.strFromAL' for more on the similar function for
+association lists.  This implementation is simple:
+
+>strFromFM = strFromAL . fmToList
+
+This function is designed to work with FiniteMap String String objects,
+but may also work with other objects with simple representations. -}
+strFromFM :: (Show a, Show b, Ord a) => FiniteMap a b -> String
+strFromFM = strFromAL . fmToList
+
+{- | Converts a String into a String, String FiniteMap.  See
+'MissingH.List.strToAL' for more on the similar function for association
+lists.
+
+This implementation is simple:
+
+>strToFM = listToFM . strToAL
+
+This function is designed to work with FiniteMap String String objects,
+but may work with other key\/value combinations if they have simple
+representations.  -}
+strToFM :: (Read a, Read b, Ord a) => String -> FiniteMap a b
+strToFM = listToFM . strToAL
 
 {- | Flips a finite map.  See 'MissingH.List.flipAL' for more on the similar
 function for lists. -}
