@@ -111,7 +111,7 @@ findMelem x path =
                       walk newobj xs
         in do
            c <- readIORef $ content x
-           case walk (MemoryDirectory c) (slice_path path) of
+           case walk (MemoryDirectory c) (sliced2) of
               Left err -> fail err
               Right result -> return result
 
