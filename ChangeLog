@@ -2,6 +2,89 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-25 04:05:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-2
+
+    Summary:
+      Removed 3rd-party code imported outside arch
+    Revision:
+      missingh--head--0.5--patch-2
+
+
+    removed files:
+     libsrc/MissingH/Hsemail/.arch-ids/=id
+     libsrc/MissingH/Hsemail/.arch-ids/README.id
+     libsrc/MissingH/Hsemail/.arch-ids/Rfc2234.hs.id
+     libsrc/MissingH/Hsemail/.arch-ids/Rfc2821.hs.id
+     libsrc/MissingH/Hsemail/.arch-ids/Rfc2822.hs.id
+     libsrc/MissingH/Hsemail/README
+     libsrc/MissingH/Hsemail/Rfc2234.hs
+     libsrc/MissingH/Hsemail/Rfc2821.hs
+     libsrc/MissingH/Hsemail/Rfc2822.hs
+     libsrc/MissingH/Wash/.arch-ids/=id
+     libsrc/MissingH/Wash/Mail/.arch-ids/=id
+     libsrc/MissingH/Wash/Mail/.arch-ids/Email.hs.id
+     libsrc/MissingH/Wash/Mail/.arch-ids/EmailConfig.hs.id
+     libsrc/MissingH/Wash/Mail/.arch-ids/HeaderField.hs.id
+     libsrc/MissingH/Wash/Mail/.arch-ids/LICENSE.id
+     libsrc/MissingH/Wash/Mail/.arch-ids/MIME.hs.id
+     libsrc/MissingH/Wash/Mail/.arch-ids/MailParser.hs.id
+     libsrc/MissingH/Wash/Mail/.arch-ids/Message.hs.id
+     libsrc/MissingH/Wash/Mail/Email.hs
+     libsrc/MissingH/Wash/Mail/EmailConfig.hs
+     libsrc/MissingH/Wash/Mail/HeaderField.hs
+     libsrc/MissingH/Wash/Mail/LICENSE
+     libsrc/MissingH/Wash/Mail/MIME.hs
+     libsrc/MissingH/Wash/Mail/MailParser.hs
+     libsrc/MissingH/Wash/Mail/Message.hs
+     libsrc/MissingH/Wash/Utility/.arch-ids/=id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Auxiliary.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Base32.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Base64.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/FileNames.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Hex.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/ISO8601.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/IntToString.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/JavaScript.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/LICENSE.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Locking.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/QuotedPrintable.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/RFC2047.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/RFC2279.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/RFC2397.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Shell.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/SimpleParser.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/URLCoding.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Unique.hs.id
+     libsrc/MissingH/Wash/Utility/Auxiliary.hs
+     libsrc/MissingH/Wash/Utility/Base32.hs
+     libsrc/MissingH/Wash/Utility/Base64.hs
+     libsrc/MissingH/Wash/Utility/FileNames.hs
+     libsrc/MissingH/Wash/Utility/Hex.hs
+     libsrc/MissingH/Wash/Utility/ISO8601.hs
+     libsrc/MissingH/Wash/Utility/IntToString.hs
+     libsrc/MissingH/Wash/Utility/JavaScript.hs
+     libsrc/MissingH/Wash/Utility/LICENSE
+     libsrc/MissingH/Wash/Utility/Locking.hs
+     libsrc/MissingH/Wash/Utility/QuotedPrintable.hs
+     libsrc/MissingH/Wash/Utility/RFC2047.hs
+     libsrc/MissingH/Wash/Utility/RFC2279.hs
+     libsrc/MissingH/Wash/Utility/RFC2397.hs
+     libsrc/MissingH/Wash/Utility/Shell.hs
+     libsrc/MissingH/Wash/Utility/SimpleParser.hs
+     libsrc/MissingH/Wash/Utility/URLCoding.hs
+     libsrc/MissingH/Wash/Utility/Unique.hs
+
+    modified files:
+     ChangeLog
+
+    removed directories:
+     libsrc/MissingH/Hsemail libsrc/MissingH/Hsemail/.arch-ids
+     libsrc/MissingH/Wash libsrc/MissingH/Wash/.arch-ids
+     libsrc/MissingH/Wash/Mail libsrc/MissingH/Wash/Mail/.arch-ids
+     libsrc/MissingH/Wash/Utility
+     libsrc/MissingH/Wash/Utility/.arch-ids
+
+
 2004-10-25 04:04:09 GMT	John Goerzen <jgoerzen@complete.org>	patch-1
 
     Summary:
