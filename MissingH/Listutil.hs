@@ -33,8 +33,6 @@ module MissingH.Listutil(-- * Tests
                          split, join, trunc,
                          -- -- * Sub-List Selection
                          -- sub,
-                         -- * Processing utilities
-                         hPutStrLns, hGetLines
                         ) where
 import Data.List(intersperse, concat, isPrefixOf, isSuffixOf)
 import IO
@@ -121,34 +119,4 @@ delFromAL :: Eq key => [(key, a)] -> key -> [(key, a)]
 delFromAL l key = filter (\a -> (fst a) /= key) l
 
 {- FIXME TODO: sub -}
-
-{- Given a list of strings, output a line containing each item, adding
-newlines as appropriate.  The list is not expected to have newlines already.
--}
-
-hPutStrLns :: Handle -> [String] -> IO ()
-hPutStrLns _ [] = return ()
-hPutStrLns h (x:xs) = do
-                      hPutStrLn h x
-                      hPutStrLns h xs
-
-{- Given a handle, returns a list of all the lines in that handle.
-Thanks to lazy evaluation, this list does not have to be read all at once.
-
-Combined with 'hPutStrLns', this can make a powerful way to develop
-filters.
--}
-
-hGetLines :: Handle -> IO [String]
-
-hGetLines h = unsafeInterleaveIO (do
-                                  ieof <- hIsEOF h
-                                  if (ieof) 
-                                     then return []
-                                     else do
-                                          line <- hGetLine h
-                                          remainder <- hGetLines h
-                                          return (line : remainder)
-                                 )
-
 
