@@ -46,6 +46,8 @@ where
 import MissingH.IO.HVFS
 import System.Posix.Files
 import MissingH.Printf
+import System.Time
+import System.Locale
 
 {- | Obtain a recursive listing of all files\/directories beneath 
 the specified directory.  The traversal is depth-first and the original
@@ -109,7 +111,7 @@ lsl fs fp =
                 (if i otherReadMode then 'r' else '-') :
                 (if i otherWriteMode then 'w' else '-') :
                 (if i otherExecuteMode then 'x' else '-') : []
-        showentry (state, fp) = 
+        showentry origdir fh (state, fp) = 
             case state of
               HVFSStatEncap se -> 
                let typechar = 
@@ -120,17 +122,29 @@ lsl fs fp =
                        else if vIsSocket se then 's'
                        else if vIsNamedPipe se then 's'
                        else '-'
-                   in vsprintf "%c%s  1 %-8d %-8d %-9d" 
-                               typechar
-                               (showmodes (vFileMode se))
-                               (toInteger $ vFileOwner se)
-                               (toInteger $ vFileGroup se)
-                               (toInteger $ vFileSize se)
-                                           
+                   clocktime = TOD (fromIntegral (vModificationTime se)) 0
+                   datestr c= formatCalendarTime defaultTimeLocale "%b %e  %Y" 
+                               c
+                    in do c <- toCalendarTime clocktime
+                          linkstr <- case vIsSymbolicLink se of
+                                       False -> return ""
+                                       True -> do sl <- vReadSymbolicLink fh 
+                                                           (origdir ++ "/" ++ fp)
+                                                  return $ " -> " ++ sl
+                          return $ vsprintf "%c%s  1 %-8d %-8d %-9d %s %s%s" 
+                                     typechar
+                                     (showmodes (vFileMode se))
+                                     (toInteger $ vFileOwner se)
+                                     (toInteger $ vFileGroup se)
+                                     (toInteger $ vFileSize se)
+                                     (datestr c)
+                                     fp
+                                     linkstr
         in do c <- vGetDirectoryContents fs fp
-              pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs x
-                                      return (ss, x)) c
-              let linedata = map showentry pairs
+              pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs (fp ++ "/" ++ x)
+                                      return (ss, x) 
+                            ) c
+              linedata <- mapM (showentry fp fs) pairs
               return $ unlines linedata
                   
             
