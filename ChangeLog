@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 02:42:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-81
+
+    Summary:
+      Noted new info in COPYRIGHT
+    Revision:
+      missingh--head--1.0--patch-81
+
+
+    modified files:
+     COPYRIGHT ChangeLog debian/copyright
+
+
 2004-10-20 02:38:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-80
 
     Summary:
