@@ -221,11 +221,8 @@ defdefaulthandler ::  MonadError CPError m =>
 
 defdefaulthandler cp sect opt = 
     let fm = content cp
-        lookup ::  MonadError CPError m =>
-                   SectionSpec -> OptionSpec -> m String
         lookup s o = do sect <- maybeToEither (NoSection s, "get") $ lookupFM fm s
                         maybeToEither (NoOption o, "get") $ lookupFM sect o
-        trydefault ::  MonadError CPError m => CPError -> m String
         trydefault e = if (usedefault cp)
                        then 
                             lookup "DEFAULT" opt 
@@ -250,23 +247,11 @@ merge src dest =
         convFM :: String -> CPOptions -> CPOptions
         convFM _ = listToFM . map (\x -> (conv (fst x), snd x)) . fmToList
         in
-        ConfigParser { content = plusFM (mapFM convFM (content src)) 
-                                 (content dest),
-                       optionxform = optionxform dest,
-                       usedefault = usedefault dest,
-                       defaulthandler = defaulthandler dest,
-                       accessfunc = accessfunc dest}
+	dest { content = plusFM (mapFM convFM (content src)) (content dest) }
 
 {- | Utility to do a special case merge. -}
 readutil :: ConfigParser -> ParseOutput -> ConfigParser
-readutil old new = 
-    let mergedest = ConfigParser {content = fromAL new,
-                                  optionxform = optionxform old,
-                                  usedefault = usedefault old,
-                                  defaulthandler = defaulthandler old,
-                                  accessfunc = accessfunc old}
-        in
-        merge old mergedest
+readutil old new = merge old $ old { content = fromAL new }
 
 {- | Loads data from the specified file.  It is then combined with the
 given 'ConfigParser' using the semantics documented under 'merge' with the
@@ -285,7 +270,7 @@ readfile cp fp = do n <- parse_file fp
                                 return $ readutil cp y
 -}
 readfile cp fp = do n <- parse_file fp
-                    return $ n >>= (return . (readutil cp))
+                    return $ n >>= (return . readutil cp)
 
 {- | Like 'readfile', but uses an already-open handle.  You should
 use 'readfile' instead of this if possible, since it will be able to
