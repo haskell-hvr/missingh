@@ -111,7 +111,7 @@ parsemain =
     <?> "High-level error parsing config file"
 
 sectionlist = 
-    do {ignorestuff <?> "POINT2"; eof; return []}
+    try (do {ignorestuff <?> "POINT2"; eof; return []})
     <|> try (do
              s <- sectionhead <?> "POINT10"
              ignorestuff  <?> "POINT1"
