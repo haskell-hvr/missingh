@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 17:29:25 GMT	John Goerzen <jgoerzen@complete.org>	patch-60
+
+    Summary:
+      Fixed a doc string parse error
+    Revision:
+      missingh--head--0.7--patch-60
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Path.hs
+
+
 2004-12-09 17:22:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-59
 
     Summary:

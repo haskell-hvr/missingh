@@ -93,7 +93,7 @@ recurseDirStat fn =
           else return [(fn, fs)]
 
 {- | Removes a file or a directory.  If a directory, also removes all its
-child files/directories.
+child files\/directories.
 -}
 recursiveRemove :: FilePath -> IO ()
 recursiveRemove fn =
