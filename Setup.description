@@ -10,6 +10,8 @@ Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Logging.Handler.Simple, MissingH.Logging.Handler.Syslog,
     MissingH.Logging.Logger, 
   MissingH.Threads,
+  MissingH.Hsemail.Rfc2234, MissingH.Hsemail.Rfc2821, 
+    MissingH.Hsemail.Rfc28222,
   MissingH.Str
 HS-Source-Dir: libsrc
 Extensions: ExistentialQuantification

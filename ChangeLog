@@ -2,6 +2,32 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 02:10:02 GMT	John Goerzen <jgoerzen@complete.org>	patch-75
+
+    Summary:
+      Imported hsemail
+    Revision:
+      missingh--head--1.0--patch-75
+
+
+    new files:
+     libsrc/MissingH/Hsemail/.arch-ids/=id
+     libsrc/MissingH/Hsemail/.arch-ids/README.id
+     libsrc/MissingH/Hsemail/.arch-ids/Rfc2234.hs.id
+     libsrc/MissingH/Hsemail/.arch-ids/Rfc2821.hs.id
+     libsrc/MissingH/Hsemail/.arch-ids/Rfc2822.hs.id
+     libsrc/MissingH/Hsemail/README
+     libsrc/MissingH/Hsemail/Rfc2234.hs
+     libsrc/MissingH/Hsemail/Rfc2821.hs
+     libsrc/MissingH/Hsemail/Rfc2822.hs
+
+    modified files:
+     COPYRIGHT ChangeLog Setup.description
+
+    new directories:
+     libsrc/MissingH/Hsemail libsrc/MissingH/Hsemail/.arch-ids
+
+
 2004-10-19 20:43:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-74
 
     Summary:
