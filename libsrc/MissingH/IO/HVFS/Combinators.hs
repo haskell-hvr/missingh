@@ -78,13 +78,15 @@ newHVFSChroot fh fp =
 dch (HVFSChroot _ a) = a
 
 {- | Convert a local (chroot) path to a full path. -}
-dch2fp (HVFSChroot fp h) locfp = 
+dch2fp mainh@(HVFSChroot fp h) locfp = 
     do full <- case (head locfp) of
                   '/' -> return (fp ++ locfp)
-                  x -> getFullPath h locfp
+                  x -> do y <- getFullPath mainh locfp
+                          return $ fp ++ y
        case secureAbsNormPath fp full of
            Nothing -> vRaiseError h doesNotExistErrorType  
-                        ("Trouble normalizing path") (Just (fp ++ "/" ++ full))
+                        ("Trouble normalizing path in chroot")
+                        (Just (fp ++ "," ++ full))
            Just x -> return x
 
 {- | Convert a full path to a local (chroot) path. -}

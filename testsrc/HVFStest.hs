@@ -86,6 +86,10 @@ test_chroot =
                     "/dir2" @=? cwd
                     y <- vGetDirectoryContents x "."
                     [] @=? y
+                    vSetCurrentDirectory x ".."
+                    "/" `ioeq` vGetCurrentDirectory x
+                    --vSetCurrentDirectory x ".."
+                    --"/" `ioeq` vGetCurrentDirectory x
           )
         --,f "test.txt" (\x -> "subdir test" `ioeq` 
         --               (vOpen x "/test.txt" ReadMode >>= vGetContents))
