@@ -153,3 +153,7 @@ callHandler lr ht =
 handlerActions :: [HandlerT] -> LogRecord -> [IO ()]
 handlerActions h lr = map (callHandler lr) h
                          
+-- | Add handler to logger.
+addHandler :: LogHandler a => Logger -> a -> Logger
+addHandler l h = l{handlers = (HandlerT h) : (handlers l)}
+

@@ -40,6 +40,7 @@ instance LogHandler (GenericHandler a) where
     emit sh lr = (writeFunc sh) (privData sh) (snd lr)
     close sh = (closeFunc sh) (privData sh)
 
+
 {- | Create a stream log handler.  Log messages sent to this handler will
    be sent to the stream used initially.  Note that the 'close' method
    will have no effect on stream handlers; it does not actually close
