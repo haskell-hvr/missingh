@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 02:01:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-30
+
+    Summary:
+      Checkpointing some more
+    Revision:
+      missingh--head--0.7--patch-30
+
+
+    new files:
+     testsrc/CRC32GZIPtest.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/FileArchive/GZip.hs testsrc/Tests.hs
+
+    renamed files:
+     testsrc/CRC32test.hs
+       ==> testsrc/CRC32POSIXtest.hs
+
+
 2004-12-04 01:58:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-29
 
     Summary:

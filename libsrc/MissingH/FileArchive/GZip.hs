@@ -25,7 +25,7 @@ module MissingH.FileArchive.GZip (
 where
 
 import MissingH.Compression.Inflate
-import MissingH.Checksum.CRC32
+import MissingH.Checksum.CRC32.POSIX
 import Data.List
 import Data.Bits
 import Control.Monad.Error

@@ -30,7 +30,8 @@ import qualified Network.FTP.Parsertest
 import qualified Eithertest
 import qualified ConfigParser.Parsertest
 import qualified ConfigParser.Maintest
-import qualified CRC32test
+import qualified CRC32POSIXtest
+import qualified CRC32GZIPtest
 import qualified GZiptest
 
 test1 = TestCase ("x" @=? "x")
@@ -47,7 +48,8 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Eithertest" Eithertest.tests,
                  TestLabel "ConfigParser.RunParser" ConfigParser.Parsertest.tests,
                  TestLabel "ConfigParser.Main" ConfigParser.Maintest.tests,
-                 TestLabel "CRC32test" CRC32test.tests,
+                 TestLabel "CRC32POSIXtest" CRC32POSIXtest.tests,
+                 TestLabel "CRC32GZIPtest" CRC32GZIPtest.tests,
                  TestLabel "GZiptest" GZiptest.tests]
 
 
