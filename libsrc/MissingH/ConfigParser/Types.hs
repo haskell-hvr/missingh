@@ -62,7 +62,7 @@ type CPData = FiniteMap SectionSpec CPOptions
 
 {- | Possible ConfigParser errors. -}
 data CPErrorData = ParseError String        -- ^ Parse error
-                 | SectionAlreadyExists String -- ^ Attempt to create an already-existing ection
+                 | SectionAlreadyExists SectionSpec -- ^ Attempt to create an already-existing ection
                  | NoSection SectionSpec    -- ^ The section does not exist
                  | NoOption OptionSpec      -- ^ The option does not exist
                  | OtherProblem String      -- ^ Miscellaneous error
@@ -70,9 +70,7 @@ data CPErrorData = ParseError String        -- ^ Parse error
 
 {- | Indicates an error occurred.  The String is an explanation of the location
 of the error. -}
-type CPError = (CPErrorData -- ^ The error itself
-               , String -- ^ Where it occurred
-               )
+type CPError = (CPErrorData, String)
 
 instance Error CPError where
     noMsg = (OtherProblem "", "")

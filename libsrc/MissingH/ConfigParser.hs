@@ -34,7 +34,7 @@ module MissingH.ConfigParser
     (
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
-     CPError, CPResult,
+     CPErrorData(..), CPError, CPResult,
      -- * Initialization
      -- $initialization
      empty,
@@ -151,7 +151,8 @@ No special @DEFAULT@ processing is done. -}
 has_section :: ConfigParser -> SectionSpec -> Bool
 has_section cp x = elemFM x (content cp)
 
-{- | Adds the specified section name.  Raises an exception if the
+{- | Adds the specified section name.  Returns a
+'SectionAlreadyExists' error if the
 section was already present.  Otherwise, returns the new 
 'ConfigParser' object.-}
 add_section :: ConfigParser -> SectionSpec -> CPResult ConfigParser
@@ -174,7 +175,7 @@ options cp x = maybeToEither (NoSection x, "options") $
 {- | Indicates whether the given option is present.  Returns True
 only if the given section is present AND the given option is present
 in that section.  No special @DEFAULT@ processing is done.  No
-exception could be raised.
+exception could be raised or error returned.
 -}
 has_option :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
 has_option cp s o = 
@@ -188,13 +189,14 @@ has_option cp s o =
                            
 {- | Retrieves a string from the configuration file.
 
-Returns an error if no such section/option could be found.
+Returns an error if no such section\/option could be found.
 -}
 get :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
 get cp = (accessfunc cp) cp
 
 {- | Retrieves a string from the configuration file and attempts to parse it
-as a number.  Raises an exception if no such option could be found or if it
+as a number.  Returns an error if no such option could be found.
+An exception may be raised if it
 could not be parsed as the destination number. -}
 getnum :: (Read a, Num a) => ConfigParser -> SectionSpec -> OptionSpec -> CPResult a
 getnum cp s o = get cp s o >>= return . read
@@ -203,7 +205,35 @@ getnum cp s o = get cp s o >>= return . read
 it as a boolean.  
 
 Returns an error if no such option could be found or
-if it could not be parsed as a boolean. -}
+if it could not be parsed as a boolean.
+
+Strings are case-insentively converted as follows:
+
+The following will produce a True value:
+
+ * 1
+
+ * yes
+
+ * on
+
+ * enabled
+
+ * true
+
+The following will produce a False value:
+
+ * 0
+
+ * no
+
+ * off
+
+ * disabled
+
+ *false
+
+ -}
 getbool :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult Bool
 getbool cp s o = 
     do val <- get cp s o
@@ -212,10 +242,12 @@ getbool cp s o =
                   "yes" -> return True
                   "on" -> return True
                   "enabled" -> return True
+                  "true" -> return True
                   "0" -> return False
                   "no" -> return False
                   "off" -> return False
                   "disabled" -> return False
+                  "false" -> return False
                   _ -> throwError (ParseError $ "couldn't parse bool " ++
                                    val ++ " from " ++ s ++ "/" ++ o, "getbool")
 
