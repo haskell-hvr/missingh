@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IOutil(-- * Entire File\/Handle Utilities
+module MissingH.IO(-- * Entire File\/Handle Utilities
                        -- ** Opened Handle Data Copying
                        hLineCopy, lineCopy,
                        hBlockCopy, blockCopy,

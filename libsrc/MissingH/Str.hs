@@ -21,18 +21,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Strutil(-- * Whitespace Removal
+module MissingH.Str(-- * Whitespace Removal
                         strip, lstrip, rstrip,
                         -- * Tests
                         -- | Note: These functions are aliases for functions
-                        -- in "MissingH.Listutil".
+                        -- in "MissingH.List".
                         startswith, endswith,
                         -- * Conversions
                         -- | Note: these functions are aliases for functions
-                        -- in "MissingH.Listutil".
+                        -- in "MissingH.List".
                         join, split, trunc
                        ) where
-import MissingH.Listutil(startswith, endswith, join, split, trunc)
+import MissingH.List(startswith, endswith, join, split, trunc)
 
 wschars = " \t\r\n"
 

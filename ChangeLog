@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 00:55:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-33
+
+    Summary:
+      Renamed modules
+    Revision:
+      missingh--head--1.0--patch-33
+
+
+    modified files:
+     ChangeLog README Setup.description libsrc/MissingH/IO.hs
+     libsrc/MissingH/List.hs libsrc/MissingH/Str.hs
+
+    renamed files:
+     libsrc/MissingH/IOutil.hs
+       ==> libsrc/MissingH/IO.hs
+     libsrc/MissingH/Listutil.hs
+       ==> libsrc/MissingH/List.hs
+     libsrc/MissingH/Strutil.hs
+       ==> libsrc/MissingH/Str.hs
+
+
 2004-10-06 03:17:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-32
 
     Summary:

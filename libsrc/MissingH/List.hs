@@ -19,21 +19,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 {- | This module provides various helpful utilities for dealing with lists.
 
 Written by John Goerzen, jgoerzen\@complete.org
--}
+n-}
 
-module MissingH.Listutil(-- * Tests
-                         startswith, endswith,
-                         -- * Association List Utilities
-                         {- | These functions are designed to augment the
-                         association list functions in "Data.List" and
-                         provide an interface similar to "Data.FiniteMap"
-                         for association lists. -}
-                         addToAL, delFromAL,
-                         -- * Conversions
-                         split, join, genericJoin, trunc,
-                         -- -- * Sub-List Selection
-                         -- sub,
-                        ) where
+module MissingH.List(-- * Tests
+                     startswith, endswith,
+                     -- * Association List Utilities
+                     {- | These functions are designed to augment the
+                     association list functions in "Data.List" and
+                     provide an interface similar to "Data.FiniteMap"
+                     for association lists. -}
+                     addToAL, delFromAL,
+                     -- * Conversions
+                     split, join, genericJoin, trunc,
+                     -- -- * Sub-List Selection
+                     -- sub,
+                    ) where
 import Data.List(intersperse, concat, isPrefixOf, isSuffixOf)
 import IO
 import System.IO.Unsafe
