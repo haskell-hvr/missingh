@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-17 22:48:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-84
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-84
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network.hs
+     libsrc/MissingH/Network/SocketServer.hs
+
+
 2004-12-17 22:03:09 GMT	John Goerzen <jgoerzen@complete.org>	patch-83
 
     Summary:

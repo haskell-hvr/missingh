@@ -85,4 +85,4 @@ showSockAddr :: SockAddr -> IO String
 showSockAddr (SockAddrUnix x) = return $ "UNIX socket at " ++ x
 showSockAddr (SockAddrInet port host) =
     do h <- inet_ntoa host
-       return $ "Host " ++ h ++ ", port " ++ (show port)
+       return $ "IPv4 host " ++ h ++ ", port " ++ (show port)

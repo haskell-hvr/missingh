@@ -77,6 +77,9 @@ serveTCPforever :: InetServerOptions     -- ^ Server options
 serveTCPforever options func =
     do proto <- getProtocolNumber "tcp"
        s <- socket (family options) Stream proto
+       setSocketOption s ReuseAddr (case (reuse options) of
+                                    True -> 1
+                                    False -> 0)
        bindSocket s (SockAddrInet (fromIntegral (portNumber options)) 
                      (interface options))
        listen s (listenQueueSize options)
@@ -88,8 +91,12 @@ serveTCPforever options func =
 -- Combinators
 ----------------------------------------------------------------------
 
--- | Log each incoming connection using the interface in
--- "MissingH.Logging.Logger".
+{- | Log each incoming connection using the interface in
+"MissingH.Logging.Logger".
+
+Log when the incoming connection disconnects.
+
+Also, log any failures that may occur in the child handler. -}
 
 loggingHandler :: String                -- ^ Name of logger to use
                -> MissingH.Logging.Logger.Priority -- ^ Priority of logged messages
@@ -99,7 +106,11 @@ loggingHandler hname prio nexth socket sockaddr =
     do sockStr <- showSockAddr sockaddr
        MissingH.Logging.Logger.logM hname prio 
                    ("Received connection from " ++ sockStr)
-       nexth socket sockaddr
+       MissingH.Logging.Logger.traplogging hname 
+               MissingH.Logging.Logger.WARNING "" (nexth socket sockaddr)
+       MissingH.Logging.Logger.logM hname prio
+                   ("Connection " ++ sockStr ++ " disconnected")
+       
 
 -- | Handle each incoming connection in its own thread to
 -- make the server multi-tasking.
@@ -109,8 +120,15 @@ threadedHandler nexth socket sockaddr =
     do forkIO (nexth socket sockaddr)
        return ()
 
--- | Give your handler function a Handle instead of a Socket and SockAddr.
+{- | Give your handler function a Handle instead of a Socket and SockAddr.
+
+The Handle will be opened with ReadWriteMode (you use one handle for both
+directions of the Socket).  Also, it will be initialized with LineBuffering.
+-}
 handleHandler :: (Handle -> IO ())      -- ^ Handler to call
               -> HandlerT
 handleHandler func socket _ = 
-    socketToHandle socket ReadWriteMode >>= func
+    do h <- socketToHandle socket ReadWriteMode
+       hSetBuffering h LineBuffering
+       func h
+
