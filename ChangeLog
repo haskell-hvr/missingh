@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-08 15:32:58 GMT	John Goerzen <jgoerzen@complete.org>	patch-54
+
+    Summary:
+      Removed provisional logging stuff
+    Revision:
+      missingh--head--1.0--patch-54
+
+
+    removed files:
+     libsrc/MissingH/Logging/Default.hs
+     libsrc/MissingH/Logging/Logger.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/List.hs libsrc/MissingH/Logging.hs
+
+
 2004-10-08 13:44:22 GMT	John Goerzen <jgoerzen@complete.org>	patch-53
 
     Summary:

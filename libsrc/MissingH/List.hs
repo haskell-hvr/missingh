@@ -31,10 +31,12 @@ module MissingH.List(-- * Tests
                      addToAL, delFromAL,
                      -- * Conversions
                      split, join, genericJoin, trunc,
+                     -- * Miscellaneous
+                     countElem
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
-import Data.List(intersperse, concat, isPrefixOf, isSuffixOf)
+import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices)
 import IO
 import System.IO.Unsafe
 
@@ -132,3 +134,7 @@ delFromAL l key = filter (\a -> (fst a) /= key) l
 
 {- FIXME TODO: sub -}
 
+{- | Returns a count of the number of times the given element occured in the
+given list. -}
+countElem :: Eq a => a -> [a] -> Int
+countElem i l = length (elemIndices i l)
