@@ -1,3 +1,9 @@
+missingh (0.5.1) unstable; urgency=low
+
+  * Added libghc6-hunit-dev to build-depends.  Closes: #278138.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sun, 24 Oct 2004 22:21:21 -0500
+
 missingh (0.5.0) unstable; urgency=low
 
   * Lots of new code: FTP, MIME, Wash, Hsemail, etc.

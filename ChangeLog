@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-25 03:22:00 GMT	John Goerzen <jgoerzen@complete.org>	patch-123
+
+    Summary:
+      Added missing build-dep on libghc6-hunit-dev
+    Revision:
+      missingh--head--1.0--patch-123
+
+
+    modified files:
+     ChangeLog debian/changelog debian/control
+
+
 2004-10-24 20:56:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-122
 
     Summary:
