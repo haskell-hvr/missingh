@@ -29,5 +29,12 @@ The MissingH.Hsemail modules are:
   Copyright (c) 2004 Peter Simons <simons@cryp.to>. All rights reserved. This
   software is released under the terms of the GNU General Public License.
 
+I (John Goerzen) have made these modifications:
+
+ * Module names adjusted to work with MissingH, and to not conflict
+   with user-installed copies of hsemail
+
+ * Some files from the source distribution are not relevant to MissingH
+   and were removed.
 
 arch-tag: copyright statement

@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 02:14:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-76
+
+    Summary:
+      Added WASHMail
+    Revision:
+      missingh--head--1.0--patch-76
+
+
+    new files:
+     libsrc/MissingH/WASHMail/.arch-ids/=id
+
+    modified files:
+     COPYRIGHT ChangeLog libsrc/MissingH/Hsemail/Rfc2234.hs
+     libsrc/MissingH/Hsemail/Rfc2821.hs
+     libsrc/MissingH/Hsemail/Rfc2822.hs
+
+    new directories:
+     libsrc/MissingH/WASHMail libsrc/MissingH/WASHMail/.arch-ids
+
+
 2004-10-20 02:10:02 GMT	John Goerzen <jgoerzen@complete.org>	patch-75
 
     Summary:

@@ -17,7 +17,7 @@
      avoid conflict with the function of the same name from Parsec.
 -}
 
-module Rfc2234
+module MissingH.Hsemail.Rfc2234
     ( -- * Parser Combinators
       caseChar, caseString, manyN, manyNtoM
 
