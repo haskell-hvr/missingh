@@ -33,5 +33,12 @@ test_vsprintf =
     "FE" @=? vsprintf "%X" (254::Integer)
     "10" @=? vsprintf "%o" (8::Integer)
 
-tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf)
+test_vsprintf_strings =
+    do
+    ".     ." @=? vsprintf ".%5s." ""
+    "     " @=? vsprintf "%5s" ""
+    "     " @=? vsprintf "%-5s" ""
+    
+tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf),
+                  TestLabel "vsprintf strings" (TestCase test_vsprintf_strings)
                  ]

@@ -92,10 +92,11 @@ sprintf ('%' : xs) (y : ys) =
          Nothing -> error $ "Problem in format string at %" ++ xs
          --Just (_, _, r, x) -> "<" ++ show x ++ ">" ++ sprintf r ys
          Just (_, _, remainder, [flagstr, widthstr, precstr, [fmt]]) ->
-             let width = if widthstr == "" then Nothing else Just (read widthstr)
+             let width = if widthstr == "" then Nothing else Just ((read widthstr)::Width)
                  prec = if precstr == "" then Nothing else Just precstr
                  flags = toflags flagstr
                  in
+                 --(show width) ++ sprintf remainder ys
                  (get_conversion_func fmt y flags width prec) ++ sprintf remainder ys
          _ -> error $ "Problem matching format string at %" ++ xs
 
