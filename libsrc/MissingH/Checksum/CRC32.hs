@@ -26,7 +26,7 @@
    Stability  : provisional
    Portability: portable
 
-Configuration file parsing, generation, and manipulation
+CRC32 checksumming
 
 Copyright (c) 2002 HardCore SoftWare, Doug Hoyte
 -}

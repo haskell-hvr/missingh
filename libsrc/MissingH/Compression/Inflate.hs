@@ -23,7 +23,7 @@ as described by RFC 1951.
    Stability  : provisional
    Portability: portable
 
-Configuration file parsing, generation, and manipulation
+Inflate algorithm implementation
 
 Copyright (C) 2004 Ian Lynagh
 -}

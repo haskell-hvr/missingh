@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-03 21:40:31 GMT	John Goerzen <jgoerzen@complete.org>	patch-17
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-17
+
+
+    new files:
+     libsrc/MissingH/FileArchive/.arch-ids/=id
+     libsrc/MissingH/FileArchive/GZip.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Checksum/CRC32.hs
+     libsrc/MissingH/Compression/Inflate.hs
+
+    new directories:
+     libsrc/MissingH/FileArchive
+     libsrc/MissingH/FileArchive/.arch-ids
+
+
 2004-12-03 21:18:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-16
 
     Summary:
