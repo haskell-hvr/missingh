@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 01:34:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-41
+
+    Summary:
+      Added printf tests
+    Revision:
+      missingh--head--0.5--patch-41
+
+
+    new files:
+     testsrc/Printftest.hs
+
+    modified files:
+     ChangeLog testsrc/Tests.hs
+
+
 2004-11-15 00:21:28 GMT	John Goerzen <jgoerzen@complete.org>	patch-40
 
     Summary:

@@ -25,6 +25,7 @@ import qualified Pathtest
 import qualified Strtest
 import qualified IOtest
 import qualified Bitstest
+import qualified Printftest
 import qualified Network.FTP.Parsertest
 
 test1 = TestCase ("x" @=? "x")
@@ -36,6 +37,7 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Path" Pathtest.tests,
                  TestLabel "MIMETypes" MIMETypestest.tests,
                  TestLabel "Bitstest" Bitstest.tests,
-                 TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests]
+                 TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests,
+                 TestLabel "Printftest" Printftest.tests]
 
 
