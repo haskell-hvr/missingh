@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-29 17:08:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-114
+
+    Summary:
+      Checkpointing compile success with new error code
+    Revision:
+      missingh--head--0.5--patch-114
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser.hs
+     libsrc/MissingH/ConfigParser/Types.hs
+
+
 2004-11-29 16:55:59 GMT	John Goerzen <jgoerzen@complete.org>	patch-113
 
     Summary:

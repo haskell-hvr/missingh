@@ -66,6 +66,7 @@ import Data.FiniteMap
 import Data.List
 import System.IO(Handle)
 import Data.Char
+import Control.Monad.Error
 
 
 {- | Combines two 'ConfigParser's into one.
@@ -162,7 +163,7 @@ options :: ConfigParser -> SectionSpec -> CPResult [OptionSpec]
 options cp x = maybeToEither (NoSection x) $ 
                do
                o <- lookupFM (content cp) x
-               keysFM o (content cp) x
+               return $ keysFM o
 
 {- | Indicates whether the given option is present.  Returns True
 only if the given section is present AND the given option is present
@@ -171,9 +172,10 @@ exception could be raised.
 -}
 has_option :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
 has_option cp s o = 
-    let c = content cp in
+    let c = content cp
         v = do secthash <- lookupFM c s
                return $ elemFM (optionxform cp $ o) secthash
+        in
         case v of
                Nothing -> False
                Just x -> x
@@ -208,7 +210,7 @@ getbool cp s o =
                   "no" -> return False
                   "off" -> return False
                   "disabled" -> return False
-                  _ -> throwError (ParseError "getbool: couldn't parse " ++
+                  _ -> throwError (ParseError $ "getbool: couldn't parse " ++
                                    val ++ " from " ++ s ++ "/" ++ o)
 
 {- | Returns a list of @(optionname, value)@ pairs representing the content

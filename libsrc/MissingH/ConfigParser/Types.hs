@@ -34,7 +34,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.ConfigParser.Types (
                                     CPOptions, CPData, 
-                                    CPError, CPResult,
+                                    CPError(..), CPResult,
                                     ConfigParser(..), empty,
                                     fromAL, SectionSpec,
                                     OptionSpec,
@@ -62,7 +62,12 @@ data CPError = ParseError String        -- ^ Parse error
              | SectionAlreadyExists String -- ^ Attempt to create an already-existing ection
              | NoSection SectionSpec    -- ^ The section does not exist
              | NoOption OptionSpec      -- ^ The option does not exist
+             | OtherProblem String      -- ^ Miscellaneous error
                deriving (Eq, Ord, Show)
+
+instance Error CPError where
+    noMsg = OtherProblem ""
+    strMsg x = OtherProblem x
 
 {- | Basic ConfigParser error handling.  The Left value indicates
 an error, while a Right value indicates success. -}
@@ -112,13 +117,17 @@ defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult Strin
 
 defdefaulthandler cp sect opt = 
     let fm = content cp
+        lookup :: SectionSpec -> OptionSpec -> CPResult String
         lookup s o = do sect <- maybeToEither (NoSection s) $ lookupFM fm s
                         maybeToEither (NoOption o) $ lookupFM sect o
+        trydefault :: CPError -> CPResult String
         trydefault e = if (usedefault cp)
                        then lookup "DEFAULT" opt
-                       else e
+                       else Left e
         in
-        lookup sect opt `catchError` trydefault
+        case lookup sect opt of
+             Right x -> Right x
+             Left x -> trydefault x
 
 {-       
 defdefaulthandler cp sect opt =
