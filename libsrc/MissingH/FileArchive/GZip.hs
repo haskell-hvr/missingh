@@ -36,8 +36,9 @@ magic = "\x1f\x8b"
 -}
 read_header :: String -> Either GZipError (String, String)
 read_header s =
+    let ok = Right "ok" in
     do let (mag, rem) = splitAt 2 s
        if mag /= magic
           then throwError "Not a GZip file"
-          else return "ok"
+          else ok
        return ("test", rem)
