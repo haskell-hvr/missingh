@@ -141,6 +141,8 @@ commands =
     ,("RMD",  (forceLogin cmd_rmd,   help_rmd))
     ,("MKD",  (forceLogin cmd_mkd,   help_mkd))
     ,("PWD",  (forceLogin cmd_pwd,   help_pwd))
+    ,("MODE", (forceLogin cmd_mode,  help_mode))
+    ,("STRU", (forceLogin cmd_stru,  help_stru))
     ]
 
 commandLoop :: FTPServer -> SockAddr -> IO ()
@@ -316,6 +318,24 @@ cmd_pwd h@(FTPServer _ fs _) _ _ =
     do d <- vGetCurrentDirectory fs
        sendReply h 257 $ "\"" ++ d ++ "\" is the current working directory."
        return True
+
+help_mode = ("Provided for compatibility only", "")
+cmd_mode :: CommandHandler
+cmd_mode h _ args =
+    case args of
+        "S" -> do sendReply h 200 "Mode is Stream."
+                  return True
+        x -> do sendReply h 504 $ "Mode \"" ++ x ++ "\" not supported."
+                return True
+
+help_stru = ("Provided for compatibility only", "")
+cmd_stru :: CommandHandler
+cmd_stru h _ args =
+    case args of
+        "F" -> do sendReply h 200 "Structure is File."
+                  return True
+        x -> do sendReply h 504 $ "Structure \"" ++ x ++ "\" not supported."
+                return True
 
 help_help =
     ("Display help on available commands",
