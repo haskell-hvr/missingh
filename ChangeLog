@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-03 22:22:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-22
+
+    Summary:
+      Started to use real header
+    Revision:
+      missingh--head--0.7--patch-22
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/FileArchive/GZip.hs
+
+
 2004-12-03 22:15:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-21
 
     Summary:

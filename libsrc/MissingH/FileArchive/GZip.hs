@@ -42,6 +42,14 @@ fFEXTRA = 4::Int
 fFNAME = 8::Int
 fFCOMMENT = 16::Int
 
+data Header = Header {
+                      method :: Int,
+                      flags :: Int,
+                      extra :: Maybe String,
+                      filename :: Maybe String,
+                      comment :: Maybe String
+                     }
+
 split1 :: String -> (Char, String)
 split1 s = (head s, tail s)
 
@@ -56,7 +64,7 @@ decompress s =
 
 {- | Read the GZip header.  Return (Header, Remainder).
 -}
-read_header :: String -> Either GZipError (String, String)
+read_header :: String -> Either GZipError (Header, String)
 read_header s =
     let ok = Right "ok" in
     do let (mag, rem) = splitAt 2 s
@@ -95,4 +103,8 @@ read_header s =
                   then return $ drop 2 rem7
                   else return rem7
                   
-       return ("foo", rem8)
+       return (Header {method = ord method,
+                      flags = flag,
+                      extra = Nothing,
+                      filename = Nothing,
+                      comment = Nothing}, rem8)
