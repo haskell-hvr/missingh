@@ -25,12 +25,24 @@ where
 import MissingH.Compression.Inflate
 import MissingH.Checksum.CRC32
 import Data.List
+import Data.Bits
 import Control.Monad.Error
+import Data.Char
 
 type GZipError = String
 
 -- | First two bytes of file
 magic = "\x1f\x8b"
+
+-- | Flags
+fFTEXT = 1
+fFHCRC = 2
+fFEXTRA = 4
+fFNAME = 8
+fFCOMMENT = 16
+
+split1 :: String -> (Char, String)
+split1 s = (head s, tail s)
 
 {- | Read the GZip header.  Return (Header, Remainder).
 -}
@@ -41,4 +53,19 @@ read_header s =
        if mag /= magic
           then throwError "Not a GZip file"
           else ok
-       return ("test", rem)
+       let (method, rem) = split1 rem
+       if (ord(method) /= 8)
+          then throwError "Unknown compression method"
+          else ok
+       let (flag_S, rem) = split1 rem
+       let flag = ord flag_S
+       -- skip modtime (4), extraflag (1), and os (1)
+       let rem = drop 6 rem
+       
+       rem <- if (flag .&. fFEXTRA /= 0)
+                  then do let (xlen_S, rem2) = split1 rem
+                          let (xlen2_S, rem2) = split1 rem2
+                          let xlen = (ord xlen_S) + 256 * (ord xlen2_S)
+                          return $ drop xlen rem2
+                  else return rem
+       return ("foo", rem)
