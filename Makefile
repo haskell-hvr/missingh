@@ -30,7 +30,7 @@ libmissingH.a: $(OBJS)
 	ar q libmissingH.a $(OBJS)
 
 %.o: %.hs
-	ghc -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
+	ghc -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
 
 doc:
 	-rm -rf html
@@ -52,7 +52,9 @@ test-hugs:
 	runhugs -P:$(PWD)/libsrc:$(PWD)/testsrc testsrc/runtests.hs
 
 interact-hugs:
-	hugs -P:$(PWD)/libsrc
+	hugs -98 -P:$(PWD)/libsrc
+
+interact: interact-hugs
 
 test: test-ghc6 test-hugs
 
