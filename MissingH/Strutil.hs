@@ -69,7 +69,9 @@ rstrip = reverse . lstrip . reverse
 
 Example:
 
-> split "," "foo,bar,,baz" -> ["foo", "bar", "", "baz"]
+> split "," "foo,bar,,baz," -> ["foo", "bar", "", "baz", ""]
+
+> split "ba" ",foo,bar,,baz," -> [",foo,","r,,","z,"]
 -}
 split :: String -> String -> [String]
 split delim str =
@@ -77,7 +79,9 @@ split delim str =
         splitworker delim [] [] = []
         splitworker delim [] accum = [accum]
         splitworker delim str accum =
-            if startswith delim str then
+            if delim == str then 
+               accum : [] : []
+            else if startswith delim str then
                accum : splitworker delim (drop (length delim) str) []
             else splitworker delim (tail str) (accum ++ [head str])
         in
