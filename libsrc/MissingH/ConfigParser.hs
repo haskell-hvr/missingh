@@ -201,26 +201,19 @@ interpolatingAccess :: MonadError CPError m =>
                        Int ->
                        ConfigParser -> SectionSpec -> OptionSpec
                        -> m String
+
 interpolatingAccess maxdepth cp s o =
-    let lookupfunc ::  MonadError CPError m => String -> m String
-        lookupfunc = interpolatingAccess (maxdepth - 1) cp s
-        error2str :: ParseError -> String
-        error2str = messageString . head . errorMessages
-        in
-        if maxdepth < 1 
-           then throwError $ 
-                    (InterpolationError "maximum interpolation depth exceeded",
-                     "interpolatingAccess")
-           else do
-                x <- simpleAccess cp s o
-                case parse (interpmain lookupfunc) (s ++ "/" ++ o) x of
-                     Left y -> case (head (errorMessages y)) of
-                                   Message z -> throwError $ 
-                                         (InterpolationError z,
-                                          "interpolatingAccess")
-                                   _ -> throwError $ (InterpolationError (show y),
-                                             "interpolatingAccess")
-                     Right y -> return y
+    if maxdepth < 1
+       then interError "maximum interpolation depth exceeded"
+       else do x <- simpleAccess cp s o
+               case parse (interpmain $ lookupfunc) (s ++ "/" ++ o) x of
+                 Left y -> case head (errorMessages y) of
+                                Message z -> interError z
+                                _ -> interError (show y)
+                 Right y -> return y
+    where
+    lookupfunc = interpolatingAccess (maxdepth - 1) cp s
+    interError x = throwError (InterpolationError x, "interpolatingAccess")
 
 -- internal function: default handler
 defdefaulthandler ::  MonadError CPError m =>

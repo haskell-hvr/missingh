@@ -36,6 +36,8 @@ module MissingH.Cmd(PipeMode(..),
                    pOpen, pOpen3)
 where
 
+-- FIXME - largely obsoleted by 6.4 - convert to wrappers.
+
 import System.Exit
 import System.Cmd
 import MissingH.Logging.Logger
