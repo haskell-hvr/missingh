@@ -29,10 +29,11 @@ testfile = "testsrc/ConfigParser/test.cfg"
 p inp = forceEither $ readstring emptyCP inp
 f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv (p inp))
 
+-- f2s, f2b are useful for matching Left return values
 f2s :: String -> Either CPError String -> Either CPError String -> Test
-f2s msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
+f2s = f2
 f2b :: String -> Either CPError Bool -> Either CPError Bool -> Test
-f2b msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
+f2b = f2
 
 f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
 f3 msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
