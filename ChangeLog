@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 04:36:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-40
+
+    Summary:
+      Updated
+    Revision:
+      missingh--head--0.7--patch-40
+
+
+    new files:
+     testsrc/gzfiles/.arch-ids/t1bad.gz.id testsrc/gzfiles/t1bad.gz
+
+    modified files:
+     ChangeLog testsrc/GZiptest.hs
+
+
 2004-12-04 04:33:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-39
 
     Summary:

@@ -75,6 +75,7 @@ test_gunzip =
         in
         [
          f "t1.gz" ("Test 1", True)
+        ,f "t1bad.gz" ("Test 1", False)
         ]
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),
