@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-03 21:16:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-200
+
+    Summary:
+      Streamlined debian build system
+    Revision:
+      missingh--head--0.7--patch-200
+
+
+    modified files:
+     ChangeLog debian/rules
+
+
 2005-02-03 21:00:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-199
 
     Summary:
