@@ -33,7 +33,58 @@ test_delFromAL =
                  f [("testkey", 1), ("2", 2), ("testkey", 3), ("4", 4)]
                    [("2", 2), ("4", 4)]
 
-tests = TestList [TestLabel "delFromAL" (TestCase test_delFromAL)]
+test_addToAL =
+    let f :: [(String, Int)] -> [(String, Int)] -> Assertion
+        f inp exp = exp @=? (addToAL inp "testkey" 101) in
+        do
+        f [] [("testkey", 101)]
+        f [("testkey", 5)] [("testkey", 101)]
+        f [("testkey", 5), ("testkey", 6)] [("testkey", 101)]
+
+test_split =
+    let f delim inp exp = exp @=? split delim inp in
+        do
+        f "," "foo,bar,,baz," ["foo", "bar", "", "baz", ""]
+        f "ba" ",foo,bar,,baz," [",foo,","r,,","z,"]
+        f "," "" []
+        f "," "," ["", ""]
+
+test_join =
+    let f :: (Eq a, Show a) => [a] -> [[a]] -> [a] -> Assertion
+        f delim inp exp = exp @=? join delim inp in
+        do
+        f "|" ["foo", "bar", "baz"] "foo|bar|baz"
+        f "|" [] ""
+        f "|" ["foo"] "foo"
+        -- f 5 [[1, 2], [3, 4]] [1, 2, 5, 3, 4]
+
+test_genericJoin =
+    let f delim inp exp = exp @=? genericJoin delim inp in
+        do
+        f ", " [1, 2, 3, 4] "1, 2, 3, 4"
+        f ", " ([] :: [Int]) ""
+        f "|" ["foo", "bar", "baz"] "\"foo\"|\"bar\"|\"baz\""
+        f ", " [5] "5"
+
+test_trunc =
+    let f len inp exp = exp @=? trunc len inp in
+        do
+        f 2 "Hello" "He"
+        f 1 "Hello" "H"
+        f 0 "Hello" ""
+        f 2 "H" "H"
+        f 2 "" ""
+        f 2 [1, 2, 3, 4, 5] [1, 2]
+        f 10 "Hello" "Hello"
+        f 0 "" ""
+                      
+
+tests = TestList [TestLabel "delFromAL" (TestCase test_delFromAL),
+                  TestLabel "addToAL" (TestCase test_addToAL),
+                  TestLabel "split" (TestCase test_split),
+                  TestLabel "join" (TestCase test_join),
+                  TestLabel "genericJoin" (TestCase test_genericJoin),
+                  TestLabel "trunc" (TestCase test_trunc)]
 
 
 
