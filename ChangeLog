@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-03 20:18:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-12
+
+    Summary:
+      Added MissingH.Checksum.CRC32
+    Revision:
+      missingh--head--0.7--patch-12
+
+
+    new files:
+     libsrc/MissingH/Checksum/.arch-ids/=id
+     libsrc/MissingH/Checksum/CRC32.hs
+
+    modified files:
+     ChangeLog
+
+    new directories:
+     libsrc/MissingH/Checksum libsrc/MissingH/Checksum/.arch-ids
+
+
 2004-12-03 17:44:02 GMT	John Goerzen <jgoerzen@complete.org>	patch-11
 
     Summary:
