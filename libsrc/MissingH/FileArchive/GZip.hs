@@ -51,7 +51,10 @@ data Header = Header {
                       flags :: Int,
                       extra :: Maybe String,
                       filename :: Maybe String,
-                      comment :: Maybe String
+                      comment :: Maybe String,
+                      mtime :: Word32,
+                      xfl :: Int,
+                      os :: Int
                      } deriving (Eq, Show)
 
 split1 :: String -> (Char, String)
@@ -134,8 +137,12 @@ read_header s =
           else ok
        let (flag_S, rem3) = split1 rem2
        let flag = ord flag_S
-       --let (mtimea, rem3a) = splitAt 4 rem2
-       --let mtime = 
+       let (mtimea, rem3a) = splitAt 4 rem3
+       let mtime = parseword mtimea
+       let (xfla, rem3b) = split1 rem3a
+       let xfl = ord xfla
+       let (osa, rem3c) = split1 rem3b
+       let os = ord osa
        -- skip modtime (4), extraflag (1), and os (1)
        let rem4 = drop 6 rem3
        
@@ -172,4 +179,7 @@ read_header s =
                       flags = flag,
                       extra = extra,
                       filename = filename,
-                      comment = comment}, rem8)
+                      comment = comment,
+                      mtime = mtime,
+                      xfl = xfl,
+                      os = os}, rem8)
