@@ -40,7 +40,7 @@ module MissingH.List(-- * Tests
                      for association lists. -}
                      addToAL, delFromAL, flipAL,
                      -- * Conversions
-                     split, join, genericJoin, takeWhileList,
+                     split, join, replace, genericJoin, takeWhileList,
                      dropWhileList, spanList, breakList,
                      -- * Miscellaneous
                      countElem, elemRIndex, alwaysElemRIndex
@@ -127,6 +127,15 @@ split delim str =
                                         else split delim 
                                                  (drop (length delim) x)
 
+
+{- | Given a list and a replacement list, replaces each occurance of the search
+list with the replacement list in the operation list.
+
+Example: replace "," "." "127,0,0,1" -> "127.0.0.1"
+-}
+
+replace :: Eq a => [a] -> [a] -> [a] -> [a]
+replace old new l = join new . split old $ l
 
 {- | Given a delimiter and a list of items (or strings), join the items
 by using the delimiter.

@@ -51,6 +51,7 @@ Useful standards:
 module MissingH.Network.FTP.Client(easyConnectTo, connectTo,
                                    loginAnon, login, 
                                    setPassive,
+                                   nlst,
                                    FTPConnection(isPassive),
                        )
 where
@@ -156,6 +157,7 @@ makepasv :: FTPConnection -> IO SockAddr
 makepasv h =
     do
     r <- sendcmd h "PASV"
+    putStrLn "makepasv returning "
     return (respToSockAddr r)
 
 {- | Establishes a connection to the remote. 
@@ -167,13 +169,19 @@ ntransfercmd h cmd =
     let sock = if isPassive h
                then do
                     addr <- makepasv h
-                    connectTCPAddr addr
+                    putStrLn "connecting"
+                    s <- connectTCPAddr addr
+                    putStrLn "connected"
+                    return s
                else fail "FIXME: No support for non-passive yet"
         in do
            s <- sock
            newh <- socketToHandle s ReadWriteMode
+           putStrLn "Have socket"
            r <- sendcmd h cmd
+           putStrLn "Sending command"
            forceioresp 100 r
+           putStrLn "ntransfercmd returning"
            return (newh, Nothing)
 
 {- | Returns the socket part from calling 'ntransfercmd'. -}
@@ -188,3 +196,16 @@ retrlines h cmd = do
               newh <- transfercmd h cmd
               c <- hGetContents newh
               return $ split "\r\n" c
+
+{- | Retrieves a list of files in the given directory. 
+
+FIXME: should this take a list of dirs? -}
+nlst :: FTPConnection
+        -> Maybe String                 -- ^ The directory to list.  If Nothing, list the current directory.
+        -> IO [String]
+nlst h dir =
+    let cmd = case dir of
+                       Nothing -> "NLST"
+                       Just x -> "NLST " ++ x
+        in do
+           retrlines h cmd

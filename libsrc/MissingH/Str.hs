@@ -40,9 +40,9 @@ module MissingH.Str(-- * Whitespace Removal
                         -- * Conversions
                         -- | Note: Some of these functions are aliases for functions
                         -- in "MissingH.List".
-                        join, split
+                        join, split, replace
                        ) where
-import MissingH.List(startswith, endswith, join, split)
+import MissingH.List(startswith, endswith, join, split, replace)
 import Text.Regex
 
 wschars = " \t\r\n"

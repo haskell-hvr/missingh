@@ -175,13 +175,13 @@ parseReply input =
 -- If the result code indicates an error, raise an exception instead
 -- of just passing it back.
 
-parseGoodReply :: String -> FTPResult
+parseGoodReply :: String -> IO FTPResult
 parseGoodReply input =
     let reply = parseReply input
         in
         if (fst reply) >= 400
-        then error ((show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
-        else reply
+        then fail ((show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
+        else return reply
 
 -- | Parse a FTP reply.  Logs debug messages.
 debugParseGoodReply :: String -> IO FTPResult
@@ -202,7 +202,7 @@ debugParseGoodReply contents =
         in
         do
         loggedStr <- logPlugin contents []
-        return (parseGoodReply loggedStr)
+        parseGoodReply loggedStr
 
 {- | Converts a socket address to a string suitable for a PORT command.
 
@@ -225,7 +225,7 @@ fromPortString instr =
         hostbytes = map read (take 4 inbytes)
         portbytes = map read (drop 4 inbytes)
         in
-        SockAddrInet (fromInteger (fromBytes portbytes)) (fromBytes hostbytes)
+        SockAddrInet (fromInteger $ fromBytes portbytes) (fromBytes hostbytes)
 
 respToSockAddrRe = mkRegex("([0-9]+,){5}[0-9]+")
 -- | Converts a response code to a socket address
@@ -233,8 +233,10 @@ respToSockAddr :: FTPResult -> SockAddr
 respToSockAddr f =
     let r = forcexresp 200 f
         in
-        case matchRegexAll respToSockAddrRe (head (snd r)) of
-             Nothing -> error ("Could not find remote endpoint in " ++ (show r))
-             Just (_, x, _, _) -> fromPortString x
+        if (fst r) /= 227 then
+           error ("Not a 227 response: " ++ show r)
+           else case matchRegexAll respToSockAddrRe (head (snd r)) of
+               Nothing -> error ("Could not find remote endpoint in " ++ (show r))
+               Just (_, x, _, _) -> fromPortString x
 
     

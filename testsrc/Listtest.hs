@@ -58,6 +58,16 @@ test_join =
         f "|" ["foo"] "foo"
         -- f 5 [[1, 2], [3, 4]] [1, 2, 5, 3, 4]
 
+test_replace =
+    let f old new inp exp = exp @=? replace old new inp in
+        do
+        f "" "" "" ""
+        f "foo" "bar" "" ""
+        f "foo" "bar" "foo" "bar"
+        f "foo" "bar" "footestfoothisisabarfoo" "bartestbarthisisabarbar"
+        f "," ", " "1,2,3,4" "1, 2, 3, 4"
+        f "," "." "1,2,3,4" "1.2.3.4"
+
 test_genericJoin =
     let f delim inp exp = exp @=? genericJoin delim inp in
         do
@@ -133,6 +143,7 @@ tests = TestList [TestLabel "delFromAL" (TestCase test_delFromAL),
                   TestLabel "flipAL" (TestCase test_flipAL),
                   TestLabel "elemRIndex" (TestCase test_elemRIndex),
                   TestLabel "alwaysElemRIndex" (TestCase test_alwaysElemRIndex),
+                  TestLabel "replace" (TestCase test_replace),
                   TestLabel "contains" (TestCase test_contains)]
 
 

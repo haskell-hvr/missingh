@@ -31,6 +31,7 @@ test_parseReply =
         f "230-Test\r\nLine2\r\n 230 Line3\r\n230 Done\r\n"
           (230, ["Test", "Line2", " 230 Line3", "Done"])
 
+{-
 test_toPortString =
     let f inp exp = exp @=? toPortString inp in
         do
@@ -43,9 +44,9 @@ test_fromPortString =
         in
         do
         f "170,187,204,221,18,52" (0x1234, 0xaabbccdd)
-
-tests = TestList [TestLabel "parseReply" (TestCase test_parseReply),
-                  TestLabel "toPortString" (TestCase test_toPortString),
-                  TestLabel "fromPortString" (TestCase test_fromPortString)
+-}
+tests = TestList [TestLabel "parseReply" (TestCase test_parseReply)
+                  --TestLabel "toPortString" (TestCase test_toPortString),
+                  --TestLabel "fromPortString" (TestCase test_fromPortString)
 
                  ]
