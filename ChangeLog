@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-17 22:59:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-85
+
+    Summary:
+      added tests
+    Revision:
+      missingh--head--0.7--patch-85
+
+
+    new files:
+     .arch-ids/test2.hs.id .arch-ids/test3.hs.id test2.hs test3.hs
+
+    modified files:
+     ChangeLog
+
+
 2004-12-17 22:48:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-84
 
     Summary:
