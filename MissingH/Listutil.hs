@@ -23,6 +23,12 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.Listutil(-- * Tests
                          startswith, endswith,
+                         -- * Association List Utilities
+                         {- | These functions are designed to augment the
+                         association list functions in "Data.List" and
+                         provide an interface similar to "Data.FiniteMap"
+                         for association lists. -}
+                         addToAL, delFromAL,
                          -- * Conversions
                          split, join, trunc
                         ) where
@@ -97,3 +103,13 @@ trunc maxlen list =
     let removecount = (length list) - maxlen in
         if (removecount < 1) then list
         else reverse $ drop removecount $ reverse list
+
+{- | Adds the specified (key, value) pair to the given list, removing any
+existing pair with the same key already present. -}
+addToAL :: Eq key => [(key, elt)] -> key -> elt -> [(key, elt)]
+addToAL l key value = (key, value) : delFromAL l key
+
+{- | Removes all (key, value) pairs from the given list where the key
+matches the given one. -}
+delFromAL :: Eq key => [(key, a)] -> key -> [(key, a)]
+delFromAL l key = filter (\a -> (fst a) /= key) l
