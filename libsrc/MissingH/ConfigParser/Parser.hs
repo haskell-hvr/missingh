@@ -153,8 +153,9 @@ interptok lookupfunc = (try percentval)
                        <|> interpother
                        <|> do s <- interpval
                               case lookupfunc s of
-                                              Left _ -> fail s
-                                              Right x -> return x
+                                 Left (InterpolationError x, _) -> fail x
+                                 Left _ -> fail $ "unresolvable interpolation reference to \"" ++ s ++ "\""
+                                 Right x -> return x
 
 
 interpmain :: (String -> CPResult String) -> Parser String

@@ -113,7 +113,7 @@ import Control.Monad.Error
 
 -- For interpolatingAccess
 import Text.ParserCombinators.Parsec.Error(ParseError, messageString,
-    errorMessages)
+    errorMessages, Message(..))
 import Text.ParserCombinators.Parsec(parse)
 
 ----------------------------------------------------------------------
@@ -167,11 +167,14 @@ interpolatingAccess maxdepth cp s o =
                      "interpolatingAccess")
            else do
                 x <- simpleAccess cp s o
-                case parse (interpmain lookupfunc) "(string)" x of
-                     Left x -> throwError $ 
-                               (InterpolationError ("unresolvable interpolation reference to \"" ++ error2str x ++ "\""),
-                                "interpolatingAccess")
-                     Right x -> return x
+                case parse (interpmain lookupfunc) (s ++ "/" ++ o) x of
+                     Left y -> case (head (errorMessages y)) of
+                                   Message z -> throwError $ 
+                                         (InterpolationError z,
+                                          "interpolatingAccess")
+                                   _ -> throwError $ (InterpolationError (show y),
+                                             "interpolatingAccess")
+                     Right y -> return y
 
 -- internal function: default handler
 defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String

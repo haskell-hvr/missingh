@@ -141,7 +141,11 @@ test_interp =
                     "dir = /usr/src/%(filename)s\n" ++
                     "percent = 5%%\n" ++
                     "bad = /usr/src/%(nonexistent)s\n" ++
-                    "recursive = foo%(recursive)s\n"
+                    "recursive = foo%(recursive)s\n" ++
+                    "syn1 = foo%()s\n" ++
+                    "syn2 = foo%(asdf)\n" ++
+                    "syn3 = foo%s\n" ++
+                    "syn4 = %\n"
         cp = (forceEither $ (readstring emptyCP interpdoc)){ accessfunc = interpolatingAccess 5}
         in
         [
@@ -150,8 +154,16 @@ test_interp =
         ,f2 "dir" (Right "/usr/src/test_i386.c") (get cp "builder" "dir")
         ,f2 "percents" (Right "5%") (get cp "builder" "percent")
         ,f2 "error" (Left (InterpolationError "unresolvable interpolation reference to \"nonexistent\"", "interpolatingAccess")) (get cp "builder" "bad")
-        ,f2 "recursive" (Left (InterpolationError "unresolvable interpolation reference to \"recursive\"", "interpolatingAccess"))
+        ,f2 "recursive" (Left (InterpolationError "maximum interpolation depth exceeded", "interpolatingAccess"))
                         (get cp "builder" "recursive")
+        ,f2 "syn1" (Left (InterpolationError "\"builder/syn1\" (line 1, column 6):\nunexpected \")\"\nexpecting interpolation name","interpolatingAccess"))
+                   (get cp "builder" "syn1")
+        ,f2 "syn2" (Left (InterpolationError "\"builder/syn2\" (line 1, column 10):\nunexpected end of input\nexpecting \")s\"","interpolatingAccess"))
+                   (get cp "builder" "syn2")
+        ,f2 "syn3" (Left (InterpolationError "\"builder/syn3\" (line 1, column 4):\nunexpected \"s\"\nexpecting \"%(\"","interpolatingAccess"))
+                   (get cp "builder" "syn3")
+        ,f2 "syn4" (Left (InterpolationError "\"builder/syn4\" (line 1, column 1):\nunexpected end of input\nexpecting \"%(\"","interpolatingAccess"))
+                   (get cp "builder" "syn4")
         ]
 
 
