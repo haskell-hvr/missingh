@@ -67,6 +67,9 @@ module MissingH.ConfigParser
      -- ** Combined Error\/IO Monad Usage
      -- $usageerroriomonad
 
+     -- ** Configuring the ConfigParser
+     -- $configuringcp
+
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
      CPErrorData(..), CPError, CPResult,
@@ -629,6 +632,62 @@ This returns @[\"opt1\", \"opt2\"]@.  A quite normal value.
 
 {- $usageerroriomonad
 
+You've seen a nice way to use this module in the Error monad and get an Either
+value out.  But that's the Error monad, so IO is not permitted.  
+Using Haskell's monad transformers, you can run it in the combined
+Error\/IO monad.  That is, you will get an IO result back.  Here is a full
+standalone example of doing that:
+
+import MissingH.ConfigParser
+import Control.Monad.Error
+
+>main = do
+>          rv <- runErrorT $
+>              do
+>              cp <- join $ liftIO $ readfile empty "/etc/passwd"
+>              let x = cp
+>              liftIO $ putStrLn "In the test"
+>              nb <- get x "DEFAULT" "nobody"
+>              liftIO $ putStrLn nb
+>              foo <- get x "DEFAULT" "foo"
+>              liftIO $ putStrLn foo
+>              return "done"
+>          print rv
+
+On my system, this prints:
+
+>In the test
+>x:65534:65534:nobody:/nonexistent:/bin/sh
+>Left (NoOption "foo","get")
+
+That is, my @\/etc\/passwd@ file contains a @nobody@ user but not a @foo@ user.
+
+Let's look at how that works.
+
+First, @main@ always runs in the IO monad only, so we take the result from
+the later calls and put it in @rv@.  Note that the combined block
+is started with @runErrorT $ do@ instead of just @do@.
+
+To get something out of the call to 'readfile', we use
+@join $ liftIO $ readfile@.  This will bring the result out of the IO monad
+into the combined monad and process it like usual.  From here on,
+everything looks normal, except for IO calls.  They are all executed under
+@liftIO@ so that the result value is properly brought into the combined
+monad.  This finally returns @\"done\"@.  Since we are in the Error monad, that means that the literal value is @Right \"done\"@.  Since we are also in the IO
+monad, this is wrapped in IO.  So the final return type after applying
+@runErrorT@ is @IO (Either CPError String)@.
+
+In this case, there was an error, and processing stopped at that point just
+like the example of the pure Error monad.  We print out the return value,
+so you see the error displayed as a @Left@ value.
+
+It all works quite easily.
+
+-}
+
+{- $configuringcp
+
+FIXME: start here
 -}
 
 {- $reading
