@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-22 20:29:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-101
+
+    Summary:
+      Added Bits
+    Revision:
+      missingh--head--1.0--patch-101
+
+
+    new files:
+     libsrc/MissingH/Bits.hs testsrc/Bitstest.hs
+
+    modified files:
+     ChangeLog Setup.description testsrc/Tests.hs
+
+
 2004-10-22 18:46:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-100
 
     Summary:
