@@ -78,6 +78,9 @@ test_gunzip =
          f "t1.gz" ("Test 1", True)
         ,f "t1bad.gz" ("Test 1", False)
         ,f "t2.gz" ("Test 1Test 2", True)
+        ,mf "zeros.gz" True (\x -> case decompress x of
+                                Right (y, _) -> y == replicate 10485760 '\0'
+                                _ -> False)
         ]
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),
