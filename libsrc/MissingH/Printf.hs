@@ -36,7 +36,8 @@ module MissingH.Printf(
                        PFRun(..),
                        PFType(..),
                        sprintf,
-                       printf,
+--                       ssprintf,
+--                       printf,
                        wrapper
                        ) where
 
@@ -62,10 +63,10 @@ instance PFType String where
     fromValue _ = error "fromValue string"
 
 class PFRun a where
-    pfrun :: ([Value] -> Value) -> a
+    pfrun :: ([Value] -> String) -> a
 
 instance PFRun String where
-    pfrun f = fromValue $ f []
+    pfrun f = f []
 
 instance (PFType a, PFRun b) => PFRun (a -> b) where
     pfrun f x = pfrun (\xs -> f (toValue x : xs))
@@ -78,14 +79,16 @@ sprintf_real ('!' : xs) (y : ys) =
     show (((fromValue y)::Int) + 1) ++ sprintf_real xs ys
 sprintf_real (x:xs) y = x : sprintf_real xs y
 
-wrapper :: String -> [Value] -> Value
-wrapper f v = toValue $ sprintf_real f v
+wrapper :: String -> [Value] -> String
+wrapper f v = sprintf_real f v
 
-sprintf :: PFRun a => String -> a
+sprintf :: (PFRun a) => String -> a
 sprintf f = pfrun $ wrapper f
 
-printf :: (PFRun a, PFType a) => String -> a -> IO ()
-printf f v = putStr (sprintf f v)
+--printf :: (PFRun a) => String -> IO a
+--printf = return . sprintf
+
+--printf :: (PFRun a) => String -> a
 
 --printf :: PFRun a => String -> a -> IO ()
 
