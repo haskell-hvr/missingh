@@ -44,4 +44,22 @@ import System.IO
 import MissingH.Logging.Logger
 import MissingH.Network
 import MissingH.Str
+import MissingH.Printf
+import MissingH.IO.HVIO
 
+s_crlf = "\r\n"
+ftpPutStrLn :: Handle -> String -> IO ()
+ftpPutStrLn h text =
+    hPutStr h (text ++ s_crlf)
+
+{- | Send a reply code, handling multi-line text as necessary. -}
+sendReply :: Handle -> Int -> String -> IO ()
+sendReply h codei text =
+    let codes = vsprintf "%03d" codei
+        writethis [] = ftpPutStrLn h (codes ++ "  ")
+        writethis [item] = ftpPutStrLn h (codes ++ " " ++ item)
+        writethis (item:xs) = do ftpPutStrLn h (codes ++ "-" ++ item)
+                                 writethis xs
+        in 
+        writethis (map (rstrip) (lines text))
+        

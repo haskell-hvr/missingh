@@ -120,15 +120,19 @@ threadedHandler nexth socket sockaddr =
     do forkIO (nexth socket sockaddr)
        return ()
 
-{- | Give your handler function a Handle instead of a Socket and SockAddr.
+{- | Give your handler function a Handle instead of a Socket.
 
 The Handle will be opened with ReadWriteMode (you use one handle for both
 directions of the Socket).  Also, it will be initialized with LineBuffering.
+
+Unlike other handlers, the handle will be closed when the function returns.
+Therefore, if you are doing threading, you should to it before you call this
+handler.
 -}
-handleHandler :: (Handle -> IO ())      -- ^ Handler to call
+handleHandler :: (Handle -> SockAddr -> IO ())      -- ^ Handler to call
               -> HandlerT
-handleHandler func socket _ = 
+handleHandler func socket sockaddr = 
     do h <- socketToHandle socket ReadWriteMode
        hSetBuffering h LineBuffering
-       func h
-
+       func h sockaddr
+       hClose h
