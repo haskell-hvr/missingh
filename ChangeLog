@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-29 16:55:59 GMT	John Goerzen <jgoerzen@complete.org>	patch-113
+
+    Summary:
+      Checkpointing switch to Either-based computing
+    Revision:
+      missingh--head--0.5--patch-113
+
+
+    new files:
+     libsrc/MissingH/Either.hs
+
+    modified files:
+     ChangeLog TODO libsrc/MissingH/ConfigParser.hs
+     libsrc/MissingH/ConfigParser/Types.hs
+
+
 2004-11-22 22:57:20 GMT	John Goerzen <jgoerzen@complete.org>	patch-112
 
     Summary:

@@ -34,6 +34,7 @@ module MissingH.ConfigParser
     (
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
+     CPError, CPResult,
      -- * Initialization
      -- $initialization
      empty,
@@ -59,11 +60,13 @@ module MissingH.ConfigParser
 import MissingH.ConfigParser.Types
 import MissingH.ConfigParser.Parser
 import MissingH.FiniteMap
+import MissingH.Either
 import MissingH.Str
 import Data.FiniteMap
 import Data.List
 import System.IO(Handle)
 import Data.Char
+
 
 {- | Combines two 'ConfigParser's into one.
 
@@ -144,18 +147,22 @@ has_section cp x = elemFM x (content cp)
 {- | Adds the specified section name.  Raises an exception if the
 section was already present.  Otherwise, returns the new 
 'ConfigParser' object.-}
-add_section :: ConfigParser -> SectionSpec -> ConfigParser
+add_section :: ConfigParser -> SectionSpec -> CPResult ConfigParser
 add_section cp s =
     if has_section cp s
-       then error ("add_section: section " ++ s ++ " already exists")
-       else cp {content = addToFM (content cp) s emptyFM}
+       then throwError $ SectionAlreadyExists ("add_section: section " ++ s ++ " already exists")
+       else return $ cp {content = addToFM (content cp) s emptyFM}
 
 {- | Returns a list of the names of all the options present in the
 given section.
 
-Could raise an exception if the given section does not exist. -}
-options :: ConfigParser -> SectionSpec -> [OptionSpec]
-options cp x = keysFM (forceLookupFM "ConfigParser.options" (content cp) x)
+Returns an error if the given section does not exist.
+-}
+options :: ConfigParser -> SectionSpec -> CPResult [OptionSpec]
+options cp x = maybeToEither (NoSection x) $ 
+               do
+               o <- lookupFM (content cp) x
+               keysFM o (content cp) x
 
 {- | Indicates whether the given option is present.  Returns True
 only if the given section is present AND the given option is present
@@ -165,61 +172,68 @@ exception could be raised.
 has_option :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
 has_option cp s o = 
     let c = content cp in
-    has_section cp s &&
-                elemFM (optionxform cp $ o)
-                       (forceLookupFM "ConfigParser.has_option" c s) 
+        v = do secthash <- lookupFM c s
+               return $ elemFM (optionxform cp $ o) secthash
+        case v of
+               Nothing -> False
+               Just x -> x
                            
-{- | Retrieves a string from the configuration file.  Raises an exception if
-no such option could be found. -}
-get :: ConfigParser -> SectionSpec -> OptionSpec -> String
-get cp s o = 
-    case (accessfunc cp) cp s o of
-         Nothing -> error $ "get: no option " ++ s ++ "/" ++ o
-         Just x -> x
+{- | Retrieves a string from the configuration file.
+
+Returns an error if no such section/option could be found.
+-}
+get :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+get cp = (accessfunc cp) cp
 
 {- | Retrieves a string from the configuration file and attempts to parse it
 as a number.  Raises an exception if no such option could be found or if it
 could not be parsed as the destination number. -}
-getnum :: (Read a, Num a) => ConfigParser -> SectionSpec -> OptionSpec -> a
-getnum cp s o = read $ get cp s o
+getnum :: (Read a, Num a) => ConfigParser -> SectionSpec -> OptionSpec -> CPResult a
+getnum cp s o = get cp s o >>= return . read
 
 {- | Retrieves a string from the configuration file and attempts to parse
-it as a boolean.  Raises an exception if no such option could be found or
+it as a boolean.  
+
+Returns an error if no such option could be found or
 if it could not be parsed as a boolean. -}
-getbool :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
+getbool :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult Bool
 getbool cp s o = 
-    case map toLower . strip . get cp s $ o of
-         "1" -> True
-         "yes" -> True
-         "on" -> True
-         "enabled" -> True
-         "0" -> False
-         "no" -> False
-         "off" -> False
-         "disabled" -> False
-         _ -> error ("getbool: couldn't parse " ++ get cp s o ++ " from " ++
-                     s ++ "/" ++ o)
+    do val <- get cp s o
+       case map toLower . strip $ val of
+                  "1" -> return True
+                  "yes" -> return True
+                  "on" -> return True
+                  "enabled" -> return True
+                  "0" -> return False
+                  "no" -> return False
+                  "off" -> return False
+                  "disabled" -> return False
+                  _ -> throwError (ParseError "getbool: couldn't parse " ++
+                                   val ++ " from " ++ s ++ "/" ++ o)
 
 {- | Returns a list of @(optionname, value)@ pairs representing the content
-of the given section.  Raises an error if the section is invalid. -}
-items :: ConfigParser -> SectionSpec -> [(OptionSpec, String)]
-items cp s = fmToList (forceLookupFM "ConfigParser.items" (content cp) s)
+of the given section.  Returns an error the section is invalid. -}
+items :: ConfigParser -> SectionSpec -> CPResult [(OptionSpec, String)]
+items cp s = do fm <- maybeToEither (NoSection s) $ lookupFM (content cp) s
+                return $ fmToList fm
 
 {- | Sets the option to a new value, replacing an existing one if it exists.
-Raises an error if the section does not exist. -}
-set :: ConfigParser -> SectionSpec -> OptionSpec -> String -> ConfigParser
+
+Returns an error if the section does not exist. -}
+set :: ConfigParser -> SectionSpec -> OptionSpec -> String -> CPResult ConfigParser
 set cp s passedo val = 
-    cp { content = newmap}
-    where newmap = addToFM (content cp) s newsect
-          newsect = addToFM sectmap o val
-          sectmap = forceLookupFM "ConfigParser.set" (content cp) s
-          o = (optionxform cp) passedo
+    do sectmap <- maybeToEither (NoSection s) $ lookupFM (content cp) s
+       let o = (optionxform cp) passedo
+       let newsect = addToFM sectmap o val
+       let newmap = addToFM (content cp) s newsect
+       return $ cp { content = newmap}
 
 {- | Sets the option to a new value, replacing an existing one if it exists.
 It requires only a showable value as its parameter.
-This can be used with bool values, as well as numeric ones.  Raises
-an error if the section does not exist. -}
-setshow :: Show a => ConfigParser -> SectionSpec -> OptionSpec -> a -> ConfigParser
+This can be used with bool values, as well as numeric ones.
+
+Returns an error if the section does not exist. -}
+setshow :: Show a => ConfigParser -> SectionSpec -> OptionSpec -> a -> CPResult ConfigParser
 setshow cp s o val = set cp s o (show val)
 
 {- | Converts the 'ConfigParser' to a string representation that could be

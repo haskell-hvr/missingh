@@ -34,13 +34,16 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.ConfigParser.Types (
                                     CPOptions, CPData, 
+                                    CPError, CPResult,
                                     ConfigParser(..), empty,
                                     fromAL, SectionSpec,
                                     OptionSpec,
                                    ) where
 import Data.FiniteMap
 import Data.Char
+import Control.Monad.Error
 import MissingH.ConfigParser.Parser
+import MissingH.Either
 
 {- | Names of sections -}
 type SectionSpec = String
@@ -54,6 +57,18 @@ type CPOptions = FiniteMap OptionSpec String
 {- | The main data storage type (storage of sections). -}
 type CPData = FiniteMap SectionSpec CPOptions
 
+{- | Possible ConfigParser errors. -}
+data CPError = ParseError String        -- ^ Parse error
+             | SectionAlreadyExists String -- ^ Attempt to create an already-existing ection
+             | NoSection SectionSpec    -- ^ The section does not exist
+             | NoOption OptionSpec      -- ^ The option does not exist
+               deriving (Eq, Ord, Show)
+
+{- | Basic ConfigParser error handling.  The Left value indicates
+an error, while a Right value indicates success. -}
+type CPResult = Either CPError
+
+
 {- | This is the main record that is used by 'MissingH.ConfigParser'.
 -}
 data ConfigParser = ConfigParser 
@@ -64,13 +79,13 @@ data ConfigParser = ConfigParser
       -- | Function to look up an option, considering a default value.
       -- if 'usedefault' is True; or ignoring a default value otherwise.
       -- The option specification is assumed to be already transformed.
-      defaulthandler :: (ConfigParser -> SectionSpec -> OptionSpec -> Maybe String),
+      defaulthandler :: (ConfigParser -> SectionSpec -> OptionSpec -> CPResult String),
       -- | Whether or not to seek out a default action when no match
       -- is found.
       usedefault :: Bool,
       -- | Function that is used to perform lookups, do optional
       -- interpolation, etc.
-      accessfunc :: (ConfigParser -> SectionSpec -> OptionSpec -> Maybe String)
+      accessfunc :: (ConfigParser -> SectionSpec -> OptionSpec -> CPResult String)
     }
 
 {- | The default empty 'MissingH.ConfigParser' object.
@@ -89,11 +104,23 @@ empty = ConfigParser { content = fromAL [("DEFAULT", [])],
                        accessfunc = defaccessfunc}
 
 -- internal function: default access function
-defaccessfunc :: ConfigParser -> SectionSpec -> OptionSpec -> Maybe String
+defaccessfunc :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
 defaccessfunc cp s o = defdefaulthandler cp s (optionxform cp $ o)
 
 -- internal function: default handler
-defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> Maybe String
+defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+
+defdefaulthandler cp sect opt = 
+    let fm = content cp
+        lookup s o = do sect <- maybeToEither (NoSection s) $ lookupFM fm s
+                        maybeToEither (NoOption o) $ lookupFM sect o
+        trydefault e = if (usedefault cp)
+                       then lookup "DEFAULT" opt
+                       else e
+        in
+        lookup sect opt `catchError` trydefault
+
+{-       
 defdefaulthandler cp sect opt =
     let fm = content cp
         lookup s o =
@@ -108,6 +135,8 @@ defdefaulthandler cp sect opt =
             Nothing -> if (usedefault cp)
                        then lookup "DEFAULT" opt
                        else Nothing
+-}
+
 
 {- | Low-level tool to convert a parsed object into a 'CPData'
 representation.  Performs no option conversions or special handling

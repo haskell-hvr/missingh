@@ -9,4 +9,6 @@ test configparser:
  * with various default options
  * exception system
 
+test Either.hs
+
 tests for new Parsec stuff
