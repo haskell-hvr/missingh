@@ -22,7 +22,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 n-}
 
 module MissingH.List(-- * Tests
-                     startswith, endswith,
+                     startswith, endswith, contains,
                      -- * Association List Utilities
                      {- | These functions are designed to augment the
                      association list functions in "Data.List" and
@@ -107,11 +107,28 @@ Examples:
 genericJoin :: Show a => String -> [a] -> String
 genericJoin delim l = join delim (map show l)
 
+{- | Returns true if the given parameter is a sublist of the given list;
+false otherwise.
+
+Example:
+
+> contains "Haskell" "I really like Haskell." -> True
+> contains "Haskell" "OCaml is great." -> False
+-}
+
+contains :: Eq a => [a] -> [a] -> Bool
+contains [] _ = True                    -- Sub is empty; matches anything
+contains _ [] = False                   -- List is empty; matches nothing
+contains sub searchlist =
+    let testlist = take (length sub) searchlist
+        in
+        case sub == testlist of
+                             True -> True
+                             False -> contains sub (tail searchlist)
+
 {- | Given a length and a list, remove any elements at the end of the list
 that make it longer than the length.  If the list is shorter than the
 length, do nothing.
-
-Example:
 
 > trunc 2 "Hello" -> "He"
 -}

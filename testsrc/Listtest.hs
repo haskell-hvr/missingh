@@ -79,12 +79,28 @@ test_trunc =
         f 0 "" ""
                       
 
+test_contains =
+    let f msg sub testlist exp = assertEqual msg exp (contains sub testlist) in
+        do
+        f "t1" "Haskell" "I really like Haskell." True
+        f "t2" "" "Foo" True
+        f "t3" "" "" True
+        f "t4" "Hello" "" False
+        f "t5" "Haskell" "Haskell" True
+        f "t6" "Haskell" "1Haskell" True
+        f "t7" "Haskell" "Haskell1" True
+        f "t8" "Haskell" "Ocaml" False
+        f "t9" "Haskell" "OCamlasfasfasdfasfd" False
+        f "t10" "a" "Hello" False
+        f "t11" "e" "Hello" True
+
 tests = TestList [TestLabel "delFromAL" (TestCase test_delFromAL),
                   TestLabel "addToAL" (TestCase test_addToAL),
                   TestLabel "split" (TestCase test_split),
                   TestLabel "join" (TestCase test_join),
                   TestLabel "genericJoin" (TestCase test_genericJoin),
-                  TestLabel "trunc" (TestCase test_trunc)]
+                  TestLabel "trunc" (TestCase test_trunc),
+                  TestLabel "contains" (TestCase test_contains)]
 
 
 

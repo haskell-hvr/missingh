@@ -1,3 +1,9 @@
+missingh (0.4.2) unstable; urgency=low
+
+  * Added MissingH.List.contains
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 18 Oct 2004 10:02:03 -0500
+
 missingh (0.4.1) unstable; urgency=low
 
   * Added haskell-src to build-depends.

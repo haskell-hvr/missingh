@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-18 15:02:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-70
+
+    Summary:
+      Preparing 0.4.2 with addition of contains
+    Revision:
+      missingh--head--1.0--patch-70
+
+
+    modified files:
+     ChangeLog debian/changelog libsrc/MissingH/List.hs
+     testsrc/Listtest.hs
+
+
 2004-10-15 20:47:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-69
 
     Summary:
