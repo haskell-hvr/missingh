@@ -33,8 +33,9 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
-                        HVFS(..), HVFSStat(..), HVFSStatEncap(..),
-                        HVFSOpenable(..), HVFSOpenEncap(..),
+                        HVFS(..), HVFSStat(..), 
+                        HVFSOpenable(..), HVFSOpenEncap(..),HVFSStatEncap(..),
+                        withStat, withOpen,
                         SystemFS(..),
                         -- * Re-exported types from other modules
                         FilePath, DeviceID, FileID, FileMode, LinkCount,
@@ -59,9 +60,22 @@ typing restrictions.  You can get at it with:
 -}
 data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
 
-{- | Similar for 'vOpen' result.
+{- | Convenience function for working with stat -- takes a stat result
+and a function that uses it, and returns the result. -}
+withStat :: forall b. HVFSStatEncap -> (forall a. HVFSStat a => a -> b) -> b
+withStat s f =
+    case s of
+           HVFSStatEncap x -> f x
+
+{- | Similar to 'HVFSStatEncap', but for 'vOpen' result.
 -}
 data HVFSOpenEncap = forall a. HVIO a => HVFSOpenEncap a
+
+{- | Similar to 'withStat', but for the 'vOpen' result. -}
+withOpen :: forall b. HVFSOpenEncap -> (forall a. HVIO a => a -> b) -> b
+withOpen s f =
+    case s of
+           HVFSOpenEncap x -> f x
 
 {- | Evaluating types of files and information about them.
 

@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-23 17:06:28 GMT	John Goerzen <jgoerzen@complete.org>	patch-153
+
+    Summary:
+      Added convenience functions
+    Revision:
+      missingh--head--0.7--patch-153
+
+
+    new files:
+     libsrc/MissingH/IO/HVFS/Utils.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS.hs libsrc/MissingH/Path.hs
+
+
 2004-12-23 02:53:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-152
 
     Summary:

@@ -49,6 +49,8 @@ import System.Posix.Temp
 import Control.Exception
 import System.IO
 import MissingH.Path.NameManip
+import MissingH.IO.HVFS.Utils
+import MissingH.IO.HVFS
 
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
@@ -96,48 +98,6 @@ secureAbsNormPath base s = do p <- absNormPath base s
                                  then return p
                                  else fail ""
 
-{- | Obtain a recursive listing of all files\/directories beneath 
-the specified directory.  The traversal is depth-first and the original
-item is always present in the returned list.
-
-If the passed value is not a directory, the return value
-be only that value.
-
-The \".\" and \"..\" entries are removed from the data returned.
--}
-recurseDir :: FilePath -> IO [FilePath]
-recurseDir x = recurseDirStat x >>= return . map fst
-
-{- | Like 'recurseDir', but return the stat() (System.Posix.Files.FileStatus)
-information with them.  This is an optimization if you will be statting files
-yourself later.
--}
-
-recurseDirStat :: FilePath -> IO [(FilePath, FileStatus)]
-recurseDirStat fn =
-    do fs <- getSymbolicLinkStatus fn
-       if isDirectory fs then do
-                              dirc <- getDirectoryContents fn
-                              let contents = map ((++) (fn ++ "/")) $ 
-                                     filter (\x -> x /= "." && x /= "..") dirc
-                              subdirs <- mapM recurseDirStat contents
-                              return $ (concat subdirs) ++ [(fn, fs)]
-          else return [(fn, fs)]
-
-{- | Removes a file or a directory.  If a directory, also removes all its
-child files\/directories.
--}
-recursiveRemove :: FilePath -> IO ()
-recursiveRemove fn =
-    let worker [] = return ()
-        worker ((fn, fs):xs) =
-            do if isDirectory fs then
-                  removeDirectory fn
-                  else removeFile fn
-               worker xs
-        in
-        recurseDirStat fn >>= worker
-
 {- | Creates a temporary directory for your use.
 
 The passed string should be a template suitable for mkstemp; that is, end with
@@ -160,4 +120,5 @@ removes the directory and all its contents when the action completes (or raises
 an exception. -}
 brackettmpdir :: String -> (String -> IO a) -> IO a
 brackettmpdir x action = do tmpdir <- mktmpdir x
-                            finally (action tmpdir) (recursiveRemove tmpdir)
+                            finally (action tmpdir) 
+                                    (recursiveRemove SystemFS tmpdir)
