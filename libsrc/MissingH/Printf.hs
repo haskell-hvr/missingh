@@ -109,6 +109,7 @@ wrapper :: String -> [Value] -> Value
 wrapper f v = toValue $ sprintf f v
 
 -- doit format v = (pfrun (wrapper format) v)::String
+doit :: PFRun a => String -> a
 doit f = pfrun $ wrapper f
 
 {-
