@@ -18,7 +18,7 @@ class PFType a where
     fromValue :: Value -> a
 
 instance Real a => PFType a where
-    toValue = toValue . toRational
+    toValue = ValueRational . toRational
     fromValue = error "fromValue to generic Real not supported"--fromRational . fromValue
 
 instance PFType Integer where

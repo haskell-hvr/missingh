@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 05:15:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-53
+
+    Summary:
+      Generics work
+    Revision:
+      missingh--head--0.5--patch-53
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Printf/Types.hs
+     testsrc/Printftest.hs
+
+
 2004-11-15 05:08:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-52
 
     Summary:

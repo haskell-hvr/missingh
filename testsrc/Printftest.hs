@@ -33,6 +33,16 @@ test_vsprintf =
     "FE" @=? vsprintf "%X" (254::Integer)
     "10" @=? vsprintf "%o" (8::Integer)
 
+test_vsprintf_generics =
+    do
+    "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Int)
+    "%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
+    "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Rational)
+    "quux: 3.140000e+02" @=? vsprintf "%s: %e" "quux" (314::Double)
+    "fe" @=? vsprintf "%x" (254::Int)
+    "FE" @=? vsprintf "%X" (254::Int)
+    "10" @=? vsprintf "%o" (8::Int)
+
 test_vsprintf_strings =
     do
     ".     ." @=? vsprintf ".%5s." ""
@@ -50,5 +60,6 @@ test_vsprintf_strings =
   -- TODO: test numeric types  
     
 tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf),
+                  TestLabel "vsprintf generics" (TestCase test_vsprintf_generics),
                   TestLabel "vsprintf strings" (TestCase test_vsprintf_strings)
                  ]
