@@ -169,7 +169,7 @@ interpolatingAccess maxdepth cp s o =
                 x <- simpleAccess cp s o
                 case parse (interpmain lookupfunc) "(string)" x of
                      Left x -> throwError $ 
-                               (InterpolationError ("Unresolvable interpolation reference to \"" ++ error2str x ++ "\""),
+                               (InterpolationError ("unresolvable interpolation reference to \"" ++ error2str x ++ "\""),
                                 "interpolatingAccess")
                      Right x -> return x
 

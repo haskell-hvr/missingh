@@ -140,7 +140,8 @@ test_interp =
                     "filename = test_%(arch)s.c\n" ++
                     "dir = /usr/src/%(filename)s\n" ++
                     "percent = 5%%\n" ++
-                    "bad = /usr/src/%(nonexistent)s"
+                    "bad = /usr/src/%(nonexistent)s\n" ++
+                    "recursive = foo%(recursive)s\n"
         cp = (forceEither $ (readstring emptyCP interpdoc)){ accessfunc = interpolatingAccess 5}
         in
         [
@@ -148,7 +149,9 @@ test_interp =
         ,f2 "filename" (Right "test_i386.c") (get cp "builder" "filename")
         ,f2 "dir" (Right "/usr/src/test_i386.c") (get cp "builder" "dir")
         ,f2 "percents" (Right "5%") (get cp "builder" "percent")
-        ,f2 "error" (Left (InterpolationError "Unresolvable interpolation reference to \"nonexistent\"", "interpolatingAccess")) (get cp "builder" "bad")
+        ,f2 "error" (Left (InterpolationError "unresolvable interpolation reference to \"nonexistent\"", "interpolatingAccess")) (get cp "builder" "bad")
+        ,f2 "recursive" (Left (InterpolationError "unresolvable interpolation reference to \"recursive\"", "interpolatingAccess"))
+                        (get cp "builder" "recursive")
         ]
 
 
