@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 05:19:33 GMT	John Goerzen <jgoerzen@complete.org>	patch-55
+
+    Summary:
+      Added todo list
+    Revision:
+      missingh--head--0.5--patch-55
+
+
+    new files:
+     TODO
+
+    modified files:
+     ChangeLog
+
+
 2004-11-15 05:18:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-54
 
     Summary:

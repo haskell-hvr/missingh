@@ -1,0 +1,9 @@
+arch-tag: TODO file
+
+Printf:
+ document sub-modules
+ document copyright status better
+ make tests for all the examples
+ show some functions in the examples
+
+
