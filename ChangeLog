@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 16:21:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-123
+
+    Summary:
+      More tests, slight bug fixes
+    Revision:
+      missingh--head--0.5--patch-123
+
+
+    modified files:
+     ChangeLog TODO libsrc/MissingH/ConfigParser.hs
+     testsrc/ConfigParser/Maintest.hs
+
+
 2004-11-30 15:40:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-122
 
     Summary:

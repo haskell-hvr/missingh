@@ -49,6 +49,9 @@ module MissingH.ConfigParser
      -- * Setting Data
      set, setshow,
 
+     -- * Output Data
+     to_string,
+
      -- * Meta-queries
      sections, has_section,
      options, has_option,
@@ -283,10 +286,12 @@ later re-parsed by this module. -}
 to_string :: ConfigParser -> String
 to_string cp = 
     let gen_option (key, value) = 
-            key ++ ": " ++ (replace "\n" "\n " value) ++ "\n"
-        gen_section (sect, valfm) = 
-            "[" ++ sect ++ "]\n" ++
-                (concat $ map gen_option (fmToList valfm)) ++ "\n"
+            key ++ ": " ++ (replace "\n" "\n    " value) ++ "\n"
+        gen_section (sect, valfm) = -- gen a section, but omit DEFAULT if empty
+            if (sect /= "DEFAULT") || (sizeFM valfm > 0)
+               then "[" ++ sect ++ "]\n" ++
+                        (concat $ map gen_option (fmToList valfm)) ++ "\n"
+               else ""
         in
         concat $ map gen_section (fmToList (content cp))
 

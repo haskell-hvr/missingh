@@ -61,12 +61,18 @@ test_basic =
               Right "o1" @=? get cp "sect1" "v1"
               Right "o2" @=? get cp "sect1" "v2"
               Right "o1" @=? get cp "DEFAULT" "v1"
+        , f3 "extensions to string" 
+             "[sect1]\nfoo: bar\nbaz: l1\n l2\n   l3\n# c\nquux: asdf"
+             "[sect1]\nbaz: l1\n    l2\n    l3\nfoo: bar\nquux: asdf\n\n"
+             to_string
         ]
+
 
 test_defaults = 
     let cp = p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes" in
       [
        f2 "default item" (Right "ault") (get cp "sect1" "def")
+       
       ]
 
      
