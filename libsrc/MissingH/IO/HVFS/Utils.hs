@@ -38,6 +38,7 @@ first parameter to these functions.
 module MissingH.IO.HVFS.Utils (recurseDir,
                                recurseDirStat,
                                recursiveRemove,
+                               lsl,
                                SystemFS(..)
                               )
 where
@@ -86,3 +87,27 @@ recursiveRemove h fn =
         in
         recurseDirStat h fn >>= worker
 
+{- | Provide a result similar to the command ls -l over a directory.
+-}
+lsl :: HVFS a => a -> FilePath -> IO String
+lsl fs fp =
+    let showentry (state, fp) = 
+            case state of
+              HVFSStatEncap se -> 
+               let typechar = 
+                    if vIsDirectory se then 'd'
+                       else if vIsSymbolicLink se then 'l'
+                       else if vIsBlockDevice se then 'b'
+                       else if vIsCharacterDevice se then 'c'
+                       else if vIsSocket se then 's'
+                       else if vIsNamedPipe se then 's'
+                       else '-'
+                   in [typechar]
+                                           
+        in do c <- vGetDirectoryContents fs fp
+              pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs x
+                                      return (ss, x)) c
+              let linedata = map showentry pairs
+              return $ unlines linedata
+                  
+            
