@@ -60,12 +60,12 @@ clean:
 
 .PHONY: local-pkg
 local-pkg: all
-        echo "[" > local-pkg
-        cat .installed-pkg-config >> local-pkg
-        echo "]" >> local-pkg
+	echo "[" > local-pkg
+	cat .installed-pkg-config >> local-pkg
+	echo "]" >> local-pkg
 
 testsrc/runtests: local-pkg $(SOURCES) $(LHSSOURCES)
-        ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build \
+	ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build \
            -package-conf local-pkg \
            -hidir dist/build -idist/build -itestsrc \
 	   -fallow-overlapping-instances -fglasgow-exts \
