@@ -46,13 +46,14 @@ module MissingH.Printf(-- * Variable-Argument Ouptut
                        PFRun,
                        PFType(..),
                        IOPFRun,
+                       get_conversion_func
                        ) where
 
 import MissingH.Str
 import Data.List
 import System.IO
 import MissingH.Printf.Types
-
+import MissingH.Printf.Printer(get_conversion_func)
 
 v :: PFType a => a -> Value
 v = toValue
@@ -60,9 +61,16 @@ v = toValue
 
 sprintf :: String -> [Value] -> String
 sprintf [] [] = []
+sprintf ('%' : '%' : xs) y = '%' : sprintf xs y
+{-
 sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
 sprintf ('!' : xs) (y : ys) = 
-    show (((fromValue y)::Int) + 1) ++ sprintf xs ys
+    show (((fromValue y)::Int) + 1) ++ sprintf xs ys -}
+
+sprintf ('%' : t : xs) (y:ys) = 
+    let cv = get_conversion_func t y [] Nothing Nothing
+        in
+        cv ++ sprintf xs ys
 sprintf (x:xs) y = x : sprintf xs y
 
 vsprintf :: (PFRun a) => String -> a

@@ -1,7 +1,8 @@
 arch-tag: Printf printer declarations
 
 \begin{code}
-module MissingH.Printf.Printer (get_conversion_func, thousandify, octalify, hexify) where
+module MissingH.Printf.Printer (get_conversion_func, thousandify, octalify, hexify,
+) where
 
 import Maybe (fromMaybe)
 import Numeric (showEFloat, showFFloat)
@@ -59,8 +60,8 @@ print_signed_int argv flags mw mp = res
           res =    let to_show = toInteger arg
                        shown = disp $ abs to_show
                        w = ( if ZeroPadded `elem` flags
-                              then (read preci `max` width - genericLength sign)::Width
-                              else (read preci)::Width )
+                              then (preci `max` width - genericLength sign)::Width
+                              else (preci)::Width )
                        sign = if to_show < 0 then "-" else plus_sign
                        num_zeroes = (w - genericLength shown) `max` 0
                    in sign ++ genericReplicate num_zeroes '0' ++ shown
@@ -72,8 +73,8 @@ print_unsigned_int base argv flags mw mp = res
     where arg = (fromValue argv)::Integer
           preci = read (fromMaybe "1"  mp)
           width = fromMaybe 0 mw
-          w = if ZeroPadded `elem` flags then (read preci) `max` width
-                                         else     read preci
+          w = if ZeroPadded `elem` flags then (preci) `max` width
+                                         else  preci
           disp = case base of
                      'o' -> octalify
                      'x' -> hexify ({-lift-} lower_hex)
@@ -109,9 +110,9 @@ print_exponent_double e argv flags mw mp = res
                       else ""
           keep_dot = AlternateForm `elem` flags
           res =    let to_show = (fromRational $ toRational arg) :: Double
-                       shown = showEFloat (Just (read preci)) (abs to_show) ""
+                       shown = showEFloat (Just (preci)) (abs to_show) ""
                        sign = if to_show < 0 then "-" else plus_sign
-                       fix_prec0 = if (read preci) == 0
+                       fix_prec0 = if (preci) == 0
                                    then case break (== '.') shown of
                                             (xs, _:_:ys)
                                                 | keep_dot  -> xs ++ '.':ys
@@ -144,8 +145,8 @@ print_fixed_double f argv flags mw mp = res
           fix_case | f == 'f'  = map toLower
                    | otherwise = map toUpper
           res =    let to_show = (fromRational $ toRational arg) :: Double
-                       shown = showFFloat (Just (read preci)) (abs to_show) ""
-                       shown' = if add_dot && (read preci) == 0 then shown ++ "."
+                       shown = showFFloat (Just (preci)) (abs to_show) ""
+                       shown' = if add_dot && (preci) == 0 then shown ++ "."
                                                           else shown
                        sign = if to_show < 0 then "-" else plus_sign
                        num_zeroes = (width - genericLength shown' - genericLength sign)
