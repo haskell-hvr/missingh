@@ -18,7 +18,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module MIMETypestest(tests) where
 import HUnit
+import Data.List
 import MissingH.MIMETypes
+
+test_guessAllExtensions =
+    let f strict inp exp = (sort exp) @=? sort (guessAllExtensions defaultmtd strict inp) in
+        do
+        f True "" []
+        f True "foo" []
+        f True "application/octet-stream" [".obj", ".so", ".bin", ".a", ".dll", ".exe", ".o"]
+        f True "text/plain" [".pl", ".ksh", ".bat", ".c", ".h", ".txt"]
+        f True "application/rtf" []
+        f False "application/rtf" [".rtf"]
 
 test_guessType =
     let f strict inp exp = exp @=? guessType defaultmtd strict inp in 
@@ -36,5 +47,6 @@ test_guessType =
         f True "foo.pict" (Nothing, Nothing)
         f False "foo.pict" (Just "image/pict", Nothing)
 
-tests = TestList [TestLabel "guessType" (TestCase test_guessType)
+tests = TestList [TestLabel "guessType" (TestCase test_guessType),
+                  TestLabel "guessAllExtensions" (TestCase test_guessAllExtensions)
                  ]

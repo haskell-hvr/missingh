@@ -41,7 +41,7 @@ module MissingH.MIMETypes (-- * Creating Lookup Objects
                            MIMETypeData(..),
                            guessType,
                            guessExtension,
-
+                           guessAllExtensions
                           )
 where
 
@@ -52,6 +52,7 @@ import System.IO
 import System.IO.Error
 import MissingH.IO
 import MissingH.Path
+import MissingH.FiniteMap
 import Data.Char
 
 ----------------------------------------------------------------------
@@ -156,11 +157,25 @@ guessType mtd strict fn =
    Returns Nothing if no extension could be found. -}
 guessExtension :: MIMETypeData          -- ^ Source data for guessing
                   -> Bool               -- ^ Whether to limit to strict data
-                  -> String             -- ^ File or URL name to consider
+                  -> String             -- ^ MIME type to consider
                   -> Maybe String       -- ^ Result of guessing, or Nothing if no match possible
--- FIXME
-guessExtension mtd strict fn = Nothing
+guessExtension mtd strict fn = 
+    case guessAllExtensions mtd strict fn of
+                                          [] -> Nothing
+                                          (x:_) -> Just x
 
+{- | Similar to 'guessExtension', but returns a list of all possible matching
+extensions, or the empty list if there are no matches. -}
+guessAllExtensions :: MIMETypeData      -- ^ Source data for guessing
+                      -> Bool           -- ^ Whether to limit to strict data
+                      -> String         -- ^ MIME type to consider
+                      -> [String]       -- ^ Result of guessing
+guessAllExtensions mtd strict fn =
+    let mimetype = map toLower fn
+        themap = getStrict mtd strict
+        in
+        flippedLookupFM themap mimetype
+        
 {- | Adds a new type to the data structures, replacing whatever data
    may exist about it already. -}
 

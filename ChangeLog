@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 17:30:34 GMT	John Goerzen <jgoerzen@complete.org>	patch-94
+
+    Summary:
+      Wrote guessAllExtensions
+    Revision:
+      missingh--head--1.0--patch-94
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/MIMETypes.hs
+     testsrc/MIMETypestest.hs
+
+
 2004-10-21 17:15:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-93
 
     Summary:
