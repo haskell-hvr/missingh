@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-08 20:49:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-60
+
+    Summary:
+      Checkpointing -- need to rearrange some things.
+    Revision:
+      missingh--head--1.0--patch-60
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging.hs
+     libsrc/MissingH/Logging/Logger.hs
+
+
 2004-10-08 20:19:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-59
 
     Summary:
