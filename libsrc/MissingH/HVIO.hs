@@ -264,19 +264,87 @@ instance HVIOReader StreamReader where
                         return c
 
 ----------------------------------------------------------------------
+-- Buffers
+----------------------------------------------------------------------
+
+{- | Simulate true I\/O on a buffer.
+
+-}
+newtype MemoryVIO = MemoryVIO (VIOCloseSupport (Int, String))
+
+newMemoryVIO :: IO MemoryVIO
+newMemoryVIO = do ref <- newIORef (True, (0, ""))
+                  return (MemoryVIO ref)
+
+vrv (MemoryVIO x) = x
+
+-- | Grab the entire contents of the buffer as a string.
+getMemoryVIOBuffer :: MemoryVIO -> IO String
+getMemoryVIOBuffer h = do c <- vioc_get (vrv h)
+                          return (snd c)
+
+instance Show MemoryVIO where
+    show _ = "<MemoryVIO>"
+
+instance HVIOGeneric MemoryVIO where
+    vClose = vioc_close . vrv
+    vIsEOF h = do vTestOpen h
+                  c <- vioc_get (vrv h)
+                  return ((length (snd c)) == (fst c))
+    vIsOpen = vioc_isopen . vrv
+
+instance HVIOReader MemoryVIO where
+    vGetChar h = do vTestEOF h
+                    c <- vioc_get (vrv h)
+                    let retval = (snd c) !! (fst c)
+                    vioc_set (vrv h) (succ (fst c), snd c)
+                    return retval
+    vGetContents h = do vTestEOF h
+                        v <- vioc_get (vrv h)
+                        let retval = drop (fst v) (snd v)
+                        vioc_set (vrv h) (-1, "")
+                        vClose h
+                        return retval
+
+instance HVIOWriter MemoryVIO where
+    vPutStr h s = do (pos, buf) <- vioc_get (vrv h)
+                     let (pre, post) = splitAt pos buf
+                     let newbuf = pre ++ s ++ (drop (length buf) post)
+                     vioc_set (vrv h) (pos + (length buf), newbuf)
+    vPutChar h c = vPutStr h [c]
+
+instance HVIOSeeker MemoryVIO where
+    vTell h = do v <- vioc_get (vrv h)
+                 return . fromIntegral $ (fst v)
+    vSeek h seekmode seekposp = 
+        do (pos, buf) <- vioc_get (vrv h)
+           let seekpos = fromInteger seekposp 
+           let newpos = case seekmode of
+                             AbsoluteSeek -> seekpos
+                             RelativeSeek -> pos + seekpos
+                             SeekFromEnd -> (length buf) + seekpos
+           let buf2 = buf ++ if newpos > (length buf)
+                                then replicate (newpos - (length buf)) '\0'
+                                else []
+           vioc_set (vrv h) (newpos, buf2)
+
+----------------------------------------------------------------------
 -- Pipes
 ----------------------------------------------------------------------
 
 newPipe :: IO (PipeReader, PipeWriter)
 newPipe = do mv <- newEmptyMVar
-             return (PipeReader (True, mv), PipeWriter (True, mv))
+             readerref <- newIORef (True, mv)
+             let reader = PipeReader readerref
+             writerref <- newIORef (True, reader)
+             return (reader, PipeWriter writerref)
 
 data PipeBit = PipeBit Char 
              | PipeEOF
                deriving (Eq, Show)
 
 newtype PipeReader = PipeReader (VIOCloseSupport (MVar PipeBit))
-newtype PipeWriter = PipeWriter (VIOCloseSupport (MVar PipeBit))
+newtype PipeWriter = PipeWriter (VIOCloseSupport PipeReader)
 
 ------------------------------
 -- Pipe Reader
@@ -319,6 +387,9 @@ instance HVIOReader PipeReader where
 ------------------------------
 
 pwv (PipeWriter x) = x
+pwmv (PipeWriter x) = do mv1 <- vioc_get x
+                         vioc_get (prv mv1)
+
 
 instance Show PipeWriter where
     show x = "<PipeWriter>"
@@ -326,16 +397,20 @@ instance Show PipeWriter where
 instance HVIOGeneric PipeWriter where
     vClose h = do o <- vIsOpen h
                   if o then do
-                            mv <- vioc_get (pwv h)
+                            mv <- pwmv h
                             putMVar mv PipeEOF
                             vioc_close (pwv h)
                      else return ()
     vIsOpen = vioc_isopen . pwv
-    vIsEOF h = vTestOpen h
-               return False
+    vIsEOF h = do vTestOpen h
+                  return False
 
 instance HVIOWriter PipeWriter where
+    -- FIXME: race condition below (could be closed after testing)
     vPutChar h c = do vTestOpen h
-                      mv <- voic_get (pwv h)
-                      putMVar mv (PipeBit c)
-
+                      child <- vioc_get (pwv h)
+                      copen <- vIsOpen child
+                      if copen 
+                         then do mv <- pwmv h
+                                 putMVar mv (PipeBit c)
+                         else fail "PipeWriter: Couldn't write to pipe because child end is closed"
