@@ -31,11 +31,12 @@ This module provides various helpful utilities for using a C-style printf().
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Printf(sprintf,
+module MissingH.Printf(
                        Value(..),
                        PFRun(..),
                        PFType(..),
                        sprintf,
+                       printf,
                        wrapper
                        ) where
 
@@ -82,6 +83,9 @@ wrapper f v = toValue $ sprintf_real f v
 
 sprintf :: PFRun a => String -> a
 sprintf f = pfrun $ wrapper f
+
+printf :: (PFRun a, PFType a) => String -> a -> IO ()
+printf f v = putStr (sprintf f v)
 
 --printf :: PFRun a => String -> a -> IO ()
 
