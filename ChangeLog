@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-05 18:40:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-220
+
+    Summary:
+      Note new version number
+    Revision:
+      missingh--head--0.7--patch-220
+
+
+    modified files:
+     ChangeLog MissingH.cabal
+
+
 2005-04-05 18:34:54 GMT	John Goerzen <jgoerzen@complete.org>	patch-219
 
     Summary:
