@@ -43,8 +43,9 @@ module MissingH.ConfigParser.Lexer
 
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
+import Data.Maybe
 
-data CPTok = EOFTOK
+data CPTok = IGNOREDATA
            | NEWSECTION String
            | NEWSECTION_EOF String
            | EXTENSIONLINE String
@@ -53,16 +54,21 @@ data CPTok = EOFTOK
 
 comment_chars = oneOf "#;"
 eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"
+eoleof = eof <|> do {eol; return ()}
 optionsep = oneOf ":=" <?> "Option separator"
 whitespace_chars = oneOf " \t" <?> "Whitespace"
 comment_line = do skipMany whitespace_chars <?> "whitespace in comment"
                   comment_chars             <?> "start of comment"
                   (many1 $ noneOf "\r\n")   <?> "content of comment"
-empty_line = many1 whitespace_chars         <?> "empty line"
+                  eoleof
+eolstuff = (try comment_line) <|> (try empty_line)
+empty_line = do many whitespace_chars         <?> "empty line"
+                eoleof
 sectheader_chars = noneOf "]\r\n"
 sectheader = do char '['
                 sname <- many1 $ sectheader_chars
                 char ']'
+                eolstuff
                 return sname
 oname_chars = noneOf ":=\r\n"
 value_chars = noneOf "\r\n"
@@ -70,6 +76,7 @@ extension_line = do
                  many1 whitespace_chars
                  c1 <- noneOf "\r\n#;"
                  remainder <- many value_chars
+                 eoleof
                  return (c1 : remainder)
 
 optionkey = many1 oname_chars
@@ -78,23 +85,21 @@ optionpair = do
              key <- optionkey
              optionsep
              value <- optionvalue
+             eolstuff
              return (key, value)
 
 iloken :: Parser (GeneralizedToken CPTok)
 iloken =
     -- Ignore these things
-    do {eol; iloken}                     
-    <|> try (do {comment_line; iloken})
-    <|> try (do {empty_line; iloken})
+    try (do {comment_line; togtok $ IGNOREDATA})
+    <|> try (do {empty_line; togtok $ IGNOREDATA})
     
     -- Real stuff
     <|> (do {sname <- sectheader; togtok $ NEWSECTION sname})
     <|> try (do {pair <- optionpair; togtok $ NEWOPTION pair})
     <|> (do {extension <- extension_line; togtok $ EXTENSIONLINE extension})
-    <|> do {eof; togtok EOFTOK}
     <?> "Invalid syntax in configuration file"
         
 loken :: Parser [GeneralizedToken CPTok]
 loken = do x <- manyTill iloken eof
-           y <- togtok EOFTOK
-           return $ x ++ [y]
+           return $ filter (\y -> snd y /= IGNOREDATA) x

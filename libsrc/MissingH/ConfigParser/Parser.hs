@@ -88,10 +88,10 @@ main =
     <?> "Error parsing config file tokens"
         
 sectionlist :: GeneralizedTokenParser CPTok () ParseOutput
-sectionlist = do {satisfyg (==EOFTOK); return []}
+sectionlist = do {eof; return []}
               <|> try (do 
                        s <- sectionhead
-                       satisfyg (==EOFTOK)
+                       eof
                        return [(s, [])]
                       )
               <|> do
