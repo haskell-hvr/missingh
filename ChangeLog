@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 02:17:28 GMT	John Goerzen <jgoerzen@complete.org>	patch-43
+
+    Summary:
+      New parser running
+    Revision:
+      missingh--head--0.5--patch-43
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Printf.hs testsrc/Printftest.hs
+
+
 2004-11-15 02:03:20 GMT	John Goerzen <jgoerzen@complete.org>	patch-42
 
     Summary:

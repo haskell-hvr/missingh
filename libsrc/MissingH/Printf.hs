@@ -59,7 +59,7 @@ import Text.Regex
 v :: PFType a => a -> Value
 v = toValue
 
-sprintfre = mkRegex "^([#0 +'O-]*)(\\d*)(.\\d*)?([.])"
+sprintfre = mkRegex "^([#0 +'O-]*)([0-9]*)(\\.[0-9]*)?(.)"
 
 toflags :: String -> [Flag]
 toflags "" = []
@@ -90,12 +90,13 @@ sprintf ('%' : t : xs) (y:ys) =
 sprintf ('%' : xs) (y : ys) =
     case matchRegexAll sprintfre xs of
          Nothing -> error $ "Problem in format string at %" ++ xs
-         Just (_, _, remainder, [flagstr, widthstr, precstr, fmt]) ->
+         --Just (_, _, r, x) -> "<" ++ show x ++ ">" ++ sprintf r ys
+         Just (_, _, remainder, [flagstr, widthstr, precstr, [fmt]]) ->
              let width = if widthstr == "" then Nothing else Just (read widthstr)
                  prec = if precstr == "" then Nothing else Just precstr
                  flags = toflags flagstr
                  in
-                 (get_conversion_func (head fmt) y flags width prec) ++ sprintf remainder ys
+                 (get_conversion_func fmt y flags width prec) ++ sprintf remainder ys
          _ -> error $ "Problem matching format string at %" ++ xs
 
 sprintf (x:xs) y = x : sprintf xs y

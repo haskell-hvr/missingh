@@ -24,6 +24,7 @@ test_vsprintf =
     do
     "" @=? vsprintf ""
     "%" @=? vsprintf "%%"
+    "asdf" @=? vsprintf "%s" "asdf"
     "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Integer)
     "%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
     "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Double)
