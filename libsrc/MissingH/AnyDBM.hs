@@ -147,7 +147,8 @@ strFromA h = do l <- toListA h
                 return (strFromAL l)
 
 instance AnyDBM (HashTable String String) where
-    insertA = insert
+    insertA h k v = do delete h k
+                       insert h k v
     deleteA = delete
     lookupA = lookup
     toListA = toList

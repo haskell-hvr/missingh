@@ -21,6 +21,7 @@ import HUnit
 import qualified MIMETypestest
 import qualified Listtest
 import qualified FiniteMaptest
+import qualified AnyDBMtest
 import qualified Pathtest
 import qualified Strtest
 import qualified IOtest
@@ -44,6 +45,7 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Str" Strtest.tests,
                  TestLabel "Time" Timetest.tests,
                  TestLabel "FiniteMap" FiniteMaptest.tests,
+                 TestLabel "AnyDBM" AnyDBMtest.tests,
                  TestLabel "Path" Pathtest.tests,
                  TestLabel "HVIO" HVIOtest.tests,
                  TestLabel "HVFS" HVFStest.tests,

@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-02 16:31:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-188
+
+    Summary:
+      Checkpointing AnyDBM testing
+    Revision:
+      missingh--head--0.7--patch-188
+
+
+    new files:
+     testsrc/AnyDBMtest.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/AnyDBM.hs testsrc/Tests.hs
+
+
 2005-02-02 04:03:46 GMT	John Goerzen <jgoerzen@complete.org>	patch-187
 
     Summary:
