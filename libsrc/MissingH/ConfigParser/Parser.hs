@@ -72,7 +72,7 @@ sectionlist = do {satisfyG (==EOFTOK); return []}
               <|> try (do 
                        s <- sectionhead
                        satisfyG (==EOFTOK)
-                       return [s, []]
+                       return [(s, [])]
                       )
               <|> do
                   s <- section
@@ -82,6 +82,7 @@ sectionlist = do {satisfyG (==EOFTOK); return []}
 section :: GenParser CPTok () (String, [(String, String)])
 section = do {sh <- sectionhead; ol <- optionlist; return (sh, ol)}
 
+sectionhead :: GenParser CPTok () String
 sectionhead = 
     let wf (NEWSECTION x) = Just x
         wf _ = Nothing
@@ -93,6 +94,7 @@ optionlist =
     try (do {c <- coption; ol <- optionlist; return $ c : ol})
     <|> do {c <- coption; return $ [c]}
 
+extensionlist :: GenParser CPTok () [String]
 extensionlist =
     let wf (EXTENSIONLINE x) = Just x
         wf _ = Nothing
@@ -112,6 +114,7 @@ coption =
             )
         <|> do {o <- want wf; return $ (strip (fst o), strip (snd o))}
 
+valmerge :: [String] -> String
 valmerge vallist =
     let vl2 = map strip vallist
         in join "\n" vl2

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 16:40:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-71
+
+    Summary:
+      Parser compiles
+    Revision:
+      missingh--head--0.5--patch-71
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser/Parser.hs
+
+
 2004-11-18 16:35:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-70
 
     Summary:
