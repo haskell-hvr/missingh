@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-01 21:30:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-184
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-184
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/AnyDBM.hs {arch}/=tagging-method
+
+
 2005-02-01 21:24:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-183
 
     Summary:
