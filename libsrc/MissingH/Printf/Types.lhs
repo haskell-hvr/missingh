@@ -1,18 +1,67 @@
 arch-tag: Printf type declarations
 
 \begin{code}
-module Types where
+module MissingH.Printf.Types where
 
-import Language.Haskell.THSyntax
+import System.IO
+
+data Value =
+           ValueInt Int
+           | ValueString String
+             deriving (Eq, Show)
+
+class PFType a where
+    toValue :: a -> Value
+    fromValue :: Value -> a
+
+instance PFType Int where
+    toValue = ValueInt
+    fromValue (ValueInt x) = x
+    fromValue _ = error "fromValue int"
+
+instance PFType String where
+    toValue = ValueString
+    fromValue (ValueString x) = x
+    fromValue _ = error "fromValue string"
+
+{-
+instance PFType Value where
+    toValue = id
+    fromValue = id
+-}
+class PFRun a where
+    pfrun :: ([Value] -> String) -> a
+instance PFRun String where
+    pfrun f = f $ []
+instance (PFType a, PFRun b) => PFRun (a -> b) where
+    pfrun f x = pfrun (\xs -> f (toValue x : xs))
+
+class IOPFRun a where
+    iopfrun :: Handle -> ([Value] -> String) -> a
+instance IOPFRun (IO ()) where
+    iopfrun h f = hPutStr h $ pfrun f
+instance (PFType a, IOPFRun b) => IOPFRun (a -> b) where
+    iopfrun h f x = iopfrun h (\xs -> f (toValue x : xs))
+
+-------------------------------------------
+-- Begin code from Ian Lynagh
+
+type ConversionFunc = Arg
+                   -> [Flag]
+                   -> Maybe Width
+                   -> Maybe Precision
+                   -> String
+
+
 
 data Format = Literal String
-            | Conversion ExpQ
+            | Conversion ConversionFunc
             | CharCount
 
 type ArgNum = Integer
-type Arg = ExpQ
-type Width = ExpQ
-type Precision = ExpQ
+type Arg = String
+type Width = Integer
+type Precision = String
 data Flag = AlternateForm       -- "#"
           | ZeroPadded          -- "0"
           | LeftAdjust          -- "-"

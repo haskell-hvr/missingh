@@ -1,13 +1,13 @@
 arch-tag: Printf printer declarations
 
 \begin{code}
-module Printer (get_conversion_func, thousandify, octalify, hexify) where
+module MissingH.Printf.Printer (get_conversion_func, thousandify, octalify, hexify) where
 
-import Language.Haskell.THSyntax
 import Maybe (fromMaybe)
 import Numeric (showEFloat, showFFloat)
 import Char (toLower, toUpper)
-import Types
+import MissingH.Printf.Types
+import Data.List(genericLength, genericReplicate)
 
 {-
 xn where n is an integer refers to an argument to the function
@@ -15,12 +15,6 @@ y*, n* is reserved for %n
 fw* is reserved for field width intermediates
 Everything else can be used by the conversion functions
 -}
-
-type ConversionFunc = Arg
-                   -> [Flag]
-                   -> Maybe Width
-                   -> Maybe Precision
-                   -> ExpQ
 
 get_conversion_func :: Char -> ConversionFunc
 get_conversion_func c = fromMaybe (error (c:": CF unknown")) $ lookup c cfs
@@ -52,38 +46,38 @@ get_conversion_func c = fromMaybe (error (c:": CF unknown")) $ lookup c cfs
 -- %d, %i
 print_signed_int :: ConversionFunc
 print_signed_int arg flags mw mp = res
-    where preci = fromMaybe [| 1 |] mp
-          width = fromMaybe [| 0 |] mw
-          disp | Thousands `elem` flags = [| thousandify . show |]
-               | otherwise              = [|               show |]
+    where preci = fromMaybe 1 mp
+          width = fromMaybe 0 mw
+          disp | Thousands `elem` flags = thousandify . show
+               | otherwise              =               show
           plus_sign = if Plus `elem` flags
                       then "+"
                       else if BlankPlus `elem` flags
                       then " "
                       else ""
-          res = [| let to_show = toInteger $arg
-                       shown = $disp $ abs to_show
-                       w = $( if ZeroPadded `elem` flags
-                              then [| $preci `max` $width - length sign |]
-                              else preci )
+          res =    let to_show = toInteger arg
+                       shown = disp $ abs to_show
+                       w = ( if ZeroPadded `elem` flags
+                              then (read preci `max` width - genericLength sign)::Width
+                              else (read preci)::Width )
                        sign = if to_show < 0 then "-" else plus_sign
-                       num_zeroes = (w - length shown) `max` 0
-                   in sign ++ replicate num_zeroes '0' ++ shown
-                 |]
+                       num_zeroes = (w - genericLength shown) `max` 0
+                   in sign ++ genericReplicate num_zeroes '0' ++ shown
+                 
 
 -- %o, u, x, X
 print_unsigned_int :: Char -> ConversionFunc
 print_unsigned_int base arg flags mw mp = res
-    where preci = fromMaybe [| 1 |] mp
-          width = fromMaybe [| 0 |] mw
-          w = if ZeroPadded `elem` flags then [| $preci `max` $width |]
-                                         else     preci
+    where preci = fromMaybe 1  mp
+          width = fromMaybe 0 mw
+          w = if ZeroPadded `elem` flags then (read preci) `max` width
+                                         else     read preci
           disp = case base of
-                     'o' -> [| octalify |]
-                     'x' -> [| hexify $(lift lower_hex) |]
-                     'X' -> [| hexify $(lift upper_hex) |]
-                     'u' | Thousands `elem` flags -> [| thousandify . show |]
-                         | otherwise              -> [|               show |]
+                     'o' -> octalify
+                     'x' -> hexify ({-lift-} lower_hex)
+                     'X' -> hexify ({-lift-} upper_hex)
+                     'u' | Thousands `elem` flags -> thousandify . show
+                         | otherwise              ->                show
                      _ -> err_letter
           prefix = if AlternateForm `elem` flags then case base of
                                                           'o' -> "0"
@@ -92,29 +86,29 @@ print_unsigned_int base arg flags mw mp = res
                                                           'X' -> "0X"
                                                           _ -> err_letter
                                                  else ""
-          res = [| let to_show = toInteger $arg `max` 0
-                       shown = $disp to_show
+          res =    let to_show = toInteger arg `max` 0
+                       shown = disp to_show
                        pref = if to_show == 0 then "" else prefix
-                       num_zeroes = ($w - length shown - length pref) `max` 0
-                   in pref ++ replicate num_zeroes '0' ++ shown
-                 |]
+                       num_zeroes = (w - genericLength shown - genericLength pref) `max` 0
+                   in pref ++ genericReplicate num_zeroes '0' ++ shown
+                 
           err_letter = error "print_unsigned_int: Bad letter"
 
 -- %e, E
 print_exponent_double :: Char -> ConversionFunc
 print_exponent_double e arg flags mw mp = res
-    where preci = fromMaybe [| 6 |] mp
-          width = fromMaybe [| 0 |] mw
+    where preci = fromMaybe 6 mp
+          width = fromMaybe 0 mw
           plus_sign = if Plus `elem` flags
                       then "+"
                       else if BlankPlus `elem` flags
                       then " "
                       else ""
           keep_dot = AlternateForm `elem` flags
-          res = [| let to_show = (fromRational $ toRational $arg) :: Double
+          res =    let to_show = (fromRational $ toRational arg) :: Double
                        shown = showEFloat (Just $preci) (abs to_show) ""
                        sign = if to_show < 0 then "-" else plus_sign
-                       fix_prec0 = if $preci == 0
+                       fix_prec0 = if preci == 0
                                    then case break (== '.') shown of
                                             (xs, _:_:ys)
                                                 | keep_dot  -> xs ++ '.':ys
@@ -127,48 +121,48 @@ print_exponent_double e arg flags mw mp = res
                        fix_exp = case break (== 'e') fix_exp_sign of
                                      (xs, [_,s,y]) -> xs ++ [e,s,'0',y]
                                      (xs, _:ys) -> xs ++ e:ys
-                       num_zeroes = ($width - length fix_exp - length sign)
+                       num_zeroes = (width - length fix_exp - length sign)
                               `max` 0
                    in sign ++ replicate num_zeroes '0' ++ fix_exp
-                 |]
+                 
 
 -- %f, F
 print_fixed_double :: Char -> ConversionFunc
 print_fixed_double f arg flags mw mp = res
-    where preci = fromMaybe [| 6 |] mp
-          width = fromMaybe [| 0 |] mw
+    where preci = fromMaybe 6  mp
+          width = fromMaybe 0  mw
           plus_sign = if Plus `elem` flags
                       then "+"
                       else if BlankPlus `elem` flags
                       then " "
                       else ""
           add_dot = AlternateForm `elem` flags
-          fix_case | f == 'f'  = [| map toLower |]
-                   | otherwise = [| map toUpper |]
-          res = [| let to_show = (fromRational $ toRational $arg) :: Double
-                       shown = showFFloat (Just $preci) (abs to_show) ""
-                       shown' = if add_dot && $preci == 0 then shown ++ "."
+          fix_case | f == 'f'  = map toLower
+                   | otherwise = map toUpper
+          res =    let to_show = (fromRational $ toRational arg) :: Double
+                       shown = showFFloat (Just preci) (abs to_show) ""
+                       shown' = if add_dot && preci == 0 then shown ++ "."
                                                           else shown
                        sign = if to_show < 0 then "-" else plus_sign
-                       num_zeroes = ($width - length shown' - length sign)
+                       num_zeroes = (width - length shown' - length sign)
                               `max` 0
-                   in sign ++ replicate num_zeroes '0' ++ $fix_case shown'
-                 |]
+                   in sign ++ replicate num_zeroes '0' ++ fix_case shown'
+                 
 
 -- %c, C
 print_char :: ConversionFunc
-print_char arg _ _ _ = [| [$arg] |]
+print_char arg _ _ _ = [arg]
 
 -- %s, S
 print_string :: ConversionFunc
 print_string arg _ _ mp
     = case mp of
-          Just preci -> [| if $preci < 0 then $arg else take $preci $arg |]
+          Just preci -> if preci < 0 then arg else take preci arg
           Nothing -> arg
 
 -- Corresponds to %H (Haskell extension)
 show_arg :: ConversionFunc
-show_arg arg flags mw mp = print_string [| show $arg |] flags mw mp
+show_arg arg flags mw mp = (print_string show arg) flags mw mp
 
 lower_hex, upper_hex :: Bool
 lower_hex = False
