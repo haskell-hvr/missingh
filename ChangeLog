@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-27 16:57:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-176
+
+    Summary:
+      Fixed build-dep-indep on ghc
+    Revision:
+      missingh--head--0.7--patch-176
+
+
+    modified files:
+     ChangeLog debian/control
+
+
 2005-01-26 16:37:51 GMT	John Goerzen <jgoerzen@complete.org>	patch-175
 
     Summary:
