@@ -57,8 +57,8 @@ entry = do key <- many1 (noneOf ":\r\n")
 control = many entry
 
 depPart = do packagename <- many1 (noneOf " (")
-             version <- (do many (char ' ')
-                            char '('
+             many (char ' ')
+             version <- (do char '('
                             op <- many1 (oneOf "<>=")
                             many (char ' ')
                             vers <- many1 (noneOf ") ")
@@ -66,8 +66,8 @@ depPart = do packagename <- many1 (noneOf " (")
                             char ')'
                             return $ Just (op, vers)
                         ) <|> return Nothing
-             archs <- (do many (char ' ')
-                          char '['
+             many (char ' ')
+             archs <- (do char '['
                           t <- many1 (noneOf "]")
                           many (char ' ')
                           char ']'

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-03-15 16:28:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-208
+
+    Summary:
+      fixed dep parser
+    Revision:
+      missingh--head--0.7--patch-208
+
+
+    modified files:
+     ChangeLog MissingH/Debian/ControlParser.hs
+
+
 2005-03-15 15:19:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-207
 
     Summary:
