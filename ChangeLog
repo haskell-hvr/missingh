@@ -2,6 +2,69 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 02:21:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-79
+
+    Summary:
+      Imported main Wash stuff
+    Revision:
+      missingh--head--1.0--patch-79
+
+
+    new files:
+     libsrc/MissingH/Wash/Utility/.arch-ids/=id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Auxiliary.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Base32.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Base64.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/FileNames.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Hex.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/ISO8601.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/IntToString.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/JavaScript.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/LICENSE.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Locking.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Makefile.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/QuotedPrintable.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/RFC2047.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/RFC2279.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/RFC2397.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/SHA1.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Shell.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/SimpleParser.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/URLCoding.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/Unique.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/sha1lib.c.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/sha1lib.h.id
+     libsrc/MissingH/Wash/Utility/Auxiliary.hs
+     libsrc/MissingH/Wash/Utility/Base32.hs
+     libsrc/MissingH/Wash/Utility/Base64.hs
+     libsrc/MissingH/Wash/Utility/FileNames.hs
+     libsrc/MissingH/Wash/Utility/Hex.hs
+     libsrc/MissingH/Wash/Utility/ISO8601.hs
+     libsrc/MissingH/Wash/Utility/IntToString.hs
+     libsrc/MissingH/Wash/Utility/JavaScript.hs
+     libsrc/MissingH/Wash/Utility/LICENSE
+     libsrc/MissingH/Wash/Utility/Locking.hs
+     libsrc/MissingH/Wash/Utility/Makefile
+     libsrc/MissingH/Wash/Utility/QuotedPrintable.hs
+     libsrc/MissingH/Wash/Utility/RFC2047.hs
+     libsrc/MissingH/Wash/Utility/RFC2279.hs
+     libsrc/MissingH/Wash/Utility/RFC2397.hs
+     libsrc/MissingH/Wash/Utility/SHA1.hs
+     libsrc/MissingH/Wash/Utility/Shell.hs
+     libsrc/MissingH/Wash/Utility/SimpleParser.hs
+     libsrc/MissingH/Wash/Utility/URLCoding.hs
+     libsrc/MissingH/Wash/Utility/Unique.hs
+     libsrc/MissingH/Wash/Utility/sha1lib.c
+     libsrc/MissingH/Wash/Utility/sha1lib.h
+
+    modified files:
+     ChangeLog libsrc/MissingH/Wash/Mail/Email.hs
+
+    new directories:
+     libsrc/MissingH/Wash/Utility
+     libsrc/MissingH/Wash/Utility/.arch-ids
+
+
 2004-10-20 02:19:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-78
 
     Summary:
