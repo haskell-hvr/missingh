@@ -16,13 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- | Logging Infrastructure for Haskell
+{- | Haskell Logging Framework
 
 Written by John Goerzen, jgoerzen\@complete.org
 
 This module defines basic types used for logging.
 
 /This API is new and in a state of flux./
+
+Extensive documentation is available in
+"MissingH.Logging.Logger".
 
 -}
 

@@ -16,16 +16,114 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- | Definition of log handler support
-
-For some handlers, check out "MissingH.Logging.Handler.Simple" and
-"MissingH.Logging.Handler.Syslog".
+{- | Haskell Logging Framework, Primary Interface
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+Welcome to the error and information logging system for Haskell.
+
+This system is patterned after Python\'s @logging@ module,
+<http://www.python.org/doc/current/lib/module-logging.html> and some of
+the documentation here was based on documentation there.
+
+To log a message, you perform operations on 'Logger's.  Each 'Logger' has a
+name, and they are arranged hierarchically.  Periods serve as separators.
+Therefore, a 'Logger' named \"foo\" is the parent of loggers \"foo.printing\",
+\"foo.html\", and \"foo.io\".  These names can be anything you want.  They're
+used to indicate the area of an application or library in which a logged
+message originates.  Later you will see how you can use this concept to 
+fine-tune logging behaviors based on specific application areas.
+
+You can also tune logging behaviors based upon how important a message is.
+Each message you log will have an importance associated with it.  The different
+importance levels are given by the 'Priority' type.  I've also provided
+some convenient functions that correspond to these importance levels:
+'debugM' through 'emergencyM' log messages with the specified importance.
+
+Now, an importance level (or 'Priority') 
+is associated not just with a particular message but also
+with a 'Logger'.  If the 'Priority' of a given log message is lower than
+the 'Priority' configured in the 'Logger', that message is ignored.  This
+way, you can globally control how verbose your logging output is.
+
+Now, let's follow what happens under the hood when you log a message.  We'll
+assume for the moment that you are logging something with a high enough
+'Priority' that it passes the test in your 'Logger'.  In your code, you'll
+call 'logM' or something like 'debugM' to log the message.  Your 'Logger'
+decides to accept the message.  What next?
+
+Well, we also have a notion of /handlers/ ('LogHandler's, to be precise).
+A 'LogHandler' is a thing that takes a message and sends it somewhere.
+That \"somewhere\" may be your screen (via standard error), your system's
+logging infrastructure (via syslog), a file, or other things.  Each
+'Logger' can have zero or more 'LogHandler's associated with it.  When your
+'Logger' has a message to log, it passes it to every 'LogHandler' it knows
+of to process.  What's more, it is also passed to /all handlers of all
+ancestors of the Logger/, regardless of whether those 'Logger's would
+normally have passed on the message.
+
+To give you one extra little knob to turn, 'LogHandler's can also have
+importance levels ('Priority') associated with them in the same way
+that 'Logger's do.  They act just like the 'Priority' value in the
+'Logger's -- as a filter.  It's useful, for instance, to make sure that
+under no circumstances will a mere 'DEBUG' message show up in your syslog.
+
+There are three built-in handlers given in two built-in modules:
+"MissingH.Logging.Handler.Simple" and "MissingH.Logging.Handler.Syslog".
+
+There is a special logger known as the /root logger/ that sits at the top
+of the logger hierarchy.  It is always present, and handlers attached
+there will be called for every message.  You can use 'getRootLogger' to get
+it or 'rootLoggerName' to work with it by name.
+
+Here's an example to illustrate some of these concepts:
+
+> import MissingH.Logging.Logger
+> import MissingH.Logging.Handler.Syslog
+> 
+> -- By default, all messages of level WARNING and above are sent to stderr.
+> -- Everything else is ignored.
+> 
+> -- "MyApp.Component" is an arbitrary string; you can tune
+> -- logging behavior based on it later.
+> main = do
+>        debugM "MyApp.Component"  "This is a debug message -- never to be seen"
+>        warningM "MyApp.Component2" "Something Bad is about to happen."
+> 
+>        -- Copy everything to syslog from here on out.
+>        s <- openlog "SyslogStuff" [PID] USER DEBUG
+>       updateGlobalLogger rootLoggerName (addHandler s)
+>       
+>        errorM "MyApp.Component" "This is going to stderr and syslog."
+>
+>        -- Now we'd like to see everything from BuggyComponent
+>        -- at DEBUG or higher go to syslog, but only go to stderr
+>        -- if it's WARNING or higher as before.  Also, we'd like to
+>        -- still ignore things less than WARNING in other areas.
+>        -- 
+>        -- So, we adjust the Logger for MyApp.Component.
+>
+>        updateGlobalLogger "MyApp.BuggyComponent"
+>                           (setLevel DEBUG . setHandlers [s])
+>
+>        -- This message will go to syslog -- the default
+>        -- restrictions on the root logger will filter it out.
+>        debugM "MyApp.BuggyComponent" "This buggy component is buggy"
+> 
+>        -- This message will go to syslog and stderr.
+>        warningM "MyApp.BuggyComponent" "Still Buggy"
+> 
+>        -- This message goes nowhere.
+>        debugM "MyApp.WorkingComponent" "Hello"
+
+
 -}
 
-module MissingH.Logging.Logger(-- * Basic Types
+module MissingH.Logging.Logger(
+                               -- * Basic Types
                                Logger,
+                               -- ** Re-Exported from MissingH.Logging
+                               Priority(..),
                                -- * Logging Messages
                                -- ** Basic
                                logM,
@@ -34,15 +132,35 @@ module MissingH.Logging.Logger(-- * Basic Types
                                -- make your job easier.
                                debugM, infoM, noticeM, warningM, errorM,
                                criticalM, alertM, emergencyM,
+                               -- ** Logging to a particular Logger by object
+                               logL,
                                -- * Logger Manipulation
-                               -- More functions are available in
-                               -- "MissingH.Logging.Logger".
+{- | These functions help you work with loggers.  There are some
+special things to be aware of.
+
+First of all, whenever you first access a given logger by name, it
+magically springs to life.  It has a default 'Priority' of 'DEBUG'
+and an empty handler list -- which means that it will inherit whatever its
+parents do.
+-}
                                -- ** Finding \/ Creating Loggers
                                getLogger, getRootLogger, rootLoggerName,
-                               -- ** Logging to a particular Logger
-                               logL,
                                -- ** Modifying Loggers
-                               addHandler, getLevel, setLevel,
+{- | Keep in mind that \"modification\" here is modification in the Haskell
+sense.  We do not actually cause mutation in a specific 'Logger'.  Rather,
+we return you a new 'Logger' object with the change applied.
+
+Also, please note that these functions will not have an effect on the
+global 'Logger' hierarchy.  You may use your new 'Logger's locally,
+but other functions won't see the changes.  To make a change global,
+you'll need to use 'updateGlobalLogger' or 'saveGlobalLogger'.
+-}
+                               addHandler, setHandlers,
+                               getLevel, setLevel,
+                               -- ** Saving Your Changes
+{- | These functions commit changes you've made to loggers to the global
+logger hierarchy. -}
+                               saveGlobalLogger,
                                updateGlobalLogger
                                ) where
 import MissingH.Str
@@ -250,12 +368,15 @@ callHandler lr ht =
 handlerActions :: [HandlerT] -> LogRecord -> [IO ()]
 handlerActions h lr = map (callHandler lr) h
                          
-
-
-
 -- | Add handler to 'Logger'.  Returns a new 'Logger'.
-addHandler :: LogHandler a => Logger -> a -> Logger
-addHandler l h = l{handlers = (HandlerT h) : (handlers l)}
+addHandler :: LogHandler a => a -> Logger -> Logger
+addHandler h l= l{handlers = (HandlerT h) : (handlers l)}
+
+-- | Set the 'Logger'\'s list of handlers to the list supplied.
+-- All existing handlers are removed first.
+setHandlers :: LogHandler a => [a] -> Logger -> Logger
+setHandlers hl l = 
+    l{handlers = map (\h -> HandlerT h) hl}
 
 -- | Returns the "level" of the logger.  Items beneath this
 -- level will be ignored.
@@ -266,12 +387,27 @@ getLevel l = level l
 -- | Sets the "level" of the 'Logger'.  Returns a new
 -- 'Logger' object with the new level.
 
-setLevel :: Logger -> Priority -> Logger
-setLevel l p = l{level = p}
+setLevel :: Priority -> Logger -> Logger
+setLevel p l = l{level = p}
 
 -- | Updates the global record for the given logger to take into
 -- account any changes you may have made.
 
-updateGlobalLogger :: Logger -> IO ()
-updateGlobalLogger l = modifyIORef logTree (\a -> addToFM a (name l) l)
+saveGlobalLogger :: Logger -> IO ()
+saveGlobalLogger l = modifyIORef logTree (\a -> addToFM a (name l) l)
 
+{- | Helps you make changes on the given logger.  Takes a function
+that makes changes and writes those changes back to the global
+database.  Here's an example from above (\"s\" is a 'LogHandler'):
+
+> updateGlobalLogger "MyApp.BuggyComponent"
+>                    (setLevel DEBUG . setHandlers [s])
+-}
+
+updateGlobalLogger :: String            -- ^ Logger name
+                      -> (Logger -> Logger) -- ^ Function to call
+                      -> IO ()
+updateGlobalLogger ln func =
+    do 
+    l <- getLogger ln
+    saveGlobalLogger (func l)
