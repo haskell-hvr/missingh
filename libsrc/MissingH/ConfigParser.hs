@@ -64,6 +64,9 @@ module MissingH.ConfigParser
      -- ** Error Monad Usage
      -- $usageerrormonad
 
+     -- ** Combined Error\/IO Monad Usage
+     -- $usageerroriomonad
+
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
      CPErrorData(..), CPError, CPResult,
@@ -620,10 +623,13 @@ out of it:
 >                 cp <- set cp "sect1" "opt2" "bar"
 >                 options cp "sect1"
 
-This returns ["opt1", "opt2"].  A quite normal value.
+This returns @[\"opt1\", \"opt2\"]@.  A quite normal value.
 
 -}
 
+{- $usageerroriomonad
+
+-}
 
 {- $reading
 

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 21:58:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-134
+
+    Summary:
+      checkpointing again
+    Revision:
+      missingh--head--0.5--patch-134
+
+
+    modified files:
+     ChangeLog cpexample1.hs libsrc/MissingH/ConfigParser.hs
+
+
 2004-11-30 21:52:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-133
 
     Summary:

@@ -3,15 +3,11 @@ import MissingH.ConfigParser
 import Control.Monad.Error
 
 main = do
-          --let d = readfile empty "/etc/passwd"
           rv <- runErrorT $
               do
               cp <- join $ liftIO $ readfile empty "/etc/passwd"
-              --x <- cp
               let x = cp
               liftIO $ putStrLn "In the test"
-              --cp <- d
-              --liftIO $ print (sections cp)
               nb <- get x "DEFAULT" "nobody"
               liftIO $ putStrLn nb
               foo <- get x "DEFAULT" "foo"
