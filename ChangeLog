@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-23 22:54:00 GMT	John Goerzen <jgoerzen@complete.org>	patch-111
+
+    Summary:
+      Basic commands now work
+    Revision:
+      missingh--head--1.0--patch-111
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Client.hs
+
+
 2004-10-23 22:18:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-110
 
     Summary:

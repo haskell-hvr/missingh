@@ -51,8 +51,10 @@ Useful standards:
 module MissingH.Network.FTP.Client(easyConnectTo, connectTo,
                                    loginAnon, login, 
                                    setPassive,
-                                   nlst,
+                                   nlst, dir, rename,
+                                   delete, cwd, size, quit,
                                    FTPConnection(isPassive),
+                                   transfercmd, ntransfercmd,
                        )
 where
 import MissingH.Network.FTP.Parser
@@ -65,6 +67,7 @@ import MissingH.Logging.Logger
 import MissingH.Network
 import MissingH.Str
 data FTPConnection = FTPConnection {readh :: IO String,
+                                    readh_internal :: Handle,
                                     writeh :: Handle,
                                     isPassive :: Bool}
 
@@ -107,7 +110,9 @@ connectTo h p =
     hSetBuffering r LineBuffering
     w <- socketToHandle s WriteMode
     hSetBuffering w LineBuffering
-    let h = FTPConnection {readh = readchars r, writeh = w, isPassive = True}
+    let h = FTPConnection {readh = readchars r, 
+                           readh_internal = r,
+                           writeh = w, isPassive = True}
     --hIsReadable h >>= print
     --hIsWritable h >>= print
     -- hSetBuffering h LineBuffering
@@ -190,12 +195,20 @@ transfercmd h cmd = do x <- ntransfercmd h cmd
                        return (fst x)
 
 {- | Retrieves lines of data from the remote. -}
-retrlines :: FTPConnection -> String -> IO [String]
-retrlines h cmd = do
+retrlines :: FTPConnection -> String -> IO ([String], FTPResult)
+retrlines h cmd =
+    -- foo returns the empty last item and closes the handle when done
+    let foo theh [] = do hClose theh
+                         r <- getresp h
+                         return ([], r)
+        foo theh ("" : []) = foo theh []
+        foo theh (x:xs) = do next <- unsafeInterleaveIO $ foo theh xs
+                             return $ (x : fst next, snd next)
+        in do
               sendcmd h "TYPE A"
               newh <- transfercmd h cmd
               c <- hGetContents newh
-              return $ split "\r\n" c
+              foo newh (split "\r\n" $ c)
 
 {- | Retrieves a list of files in the given directory. 
 
@@ -203,9 +216,55 @@ FIXME: should this take a list of dirs? -}
 nlst :: FTPConnection
         -> Maybe String                 -- ^ The directory to list.  If Nothing, list the current directory.
         -> IO [String]
-nlst h dir =
-    let cmd = case dir of
-                       Nothing -> "NLST"
-                       Just x -> "NLST " ++ x
-        in do
-           retrlines h cmd
+nlst h Nothing = retrlines h "NLST" >>= return . fst
+nlst h (Just dirname) = retrlines h ("NLST " ++ dirname) >>= return . fst
+
+{- | Retrieve the system-specific long form of a directory list.
+
+FIXME: should this take a list of dirs? -}
+dir :: FTPConnection
+       -> Maybe String                  -- ^ The directory to list.  If Nothing, list the current directory.
+       -> IO [String]
+dir h Nothing = retrlines h "LIST" >>= return .  fst
+dir h (Just dirname) = retrlines h ("LIST " ++ dirname) >>= return . fst
+
+{- | Rename or move a file. -}
+rename :: FTPConnection
+          -> String                     -- ^ Old name
+          -> String                     -- ^ New name
+          -> IO FTPResult
+rename h old new = do
+                   r <- sendcmd h ("RNFR " ++ old)
+                   forceioresp 300 r
+                   sendcmd h ("RNTO " ++ new)
+
+{- | Delete (unlink) a file. -}
+delete :: FTPConnection -> String -> IO FTPResult
+delete h fn = sendcmd h ("DELE " ++ fn)
+
+{- | Change the working directory. -}
+cwd :: FTPConnection -> String -> IO FTPResult
+cwd h ".." = sendcmd h "CDUP"
+cwd h "" = cwd h "."
+cwd h newdir = sendcmd h ("CWD " ++ newdir)
+
+{- | Get the size of a file.
+
+This command is non-standard and may possibly fail.
+-}
+size :: (Num a, Read a) => FTPConnection -> String -> IO a
+size h fn = do
+            r <- sendcmd h ("SIZE " ++ fn)
+            forceioresp 200 r
+            return (read . head . snd $ r)
+
+-- FIXME: write mkd, rmd, pwd
+
+quit :: FTPConnection -> IO FTPResult
+quit h = do
+         r <- sendcmd h "QUIT"
+         hClose (writeh h)
+         -- hClose (readh_internal h)
+         return r
+
+
