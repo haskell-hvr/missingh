@@ -23,8 +23,11 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.IOutil(-- * Entire File\/Handle Utilities
                        -- ** Opened Handle Data Copying
+                       hLineCopy, lineCopy,
                        hBlockCopy, blockCopy,
                        -- ** Disk File Data Copying
+                       copyFileLinesToFile,
+                       copyFileBlocksToFile,
                        -- * Line Processing Utilities
                        hPutStrLns, hGetLines,
                        -- * Binary Single-Block I\/O
@@ -100,11 +103,14 @@ hInteract finput foutput func = do
 {- | Line-based interaction.  This is similar to wrapping your
 interact functions with 'lines' and 'unlines'.  This equality holds:
 
-> lineInteract = 'hLineInteract' stdin stdout
+> lineInteract = hLineInteract stdin stdout
 
 Here's an example:
 
 > main = lineInteract (filter (startswith "1"))
+
+This will act as a simple version of grep -- all lines that start with 1
+will be displayed; all others will be ignored.
 -}
 lineInteract :: ([String] -> [String]) -> IO ()
 lineInteract = hLineInteract stdin stdout
@@ -256,7 +262,7 @@ hBlockInteractUtil blockreader blocksize hin hout func =
 {- | Copies everything from the input handle to the output handle using binary
 blocks of the given size.  This is actually a beautiful implementation:
 
-> hBlockCopy bs hin hout = 'hBlockInteract' bs hin hout id
+> hBlockCopy bs hin hout = hBlockInteract bs hin hout id
 
 ('id' is the built-in Haskell function that just returns whatever is given
 to it)
@@ -265,7 +271,58 @@ to it)
 hBlockCopy :: Int -> Handle -> Handle -> IO ()
 hBlockCopy bs hin hout = hBlockInteract bs hin hout id
 
-{- | Copies from stdin to stdout using binary blocks of the given size.
+{- | Copies from 'stdin' to 'stdout' using binary blocks of the given size.
+An alias for 'hBlockCopy' over 'stdin' and 'stdout'
 -}
 blockCopy :: Int -> IO ()
 blockCopy bs = hBlockCopy bs stdin stdout
+
+{- | Copies from one handle to another in text mode (with lines).
+Like 'hBlockCopy', this implementation is nice:
+
+> hLineCopy hin hout = hLineInteract hin hout id
+-}
+
+hLineCopy :: Handle -> Handle -> IO()
+hLineCopy hin hout = hLineInteract hin hout id
+
+{- | Copies from 'stdin' to 'stdout' using lines.  An alias for 'hLineCopy'
+over 'stdin' and 'stdout'. -}
+
+lineCopy :: IO ()
+lineCopy = hLineCopy stdin stdout
+
+{- | Copies one filename to another in text mode.
+
+Please note that the Unix permission bits are set at a default; you may
+need to adjust them after the copy yourself.
+
+This function is implemented using 'hLineCopy' internally. -}
+
+copyFileLinesToFile :: FilePath -> FilePath -> IO ()
+copyFileLinesToFile infn outfn = do
+                                 hin <- openFile infn ReadMode
+                                 hout <- openFile outfn WriteMode
+                                 hLineCopy hin hout
+                                 hClose hin
+                                 hClose hout
+                                 return ()
+                                 
+
+{- | Copies one filename to another in binary mode.
+
+Please note that the Unix permission bits on the output file cannot
+be set due to a limitation of the Haskell 'System.IO.openBinaryFile'
+function.  Therefore, you may need to adjust those bits after the copy
+yourself.
+
+This function is implemented using 'hBlockCopy' internally. -}
+copyFileBlocksToFile :: Int -> FilePath -> FilePath -> IO ()
+copyFileBlocksToFile bs infn outfn = do
+                                     hin <- openBinaryFile infn ReadMode
+                                     hout <- openBinaryFile outfn WriteMode
+                                     hBlockCopy bs hin hout
+                                     hClose hin
+                                     hClose hout
+                                     return ()
+
