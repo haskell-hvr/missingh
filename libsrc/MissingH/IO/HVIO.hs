@@ -117,10 +117,18 @@ module MissingH.IO.HVIO(-- * Implementation Classes
                      HVIOReader(..),
                      HVIOWriter(..),
                      HVIOSeeker(..),
-                     -- * Standard Virtual IO features
-                     -- | Note: Handle is a member of all classes by default.
+                     -- * Standard HVIO Implementations
+
+                     -- ** Handle
+                     -- | Handle is a member of all four classes.
+
+                     -- ** Stream Reader
                      StreamReader, newStreamReader,
+
+                     -- ** Memory Buffer
                      MemoryBuffer, newMemoryBuffer, getMemoryBuffer,
+
+                     -- ** Haskell Pipe
                      PipeReader, PipeWriter, newHVIOPipe
                     )
 where
@@ -336,10 +344,17 @@ class (HVIOGeneric a) => HVIOSeeker a where
     -- | Get the current position.
     vTell :: a -> IO Integer
 
+    -- | Convenience function to reset the file pointer to the beginning
+    -- of the file.  A call to @vRewind h@ is the
+    -- same as @'vSeek' h AbsoluteSeek 0@.
+    vRewind :: a -> IO ()
+
     -- | Indicate whether this instance supports seeking.
     vIsSeekable :: a -> IO Bool
 
     vIsSeekable _ = return True
+
+    vRewind h = vSeek h AbsoluteSeek 0
 
 ----------------------------------------------------------------------
 -- Handle instances
@@ -396,11 +411,20 @@ vioc_set x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
 
 {- | Simulate I\/O based on a string buffer.
 
-This is lazy!
+When a 'StreamReader' is created, it is initialized based on the contents of
+a 'String'.  Its contents are read lazily whenever a request is made to read
+something from the 'StreamReader'.    It
+can be used, therefore, to implement filters (simply initialize it with the
+result from, say, a map over hGetContents from another HVIO object), codecs,
+and simple I\/O testing.  Because it is lazy, it need not hold the entire
+string in memory.  You can create a 'StreamReader' with a call to
+'newStreamReader'.
  -}
 newtype StreamReader = StreamReader (VIOCloseSupport String)
 
-newStreamReader :: String -> IO StreamReader
+{- | Create a new 'StreamReader' object. -}
+newStreamReader :: String            -- ^ Initial contents of the 'StreamReader'
+                -> IO StreamReader
 newStreamReader s = do ref <- newIORef (True, s)
                        return (StreamReader ref)
 
@@ -433,18 +457,37 @@ instance HVIOReader StreamReader where
 -- Buffers
 ----------------------------------------------------------------------
 
-{- | Simulate true I\/O on a buffer.
+{- | A 'MemoryBuffer' simulates true I\/O, but uses an in-memory buffer instead
+of on-disk storage.
 
+
+ It provides
+a full interface like Handle (it implements 'HVIOReader', 'HVIOWriter',
+and 'HVIOSeeker').  However, it maintains an in-memory buffer with the 
+contents of the file, rather than an actual on-disk file.  You can access
+the entire contents of this buffer at any time.  This can be quite useful
+for testing I\/O code, or for cases where existing APIs use I\/O, but you
+prefer a String representation.  You can create a 'MemoryBuffer' with a call
+to 'newMemoryBuffer'.
+
+The present 'MemoryBuffer' implementation is rather inefficient, particularly
+when reading towards the end of large files.  It's best used for smallish
+data storage.  This problem will be fixed eventually.
 -}
 newtype MemoryBuffer = MemoryBuffer (VIOCloseSupport (Int, String))
 
+{- | Create a new 'MemoryBuffer' instance.  The buffer is initially empty;
+you can put things in it by using the normal 'vPutStr' calls, and reset to
+the beginning by using the normal 'vRewind' call. -}
 newMemoryBuffer :: IO MemoryBuffer
 newMemoryBuffer = do ref <- newIORef (True, (0, ""))
                      return (MemoryBuffer ref)
 
 vrv (MemoryBuffer x) = x
 
--- | Grab the entire contents of the buffer as a string.
+{- | Grab the entire contents of the buffer as a string. 
+Unlike 'vGetContents', this has no effect on the open status of the
+item, the EOF status, or the current position of the file pointer. -}
 getMemoryBuffer :: MemoryBuffer -> IO String
 getMemoryBuffer h = do c <- vioc_get (vrv h)
                        return (snd c)
@@ -498,6 +541,20 @@ instance HVIOSeeker MemoryBuffer where
 -- Pipes
 ----------------------------------------------------------------------
 
+{- | Create a Haskell pipe.
+
+These pipes are analogous to the Unix
+pipes that are available from System.Posix, but don't require Unix and work
+only in Haskell.  When you create a pipe, you actually get two HVIO objects:
+a 'PipeReader' and a 'PipeWriter'.  You must use the 'PipeWriter' in one
+thread and the 'PipeReader' in another thread.  Data that's written to the
+'PipeWriter' will then be available for reading with the 'PipeReader'.  The
+pipes are implemented completely with existing Haskell threading primitives,
+and require no special operating system support.  Unlike Unix pipes, these
+pipes cannot be used across a fork().  Also unlike Unix pipes, these pipes
+are portable and interact well with Haskell threads.
+-}
+
 newHVIOPipe :: IO (PipeReader, PipeWriter)
 newHVIOPipe = do mv <- newEmptyMVar
                  readerref <- newIORef (True, mv)
@@ -509,7 +566,12 @@ data PipeBit = PipeBit Char
              | PipeEOF
                deriving (Eq, Show)
 
+{- | The reading side of a Haskell pipe.  Please see 'newHVIOPipe' for more
+details. -}
 newtype PipeReader = PipeReader (VIOCloseSupport (MVar PipeBit))
+
+{- | The writing side of a Haskell pipe.  Please see 'newHVIOPipe' for more
+details. -}
 newtype PipeWriter = PipeWriter (VIOCloseSupport PipeReader)
 
 ------------------------------
