@@ -73,10 +73,10 @@ sendReply h codei text =
         in 
         writethis (map (rstrip) (lines text))
 
-{- | Main FTP handler; pass this to 
+{- | Main FTP handler; pass the result of applying this to one argument to 
 'MissingH.Network.SocketServer.handleHandler' -}
 
-ftpHandler :: (forall a. HVFS a => a) -> Handle -> SockAddr -> IO ()
+ftpHandler :: forall a. HVFS a => a -> Handle -> SockAddr -> IO ()
 ftpHandler f h sa =
     let serv = FTPServer {fs = f, handle = h}
         in
@@ -89,6 +89,7 @@ type CommandHandler = FTPServer -> SockAddr -> String -> IO Bool
 commands :: [(String, (CommandHandler, (String, String)))]
 commands =
     [("HELP", (cmd_help, help_help))
+    ,("QUIT", (cmd_quit, help_quit))
     ]
 
 commandLoop :: FTPServer -> SockAddr -> IO ()
@@ -113,6 +114,15 @@ commandLoop h sa =
               if continue
                  then commandLoop h sa
                  else return ()
+
+help_quit =
+    ("Terminate the program",
+     "")
+
+cmd_quit :: CommandHandler
+cmd_quit h sa args =
+    do sendReply h 211 "OK, Goodbye."
+       return False
 
 help_help =
     ("Display help on available commands",
