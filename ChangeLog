@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-25 15:34:28 GMT	John Goerzen <jgoerzen@complete.org>	version-0
+
+    Summary:
+      Added note that development has moved to a different archive
+    Revision:
+      missingh--head--1.0--version-0
+
+
+    new files:
+     .arch-ids/STOP-HERE-YOU-HAVE-THE-WRONG-ARCHIVE.id
+     STOP-HERE-YOU-HAVE-THE-WRONG-ARCHIVE
+
+    modified files:
+     ChangeLog
+
+
 2004-10-25 03:22:00 GMT	John Goerzen <jgoerzen@complete.org>	patch-123
 
     Summary:
