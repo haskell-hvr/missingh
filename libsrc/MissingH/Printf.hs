@@ -277,7 +277,6 @@ pio = id
 Welcome to the Haskell printf support.  This module is designed to emulate the
 C printf(3) family of functions.  Here are some quick introductory examples:
 
-#examples#
 
 >vsprintf "Hello"
 >> "Hello"
@@ -360,8 +359,6 @@ in an association list or FiniteMap passed in.  Python programmers will
 find this very similar to Python's @%@ operator, which can look up inside
 dicts.
 
-#alexample#
-
 Here's an example:
 
 >import MissingH.Printf
@@ -401,7 +398,7 @@ These make less sense in Haskell.
 Please be aware of the following as you use this module:
 
 If the type system cannot determine the type of an argument (as in the
-numeric literals in the examples at "MissingH.Printf#examples"), you may have to explicitly cast it to something.
+numeric literals in the examples in the introduction), you may have to explicitly cast it to something.
 In practice, this is only a problem in interactive situations like ghci or
 hugs.
 
@@ -497,8 +494,7 @@ When applied to the same example file as before, the output will be:
 >3          0000000015 000000000F
 >4          0000000023 0000000017
 
-There's a full association list example at
-"MissingH.Printf#alexample".
+There's a full association list example elsewhere in this document.
 
 -}
 

@@ -153,5 +153,19 @@ University wherever it may occur in that file.
 The code was obtained from
 http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
 
+----------------------------------------------------
+MissingH.Regex.Pesco was written by Sven Moritz Hallberg,
+<pesco@@gmx.de>, on December 6, 2004.  It was pulled from the darcs
+repository at http://www.scannedinavian.org/~pesco/code/Regex/ as of
+January 28, 2005.
+
+Sven's license is:
+
+TO THOSE CONCERNED ABOUT THE LAW:
+
+         All of this is mine! Take it and your soul shall be damned forever.
+         But you can keep it and do with it whatever you want.
+           -- SMH, Creator, Programmer.
+
 ------------------------------------------------------------------
 arch-tag: copyright statement

@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-28 17:29:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-180
+
+    Summary:
+      Added Pesco's regexp library; updated copyright; fixed Printf.hs to work with cpphs
+    Revision:
+      missingh--head--0.7--patch-180
+
+
+    new files:
+     libsrc/MissingH/Regex/.arch-ids/=id
+     libsrc/MissingH/Regex/.arch-ids/Pesco.lhs.id
+     libsrc/MissingH/Regex/Pesco.lhs
+
+    modified files:
+     COPYRIGHT ChangeLog Makefile MissingH.cabal
+     libsrc/MissingH/Printf.hs
+
+    new directories:
+     libsrc/MissingH/Regex libsrc/MissingH/Regex/.arch-ids
+
+
 2005-01-27 18:44:49 GMT	John Goerzen <jgoerzen@complete.org>	patch-179
 
     Summary:
