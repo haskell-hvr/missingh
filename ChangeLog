@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 18:34:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-76
+
+    Summary:
+      Fixed eof problems
+    Revision:
+      missingh--head--0.5--patch-76
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser/Lexer.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+     testsrc/ConfigParser/Parsertest.hs
+
+
 2004-11-18 17:26:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-75
 
     Summary:

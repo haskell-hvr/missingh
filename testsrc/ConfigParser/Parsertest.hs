@@ -25,6 +25,10 @@ test_basic =
     let f inp exp = exp @=? parse_string inp in
         do
         f "" []
+        f "\n" []
+        f "#foo bar" []
+        f "#foo bar\n" []
+        f "[emptysect]" [("emptysect", [])]
         f "foo: bar" [("DEFAULT", [("foo", "bar")])]
 
 tests = TestList [TestLabel "test_basic" (TestCase test_basic)

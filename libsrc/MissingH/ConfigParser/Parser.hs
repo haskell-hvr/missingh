@@ -33,32 +33,46 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.ConfigParser.Parser
 (
- parse_string,
+ parse_string, parse_file, parse_handle, ParseOutput
        --satisfyG,
        --main
 ) where
 import Text.ParserCombinators.Parsec
 import MissingH.Str
 import MissingH.ConfigParser.Lexer
+import System.IO(Handle, hGetContents)
+
+type ParseOutput = [(String, [(String, String)])]
 
 ----------------------------------------------------------------------
 -- Exported funcs
 ----------------------------------------------------------------------
 
-parse_string :: String -> [(String, [(String, String)])]
+parse_string :: String -> ParseOutput
 parse_string s = 
     detokenize "(string)" $ parse loken "(string)" s
+
+parse_file :: FilePath -> IO ParseOutput
+parse_file f =
+    do o <- parseFromFile loken f
+       return $ detokenize f o
+
+parse_handle :: Handle -> IO ParseOutput
+parse_handle h =
+    do s <- hGetContents h
+       let o = parse loken (show h) s
+       return $ detokenize (show h) o
 
 ----------------------------------------------------------------------
 -- Private funcs
 ----------------------------------------------------------------------
 detokenize fp l =
     let r = case l of
-                   Left err -> error (show err)
+                   Left err -> error $ "Lexer: " ++ (show err)
                    Right reply -> reply
         in
         case runParser main () fp r of
-                                    Left err -> error (show err)
+                                    Left err -> error $ "Parser: " ++ (show err)
                                     Right reply -> reply
 
 main :: GenParser CPTok () [(String, [(String, String)])]
