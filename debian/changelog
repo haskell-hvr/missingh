@@ -5,6 +5,7 @@ missingh (0.9.0) unstable; urgency=low
   * New support for converting arbitrary association lists and
     finite maps two/from string.
   * New module: MissingH.AnyDBM.StringDBM that uses this new support.
+  * New module: MissingH.Regex.Pesco
 
  -- John Goerzen <jgoerzen@complete.org>  Tue,  1 Feb 2005 15:22:37 -0600
 

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-03 14:43:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-194
+
+    Summary:
+      updated debian changelog
+    Revision:
+      missingh--head--0.7--patch-194
+
+
+    modified files:
+     ChangeLog debian/changelog
+
+
 2005-02-02 22:26:33 GMT	John Goerzen <jgoerzen@complete.org>	patch-193
 
     Summary:
