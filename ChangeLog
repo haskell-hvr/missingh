@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-24 02:43:11 GMT	John Goerzen <jgoerzen@complete.org>	patch-113
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--1.0--patch-113
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Client.hs
+     libsrc/MissingH/Network/FTP/Parser.hs
+
+
 2004-10-24 01:37:22 GMT	John Goerzen <jgoerzen@complete.org>	patch-112
 
     Summary:

@@ -42,7 +42,8 @@ module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
                                   -- * Utilities
                                   unexpectedresp, isxresp,
                                   forcexresp,
-                                  forceioresp)
+                                  forceioresp,
+                                  parseDirName)
 where
 
 import Text.ParserCombinators.Parsec
@@ -242,3 +243,14 @@ respToSockAddr f =
                   Just (_, x, _, _) -> fromPortString x
 
     
+parseDirName :: FTPResult -> Maybe String
+parseDirName (257, name:_) =
+    let procq [] = []
+        procq ['"'] = []
+        procq ('"' : '"' : xs) = '"' : procq xs
+        procq (x:xs) = x : procq xs
+        in       
+        if head name /= '"'
+           then Nothing
+           else Just (procq (tail name))
+

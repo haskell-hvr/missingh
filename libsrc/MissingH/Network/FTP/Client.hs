@@ -53,6 +53,7 @@ module MissingH.Network.FTP.Client(easyConnectTo, connectTo,
                                    setPassive,
                                    nlst, dir, rename,
                                    delete, cwd, size, quit,
+                                   mkdir, rmdir, pwd, 
                                    FTPConnection(isPassive),
                                    transfercmd, ntransfercmd,
                        )
@@ -258,13 +259,26 @@ size h fn = do
             forceioresp 200 r
             return (read . head . snd $ r)
 
--- FIXME: write mkd, rmd, pwd
+-- | Make new directory.  Returns the absolute name of the
+-- new directory if possible.
+mkdir :: FTPConnection -> String -> IO (Maybe String, FTPResult)
+mkdir h fn = do x <- sendcmd h ("MKD " ++ fn)
+                return (parseDirName x, x)
 
+-- | Remove a directory.
+rmdir :: FTPConnection -> String -> IO FTPResult
+rmdir h fn = sendcmd h ("RMD " ++ fn)
+
+-- | Print the current working directory.  The first component of the result
+-- is the parsed directory name, if the servers response was parsable.
+pwd :: FTPConnection -> IO (Maybe String, FTPResult)
+pwd h = do x <- sendcmd h ("PWD")
+           return (parseDirName x, x)
+
+-- | Log off the server and quit.
 quit :: FTPConnection -> IO FTPResult
 quit h = do
          r <- sendcmd h "QUIT"
          hClose (writeh h)
          -- hClose (readh_internal h)
          return r
-
-
