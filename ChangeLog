@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-21 22:02:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-136
+
+    Summary:
+      Added rename features
+    Revision:
+      missingh--head--0.7--patch-136
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Server.hs
+
+
 2004-12-21 21:13:57 GMT	John Goerzen <jgoerzen@complete.org>	patch-135
 
     Summary:

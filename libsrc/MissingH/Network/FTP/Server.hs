@@ -61,7 +61,8 @@ data AuthState = NoAuth
                 deriving (Eq, Show)
 data FTPState = FTPState
               { auth :: IORef AuthState,
-                datatype :: IORef DataType}
+                datatype :: IORef DataType,
+                rename :: IORef (Maybe String)}
 
 data FTPServer = forall a. HVFS a => FTPServer Handle a FTPState
 
@@ -93,7 +94,9 @@ anonFtpHandler f h sa =
         traplogging logname NOTICE "" $
           do authr <- newIORef (NoAuth)
              typer <- newIORef ASCII
-             let s = serv (FTPState {auth = authr, datatype = typer})
+             renamer <- newIORef (Nothing::Maybe String)
+             let s = serv (FTPState {auth = authr, datatype = typer,
+                                    rename = renamer})
              sendReply s 220 "Welcome to MissingH.Network.FTP.Server."
              commandLoop s sa
 
@@ -131,6 +134,8 @@ commands =
     ,("CDUP", (forceLogin cmd_cdup,  help_cdup))
     ,("TYPE", (forceLogin cmd_type,  help_type))
     ,("NOOP", (forceLogin cmd_noop,  help_noop))
+    ,("RNFR", (forceLogin cmd_rnfr,  help_rnfr))
+    ,("RNTO", (forceLogin cmd_rnto,  help_rnto))
     ]
 
 commandLoop :: FTPServer -> SockAddr -> IO ()
@@ -240,6 +245,34 @@ cmd_noop :: CommandHandler
 cmd_noop h _ _ =
     do sendReply h 200 "OK"
        return True
+
+help_rnfr = ("Specify FROM name for a file rename", "")
+cmd_rnfr :: CommandHandler
+cmd_rnfr h@(FTPServer _ _ state) _ args = 
+    if length args < 1
+       then do sendReply h 501 "Filename required"
+               return True
+       else do writeIORef (rename state) (Just args)
+               sendReply h 350 "Noted rename from name; please send RNTO."
+               return True
+
+help_rnto = ("Specify TO name for a file name", "")
+cmd_rnto :: CommandHandler
+cmd_rnto h@(FTPServer _ fs state) _ args =
+    if length args < 1
+       then do sendReply h 501 "Filename required"
+               return True
+       else do fr <- readIORef (rename state)
+               case fr of
+                   Nothing -> do sendReply h 503 "RNFR required before RNTO"
+                                 return True
+                   Just fromname -> 
+                       do writeIORef (rename state) Nothing
+                          trapIOError h (vRenameFile fs fromname args)
+                              $ \_ -> do sendReply h 250 
+                                           ("File " ++ fromname ++ 
+                                            " renamed to " ++ args)
+                                         return True
 
 help_help =
     ("Display help on available commands",
