@@ -28,11 +28,12 @@ module MissingH.Str(-- * Whitespace Removal
                         -- in "MissingH.List".
                         startswith, endswith,
                         -- * Conversions
-                        -- | Note: these functions are aliases for functions
+                        -- | Note: Some of these functions are aliases for functions
                         -- in "MissingH.List".
                         join, split, trunc
                        ) where
 import MissingH.List(startswith, endswith, join, split, trunc)
+import Text.Regex
 
 wschars = " \t\r\n"
 
@@ -67,3 +68,19 @@ lstrip s = case s of
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
+{-
+-- | Splits a string based on a regular expression.  The regular express
+-- should identify one delimiter.
+
+splitRe :: Regex -> String -> [String]
+splitRe delim [] = []
+splitRe delim str =
+    case matchRegexAll delim str of
+        Just (prefix, match, postfix, subex) ->
+            if (prefix == "") && (postfix == "") && (match == str) then
+               -- We matched just a delimiter
+               [] : [] : []
+            else prefix : splitRe delim postfix
+        Nothing -> [str]
+
+-}

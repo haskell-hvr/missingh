@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-09 00:54:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-64
+
+    Summary:
+      Prepping code for 0.4.0
+    Revision:
+      missingh--head--1.0--patch-64
+
+
+    modified files:
+     ChangeLog Setup.description libsrc/MissingH/Str.hs
+
+
 2004-10-08 22:02:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-63
 
     Summary:
