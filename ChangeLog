@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-13 04:26:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-23
+
+    Summary:
+      Added experimental printf
+    Revision:
+      missingh--head--0.5--patch-23
+
+
+    new files:
+     libsrc/MissingH/Printf.hs
+
+    modified files:
+     ChangeLog
+
+
 2004-10-29 13:37:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-22
 
     Summary:
