@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 02:16:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-32
+
+    Summary:
+      Renamed POSIX to Posix
+    Revision:
+      missingh--head--0.7--patch-32
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Checksum/CRC32/Posix.hs
+     testsrc/CRC32POSIXtest.hs
+
+    renamed files:
+     libsrc/MissingH/Checksum/CRC32/POSIX.hs
+       ==> libsrc/MissingH/Checksum/CRC32/Posix.hs
+
+
 2004-12-04 02:03:07 GMT	John Goerzen <jgoerzen@complete.org>	patch-31
 
     Summary:
