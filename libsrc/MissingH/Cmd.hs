@@ -16,7 +16,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- | Command invocation utilities.
+{- |
+   Module     : MissingH.Cmd
+   Copyright  : Copyright (C) 2004 John Goerzen
+   License    : GNU GPL, version 2 or above
+
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable to platforms with rawSystem
+
+ Command invocation utilities.
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}

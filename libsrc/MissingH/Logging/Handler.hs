@@ -16,7 +16,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- | Definition of log handler support
+{- |
+   Module     : MissingH.Logging.Handler
+   Copyright  : Copyright (C) 2004 John Goerzen
+   License    : GNU GPL, version 2 or above
+
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
+
+Definition of log handler support
 
 For some handlers, check out "MissingH.Logging.Handler.Simple" and
 "MissingH.Logging.Handler.Syslog".

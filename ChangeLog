@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 15:43:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-83
+
+    Summary:
+      Added Haddock meta-tags to docs
+    Revision:
+      missingh--head--1.0--patch-83
+
+
+    modified files:
+     COPYRIGHT ChangeLog debian/copyright libsrc/MissingH/Cmd.hs
+     libsrc/MissingH/IO.hs libsrc/MissingH/IO/Binary.hs
+     libsrc/MissingH/List.hs libsrc/MissingH/Logging.hs
+     libsrc/MissingH/Logging/Handler.hs
+     libsrc/MissingH/Logging/Handler/Simple.hs
+     libsrc/MissingH/Logging/Handler/Syslog.hs
+     libsrc/MissingH/Logging/Logger.hs libsrc/MissingH/Str.hs
+     libsrc/MissingH/Threads.hs
+
+
 2004-10-20 13:56:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-82
 
     Summary:

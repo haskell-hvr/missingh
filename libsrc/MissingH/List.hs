@@ -16,10 +16,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- | This module provides various helpful utilities for dealing with lists.
+{- |
+   Module     : MissingH.List
+   Copyright  : Copyright (C) 2004 John Goerzen
+   License    : GNU GPL, version 2 or above
+
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
+
+This module provides various helpful utilities for dealing with lists.
 
 Written by John Goerzen, jgoerzen\@complete.org
-n-}
+-}
 
 module MissingH.List(-- * Tests
                      startswith, endswith, contains,

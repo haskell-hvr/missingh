@@ -23,6 +23,19 @@ distribution.  Debian GNU/Linux users may find this in
 If the GPL is unacceptable for your uses, please e-mail me; alternative
 terms can be negotiated for your project.
 
+============================================================================
+Special Notes for Included Code
+============================================================================
+
+MissingH includes some code from other authors.  The copyright and license
+statements for these sources are included below.  All are GPL-compatible
+licenses, so if you have any doubt about how to treat MissingH as a whole,
+simply know that the GPL should be understood to cover the entire library.
+
+If you split out the parts originally from other authors, and use them
+completely independently of the rest of the library, you may treat them
+under the licenses shown below.
+
 ----------------------------------------------------
 The MissingH.Hsemail modules come from hsemail 2004-10-12 from 
 http://cryp.to/hsemail/.
