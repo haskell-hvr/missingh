@@ -120,7 +120,9 @@ lsl fs fp =
                        else if vIsSocket se then 's'
                        else if vIsNamedPipe se then 's'
                        else '-'
-                   in [typechar] ++ showmodes (vFileMode se)
+                   in vsprintf "%c%s" 
+                               typechar
+                               (showmodes (vFileMode se))
                                            
         in do c <- vGetDirectoryContents fs fp
               pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs x
