@@ -48,7 +48,8 @@ Useful standards:
 
 -}
 
-module MissingH.Network.FTP.Client(
+module MissingH.Network.FTP.Client(easyConnectTo, connectTo,
+                                   loginAnon, login
                        )
 where
 import MissingH.Network.FTP.Parser
@@ -65,23 +66,65 @@ getresp h = do c <- hGetContents h
 -}
 
 getresp = debugParseGoodReplyHandle
+unexpectedresp m r = error ("Expected " ++ m ++ ", got " ++ (show r))
 
-sendcmd h c = hPutStr h (c ++ "\r\n")
+isxresp desired (r, _) = r >= desired && r < (desired + 100)
+
+forcexresp desired r = if isxresp desired r
+                       then r
+                       else error (show desired)
+
+sendcmd h c = do hPutStr h (c ++ "\r\n")
+                 getresp h
 
 {- | Connect to the remote FTP server and read but discard
    the welcome.  Assumes
    default FTP port, 21, on remote. -}
-easyConnectTo :: Network.HostName -> IO Handle
+easyConnectTo :: Network.HostName -> IO FTPConnection
 easyConnectTo h = do x <- connectTo h (Network.PortNumber 21)
-                     return (fst x)
+                     let h = (fst x)
+                     -- hPutStr h "foo"
+                     return h
 
 {- | Connect to remote FTP server and read the welcome. -}
-connectTo :: Network.HostName -> Network.PortID -> IO (Handle, FTPResult)
+connectTo :: Network.HostName -> Network.PortID -> IO (FTPConnection, FTPResult)
 connectTo h p =
     do
     updateGlobalLogger "MissingH.Network.FTP.Parser" (setLevel DEBUG)
     h <- Network.connectTo h p
-    hSetBuffering h LineBuffering
+    --hIsReadable h >>= print
+    --hIsWritable h >>= print
+    -- hSetBuffering h LineBuffering
     r <- getresp h
-    --r `seq` return (h, r)
-    return (h, r)
+    -- hPutStr h "foo"
+    r `seq` return (h, r)
+    --return (h, r)
+
+{- | Log in anonymously. -}
+loginAnon :: FTPConnection -> IO FTPResult
+loginAnon h = login h "anonymous" (Just "anonymous@") Nothing
+
+{- | Log in to an FTP account. -}
+login :: FTPConnection                  -- ^ Connection
+         -> String                         -- ^ Username
+         -> Maybe String                -- ^ Password
+         -> Maybe String                -- ^ Account (rarely used)
+         -> IO FTPResult
+login h user pass acct =
+    do
+    ur <- sendcmd h ("USER " ++ user)
+    if isxresp 300 ur then
+       case pass of
+            Nothing -> error "FTP server demands password, but no password given"
+            Just p -> do pr <- sendcmd h ("PASS " ++ p)
+                         if isxresp 300 pr then
+                            case acct of
+                                Nothing -> error "FTP server demands account, but no account given"
+                                Just a -> do ar <- sendcmd h ("ACCT " ++ a)
+                                             return (forcexresp 200 ar)
+                                             return ar
+                            else return $ forcexresp 200 pr
+       else return $ forcexresp 200 ur
+
+            
+      

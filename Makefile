@@ -56,6 +56,9 @@ test-hugs:
 interact-hugs:
 	hugs -98 -P:$(PWD)/libsrc
 
+interact-ghci: all
+	ghci -ilibsrc
+
 interact: interact-hugs
 
 test: test-ghc6 test-hugs
