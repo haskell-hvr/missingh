@@ -43,6 +43,7 @@ build: build-stamp
 build-stamp: configure-stamp 
 	dh_testdir
 
+	make test-ghc6
 	# Add here commands to compile the package.
 	touch build-stamp
 
@@ -53,6 +54,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	-./setup clean
+	-make clean
 	-rm -rf setup Setup.hi Setup.ho Setup.o .*config* dist html
 
 	dh_clean 
@@ -71,6 +73,7 @@ builddocs-stamp:
 	dh_testdir
 
 	make doc
+	make test-hugs
 
 installdocs: builddocs
 	dh_testdir
