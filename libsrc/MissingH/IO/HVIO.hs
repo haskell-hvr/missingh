@@ -120,7 +120,8 @@ module MissingH.IO.HVIO(-- * Implementation Classes
                      StreamReader, newStreamReader,
 
                      -- ** Memory Buffer
-                     MemoryBuffer, newMemoryBuffer, getMemoryBuffer,
+                     MemoryBuffer, newMemoryBuffer, 
+                     mbDefaultCloseFunc, getMemoryBuffer,
 
                      -- ** Haskell Pipe
                      PipeReader, PipeWriter, newHVIOPipe
@@ -430,7 +431,7 @@ The present 'MemoryBuffer' implementation is rather inefficient, particularly
 when reading towards the end of large files.  It's best used for smallish
 data storage.  This problem will be fixed eventually.
 -}
-newtype MemoryBuffer = MemoryBuffer (VIOCloseSupport (Int, String))
+data MemoryBuffer = MemoryBuffer (String -> IO ()) (VIOCloseSupport (Int, String))
 
 {- | Create a new 'MemoryBuffer' instance.  The buffer is initialized
 to the value passed, and the pointer is placed at the beginning of the file.
@@ -438,12 +439,22 @@ to the value passed, and the pointer is placed at the beginning of the file.
 You can put things in it by using the normal 'vPutStr' calls, and reset to
 the beginning by using the normal 'vRewind' call.
 
-To create an empty buffer, pass the initial value @\"\"@. -}
-newMemoryBuffer :: String -> IO MemoryBuffer
-newMemoryBuffer init = do ref <- newIORef (True, (0, init))
-                          return (MemoryBuffer ref)
+The function is called when 'vClose' is called, and is passed the contents of
+the buffer at close time.  You can use 'mbDefaultCloseFunc' if you don't want to
+do anything.
 
-vrv (MemoryBuffer x) = x
+To create an empty buffer, pass the initial value @\"\"@. -}
+newMemoryBuffer :: String               -- ^ Initial Contents
+                -> (String -> IO ())    -- ^ close func
+                -> IO MemoryBuffer
+newMemoryBuffer init closefunc = do ref <- newIORef (True, (0, init))
+                                    return (MemoryBuffer closefunc ref)
+
+{- | Default (no-op) memory buf close function. -}
+mbDefaultCloseFunc :: String -> IO ()
+mbDefaultCloseFunc _ = return ()
+
+vrv (MemoryBuffer _ x) = x
 
 {- | Grab the entire contents of the buffer as a string. 
 Unlike 'vGetContents', this has no effect on the open status of the
@@ -456,7 +467,13 @@ instance Show MemoryBuffer where
     show _ = "<MemoryBuffer>"
 
 instance HVIO MemoryBuffer where
-    vClose = vioc_close . vrv
+    vClose x = do wasopen <- vIsOpen x
+                  vioc_close (vrv x)
+                  if wasopen
+                     then do c <- getMemoryBuffer x
+                             case x of
+                                 MemoryBuffer cf _ -> cf c
+                     else return ()
     vIsEOF h = do vTestOpen h
                   c <- vioc_get (vrv h)
                   return ((length (snd c)) == (fst c))

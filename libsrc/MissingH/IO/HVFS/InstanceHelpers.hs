@@ -35,10 +35,13 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                         SimpleStat(..),
                                         -- * HVFS objects & types
+                                        -- ** MemoryVFS
                                         MemoryVFS,
                                         newMemoryVFS, newMemoryVFSRef,
                                         MemoryNode,
                                         MemoryEntry(..),
+                                        -- ** FuncVFS
+                                        
                                        )
 where
 import MissingH.IO.HVFS
@@ -170,3 +173,4 @@ instance HVFSOpenable MemoryVFS where
     vOpen x fp _ = vRaiseError x permissionErrorType
                      "Only ReadMode is supported with MemoryVFS files"
                      (Just fp)
+

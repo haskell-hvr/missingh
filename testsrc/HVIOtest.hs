@@ -29,7 +29,7 @@ ioeq exp inp = do x <- inp
                   exp @=? x
 
 test_MemoryBuffer =
-    let f inp testfunc = TestLabel inp $ TestCase $ do x <- newMemoryBuffer inp
+    let f inp testfunc = TestLabel inp $ TestCase $ do x <- newMemoryBuffer inp mbDefaultCloseFunc
                                                        testfunc x
         in
         [
