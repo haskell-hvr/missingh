@@ -1,4 +1,4 @@
-{- arch-tag: Tests main file
+{- arch-tag: IO tests main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Tests(tests) where
+module IOtest(foo) where
 import HUnit
-import qualified Listtest
-import qualified Strtest
-import qualified IOtest
+import MissingH.IO
+import Testutil
 
-test1 = TestCase ("x" @=? "x")
+foo = hInteract
 
-tests = TestList [TestLabel "test1" test1,
-                 TestLabel "List" Listtest.tests,
-                 TestLabel "Str" Strtest.tests]
+
 
 

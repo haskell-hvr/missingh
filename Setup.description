@@ -5,5 +5,5 @@ License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2004 John Goerzen
-Modules: MissingH.List, MissingH.Str, MissingH.IO
+Modules: MissingH.List, MissingH.Str, MissingH.IO, MissingH.IO.Binary
 HS-Source-Dir: libsrc

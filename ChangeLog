@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 02:36:06 GMT	John Goerzen <jgoerzen@complete.org>	patch-40
+
+    Summary:
+      Split off binary functions since some environments don't support them
+    Revision:
+      missingh--head--1.0--patch-40
+
+
+    new files:
+     libsrc/MissingH/IO/.arch-ids/=id libsrc/MissingH/IO/Binary.hs
+     testsrc/IOtest.hs
+
+    modified files:
+     ChangeLog Makefile Setup.description libsrc/MissingH/IO.hs
+     testsrc/Tests.hs
+
+    new directories:
+     libsrc/MissingH/IO libsrc/MissingH/IO/.arch-ids
+
+
 2004-10-07 02:19:34 GMT	John Goerzen <jgoerzen@complete.org>	patch-39
 
     Summary:

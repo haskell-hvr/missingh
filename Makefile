@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-SOURCES := $(wildcard libsrc/MissingH/*.hs)
+SOURCES := $(wildcard libsrc/MissingH/*.hs) $(wildcard libsrc/MissingH/*/*.hs)
 OBJS := $(SOURCES:.hs=.o)
 
 all: libmissingH.a
