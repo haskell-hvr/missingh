@@ -2,6 +2,30 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-24 02:16:39 GMT	John Goerzen <jgoerzen@complete.org>	patch-167
+
+    Summary:
+      Readying 0.8.0
+    Revision:
+      missingh--head--0.7--patch-167
+
+
+    new files:
+     announcements/.arch-ids/=id announcements/0.8.0.txt
+     examples/.arch-ids/=id
+
+    modified files:
+     ChangeLog Setup.description
+
+    renamed files:
+     ftptest.hs
+       ==> examples/ftptest.hs
+
+    new directories:
+     announcements announcements/.arch-ids examples
+     examples/.arch-ids
+
+
 2004-12-24 01:48:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-166
 
     Summary:
