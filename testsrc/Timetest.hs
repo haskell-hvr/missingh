@@ -51,6 +51,6 @@ test_ct2e =
            1088701200
         ]
 
-tests = TestList [TestLabel "ctu2e" (TestList test_ctu2e),
+tests = TestList [TestLabel "ctu2e" (TestList test_ctu2e)
 #                  TestLabel "ct2e" (TestList test_ct2e)
                  ]

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-27 17:03:04 GMT	John Goerzen <jgoerzen@complete.org>	patch-177
+
+    Summary:
+      Fixed a syntax error
+    Revision:
+      missingh--head--0.7--patch-177
+
+
+    modified files:
+     ChangeLog testsrc/Timetest.hs
+
+
 2005-01-27 16:57:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-176
 
     Summary:
