@@ -33,7 +33,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.IO.HVFS(-- * Implementation Classes
-                        HVFS, HVFSStat,
+                        HVFS(..), HVFSStat(..),
                         -- * Re-exported types from other modules
                         FilePath, DeviceID, FileID, FileMode, LinkCount,
                         UserID, GroupID, FileOffset, EpochTime,
@@ -47,6 +47,7 @@ import System.IO.Error
 import System.Posix.Files
 import System.Posix.Types
 import System.Time
+import System.Directory
 
 class HVFSStat a where
     vDeviceID :: a -> DeviceID
@@ -92,13 +93,11 @@ class HVFSStat b => HVFS a b where
     vGetSymbolicLinkStatus :: a -> FilePath -> IO b
     vGetModificationTime :: a -> FilePath -> IO ClockTime
     vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO c
-
     vGetModificationTime fs fp = 
         do s <- (vGetFileStatus fs fp)::IO b
            let t = vModificationTime s
            return $ TOD (fromIntegral t) 0
-
-    vRaiseError fs et desc mfp =
+    vRaiseError _ et desc mfp =
         ioError $ mkIOError et desc Nothing mfp
 
     --vGetCurrentDirectory fs = vRaiseError fs 
@@ -109,3 +108,40 @@ class (HVFS a b, HVIOGeneric c) => HVFSOpenable a b c where
 ----------------------------------------------------------------------
 -- Standard implementations
 ----------------------------------------------------------------------
+instance HVFSStat FileStatus where
+    vDeviceID = deviceID
+    vFileID = fileID
+    vFileMode = fileMode
+    vLinkCount = linkCount
+    vFileOwner = fileOwner
+    vFileGroup = fileGroup
+    vSpecialDeviceID = specialDeviceID
+    vFileSize = fileSize
+    vAccessTime = accessTime
+    vModificationTime = modificationTime
+    vStatusChangeTime = statusChangeTime
+    vIsBlockDevice = isBlockDevice
+    vIsCharacterDevice = isCharacterDevice
+    vIsNamedPipe = isNamedPipe
+    vIsRegularFile = isRegularFile
+    vIsDirectory = isDirectory
+    vIsSymbolicLink = isSymbolicLink
+    vIsSocket = isSocket
+
+data SystemFS = SystemFS
+              deriving (Eq, Show)
+
+instance HVFS SystemFS FileStatus where
+    vGetCurrentDirectory _ = getCurrentDirectory
+    vSetCurrentDirectory _ = setCurrentDirectory
+    vGetDirectoryContents _ = getDirectoryContents
+    vDoesFileExist _ = doesFileExist
+    vDoesDirectoryExist _ = doesDirectoryExist
+    vCreateDirectory _ = createDirectory
+    vRemoveDirectory _ = removeDirectory
+    vRenameDirectory _ = renameDirectory
+    vRemoveFile _ = removeFile
+    vRenameFile _ = renameFile
+    vGetFileStatus _ = getFileStatus
+    vGetSymbolicLinkStatus _ = getSymbolicLinkStatus
+    --vGetModificationTime _ = getModificationTime
