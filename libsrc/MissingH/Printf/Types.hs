@@ -42,6 +42,7 @@ module MissingH.Printf.Types where
 
 import System.IO
 import Data.Ratio
+import Data.FiniteMap
 
 -- data Wrapped a = Wrapped a
 
@@ -50,6 +51,9 @@ data Value =
            | ValueString String
            | ValueChar Char
              deriving (Eq, Show)
+
+type PrintfAL = [(String, Value)]
+type PrintfFM = FiniteMap String Value
 
 showValue :: Value -> String
 showValue (ValueRational x) = show x
@@ -60,7 +64,7 @@ class PFType a where
     toValue :: a -> Value
     fromValue :: Value -> a
 
-instance Real a => PFType a where
+instance (Real a) => PFType a where
     toValue = ValueRational . toRational
     fromValue = error "fromValue to generic Real not supported"--fromRational . fromValue
 

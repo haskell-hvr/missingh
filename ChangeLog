@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 20:27:31 GMT	John Goerzen <jgoerzen@complete.org>	patch-61
+
+    Summary:
+      Experimental AL work for Printf
+    Revision:
+      missingh--head--0.5--patch-61
+
+
+    removed files:
+     libsrc/MissingH/Varargs.hs
+
+    modified files:
+     ChangeLog README libsrc/MissingH/Printf.hs
+     libsrc/MissingH/Printf/Types.hs
+
+
 2004-11-15 19:12:34 GMT	John Goerzen <jgoerzen@complete.org>	patch-60
 
     Summary:

@@ -35,6 +35,8 @@ Major Features
 
  * Other utilities for threads, parers, filenames, etc.
 
+ * Printf utilities for formatting strings
+
 The following modules are are provided at this time, and more are
 likely to follow:
 
@@ -88,6 +90,10 @@ MissingH.Network.        * Parse FTP protocol replies
 MissingH.Parsec          * Invert the sense of a parser
 
 MissingH.Path            * Split apart filename components
+
+MissingH.Printf          * Format strings using C-like syntax
+                         * Support for args as a list or as
+                           a variable-length argument
 
 MissingH.Str             * Leading/trailing whitespace removal
                          * Beginning/ending tests

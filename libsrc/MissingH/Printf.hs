@@ -108,24 +108,9 @@ mkflags x =
         in
         flags''
 
-{- | List version of 'vsprintf'. -}
-
-sprintf :: String -> [Value] -> String
-sprintf [] [] = []
-sprintf ('%' : '%' : xs) y = '%' : sprintf xs y
-{-
-sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
-sprintf ('!' : xs) (y : ys) = 
-    show (((fromValue y)::Int) + 1) ++ sprintf xs ys -}
-
-{-
-sprintf ('%' : t : xs) (y:ys) = 
-    let cv = get_conversion_func t y [] Nothing Nothing
-        in
-        cv ++ sprintf xs ys
--}
-
-sprintf ('%' : xs) (y : ys) =
+--type LookupFunc a :: String -> a -> (String, String, a)
+normLookup :: String -> [Value] -> (String, String, [Value])
+normLookup xs (y : ys) =
     case matchRegexAll sprintfre xs of
          Nothing -> error $ "Problem in format string at %" ++ xs
          --Just (_, _, r, x) -> "<" ++ show x ++ ">" ++ sprintf r ys
@@ -139,11 +124,31 @@ sprintf ('%' : xs) (y : ys) =
                  flags = mkflags flagstr
                  in
                  --(show width) ++ sprintf remainder ys
-                 fix_width flags width ((get_conversion_func fmt y flags width prec)) ++ sprintf remainder ys
+                 (fix_width flags width ((get_conversion_func fmt y flags width prec)), remainder, ys)
          _ -> error $ "Problem matching format string at %" ++ xs
-
+    
+{- | List version of 'vsprintf'. -}
+sprintf :: String -> [Value] -> String
+sprintf [] [] = []
+sprintf ('%' : '%' : xs) y = '%' : sprintf xs y
+sprintf ('%' : xs) y =
+    let (this, remainder, ys) = normLookup xs y
+        in
+        this ++ sprintf remainder ys
 sprintf (x:xs) y = x : sprintf xs y
 
+{-
+sprintf :: String -> [Value] -> String
+sprintf = sprintfG id sprintf
+-}
+
+{-
+{- | Association list printing -}
+sprintfAL :: String -> PrintfAL -> String
+sprintfAL [] _ = []
+sprintfAL ('%' : '%' : xs) y = '%' : sprintfAL xs y
+sprintfAL ('%' : xs) (y : ys) =
+-}
 {- | Given a format string and zero or more arguments, return a string
 that has formatted them appropriately.  This is the variable argument version
 of 'sprintf'. -}
