@@ -4,6 +4,8 @@ module MissingH.Printf.Types where
 
 import System.IO
 
+data Wrapped a = Wrapped a
+
 data Value =
            ValueInteger Integer
            | ValueString String
