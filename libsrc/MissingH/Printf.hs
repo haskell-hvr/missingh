@@ -66,6 +66,9 @@ module MissingH.Printf(-- * Introduction
                        -- *** FiniteMap Output
                        sprintfFM, printfFM, fprintfFM,
 
+                       -- *** Generic\/Custom Output
+                       sprintfG, printfG, fprintfG,
+
                        -- * Utility Function
                        v,
                        -- * Differences from C
@@ -159,25 +162,39 @@ sprintf ('%' : xs) y =
         this ++ sprintf remainder ys
 sprintf (x:xs) y = x : sprintf xs y
 
+{- | Generic version of 'sprintf'.
+
+This is one of the map-style functions and provides a way for you to integrate
+your own lookup support into sprintf.  The first parameter is a lookup
+function.  It takes a variable name and a map data object and returns
+a sought-after Value.  It is expected to return Nothing if the given
+key could not be found.
+
+You might be interested to know that related helper functions can be defined
+thusly:
+
+>sprintfAL = sprintfG lookup
+>sprintfFM = sprintfG (flip lookupFM)
+-}
+sprintfG :: (String -> a -> Maybe Value)-- ^ Lookup function
+         -> String                      -- ^ Format string
+         ->  a                          -- ^ Lookup data
+         -> String                      -- ^ Return value
+sprintfG _ [] _ = []
+sprintfG conv ('%' : '%' : xs) y = '%' : sprintfG conv xs y
+sprintfG conv ('%' : xs) y =
+    let (this, remainder) = (gLookup conv) xs y
+        in
+        this ++ sprintfG conv remainder y
+sprintfG conv (x:xs) y = x : sprintfG conv xs y
+
 {- | Association list version of 'sprintf'. -}
 sprintfAL :: String -> [(String, Value)] -> String
-sprintfAL [] _ = []
-sprintfAL ('%' : '%' : xs) y = '%' : sprintfAL xs y
-sprintfAL ('%' : xs) y =
-    let (this, remainder) = (gLookup lookup) xs y
-        in
-        this ++ sprintfAL remainder y
-sprintfAL (x:xs) y = x : sprintfAL xs y
+sprintfAL = sprintfG lookup
 
 {- | Finite map version of 'sprintf'. -}
 sprintfFM :: String -> FiniteMap String Value -> String
-sprintfFM [] _ = []
-sprintfFM ('%' : '%' : xs) y = '%' : sprintfFM xs y
-sprintfFM ('%' : xs) y =
-    let (this, remainder) = (gLookup (flip lookupFM)) xs y
-        in
-        this ++ sprintfFM remainder y
-sprintfFM (x:xs) y = x : sprintfFM xs y
+sprintfFM = sprintfG (flip lookupFM)
 
 {- | Given a format string and zero or more arguments, return a string
 that has formatted them appropriately.  This is the variable argument version
@@ -200,6 +217,11 @@ to the given Handle. -}
 fprintfFM :: Handle -> String -> FiniteMap String Value -> IO ()
 fprintfFM h f v = hPutStr h $ sprintfFM f v
 
+{- | Like 'sprintfG', but instead of returning a string, directs output
+to the given Handle. -}
+fprintfG :: Handle -> (String -> a -> Maybe Value) -> String -> a -> IO ()
+fprintfG h c f v = hPutStr h $ sprintfG c f v
+
 {- | Like 'fprintf', but directs output to standard out instead of
 taking an explicit Handle. -}
 printf :: String -> [Value] -> IO ()
@@ -214,6 +236,11 @@ printfAL = fprintfAL stdout
 taking an explicit Handle. -}
 printfFM :: String -> FiniteMap String Value -> IO ()
 printfFM = fprintfFM stdout
+
+{- | Like 'fprintfG', but directs output to standard out instead of
+taking an explicit Handle. -}
+printfG :: (String -> a -> Maybe Value) -> String -> a -> IO ()
+printfG = fprintfG stdout
 
 {- | Like 'vsprintf', but instead of returning a string, directs output to
 the given Handle. -}
