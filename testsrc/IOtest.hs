@@ -21,7 +21,7 @@ import HUnit
 import MissingH.IO
 import Testutil
 
-foo = hInteract
+
 
 
 
