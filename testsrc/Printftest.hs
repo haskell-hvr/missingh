@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Printftest(tests) where
 import HUnit
 import MissingH.Printf
+import Data.FiniteMap
 
 test_vsprintf = 
     do
@@ -40,23 +41,29 @@ test_vsprintf =
     "John, your age is 10\n" @=? sprintf "%s, your age is %d\n" [v "John",
                                                                  v (10::Integer)]
 
-test_al =
+test_al_fm =
     let testal = [("foo", v (1::Int)),
                   ("bar", v "asdf"),
                   ("baz", v (3.14::Double))]
-        f exp inp = exp @=? sprintfAL inp testal
+        testfm = listToFM testal
+        f exp inp = do 
+                    exp @=? sprintfAL inp testal
+                    exp @=? sprintfFM inp testfm
         in do
            f "" ""
+           f "%" "%%"
            f "asdf" "%(bar)s"
            f "001" "%(foo)03d"
            f "asdf " "%(bar)-5s"
            f "3.140" "%(baz).3f"
+           f "%asdf%" "%%%(bar)s%%"
+           f "Str: asdf % Int: 1" "Str: %(bar)s %% Int: %(foo)d"
 
 test_vsprintf_generics =
     do
     "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Int)
     "%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
-                          "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Rational)
+    "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Rational)
     "quux: 3.140000e+02" @=? vsprintf "%s: %e" "quux" (314::Double)
     "fe" @=? vsprintf "%x" (254::Int)
     "FE" @=? vsprintf "%X" (254::Int)
@@ -82,5 +89,5 @@ test_vsprintf_strings =
 tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf),
                   TestLabel "vsprintf generics" (TestCase test_vsprintf_generics),
                   TestLabel "vsprintf strings" (TestCase test_vsprintf_strings),
-                  TestLabel "vsprintf AL" (TestCase test_al)
+                  TestLabel "vsprintf AL&FM" (TestCase test_al_fm)
                  ]

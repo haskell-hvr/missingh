@@ -57,6 +57,7 @@ module MissingH.Printf(-- * Introduction
                        printf,
                        fprintf,
                        sprintfAL,
+                       sprintfFM,
                        -- ** Utility Function
                        v,
                        -- * Differences from C
@@ -82,6 +83,7 @@ import System.IO
 import MissingH.Printf.Types
 import MissingH.Printf.Printer(get_conversion_func, fix_width)
 import Text.Regex
+import Data.FiniteMap(lookupFM)
 
 v :: PFType a => a -> Value
 v = toValue
@@ -153,7 +155,7 @@ sprintf ('%' : xs) y =
         this ++ sprintf remainder ys
 sprintf (x:xs) y = x : sprintf xs y
 
-{- | Association list printing -}
+{- | Association list version of 'sprintf'. -}
 sprintfAL :: String -> PrintfAL -> String
 sprintfAL [] _ = []
 sprintfAL ('%' : '%' : xs) y = '%' : sprintfAL xs y
@@ -162,6 +164,16 @@ sprintfAL ('%' : xs) y =
         in
         this ++ sprintfAL remainder y
 sprintfAL (x:xs) y = x : sprintfAL xs y
+
+{- | Finite map version of 'sprintf'. -}
+sprintfFM :: String -> PrintfFM -> String
+sprintfFM [] _ = []
+sprintfFM ('%' : '%' : xs) y = '%' : sprintfFM xs y
+sprintfFM ('%' : xs) y =
+    let (this, remainder) = (gLookup (flip lookupFM)) xs y
+        in
+        this ++ sprintfFM remainder y
+sprintfFM (x:xs) y = x : sprintfFM xs y
 
 {- | Given a format string and zero or more arguments, return a string
 that has formatted them appropriately.  This is the variable argument version
