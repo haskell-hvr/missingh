@@ -20,14 +20,17 @@ module AnyDBMtest(mf, generic_test, tests) where
 import HUnit
 import MissingH.List
 import MissingH.IO.HVFS
+import MissingH.IO.HVFS.InstanceHelpers
 import MissingH.AnyDBM
+import MissingH.AnyDBM.StringDBM
 import Data.HashTable
 import Data.List(sort)
 import Control.Exception(finally)
 
-mf :: AnyDBM a => IO a -> String -> (a -> Assertion) -> Test
-mf openfunc msg code =
-    TestLabel msg $ TestCase $ do h <- openfunc
+mf :: AnyDBM a => IO b -> (b -> IO a) -> String -> (a -> Assertion) -> Test
+mf initfunc openfunc msg code =
+    TestLabel msg $ TestCase $ do i <- initfunc
+                                  h <- openfunc i
                                   finally (code h) (closeA h)
         
 infix 1 @>=?
@@ -44,8 +47,8 @@ weirdl = sort $ [("", "empty"),
                  ("v3,v4", ""),
                  ("k\0ey", "\xFF")]
 
-generic_test openfunc =
-    let f = mf openfunc in
+generic_test initfunc openfunc =
+    let f = mf initfunc openfunc in
         [
          f "empty" $ \h -> do [] @>=? keysA h
                               [] @>=? valuesA h
@@ -70,9 +73,13 @@ generic_test openfunc =
                                    deleteall h
         ]
 
-test_hashtable = generic_test $ ((new (==) hashString)::IO (HashTable String String))
+test_hashtable = generic_test (return ())
+                  (\_ -> ((new (==) hashString)::IO (HashTable String String)))
+test_stringdbm = generic_test (newMemoryVFS [])
+                   (\f -> openStringDBM f "/foo" ReadWriteMode)
 
-tests = TestList [TestLabel "HashTable" (TestList test_hashtable)
+tests = TestList [TestLabel "HashTable" (TestList test_hashtable),
+                  TestLabel "StringDBM" (TestList test_stringdbm)
                  ]
 
 

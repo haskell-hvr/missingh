@@ -36,7 +36,8 @@ The data is written out during a call to 'flush' or 'close'.
 
 module MissingH.AnyDBM.StringDBM (StringDBM,
                                   openStringDBM,
-                                  SystemFS(..)
+                                  SystemFS(..),
+                                  IOMode(..)
                                  )
 where
 import MissingH.AnyDBM
@@ -73,9 +74,12 @@ openStringDBM h fp WriteMode =
 openStringDBM h fp ReadWriteMode =
     -- Nothing different to start with.  Later, we emulate WriteMode.
     -- Nothing is ever read after the object is created.
-    do o <- openStringDBM h fp ReadMode
-       case o of
-              StringDBM x _ y z -> return $ StringDBM x WriteMode y z
+    do ht <- new (==) hashString
+       d <- vDoesFileExist h fp
+       if d
+          then vReadFile h fp >>= strToA ht
+          else return ()
+       return $ StringDBM ht WriteMode h fp
 
 g :: StringDBM -> HashTable String String
 g (StringDBM ht _ _ _) = ht

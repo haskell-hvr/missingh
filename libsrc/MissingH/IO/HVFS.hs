@@ -58,7 +58,7 @@ module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
                         -- * Re-exported types from other modules
                         FilePath, DeviceID, FileID, FileMode, LinkCount,
                         UserID, GroupID, FileOffset, EpochTime,
-                        
+                        IOMode
                     )
 where
 
