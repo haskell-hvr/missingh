@@ -73,13 +73,25 @@ class HVFSStat a where
 
 {- | The main HVFS class.
 
-A default implementation of 'vGetModificationTime' is provided (in terms
-of 'vGetFileStatus').  A standard implementation of 'vRaiseError' is also
-provided.
+Default implementations of these functions are provided:
+
+ * 'vGetModificationTime' -- implemented in terms of 'vGetFileStatus'
+
+ * 'vRaiseError'
+
+ * 'vDoesFileExist' -- implemented in terms of 'vGetFileStatus'
+
+ * 'vDoesDirectoryExist' -- implemented in terms of 'vGetFileStatus'
+
+ * 'vGetSymbolicLinkStatus' -- set to call 'vGetFileStatus'.
 
 Default implementations of all other functions
 will generate an isIllegalOperation error, since they are assumed to be
-un-implemented. -}
+un-implemented.
+
+You should always provide at least a 'vGetFileStatus' call, and almost
+certainly several of the others.
+ -}
 class HVFS a where
     vGetCurrentDirectory :: a -> IO FilePath
     vSetCurrentDirectory :: a -> FilePath -> IO ()
@@ -95,15 +107,38 @@ class HVFS a where
     vGetSymbolicLinkStatus :: a -> FilePath -> IO HVFSStatEncap
     vGetModificationTime :: a -> FilePath -> IO ClockTime
     vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO c
+
     vGetModificationTime fs fp = 
-        do s <- (vGetFileStatus fs fp)
+        do s <- vGetFileStatus fs fp
            case s of
                   HVFSStatEncap x -> return $ 
                                       TOD (fromIntegral (vModificationTime x)) 0
     vRaiseError _ et desc mfp =
         ioError $ mkIOError et desc Nothing mfp
 
-    --vGetCurrentDirectory fs = vRaiseError fs 
+    vGetCurrentDirectory fs = eh fs "vGetCurrentDirectory"
+    vSetCurrentDirectory fs _ = eh fs "vSetCurrentDirectory"
+    vGetDirectoryContents fs _ = eh fs "vGetDirectoryContents"
+    vDoesFileExist fs fp = 
+        catch (do s <- vGetFileStatus fs fp
+                  case s of
+                     HVFSStatEncap x -> return $ vIsRegularFile x
+              ) (\_ -> return False)
+    vDoesDirectoryExist fs fp = 
+        catch (do s <- vGetFileStatus fs fp
+                  case s of
+                     HVFSStatEncap x -> return $ vIsDirectory x
+              ) (\_ -> return False)
+    vCreateDirectory fs _ = eh fs "vCreateDirectory"
+    vRemoveDirectory fs _ = eh fs "vRemoveDirectory"
+    vRemoveFile fs _ = eh fs "vRemoveFile"
+    vRenameFile fs _ _ = eh fs "vRenameFile"
+    vGetSymbolicLinkStatus = vGetFileStatus
+
+-- | Error handler helper
+eh :: HVFS a => a -> String -> IO c
+eh fs desc = vRaiseError fs illegalOperationErrorType 
+             (desc ++ " is not implemented in this HVFS class") Nothing
 
 class (HVFS a, HVIOGeneric c) => HVFSOpenable a b c where
     vOpen :: a -> FilePath -> IO c
