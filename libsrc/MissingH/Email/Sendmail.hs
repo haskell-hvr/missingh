@@ -85,10 +85,12 @@ sendmail_worker args msg =
     let func h = hPutStr h msg
         in
         do
-        pOpen WriteToPipe "/usr/sbin/sendmail" args func
-        
-        catch (pOpen WriteToPipe "sendmail" args func) 
-                  (\_ -> do
-                         sn <- findsendmail
-                         pOpen WriteToPipe sn args func)
-
+        --pOpen WriteToPipe "/usr/sbin/sendmail" args func
+        rv <- try (pOpen WriteToPipe "sendmail" args func)
+        case rv of
+            Right x -> return x
+            Left _ -> do
+                      sn <- findsendmail
+                      rv <- pOpen WriteToPipe sn args func
+                      return $! rv
+                         
