@@ -51,7 +51,7 @@ import MissingH.List
 import MissingH.Bits
 import MissingH.Str
 import MissingH.Logging.Logger
-import Network.Socket(SockAddr(..), PortNumber(..))
+import Network.Socket(SockAddr(..), PortNumber(..), inet_addr)
 import System.IO(Handle, hGetContents)
 import System.IO.Unsafe
 import Text.Regex
@@ -219,24 +219,26 @@ toPortString _ =
     error "toPortString only works on AF_INET addresses"
 
 -- | Converts a port string to a socket address.  This is the inverse calculation of 'toPortString'.
-fromPortString :: String -> SockAddr
+fromPortString :: String -> IO SockAddr
 fromPortString instr =
     let inbytes = split "," instr
-        hostbytes = map read (take 4 inbytes)
+        hostname = join "." (take 4 inbytes)
         portbytes = map read (drop 4 inbytes)
         in
-        SockAddrInet (fromInteger $ fromBytes portbytes) (fromBytes hostbytes)
+        do
+        addr <- inet_addr hostname
+        return $ SockAddrInet (fromInteger $ fromBytes portbytes) addr
 
 respToSockAddrRe = mkRegex("([0-9]+,){5}[0-9]+")
 -- | Converts a response code to a socket address
-respToSockAddr :: FTPResult -> SockAddr
+respToSockAddr :: FTPResult -> IO SockAddr
 respToSockAddr f =
-    let r = forcexresp 200 f
-        in
-        if (fst r) /= 227 then
-           error ("Not a 227 response: " ++ show r)
-           else case matchRegexAll respToSockAddrRe (head (snd r)) of
-               Nothing -> error ("Could not find remote endpoint in " ++ (show r))
-               Just (_, x, _, _) -> fromPortString x
+    do
+    forceioresp 200 f
+    if (fst f) /= 227 then
+       fail ("Not a 227 response: " ++ show f)
+       else case matchRegexAll respToSockAddrRe (head (snd f)) of
+                  Nothing -> fail ("Could not find remote endpoint in " ++ (show f))
+                  Just (_, x, _, _) -> fromPortString x
 
     

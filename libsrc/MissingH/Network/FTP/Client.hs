@@ -158,7 +158,7 @@ makepasv h =
     do
     r <- sendcmd h "PASV"
     putStrLn "makepasv returning "
-    return (respToSockAddr r)
+    respToSockAddr r
 
 {- | Establishes a connection to the remote. 
 

@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-23 22:18:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-110
+
+    Summary:
+      retrlines is working
+    Revision:
+      missingh--head--1.0--patch-110
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Client.hs
+     libsrc/MissingH/Network/FTP/Parser.hs
+
+
 2004-10-23 21:03:06 GMT	John Goerzen <jgoerzen@complete.org>	patch-109
 
     Summary:
