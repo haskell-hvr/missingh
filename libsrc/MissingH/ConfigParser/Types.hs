@@ -57,7 +57,14 @@ type OptionSpec = String
 {- | Storage of options. -}
 type CPOptions = FiniteMap OptionSpec String
 
-{- | The main data storage type (storage of sections). -}
+{- | The main data storage type (storage of sections).
+
+PLEASE NOTE: This type is exported only for use by other modules under
+MissingH.ConfigParser.  You should NEVER access the FiniteMap in a ConfigParser
+directly.  This type may change in future releases of MissingH, which could
+break your programs.  Please retrict yourself to the interface in
+'MissingH.ConfigParser'.
+ -}
 type CPData = FiniteMap SectionSpec CPOptions
 
 {- | Possible ConfigParser errors. -}

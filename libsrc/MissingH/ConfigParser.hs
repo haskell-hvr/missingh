@@ -83,20 +83,19 @@ module MissingH.ConfigParser
 
      -- * Accessing Data
      get, getbool, getnum,
-
-     -- * Setting Data
-     set, setshow,
-
-     -- * Output Data
-     to_string,
-
-     -- * Meta-queries
      sections, has_section,
      options, has_option,
      items,
 
-     -- * Miscellaneous Manipulation
-     add_section, merge
+     -- * Modifying Data
+     set, setshow, remove_option,
+     add_section, remove_section,
+     merge,
+
+     -- * Output Data
+     to_string
+
+
 ) where
 import MissingH.ConfigParser.Types
 import MissingH.ConfigParser.Parser
@@ -255,6 +254,34 @@ add_section cp s =
        then throwError $ (SectionAlreadyExists s, "add_section")
        else return $ cp {content = addToFM (content cp) s emptyFM}
 
+{- | Removes the specified section.  Returns a 'NoSection' error if
+the section does not exist; otherwise, returns the new 'ConfigParser'
+object.
+
+This call may not be used to remove the @DEFAULT@ section.  Attempting to do
+so will always cause a 'NoSection' error.
+ -}
+remove_section :: ConfigParser -> SectionSpec -> CPResult ConfigParser
+remove_section _ "DEFAULT" = throwError $ (NoSection "DEFAULT", "remove_section")
+remove_section cp s = 
+    if has_section cp s
+       then return $ cp {content = delFromFM (content cp) s}
+       else throwError $ (NoSection s, "remove_section")
+
+{- | Removes the specified option.  Returns a 'NoSection' error if the
+section does not exist and a 'NoOption' error if the option does not
+exist.  Otherwise, returns the new 'ConfigParser' object.
+-}
+remove_option :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult ConfigParser
+remove_option cp s passedo =
+    do sectmap <- maybeToEither (NoSection s, "remove_option") $ lookupFM (content cp) s
+       let o = (optionxform cp) passedo
+       let newsect = delFromFM sectmap o
+       let newmap = addToFM (content cp) s newsect
+       if elemFM o sectmap
+          then return $ cp {content = newmap}
+          else throwError $ (NoOption o, "remove_option")
+
 {- | Returns a list of the names of all the options present in the
 given section.
 
@@ -371,7 +398,16 @@ setshow :: Show a => ConfigParser -> SectionSpec -> OptionSpec -> a -> CPResult 
 setshow cp s o val = set cp s o (show val)
 
 {- | Converts the 'ConfigParser' to a string representation that could be
-later re-parsed by this module. -}
+later re-parsed by this module or modified by a human.
+
+Note that this does not necessarily re-create a file that was originally
+loaded.  Things may occur in a different order, comments will be removed,
+etc.  The conversion makes an effort to make the result human-editable,
+but it does not make an effort to make the result identical to the original
+input.
+
+The result is, however, guaranteed to parse the same as the original input.
+ -}
 to_string :: ConfigParser -> String
 to_string cp = 
     let gen_option (key, value) = 
@@ -511,6 +547,10 @@ before\/after the colon or equal sign if they like, and it will be
 automatically stripped.
 
 Blank lines or lines consisting solely of whitespace are ignored. 
+
+A line giving an option or a section name may not begin with white space.
+This requirement is necessary so there is no ambiguity between such lines
+and continuation lines for multi-line options.
 
 -}
 
@@ -687,7 +727,15 @@ It all works quite easily.
 
 {- $configuringcp
 
-FIXME: start here
+You may notice that the 'ConfigParser' object has some configurable parameters,
+such as 'usedefault'.  In case you're not familiar with the Haskell syntax
+for working with these, you can use syntax like this to set these options:
+
+>let cp2 = cp { usedefault = False }
+
+This will create a new 'ConfigParser' that is the same as @cp@ except for
+the 'usedefault' field, which is now always False.  The new object will be
+called @cp2@ in this example.
 -}
 
 {- $reading

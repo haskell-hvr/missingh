@@ -8,6 +8,7 @@ test configparser:
  * according to ocaml spec
  * with various default options
  * exception system
+ * remove_*
 
 document configparser
 
