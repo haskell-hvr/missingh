@@ -2,6 +2,29 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-22 15:23:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-96
+
+    Summary:
+      Added basic FTP support, Parsec utilities
+    Revision:
+      missingh--head--1.0--patch-96
+
+
+    new files:
+     .arch-ids/notes.txt.id
+     libsrc/MissingH/Network/FTP/.arch-ids/=id
+     libsrc/MissingH/Network/FTP/Client.hs
+     libsrc/MissingH/Network/FTP/Parser.hs
+     libsrc/MissingH/Parsec.hs notes.txt
+
+    modified files:
+     ChangeLog Setup.description
+
+    new directories:
+     .arch-ids libsrc/MissingH/Network/FTP
+     libsrc/MissingH/Network/FTP/.arch-ids
+
+
 2004-10-21 17:55:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-95
 
     Summary:
