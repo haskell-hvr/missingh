@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-06 18:05:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-50
+
+    Summary:
+      Imported blockio 2004-11-12
+    Revision:
+      missingh--head--0.7--patch-50
+
+
+    new files:
+     libsrc/MissingH/IO/.arch-ids/BlockIO.hs.id
+     libsrc/MissingH/IO/BlockIO.hs
+     libsrc/MissingH/Threads/.arch-ids/=id
+     libsrc/MissingH/Threads/.arch-ids/Child.hs.id
+     libsrc/MissingH/Threads/Child.hs
+
+    modified files:
+     COPYRIGHT ChangeLog Setup.description debian/changelog
+
+    new directories:
+     libsrc/MissingH/Threads libsrc/MissingH/Threads/.arch-ids
+
+
 2004-12-06 17:58:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-49
 
     Summary:

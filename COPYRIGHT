@@ -54,6 +54,22 @@ I (John Goerzen) have made these modifications:
    and were removed.
 
 ----------------------------------------------------
+The MissingH.Threads.Child and MissingH.IO.BlockIO modules from from
+blockio 2004-11-12 from http://cryp.to/blockio/.
+
+Copyright/License:
+
+  Copyright (c) 2004 Peter Simons <simons@cryp.to>. All rights reserved. This
+  software is released under the terms of the GNU General Public License.
+
+I (John Goerzen) have made these modifications:
+
+ * Module names adjusted to work with MissingH
+
+ * Some files from the source distribution are not relevant to MissingH
+   and were removed.
+
+----------------------------------------------------
 The Wash modules come from WashNGo 2.0.5.  Mail is version 0.3.7.  Utility
 is version 0.3.11.   They are available from
 http://www.informatik.uni-freiburg.de/~thiemann/haskell/WASH/.
