@@ -21,7 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IOutil(-- * Line Processing Utilities
+module MissingH.IOutil(-- * Entire File\/Handle Utilities
+                       -- ** Opened Handle Data Copying
+                       hBlockCopy, blockCopy,
+                       -- ** Disk File Data Copying
+                       -- * Line Processing Utilities
                        hPutStrLns, hGetLines,
                        -- * Binary Single-Block I\/O
                        hPutBufStr, putBufStr, hGetBufStr, getBufStr,
@@ -35,7 +39,7 @@ module MissingH.IOutil(-- * Line Processing Utilities
                        hLineInteract, lineInteract,
                        -- ** Binary Block-based
                        hBlockInteract, blockInteract,
-                       hFullBlockInteract, hFullBlockInteract
+                       hFullBlockInteract, fullBlockInteract
                         ) where
 
 import Foreign.Ptr
@@ -248,3 +252,20 @@ hBlockInteractUtil blockreader blocksize hin hout func =
     do
     blocks <- blockreader hin blocksize
     hPutBlocks hout (func blocks)
+
+{- | Copies everything from the input handle to the output handle using binary
+blocks of the given size.  This is actually a beautiful implementation:
+
+> hBlockCopy bs hin hout = 'hBlockInteract' bs hin hout id
+
+('id' is the built-in Haskell function that just returns whatever is given
+to it)
+-}
+
+hBlockCopy :: Int -> Handle -> Handle -> IO ()
+hBlockCopy bs hin hout = hBlockInteract bs hin hout id
+
+{- | Copies from stdin to stdout using binary blocks of the given size.
+-}
+blockCopy :: Int -> IO ()
+blockCopy bs = hBlockCopy bs stdin stdout
