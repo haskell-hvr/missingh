@@ -1,3 +1,10 @@
+missingh (0.5.0) unstable; urgency=low
+
+  * Lots of new code: FTP, MIME, Wash, Hsemail, etc.
+  * Rebuilt for new ghc.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sun, 24 Oct 2004 01:46:35 -0500
+
 missingh (0.4.2) unstable; urgency=low
 
   * Added MissingH.List.contains

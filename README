@@ -17,8 +17,15 @@ Major Features
 
    Also included is a native-Haskell Syslog client.
 
+ * Versatile modules to simplify everyday tasks:
+   + FTP client library
+   + E-mail client library
+   + MIME types library to determine MIME types from files or URLs
+
  * IO utilities make it easier to work with line-based text files
    and binary files
+
+ * Network utilities to streamline connections
 
  * List utilities including association list tools,
    list splitting, truncation, and delimiter joining
@@ -26,13 +33,23 @@ Major Features
  * String utilities including removal of leading or trailing
    whitespace, joining, splitting, and truncation
 
+ * Other utilities for threads, parers, filenames, etc.
+
 The following modules are are provided at this time, and more are
 likely to follow:
+
+MissingH.Bits            * Obtain individual bytes from a bitfield
+
+MissingH.Cmd             * Trap errors during calls to external programs
+
+MissingH.FiniteMap       * Flip a finite map
+
+MissingH.Hsemail         * E-mail parsers
 
 MissingH.IO              * Copying data between files or handles
                          * Lazy operations on line input
 
-MissingH.Io.Binary       * Binary I/O with Haskell strings
+MissingH.IO.Binary       * Binary I/O with Haskell strings
                          * Lazy operations on binary blocks
 
 MissingH.List            * Association list manipulation
@@ -52,11 +69,37 @@ MissingH.Logging.        * Logging to local or remote syslog
 MissingH.Logging.Logger  * Primary user interface to logging
                          * Documentation for the logging system
 
+MissingH.MIMETypes       * Determine the MIME type of a file
+                         * Guess an extension based on MIME type
+
+MissingH.Network         * Establish TCP connections easily
+                         * Trap SIGPIPE to prevent odd crashes
+
+MissingH.Network.        * Versatile FTP client module
+ FTP.Client              * Full support for uploads and downloads
+                         * Passive or standard mode
+                         * Lazy uploads and downloads
+                         * Also provides low-level interface to issue
+                           advanced server commands
+
+MissingH.Network.        * Parse FTP protocol replies
+ FTP.Parser
+
+MissingH.Parsec          * Invert the sense of a parser
+
+MissingH.Path            * Split apart filename components
 
 MissingH.Str             * Leading/trailing whitespace removal
                          * Beginning/ending tests
                          * Joining, splitting, and truncation
 
+MissingH.Threads         * Threaded callbacks
+
+Wash.Mail.*              * Generate or parse e-mail messages
+                         * Full support for headers and MIME
+
+Wash.Utility.*           * Base64 codec
+                         * Various Internet-related parsers
 
 The entire library has no prerequisites save the Haskell standard
 library and is designed to install without complexity on a variety of
@@ -103,6 +146,11 @@ See the COPYRIGHT and COPYING files for more details.
 
 If the GPL is unacceptable for your uses, please e-mail me; alternative
 terms can be negotiated for your project.
+
+Certain code in MissingH was written by third parties.  Licenses of
+these components may vary and are stated in COPYRIGHT.  All code in
+MissingH is GPL-compatible, and the work as a whole may be distributed
+as a GPL'd work.
 
 arch-tag: general information
 
