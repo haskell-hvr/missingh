@@ -32,9 +32,15 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Printf(sprintf,
-                       Value(..)
-
+                       Value(..),
+                       PFRun(..),
+                       PFCall(..),
+                       PFType(..),
+                       wrapper
                        ) where
+
+-- THIS WORKS:
+-- Prelude MissingH.Printf> (pfrun (wrapper "text%!") "asdf" (5::Int))::String
 
 import MissingH.Str
 import Data.List
@@ -75,8 +81,8 @@ instance (PFType a, PFFun b) => PFFun (a -> b) where
 class PFRun a where
     pfrun :: ([Value] -> Value) -> a
 
---instance PFType a => PFRun a where
---    pfrun f = f . fromValue
+instance PFRun String where
+    pfrun f = fromValue $ f []
 
 instance (PFType a, PFRun b) => PFRun (a -> b) where
     pfrun f x = pfrun (\xs -> f (toValue x : xs))
@@ -97,6 +103,9 @@ sprintf [] [] = []
 sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
 sprintf ('!' : xs) (y : ys) = show (((fromValue y)::Int) + 1) ++ sprintf xs ys
 sprintf (x:xs) y = x : sprintf xs y
+
+wrapper :: String -> [Value] -> Value
+wrapper f v = toValue $ sprintf f v
 
 {-
 wrapper :: String -> [PFType] -> String
