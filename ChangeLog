@@ -2,6 +2,50 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 02:19:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-78
+
+    Summary:
+      Generalized Wash infrastructure
+    Revision:
+      missingh--head--1.0--patch-78
+
+
+    new files:
+     libsrc/MissingH/Wash/.arch-ids/=id
+
+    modified files:
+     ChangeLog libsrc/MissingH/Wash/Mail/Email.hs
+
+    renamed files:
+     libsrc/MissingH/WASHMail/.arch-ids/=id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/=id
+     libsrc/MissingH/WASHMail/.arch-ids/Email.hs.id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/Email.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/EmailConfig.hs.id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/EmailConfig.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/HeaderField.hs.id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/HeaderField.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/LICENSE.id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/LICENSE.id
+     libsrc/MissingH/WASHMail/.arch-ids/MIME.hs.id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/MIME.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/MailParser.hs.id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/MailParser.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/Message.hs.id
+       ==> libsrc/MissingH/Wash/Mail/.arch-ids/Message.hs.id
+
+    new directories:
+     libsrc/MissingH/Wash libsrc/MissingH/Wash/.arch-ids
+     libsrc/MissingH/Wash/Mail/.arch-ids
+
+    removed directories:
+     libsrc/MissingH/WASHMail/.arch-ids
+
+    renamed directories:
+     libsrc/MissingH/WASHMail
+       ==> libsrc/MissingH/Wash/Mail
+
+
 2004-10-20 02:15:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-77
 
     Summary:
