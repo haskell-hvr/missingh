@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 18:45:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-127
+
+    Summary:
+      Updated tests
+    Revision:
+      missingh--head--0.5--patch-127
+
+
+    modified files:
+     ChangeLog testsrc/Bitstest.hs testsrc/FiniteMaptest.hs
+     testsrc/Listtest.hs testsrc/MIMETypestest.hs
+
+
 2004-11-30 18:38:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-126
 
     Summary:

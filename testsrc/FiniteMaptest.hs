@@ -22,24 +22,26 @@ import MissingH.FiniteMap
 import Data.FiniteMap
 
 test_flipFM =
-    let f inp exp = (listToFM exp) @=? flipFM (listToFM inp) in
-        do
-        f ([]::[(Int,Int)]) ([]::[(Int,[Int])])
-        f [("a", "b")] [("b", ["a"])]
-        f [("a", "b"),
-           ("c", "b"),
-           ("d", "e"),
-           ("b", "b")] [("b", ["c", "b", "a"]),
-                        ("e", ["d"])]
+    let f inp exp = TestCase $ (listToFM exp) @=? flipFM (listToFM inp) in
+        [
+         f ([]::[(Int,Int)]) ([]::[(Int,[Int])])
+        ,f [("a", "b")] [("b", ["a"])]
+        ,f [("a", "b"),
+            ("c", "b"),
+            ("d", "e"),
+            ("b", "b")] [("b", ["c", "b", "a"]),
+                         ("e", ["d"])]
+        ]
 
 test_flippedLookupFM =
-    let f item inp exp = exp @=? flippedLookupFM (listToFM inp) item in
-        do
-        f 'a' ([]::[(Char, Char)]) []
-        f 'a' [("Test1", 'a'), ("Test2", 'b')] ["Test1"]
-        f 'a' [("Test1", 'b'), ("Test2", 'b')] []
-        f 'a' [("Test1", 'a'), ("Test2", 'a')] ["Test2", "Test1"]
+    let f item inp exp = TestCase $ exp @=? flippedLookupFM (listToFM inp) item in
+        [
+         f 'a' ([]::[(Char, Char)]) []
+        ,f 'a' [("Test1", 'a'), ("Test2", 'b')] ["Test1"]
+        ,f 'a' [("Test1", 'b'), ("Test2", 'b')] []
+        ,f 'a' [("Test1", 'a'), ("Test2", 'a')] ["Test2", "Test1"]
+        ]
 
-tests = TestList [TestLabel "flipFM" (TestCase test_flipFM),
-                  TestLabel "flippedLookupFM" (TestCase test_flippedLookupFM)
+tests = TestList [TestLabel "flipFM" (TestList test_flipFM),
+                  TestLabel "flippedLookupFM" (TestList test_flippedLookupFM)
                  ]
