@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 16:35:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-70
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.5--patch-70
+
+
+    new files:
+     libsrc/MissingH/ConfigParser/.arch-ids/=id
+     libsrc/MissingH/ConfigParser/Lexer.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+
+    modified files:
+     ChangeLog debian/changelog
+
+    new directories:
+     libsrc/MissingH/ConfigParser
+     libsrc/MissingH/ConfigParser/.arch-ids
+
+
 2004-11-18 14:55:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-69
 
     Summary:
