@@ -23,7 +23,8 @@ import Testutil
 import Control.Exception
 
 test_basic =
-    let f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (readstring empty inp))
+    let p inp = readstring empty inp
+        f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
         in
         [
          f "empty doc, no sections" "" [] sections,
@@ -37,7 +38,13 @@ test_basic =
            "# [nonexistant]\n[emptysect]\n" ["emptysect"] sections,
          f "1 empty s w/comments"
            "#fo\n[Cemptysect]\n#asdf boo\n  \n  # fnonexistantg"
-           ["Cemptysect"] sections
+           ["Cemptysect"] sections,
+         f "1 empty s, comments, EOL"
+           "[emptysect]\n# [nonexistant]\n" ["emptysect"] sections,
+         TestLabel "1 sec w/option" $ TestCase $
+           do let cp = p "[sect1]\nfoo: bar\n"
+              ["sect1"] @=? sections cp
+              "bar" @=? get cp "sect1" "foo"
         ]
 
 {-
