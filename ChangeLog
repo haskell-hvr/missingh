@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-12-02 20:30:29 GMT	John Goerzen <jgoerzen@complete.org>	patch-144
+
+    Summary:
+      Added new modules to cabal file
+    Revision:
+      missingh--head--0.5--patch-144
+
+
+    modified files:
+     ChangeLog Setup.description
+
+
 2004-12-02 20:28:03 GMT	John Goerzen <jgoerzen@complete.org>	patch-143
 
     Summary:
