@@ -147,6 +147,10 @@ class (HVIOGeneric a) => HVIOWriter a where
     vPutStrLn :: a -> String -> IO ()
     -- | Write a string representation of the argument, plus a newline.
     vPrint :: Show b => a -> b -> IO ()
+    -- | Flush any output buffers.
+    -- Note: implementations should assure that a vFlush is performed
+    -- on file close, if necessary to ensure all data sent is written.
+    vFlush :: a -> IO ()
 
     vPutStr _ [] = return ()
     vPutStr h (x:xs) = do vPutChar h x
@@ -155,6 +159,8 @@ class (HVIOGeneric a) => HVIOWriter a where
     vPutStrLn h s = vPutStr h (s ++ "\n")
 
     vPrint h s = vPutStrLn h (show s)
+                 
+    vFlush _ = return ()
 
 {- | Seekable items.  Implementators must provide all functions.
 
@@ -189,6 +195,7 @@ instance HVIOWriter Handle where
     vPutStr = hPutStr
     vPutStrLn = hPutStrLn
     vPrint = hPrint
+    vFlush = hFlush
 
 instance HVIOSeeker Handle where
     vSeek = hSeek
@@ -206,7 +213,7 @@ vioc_get :: VIOCloseSupport a -> IO a
 vioc_get x = readIORef x >>= return . snd
 
 vioc_close :: VIOCloseSupport a -> IO ()
-vioc_close x = modifyIORef x (\ _ -> (False, undefined))
+vioc_close x = modifyIORef x (\ (_, dat) -> (False, dat))
 
 vioc_set :: VIOCloseSupport a -> a -> IO ()
 vioc_set x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
@@ -250,3 +257,47 @@ instance HVIOReader StreamReader where
                         vClose h
                         return c
 
+----------------------------------------------------------------------
+-- Pipes
+----------------------------------------------------------------------
+
+-- newPipe :: (PipeReader, PipeWriter)
+
+data PipeBit = PipeBit Char 
+             | PipeEOF
+               deriving (Eq, Show)
+
+newtype PipeReader = PipeReader (VIOCloseSupport (MVar PipeBit))
+newtype PipeWriter = PipeWriter (VIOCloseSupport (MVar PipeBit))
+
+prv (PipeReader x) = x
+
+instance Show PipeReader where
+    show x = "<PipeReader>"
+
+instance HVIOGeneric PipeReader where
+    vClose = vioc_close . prv
+    vIsOpen = vioc_isopen . prv
+    vIsEOF h = do mv <- vioc_get (prv h)
+                  dat <- readMVar mv
+                  return (dat == PipeEOF)
+
+pr_getc h = do mv <- vioc_get (prv h)
+               takeMVar mv
+
+instance HVIOReader PipeReader where
+    vGetChar h = do vTestEOF h
+                    c <- pr_getc h
+                    case c of 
+                        PipeBit x -> return x
+                        -- vTestEOF should eliminate this case
+                        _ -> fail "Internal error in HVIOReader vGetChar"
+    vGetContents h = 
+        let loop = do c <- pr_getc h
+                      case c of
+                          PipeEOF -> return []
+                          PipeBit x -> do next <- loop
+                                          return (x : next)
+        in do vTestEOF h
+              loop
+                        
