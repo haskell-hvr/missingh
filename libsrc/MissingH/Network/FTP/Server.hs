@@ -51,16 +51,13 @@ import MissingH.IO.HVFS
 import Data.Char
 import MissingH.Printf
 
-data FTPServer =  FTPServer
-    {handle :: Handle,
-     fs :: forall a. HVFS a => a
-    }
+data FTPServer = forall a. HVFS a => FTPServer Handle a
 
 s_crlf = "\r\n"
 ftpPutStrLn :: FTPServer -> String -> IO ()
-ftpPutStrLn h text =
-    do hPutStr (handle h) (text ++ s_crlf)
-       hFlush (handle h)
+ftpPutStrLn (FTPServer h _) text =
+    do hPutStr h (text ++ s_crlf)
+       hFlush h
 
 {- | Send a reply code, handling multi-line text as necessary. -}
 sendReply :: FTPServer -> Int -> String -> IO ()
@@ -78,7 +75,7 @@ sendReply h codei text =
 
 ftpHandler :: forall a. HVFS a => a -> Handle -> SockAddr -> IO ()
 ftpHandler f h sa =
-    let serv = FTPServer {fs = f, handle = h}
+    let serv = FTPServer h f
         in
         traplogging "MissingH.Network.FTP.Server" NOTICE "" $
           do sendReply serv 220 "Welcome to MissingH.Network.FTP.Server."
@@ -93,13 +90,13 @@ commands =
     ]
 
 commandLoop :: FTPServer -> SockAddr -> IO ()
-commandLoop h sa =
+commandLoop h@(FTPServer fh _) sa =
     let errorhandler e = do noticeM "MissingH.Network.FTP.Server"
                                     ("Closing due to error: " ++ (show e))
-                            hClose (handle h)
+                            hClose fh
                             return False
         in do continue <- (flip catch) errorhandler 
-               (do x <- parseCommand (handle h)
+               (do x <- parseCommand fh
                    case x of
                      Left err -> do sendReply h 500 $
                                       "Couldn't parse command: " ++ (show err)
