@@ -41,7 +41,7 @@ is the support status:
 
  * nhc98: no
 
- * Hugs: no
+ * Hugs: partial (maybe complete; needs more testing)
 
 Non-binary functions may be found in "MissingH.IO".
 
