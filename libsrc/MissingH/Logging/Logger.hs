@@ -31,7 +31,8 @@ module MissingH.Logging.Logger(-- * Basic Types
                                ) where
 import MissingH.Str
 import MissingH.Logging
-import MissingH.Logging.Handler
+import MissingH.Logging.Handler(LogHandler)
+import qualified MissingH.Logging.Handler(handle)
 import MissingH.Logging.Handler.Simple
 import IO
 import System.IO.Unsafe
@@ -45,7 +46,8 @@ import Data.FiniteMap
 data HandlerT = forall a. LogHandler a => HandlerT a
 
 data Logger = Logger { level :: Priority,
-                       handlers :: [HandlerT]}
+                       handlers :: [HandlerT],
+                       name :: String}
 
 type LogTree = FiniteMap String Logger
 
@@ -59,7 +61,7 @@ rootlogger = ""
 
 -- | Placeholders created when a new logger must be created.
 placeholder :: Logger
-placeholder = Logger {level = DEBUG, handlers = []}
+placeholder = Logger {level = DEBUG, handlers = [], name = ""}
 
 -----------------------------------------------------------------------
 -- Logger Tree Storage
@@ -75,8 +77,9 @@ logTree =
     unsafePerformIO $ do
                       h <- streamHandler stderr DEBUG
                       newIORef (unitFM rootlogger (Logger 
-                                 {level = WARNING,
-                                  handlers = [HandlerT h]}))
+                                                   {level = WARNING,
+                                                    name = "",
+                                                    handlers = [HandlerT h]}))
 
 -- | Given a name, return all components of it, starting from the root.
 componentsOfName :: String -> [String]
@@ -97,7 +100,7 @@ createLoggers (x:xs) =
     if elemFM x lt
        then createLoggers xs
        else do
-         modifyIORef logTree (\a -> addToFM a x placeholder)
+         modifyIORef logTree (\a -> addToFM a x (placeholder {name = x}))
          createLoggers xs
 
 
@@ -121,23 +124,32 @@ getLogger lname =
 getRootLogger :: IO Logger
 getRootLogger = getLogger ""
 
-{-
-callHandler :: Priority -> String -> HandlerT -> IO ()
-callHandler pri msg ht =
-    case ht of
-            HandlerT x -> handle x (pri, msg)
+-- | Log a message, assuming the current logger's
+log :: Logger -> Priority -> String -> IO ()
+log l pri msg = handle l (pri, msg)
 
-handlerActions :: Priority -> String -> IO [IO ()]
-handlerActions pri msg = do
-                         l <- readIORef rootLogger
-                         let h = map (callHandler pri msg) (handlers l)
-                         return h
+-- | Handle a log request.
+handle :: Logger -> LogRecord -> IO ()
+handle l (pri, msg) = 
+    if pri >= (level l)
+       then do 
+            sequence_ (handlerActions (handlers l) (pri, msg))
+            -- Send it upstairs if we can
+            case (name l) of
+                "" -> return ()
+                x -> do 
+                     parent <- (getLogger . head . reverse . componentsOfName) x
+                     handle parent (pri, msg)
+       else return ()
+
+
+-- | Call a handler given a HandlerT.
+callHandler :: LogRecord -> HandlerT -> IO ()
+callHandler lr ht =
+    case ht of
+            HandlerT x -> MissingH.Logging.Handler.handle x lr
+
+-- | Generate IO actions for the handlers.
+handlerActions :: [HandlerT] -> LogRecord -> [IO ()]
+handlerActions h lr = map (callHandler lr) h
                          
-logM :: Priority -> String -> IO ()
-logM pri msg = do
-              l <- readIORef rootLogger
-              a <- handlerActions pri msg
-              if (pri >= priority l) 
-                 then sequence_ a
-                 else return ()
--}
