@@ -80,17 +80,21 @@ optionpair = do
              value <- optionvalue
              return (key, value)
 
-loken :: Parser [CPTok]
-loken =
+iloken :: Parser (GeneralizedToken CPTok)
+iloken =
     -- Ignore these things
-    do {eol; loken}                     
-    <|> try (do {comment_line; loken})
-    <|> try (do {empty_line; loken})
+    do {eol; iloken}                     
+    <|> try (do {comment_line; iloken})
+    <|> try (do {empty_line; iloken})
     
     -- Real stuff
-    <|> (do {sname <- sectheader; next <- loken; return $ NEWSECTION sname : next})
-    <|> try (do {pair <- optionpair; next <- loken; return $ NEWOPTION pair : next})
-    <|> (do {extension <- extension_line; next <- loken; return $ EXTENSIONLINE extension : next})
-    <|> do {eof; return [EOFTOK]}
+    <|> (do {sname <- sectheader; togtok $ NEWSECTION sname})
+    <|> try (do {pair <- optionpair; togtok $ NEWOPTION pair})
+    <|> (do {extension <- extension_line; togtok $ EXTENSIONLINE extension})
+    <|> do {eof; togtok EOFTOK}
     <?> "Invalid syntax in configuration file"
         
+loken :: Parser [GeneralizedToken CPTok]
+loken = do x <- manyTill iloken eof
+           y <- togtok EOFTOK
+           return $ x ++ [y]

@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-19 01:36:57 GMT	John Goerzen <jgoerzen@complete.org>	patch-93
+
+    Summary:
+      Switched to generalized token system for ConfigParser
+    Revision:
+      missingh--head--0.5--patch-93
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser/Lexer.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+     libsrc/MissingH/Parsec.hs
+
+
 2004-11-19 01:20:05 GMT	John Goerzen <jgoerzen@complete.org>	patch-92
 
     Summary:

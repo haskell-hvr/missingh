@@ -34,7 +34,7 @@ module MissingH.Parsec(-- * Generalized Utilities
                        -- | These functions are generalized versions of
                        -- ones you might see in the Char parser.
                        GeneralizedToken, GeneralizedTokenParser,
-                       retgtok, tokeng, satisfyg, oneOfg, noneOfg,
+                       togtok, tokeng, satisfyg, oneOfg, noneOfg,
                        specificg,
                        -- * Other Utilities
                        notMatching)
@@ -46,8 +46,8 @@ type GeneralizedToken a = (SourcePos, a)
 type GeneralizedTokenParser a st b = GenParser (GeneralizedToken a) st b
 
 {- | Generate (return) a 'GeneralizedToken'. -}
-retgtok :: a -> GenParser b st (GeneralizedToken a)
-retgtok tok = do
+togtok :: a -> GenParser b st (GeneralizedToken a)
+togtok tok = do
               x <- getPosition
               return (x, tok)
 

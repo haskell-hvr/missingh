@@ -41,6 +41,7 @@ import Text.ParserCombinators.Parsec
 import MissingH.Str
 import MissingH.ConfigParser.Lexer
 import System.IO(Handle, hGetContents)
+import MissingH.Parsec
 
 type ParseOutput = [(String, [(String, String)])]
 
@@ -75,7 +76,7 @@ detokenize fp l =
                                     Left err -> error $ "Parser: " ++ (show err)
                                     Right reply -> reply
 
-main :: GenParser CPTok () [(String, [(String, String)])]
+main :: GeneralizedTokenParser CPTok () ParseOutput
 main =
     do {s <- sectionlist; return s}
     <|> try (do 
@@ -86,21 +87,11 @@ main =
     <|> do {o <- optionlist; return $ [("DEFAULT", o)] }
     <?> "Error parsing config file tokens"
         
-satisfyG :: (CPTok -> Bool) -> GenParser CPTok () CPTok
-satisfyG f = tokenPrim (\c -> show [c])
-                       (\pos _ _ -> pos)
-                       (\c -> if f c then Just c else Nothing)
-
-want :: (CPTok -> Maybe a) -> GenParser CPTok () a
-want f = tokenPrim (\c -> show [c])
-                   (\pos _ _ -> pos)
-                   (\c -> f c)
-
-sectionlist :: GenParser CPTok () [(String, [(String, String)])]
-sectionlist = do {satisfyG (==EOFTOK); return []}
+sectionlist :: GeneralizedTokenParser CPTok () ParseOutput
+sectionlist = do {satisfyg (==EOFTOK); return []}
               <|> try (do 
                        s <- sectionhead
-                       satisfyG (==EOFTOK)
+                       satisfyg (==EOFTOK)
                        return [(s, [])]
                       )
               <|> do
@@ -108,40 +99,40 @@ sectionlist = do {satisfyG (==EOFTOK); return []}
                   sl <- sectionlist
                   return (s : sl)
 
-section :: GenParser CPTok () (String, [(String, String)])
+section :: GeneralizedTokenParser CPTok () (String, [(String, String)])
 section = do {sh <- sectionhead; ol <- optionlist; return (sh, ol)}
 
-sectionhead :: GenParser CPTok () String
+sectionhead :: GeneralizedTokenParser CPTok () String
 sectionhead = 
     let wf (NEWSECTION x) = Just x
         wf _ = Nothing
         in
-        do {s <- want wf; return $ strip s}
+        do {s <- tokeng wf; return $ strip s}
 
-optionlist :: GenParser CPTok () [(String, String)]
+optionlist :: GeneralizedTokenParser CPTok () [(String, String)]
 optionlist =
     try (do {c <- coption; ol <- optionlist; return $ c : ol})
     <|> do {c <- coption; return $ [c]}
 
-extensionlist :: GenParser CPTok () [String]
+extensionlist :: GeneralizedTokenParser CPTok () [String]
 extensionlist =
     let wf (EXTENSIONLINE x) = Just x
         wf _ = Nothing
         in
-        try (do {x <- want wf; l <- extensionlist; return $ x : l})
-        <|> do {x <- want wf; return [x]}
+        try (do {x <- tokeng wf; l <- extensionlist; return $ x : l})
+        <|> do {x <- tokeng wf; return [x]}
 
-coption :: GenParser CPTok () (String, String)
+coption :: GeneralizedTokenParser CPTok () (String, String)
 coption =
     let wf (NEWOPTION x) = Just x
         wf _ = Nothing
         in
         try (do 
-             o <- want wf
+             o <- tokeng wf
              l <- extensionlist
              return (strip (fst o), valmerge ((snd o) : l ))
             )
-        <|> do {o <- want wf; return $ (strip (fst o), strip (snd o))}
+        <|> do {o <- tokeng wf; return $ (strip (fst o), strip (snd o))}
 
 valmerge :: [String] -> String
 valmerge vallist =
