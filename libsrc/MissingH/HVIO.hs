@@ -39,7 +39,7 @@ module MissingH.HVIO(-- * Implementation Classes
                      HVIOSeeker(..),
                      -- * Standard Virtual IO features
                      -- | Note: Handle is a member of all classes by default.
-                     StreamReader
+                     StreamReader, newStreamReader
                     )
 where
 
@@ -212,7 +212,7 @@ vioc_set :: VIOCloseSupport a -> a -> IO ()
 vioc_set x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
 
 ----------------------------------------------------------------------
--- Stream Readers/Writers
+-- Stream Readers
 ----------------------------------------------------------------------
 
 {- | Simulate I\/O based on a string buffer.
@@ -220,6 +220,10 @@ vioc_set x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
 This is lazy!
  -}
 newtype StreamReader = StreamReader (VIOCloseSupport String)
+
+newStreamReader :: String -> IO StreamReader
+newStreamReader s = do ref <- newIORef (True, s)
+                       return (StreamReader ref)
 
 srv (StreamReader x) = x
 instance Show StreamReader where
