@@ -20,6 +20,9 @@ OBJS := $(SOURCES:.hs=.o)
 
 all: libmissingH.a
 
+setup: Setup.lhs Setup.description
+	ghc -package Cabal Setup.lhs -o setup
+
 libmissingH.a: $(OBJS)
 	-rm -f libmissingH.a
 	ar q libmissingH.a $(OBJS)
@@ -34,5 +37,5 @@ doc:
 
 clean:
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
-		`find . -name "*~"` *.a
+		`find . -name "*~"` *.a setup
 
