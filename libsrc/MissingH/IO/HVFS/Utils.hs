@@ -38,7 +38,7 @@ first parameter to these functions.
 module MissingH.IO.HVFS.Utils (recurseDir,
                                recurseDirStat,
                                recursiveRemove,
-                               SystemFS
+                               SystemFS(..)
                               )
 where
 

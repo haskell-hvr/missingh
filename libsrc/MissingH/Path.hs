@@ -50,7 +50,6 @@ import Control.Exception
 import System.IO
 import MissingH.Path.NameManip
 import MissingH.IO.HVFS.Utils
-import MissingH.IO.HVFS
 
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last

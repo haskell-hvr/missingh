@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-23 17:37:25 GMT	John Goerzen <jgoerzen@complete.org>	patch-157
+
+    Summary:
+      Checkpointing ReadOnly cleanup
+    Revision:
+      missingh--head--0.7--patch-157
+
+
+    modified files:
+     ChangeLog ftptest.hs libsrc/MissingH/IO/HVFS/Combinators.hs
+     libsrc/MissingH/IO/HVFS/Utils.hs libsrc/MissingH/Path.hs
+
+
 2004-12-23 17:33:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-156
 
     Summary:

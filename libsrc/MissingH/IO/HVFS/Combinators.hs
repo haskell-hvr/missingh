@@ -34,7 +34,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.IO.HVFS.Combinators(
                                     -- * Restrictions
-                                    HVFSReadOnly,
+                                    HVFSReadOnly(..),
                                     HVFSChroot, newHVFSChroot
                                    )
 where

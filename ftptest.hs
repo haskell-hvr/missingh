@@ -3,6 +3,7 @@ import MissingH.Network.FTP.Server
 import MissingH.Network.SocketServer
 import MissingH.Logging.Logger
 import MissingH.IO.HVFS
+import MissingH.IO.HVFS.Combinators
 
 main = do
        updateGlobalLogger "" (setLevel DEBUG)
@@ -12,4 +13,4 @@ main = do
             threadedHandler $ 
             loggingHandler "" INFO $
             handleHandler $
-            anonFtpHandler (SystemFS)
+            anonFtpHandler (HVFSReadOnly SystemFS)
