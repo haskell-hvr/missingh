@@ -53,7 +53,7 @@ import MissingH.Str
 import Data.List
 import System.IO
 import MissingH.Printf.Types
-import MissingH.Printf.Printer(get_conversion_func)
+import MissingH.Printf.Printer(get_conversion_func, fix_width)
 import Text.Regex
 
 v :: PFType a => a -> Value
@@ -107,7 +107,7 @@ sprintf ('%' : xs) (y : ys) =
                  flags = mkflags flagstr
                  in
                  --(show width) ++ sprintf remainder ys
-                 (get_conversion_func fmt y flags width prec) ++ sprintf remainder ys
+                 fix_width flags width ((get_conversion_func fmt y flags width prec)) ++ sprintf remainder ys
          _ -> error $ "Problem matching format string at %" ++ xs
 
 sprintf (x:xs) y = x : sprintf xs y

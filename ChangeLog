@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 03:07:28 GMT	John Goerzen <jgoerzen@complete.org>	patch-46
+
+    Summary:
+      Width working
+    Revision:
+      missingh--head--0.5--patch-46
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Printf.hs
+     libsrc/MissingH/Printf/Printer.lhs
+
+
 2004-11-15 03:04:36 GMT	John Goerzen <jgoerzen@complete.org>	patch-45
 
     Summary:

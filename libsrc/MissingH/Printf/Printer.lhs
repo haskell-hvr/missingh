@@ -1,7 +1,7 @@
 arch-tag: Printf printer declarations
 
 \begin{code}
-module MissingH.Printf.Printer (get_conversion_func, thousandify, octalify, hexify,
+module MissingH.Printf.Printer (get_conversion_func, thousandify, octalify, hexify, fix_width
 ) where
 
 import Maybe (fromMaybe)
@@ -199,3 +199,25 @@ thousandify = reverse . t . reverse
           t xs = xs
 \end{code}
 
+
+----------------------------------------------------------------------
+-- FROM Ian Lynagh's Parser.lhs
+----------------------------------------------------------------------
+
+\begin{code}
+
+fix_width :: [Flag] -> Maybe Width -> String -> String
+fix_width _ Nothing e = e
+fix_width flags (Just w) e = exp_spaced
+    where
+          exp_num_spaces = abs w - genericLength e
+          exp_num_spaces' = 0 `max` exp_num_spaces
+          exp_spaces = genericReplicate exp_num_spaces' ' '
+          exp_left_padded = e ++ exp_spaces
+          exp_right_padded = exp_spaces ++ e
+          exp_spaced = if LeftAdjust `elem` flags
+                       then exp_left_padded
+                       else if w < 0 then exp_left_padded
+                                      else exp_right_padded
+
+\end{code}
