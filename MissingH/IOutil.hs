@@ -26,7 +26,8 @@ module MissingH.IOutil(-- * Line Processing Utilities
                        -- * Lazy Interaction
                        hInteract, lineInteract, hLineInteract,
                        -- * Binary Files
-                       hPutBufStr, hGetBufStr, hFullGetBufStr
+                       hPutBufStr, hGetBufStr, hFullGetBufStr,
+                       hGetBlocks, hFullGetBlocks
                         ) where
 
 import Foreign.Ptr
@@ -158,3 +159,24 @@ hFullGetBufStr f count = do
                                  remainder <- hFullGetBufStr f (count - (length thisstr))
                                  return (thisstr ++ remainder)
 
+{- | Returns a lazily-evaluated list of all blocks in the input file,
+as read by 'hGetBufStr'.  There will be no 0-length block in this list.
+The list simply ends at EOF. -}
+hGetBlocks :: Handle -> Int -> IO [String]
+hGetBlocks = hGetBlocksUtil hGetBufStr
+
+{- | Same as 'hGetBlocks', but using 'hFullGetBufStr' underneath. -}
+hFullGetBlocks :: Handle -> Int -> IO [String]
+hFullGetBlocks = hGetBlocksUtil hFullGetBufStr
+
+
+hGetBlocksUtil :: (Handle -> Int -> IO String) -> Handle -> Int -> IO [String]
+hGetBlocksUtil readfunc h count =
+    unsafeInterleaveIO (do
+                       block <- readfunc h count
+                       if block == ""
+                          then return []
+                          else do
+                               remainder <- hGetBlocksUtil readfunc h count
+                               return (block : remainder)
+                       )
