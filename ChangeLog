@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-05 17:38:00 GMT	John Goerzen <jgoerzen@complete.org>	patch-212
+
+    Summary:
+      Stage 1 of compatibility fixes for new fptools
+    Revision:
+      missingh--head--0.7--patch-212
+
+
+    modified files:
+     ChangeLog MissingH/IO/HVFS.hs MissingH/IO/HVFS/Utils.hs
+     MissingH/Time.hs debian/changelog
+
+
 2005-04-05 16:47:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-211
 
     Summary:

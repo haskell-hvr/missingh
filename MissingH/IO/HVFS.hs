@@ -63,6 +63,7 @@ module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
 where
 
 import MissingH.IO.HVIO
+import MissingH.Time
 import System.IO
 import System.IO.Error
 import System.Posix.Files
@@ -85,7 +86,9 @@ Here is an example from the HVFS source:
 
 >    vGetModificationTime fs fp = 
 >       do s <- vGetFileStatus fs fp
->          return $ TOD (fromIntegral (withStat s vModificationTime)) 0
+>          return $ epochToClockTime (withStat s vModificationTime)
+
+See 'MissingH.Time.epochToClockTime' for more information.
 -}
 withStat :: forall b. HVFSStatEncap -> (forall a. HVFSStat a => a -> b) -> b
 withStat s f =
@@ -197,7 +200,7 @@ class (Show a) => HVFS a where
 
     vGetModificationTime fs fp = 
         do s <- vGetFileStatus fs fp
-           return $ TOD (fromIntegral (withStat s vModificationTime)) 0
+           return $ epochToClockTime (withStat s vModificationTime)
     vRaiseError _ et desc mfp =
         ioError $ mkIOError et desc Nothing mfp
 

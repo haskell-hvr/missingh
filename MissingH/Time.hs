@@ -1,5 +1,5 @@
 {- arch-tag: Time utilities main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Time
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen, 
@@ -36,10 +36,12 @@ module MissingH.Time(
                      timelocal,
                      timegm,
                      timeDiffToSecs,
-                     epoch
+                     epoch,
+                     epochToClockTime
                     )
 where
 import System.Time
+import Data.Ratio
 
 {- | January 1, 1970, midnight, UTC, represented as a CalendarTime. -}
 epoch :: CalendarTime
@@ -95,3 +97,15 @@ timeDiffToSecs td =
                 24 * ((fromIntegral $ tdDay td) +
                       30 * ((fromIntegral $ tdMonth td) +
                             365 * (fromIntegral $ tdYear td)))))
+
+{- | Converts an Epoch time represented with an arbitrary Real to a ClockTime.
+This input could be a CTime from Foreign.C.Types or an EpochTime from
+System.Posix.Types. -}
+epochToClockTime :: Real a => a -> ClockTime
+epochToClockTime x =
+    TOD seconds secfrac
+    where ratval = toRational x
+          seconds = floor ratval
+          secfrac = floor $ (ratval - (seconds % 1) ) * picosecondfactor
+          picosecondfactor = 10 ^ 12
+          

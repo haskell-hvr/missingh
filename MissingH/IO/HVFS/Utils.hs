@@ -44,6 +44,7 @@ module MissingH.IO.HVFS.Utils (recurseDir,
 where
 
 import MissingH.IO.HVFS
+import MissingH.Time
 import System.Posix.Files
 import MissingH.Printf
 import System.Time
@@ -122,7 +123,7 @@ lsl fs fp =
                        else if vIsSocket se then 's'
                        else if vIsNamedPipe se then 's'
                        else '-'
-                   clocktime = TOD (fromIntegral (vModificationTime se)) 0
+                   clocktime = epochToClockTime (vModificationTime se)
                    datestr c= formatCalendarTime defaultTimeLocale "%b %e  %Y" 
                                c
                     in do c <- toCalendarTime clocktime
