@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-05 18:15:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-216
+
+    Summary:
+      Switch to binary I/O where appropriate
+    Revision:
+      missingh--head--0.7--patch-216
+
+
+    modified files:
+     ChangeLog MissingH/Network/FTP/Client.hs testsrc/GZiptest.hs
+
+
 2005-04-05 18:06:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-215
 
     Summary:

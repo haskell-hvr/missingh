@@ -20,12 +20,13 @@ module GZiptest(tests) where
 import HUnit
 import MissingH.FileArchive.GZip
 import MissingH.Compression.Inflate
+import MissingH.IO.Binary
 import System.IO
 import MissingH.Either
 import Data.List
 
 mf fn exp conf = TestLabel fn $ TestCase $
-                     do c <- readFile ("testsrc/gzfiles/" ++ fn)
+                     do c <- readBinaryFile ("testsrc/gzfiles/" ++ fn)
                         assertEqual "" exp (conf c)
 
 {-
