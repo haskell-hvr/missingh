@@ -32,5 +32,14 @@ test_flipFM =
            ("b", "b")] [("b", ["c", "b", "a"]),
                         ("e", ["d"])]
 
-tests = TestList [TestLabel "flipFM" (TestCase test_flipFM)
+test_flippedLookupFM =
+    let f item inp exp = exp @=? flippedLookupFM (listToFM inp) item in
+        do
+        f 'a' ([]::[(Char, Char)]) []
+        f 'a' [("Test1", 'a'), ("Test2", 'b')] ["Test1"]
+        f 'a' [("Test1", 'b'), ("Test2", 'b')] []
+        f 'a' [("Test1", 'a'), ("Test2", 'a')] ["Test2", "Test1"]
+
+tests = TestList [TestLabel "flipFM" (TestCase test_flipFM),
+                  TestLabel "flippedLookupFM" (TestCase test_flippedLookupFM)
                  ]

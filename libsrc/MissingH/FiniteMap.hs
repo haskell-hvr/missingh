@@ -34,7 +34,7 @@ In addition to the functions exported, this module also makes a FiniteMap
 showable.
 -}
 
-module MissingH.FiniteMap (flipFM)
+module MissingH.FiniteMap (flipFM, flippedLookupFM)
 where
 
 import Data.FiniteMap
@@ -45,6 +45,15 @@ function for lists. -}
 
 flipFM :: (Ord key, Ord val) => FiniteMap key val -> FiniteMap val [key]
 flipFM = listToFM . flipAL . fmToList
+
+{- | Returns a list of all keys in the finite map whose value matches the
+parameter. -}
+
+flippedLookupFM :: (Ord val, Ord key) => FiniteMap key val -> val-> [key]
+flippedLookupFM fm v =
+    case lookupFM (flipFM fm) v of
+                                Nothing -> []
+                                Just x -> x
 
 {- | Makes a FiniteMap showable. -}
 instance (Show a, Show b) => Show (FiniteMap a b) where

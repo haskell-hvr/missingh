@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 14:17:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-92
+
+    Summary:
+      Added FlippedLookupFM and a test for it
+    Revision:
+      missingh--head--1.0--patch-92
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/FiniteMap.hs
+     testsrc/FiniteMaptest.hs
+
+
 2004-10-21 14:06:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-91
 
     Summary:
