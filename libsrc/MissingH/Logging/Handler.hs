@@ -16,15 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- | Definition of log handlers
+{- | Definition of log handler support
+
+For some handlers, check out "MissingH.Logging.Handler.Simple" and
+"MissingH.Logging.Handler.Syslog".
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Logging.Handler(-- * Basic Types
-                                LogHandler(..),
-                                -- * Simple Handlers
-                                streamHandler, fileHandler
+                                LogHandler(..)
                                ) where
 import MissingH.Logging
 import IO
@@ -54,37 +55,3 @@ class LogHandler a where
                    -- any open files, etc.
                    close :: a -> IO ()
 
-
-data GenericHandler a = GenericHandler {priority :: Priority,
-                                        privData :: a,
-                                        writeFunc :: a -> String -> IO (),
-                                        closeFunc :: a -> IO () }
-
-instance LogHandler (GenericHandler a) where
-    setLevel sh p = sh{priority = p}
-    getLevel sh = priority sh
-    emit sh lr = (writeFunc sh) (privData sh) (snd lr)
-    close sh = (closeFunc sh) (privData sh)
-
-{- | Create a stream log handler.  Log messages sent to this handler will
-   be sent to the stream used initially.  Note that the 'close' method
-   will have no effect on stream handlers; it does not actually close
-   the underlying stream.  -}
-
-streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
-streamHandler h pri = 
-    return (GenericHandler {priority = pri,
-                            privData = h,
-                            writeFunc = hPutStrLn,
-                            closeFunc = \x -> return ()})
-
-{- | Create a file log handler.  Log messages sent to this handler
-   will be sent to the filename specified, which will be opened
-   in Append mode.  Calling close on the handler will close the file.
-   -}
-
-fileHandler :: FilePath -> Priority -> IO (GenericHandler Handle)
-fileHandler fp pri = do
-                     h <- openFile fp AppendMode
-                     sh <- streamHandler h pri
-                     return (sh{closeFunc = hClose})

@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-08 03:01:03 GMT	John Goerzen <jgoerzen@complete.org>	patch-50
+
+    Summary:
+      Split out Simple handler
+    Revision:
+      missingh--head--1.0--patch-50
+
+
+    new files:
+     libsrc/MissingH/Logging/Handler/Simple.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging/Handler.hs
+
+
 2004-10-07 21:45:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-49
 
     Summary:
