@@ -2,6 +2,34 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 02:15:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-77
+
+    Summary:
+      Added WASHMail 0.3.6 files
+    Revision:
+      missingh--head--1.0--patch-77
+
+
+    new files:
+     libsrc/MissingH/WASHMail/.arch-ids/Email.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/EmailConfig.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/HeaderField.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/LICENSE.id
+     libsrc/MissingH/WASHMail/.arch-ids/MIME.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/MailParser.hs.id
+     libsrc/MissingH/WASHMail/.arch-ids/Message.hs.id
+     libsrc/MissingH/WASHMail/Email.hs
+     libsrc/MissingH/WASHMail/EmailConfig.hs
+     libsrc/MissingH/WASHMail/HeaderField.hs
+     libsrc/MissingH/WASHMail/LICENSE
+     libsrc/MissingH/WASHMail/MIME.hs
+     libsrc/MissingH/WASHMail/MailParser.hs
+     libsrc/MissingH/WASHMail/Message.hs
+
+    modified files:
+     ChangeLog
+
+
 2004-10-20 02:14:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-76
 
     Summary:
