@@ -38,8 +38,15 @@ test_basic =
         f "[sect1]\nfoo: bar\n" [("sect1", [("foo", "bar")])]
         f "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\n o3: v3"
           [("sect1", [("o1", "v1"), ("o2", "v2"), ("o3", "v3")])]
+
         assertRaises (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
                       (f "#foo\nthis is bad data" [])
+
+        assertRaises (ErrorCall "Lexer: \"(string)\" (line 2, column 9):\nunexpected \"\\n\"\nexpecting Option separator")
+                     (f "[sect1]\n#iiiiii \n  extensionline\n#foo" [])
+
+        f "v1: o1\n[sect1]\nv2: o2" [("DEFAULT", [("v1", "o1")]),
+                                     ("sect1", [("v2", "o2")])]
         f "foo: bar" [("DEFAULT", [("foo", "bar")])]
 
 tests = TestList [TestLabel "test_basic" (TestCase test_basic)

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 19:13:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-80
+
+    Summary:
+      Finished off basic tests
+    Revision:
+      missingh--head--0.5--patch-80
+
+
+    modified files:
+     ChangeLog testsrc/ConfigParser/Parsertest.hs
+
+
 2004-11-18 19:10:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-79
 
     Summary:
