@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-19 20:25:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-73
+
+    Summary:
+      Fixed setup.description syntax
+    Revision:
+      missingh--head--1.0--patch-73
+
+
+    modified files:
+     ChangeLog Setup.description libsrc/MissingH/Logging/Handler.hs
+
+
 2004-10-19 20:23:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-72
 
     Summary:

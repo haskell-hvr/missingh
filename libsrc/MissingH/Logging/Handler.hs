@@ -33,6 +33,7 @@ module MissingH.Logging.Handler(-- * Basic Types
 import MissingH.Logging
 import IO
 
+{- | All log handlers should adhere to this. -}
 
 {- | This is the base class for the various log handlers.  They should
 all adhere to this class. -}
