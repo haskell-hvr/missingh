@@ -6,8 +6,9 @@ main = do
           --let d = readfile empty "/etc/passwd"
           rv <- runErrorT $
               do
-              cp <- liftIO $ readfile empty "/etc/passwd"
-              x <- cp
+              cp <- join $ liftIO $ readfile empty "/etc/passwd"
+              --x <- cp
+              let x = cp
               liftIO $ putStrLn "In the test"
               --cp <- d
               --liftIO $ print (sections cp)

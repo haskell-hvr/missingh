@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 18:38:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-126
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.5--patch-126
+
+
+    modified files:
+     ChangeLog cpexample1.hs debian/changelog
+
+
 2004-11-30 17:24:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-125
 
     Summary:
