@@ -33,17 +33,19 @@ Users can filter log messages based on priorities.
 
 These have their roots on the traditional syslog system.  The standard
 definitions are given below, but you are free to interpret them however you
-like.  They are listed here in descending importance order.
+like.  They are listed here in ascending importance order.
 -}
 
-data Priority = EMERG                   -- ^ System is unusable
-              | ALERT                   -- ^ Take immediate action
-              | CRITICAL                -- ^ Severe situations
-              | ERROR                   -- ^ General Errors
-              | WARNING                 -- ^ General Warnings
-              | NOTICE                  -- ^ Normal runtime conditions
-              | INFO                    -- ^ Information
-              | DEBUG                   -- ^ Debug messages
+data Priority = 
+            DEBUG                   -- ^ Debug messages
+          | INFO                    -- ^ Information
+          | NOTICE                  -- ^ Normal runtime conditions
+          | WARNING                 -- ^ General Warnings
+          | ERROR                   -- ^ General Errors
+          | CRITICAL                -- ^ Severe situations
+          | ALERT                   -- ^ Take immediate action
+          | EMERG                   -- ^ System is unusable
+                    deriving (Eq, Ord, Show, Read)
 
 type LogRecord = (Priority, String)
 

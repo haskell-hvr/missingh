@@ -24,7 +24,7 @@ n-}
 module MissingH.Logging.Handler(-- * Basic Types
                                 LogHandler(..),
                                 -- * Simple Handlers
-                                newStreamHandler, TStreamH
+                                streamHandler, fileHandler
                                ) where
 import MissingH.Logging
 import IO
@@ -42,6 +42,11 @@ class LogHandler a where
                    -- | Logs an event if it meets the requirements
                    -- given by the most recent call to 'setLevel'.
                    handle :: a -> LogRecord -> IO ()
+
+                   handle h (pri, msg) = 
+                       if pri >= (getLevel h)
+                          then emit h (pri, msg)
+                          else return ()
                    -- | Forces an event to be logged regardless of
                    -- the configured level.
                    emit :: a -> LogRecord -> IO ()
@@ -50,18 +55,36 @@ class LogHandler a where
                    close :: a -> IO ()
 
 
--- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Stream handler
--- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+data GenericHandler a = GenericHandler {priority :: Priority,
+                                        privData :: a,
+                                        writeFunc :: a -> String -> IO (),
+                                        closeFunc :: a -> IO () }
 
-data TStreamH = TStreamH (Handle, Priority)
+instance LogHandler (GenericHandler a) where
+    setLevel sh p = sh{priority = p}
+    getLevel sh = priority sh
+    emit sh lr = (writeFunc sh) (privData sh) (snd lr)
+    close sh = (closeFunc sh) (privData sh)
 
-instance LogHandler TStreamH where
-    setLevel (TStreamH (h, pri)) newpri = TStreamH (h, newpri)
-    getLevel (TStreamH (h, pri)) = pri
-    handle (TStreamH (h, pri)) rec = return ()
-    emit (TStreamH(h, pri)) rec = return ()
-    close _ = return ()
+{- | Create a stream log handler.  Log messages sent to this handler will
+   be sent to the stream used initially.  Note that the 'close' method
+   will have no effect on stream handlers; it does not actually close
+   the underlying stream.  -}
 
-newStreamHandler :: Handle -> Priority -> TStreamH
-newStreamHandler h pri = TStreamH (h, pri)
+streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
+streamHandler h pri = 
+    return (GenericHandler {priority = pri,
+                            privData = h,
+                            writeFunc = hPutStrLn,
+                            closeFunc = \x -> return ()})
+
+{- | Create a file log handler.  Log messages sent to this handler
+   will be sent to the filename specified, which will be opened
+   in Append mode.  Calling close on the handler will close the file.
+   -}
+
+fileHandler :: FilePath -> Priority -> IO (GenericHandler Handle)
+fileHandler fp pri = do
+                     h <- openFile fp AppendMode
+                     sh <- streamHandler h pri
+                     return (sh{closeFunc = hClose})

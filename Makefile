@@ -51,5 +51,8 @@ test-ghc6: testsrc/runtests
 test-hugs:
 	runhugs -P:$(PWD)/libsrc:$(PWD)/testsrc testsrc/runtests.hs
 
+interact-hugs:
+	hugs -P:$(PWD)/libsrc
+
 test: test-ghc6 test-hugs
 

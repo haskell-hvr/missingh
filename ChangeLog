@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 19:54:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-44
+
+    Summary:
+      Checkpointing logging work
+    Revision:
+      missingh--head--1.0--patch-44
+
+
+    modified files:
+     ChangeLog Makefile libsrc/MissingH/Logging.hs
+     libsrc/MissingH/Logging/Handler.hs
+
+
 2004-10-07 16:12:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-43
 
     Summary:
