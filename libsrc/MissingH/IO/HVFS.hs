@@ -35,6 +35,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
                         HVFS(..), HVFSStat(..), HVFSStatEncap(..),
                         HVFSOpenable(..), HVFSOpenEncap(..),
+                        SystemFS(..),
                         -- * Re-exported types from other modules
                         FilePath, DeviceID, FileID, FileMode, LinkCount,
                         UserID, GroupID, FileOffset, EpochTime,

@@ -41,6 +41,14 @@ testTree = [("test.txt", MemoryFile "line1\nline2\n"),
             )
            ]
 
+test_nice_slice =
+    let f exp fp = TestLabel fp $ TestCase $ exp @=? nice_slice fp
+        in [
+            f [] "/"
+           ,f ["foo", "bar"] "/foo/bar"
+           --,f [] "."
+           ]
+
 test_content = 
     let f exp fp = TestLabel fp $ TestCase $
                      do x <- newMemoryVFS testTree
@@ -73,6 +81,7 @@ test_structure =
         ]
                             
 
-tests = TestList [TestLabel "structure" (TestList test_structure)
+tests = TestList [TestLabel "nice_slice" (TestList test_nice_slice)
+                 ,TestLabel "structure" (TestList test_structure)
                  ,TestLabel "content" (TestList test_content)
                  ]

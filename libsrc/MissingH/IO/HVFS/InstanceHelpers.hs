@@ -40,8 +40,9 @@ module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                         newMemoryVFS, newMemoryVFSRef,
                                         MemoryNode,
                                         MemoryEntry(..),
-                                        -- ** FuncVFS
-                                        
+                                        -- * Utilities
+                                        nice_slice, getFullPath,
+                                        getFullSlice
                                        )
 where
 import MissingH.IO.HVFS
@@ -90,6 +91,39 @@ newMemoryVFSRef :: IORef [MemoryNode] -> IO MemoryVFS
 newMemoryVFSRef r = do
                     c <- newIORef "/"
                     return (MemoryVFS {content = r, cwd = c})
+
+{- | Similar to 'MissingH.Path.NameManip' but the first element
+won't be @\/@.
+
+>nice_slice "/" -> []
+>nice_slice "/foo/bar" -> ["foo", "bar"]
+-}
+nice_slice :: String -> [String]
+nice_slice "/" = []
+nice_slice path =
+    let sliced1 = slice_path path
+        h = head sliced1
+        t = tail sliced1
+        newh =  if head h == '/' then tail h else h
+        sliced2 = newh : t
+    in sliced2
+
+{- | Gets a full path, after investigating the cwd.
+-}
+getFullPath :: HVFS a => a -> String -> IO String
+getFullPath fs path =
+    do cwd <- vGetCurrentDirectory fs
+       case absNormPath cwd path of
+           Nothing -> vRaiseError fs doesNotExistErrorType
+                        ("Trouble normalizing path " ++ path) (Just (cwd ++ "/" ++ path))
+           Just newpath -> return newpath
+
+{- | Gets the full path via 'getFullPath', then splits it via 'nice_slice'.
+-}
+getFullSlice :: HVFS a => a -> String -> IO [String]
+getFullSlice fs fp =
+    do newpath <- getFullPath fs fp
+       return (nice_slice newpath)
 
 -- | Find an element on the tree, assuming a normalized path
 findMelem :: MemoryVFS -> String -> IO MemoryEntry
