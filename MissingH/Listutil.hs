@@ -29,9 +29,9 @@ module MissingH.Listutil(-- * Tests
 false otherwise.
 
 Example:
-@
-startswith He Hello -> True
-@
+
+> startswith "He" "Hello" -> True
+
 -}
 
 startswith :: Eq a => [a] -> [a] -> Bool
@@ -45,9 +45,9 @@ startswith (x:xs) (l:ls) =
 false otherwise.
 
 Example:
-@
-endswith lo Hello True
-@
+
+> endswith "lo" "Hello" -> True
+
 -}
 endswith :: Eq a => [a] -> [a] -> Bool
 endswith x l = startswith (reverse x) (reverse l)

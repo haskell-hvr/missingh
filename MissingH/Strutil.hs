@@ -24,6 +24,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Strutil(-- * Whitespace Removal
                         strip, lstrip, rstrip,
                         -- * Tests
+                        -- | Note: These functions are aliases for functions
+                        -- in "MissingH.Listutil".
                         startswith, endswith
                        ) where
 import MissingH.Listutil(startswith, endswith)
