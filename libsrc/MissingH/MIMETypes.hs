@@ -137,10 +137,13 @@ makeMIMETypes mtd =
                         procwords (('#':_) :_) = []
                         procwords (x:xs) = x : procwords xs
                         l2 = procwords l1
-                        thetype = head l2
-                        suffixlist = tail l2
                         in
-                        foldl (\o suff -> (addType o) strict thetype suff) obj suffixlist
+                        if (length l2) >= 2 then
+                           let thetype = head l2
+                               suffixlist = tail l2
+                               in
+                               foldl (\o suff -> (addType o) strict thetype suff) obj suffixlist
+                        else self
                 in
                 do
                 lines <- hGetLines h

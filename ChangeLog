@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 21:24:05 GMT	John Goerzen <jgoerzen@complete.org>	patch-87
+
+    Summary:
+      Added mime types parsing
+    Revision:
+      missingh--head--1.0--patch-87
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/MIMETypes.hs
+
+
 2004-10-20 21:22:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-86
 
     Summary:
