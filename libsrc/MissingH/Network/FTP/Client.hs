@@ -23,12 +23,140 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
    Maintainer : John Goerzen, 
    Maintainer : jgoerzen@complete.org
-   Stability  : provisional
+   Stability  : experimental
    Portability: systems with networking
 
 This module provides a client-side interface to the File Transfer Protocol.
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+Welcome to the FTP module for Haskell.
+
+Here is a quick usage example to get you started.  This is a log of a real
+session with ghci: 
+
+(This would be similar in a "do" block.  You could also save it to a file and
+run that with Hugs.)
+
+> Prelude> :l MissingH.Network.FTP.Client
+> ...
+
+The above loads the module.
+
+Next, we enable the debugging.  This will turn on all the @"FTP sent"@ and
+@"FTP received"@ messages you'll see.
+
+> Prelude MissingH.Network.FTP.Client> enableFTPDebugging
+
+Now, connect to the server on @ftp.kernel.org@.
+
+> *MissingH.Network.FTP.Client> h <- easyConnectFTP "ftp.kernel.org"
+> FTP received: 220 Welcome to ftp.kernel.org.
+
+And log in anonymously.
+
+> *MissingH.Network.FTP.Client> loginAnon h
+> FTP sent: USER anonymous
+> FTP received: 331 Please specify the password.
+> FTP sent: PASS anonymous@
+> ...
+> FTP received: 230 Login successful.
+
+Change the directory...
+
+> Prelude MissingH.Network.FTP.Client> cwd h "/pub/linux/kernel/Historic"
+> FTP sent: CWD /pub/linux/kernel/Historic
+> FTP received: 250 Directory successfully changed.
+
+Let's look at the directory. 'nlst' returns a list of strings, each string
+corresponding to a filename.  Here, @putStrLn . unlines@ will simply
+print them out, one per line.
+
+> Prelude MissingH.Network.FTP.Client> nlst h Nothing >>= putStrLn . unlines
+> FTP sent: TYPE A
+> FTP received: 200 Switching to ASCII mode.
+> FTP sent: PASV
+> FTP received: 227 Entering Passive Mode (204,152,189,116,130,143)
+> FTP sent: NLST
+> FTP received: 150 Here comes the directory listing.
+> linux-0.01.tar.bz2
+> linux-0.01.tar.bz2.sign
+> linux-0.01.tar.gz
+> linux-0.01.tar.gz.sign
+> linux-0.01.tar.sign
+> old-versions
+> v0.99
+> FTP received: 226 Directory send OK.
+
+Let's try downloading something and print it to the screen.  Again, we use
+@putStrLn@.  We use @fst@ here because 'getbinary' returns a tuple consisting
+of a string representing the data and a 'FTPResult' code.
+
+> Prelude MissingH.Network.FTP.Client> getbinary h "linux-0.01.tar.gz.sign" >>= putStrLn . fst
+> FTP sent: TYPE I
+> FTP received: 200 Switching to Binary mode.
+> FTP sent: PASV
+> FTP received: 227 Entering Passive Mode (204,152,189,116,121,121)
+> FTP sent: RETR linux-0.01.tar.gz.sign
+> FTP received: 150 Opening BINARY mode data connection for linux-0.01.tar.gz.sign (248 bytes).
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.0.0 (GNU/Linux)
+> Comment: See http://www.kernel.org/signature.html for info
+> 
+> iD8DBQA54rf0yGugalF9Dw4RAqelAJ9lafFni4f/QyJ2IqDXzW2nz/ZIogCfRPtg
+> uYpWffOhkyByfhUt8Lcelec=
+> =KnLA
+> -----END PGP SIGNATURE-----
+> FTP received: 226 File send OK.
+
+Here's an example showing you what the result code looks like.
+
+> Prelude MissingH.Network.FTP.Client> getbinary h "linux-0.01.tar.gz.sign" >>= print . snd
+> ...
+> (226,["File send OK."])
+
+The first component of the 'FTPResult' object is the numeric status code from
+the server.  The second component is a list of message lines from the server.
+
+Now, let's get a more detailed directory listing:
+
+> Prelude MissingH.Network.FTP.Client> dir h Nothing >>= putStrLn . unlines
+> ...
+> -r--r--r--    1 536      536         63362 Oct 30  1993 linux-0.01.tar.bz2
+> -r--r--r--    1 536      536           248 Oct 30  1993 linux-0.01.tar.bz2.sign
+> -r--r--r--    1 536      536         73091 Oct 30  1993 linux-0.01.tar.gz
+> -r--r--r--    1 536      536           248 Oct 30  1993 linux-0.01.tar.gz.sign
+> -r--r--r--    1 536      536           248 Oct 30  1993 linux-0.01.tar.sign
+> drwxrwsr-x    5 536      536          4096 Mar 20  2003 old-versions
+> drwxrwsr-x    2 536      536          4096 Mar 20  2003 v0.99
+> FTP received: 226 Directory send OK.
+
+And finally, log out:
+
+> Prelude MissingH.Network.FTP.Client> quit h
+> FTP sent: QUIT
+> FTP received: 221 Goodbye.
+
+Here is one big important caution:
+
+/You MUST consume all data from commands that return file data before you
+issue any other FTP commands./
+
+That's due to the lazy nature of Haskell.  This means that, for instance,
+you can't just iterate over the items 'nlst' returns, trying to 'getbinary'
+each one of them -- the system is still transferring 'nlst' data while you
+are trying that, and confusion will ensue.  Either open two FTP connections
+or make sure you consume the 'nlst' data first.
+
+Here is a partial list of commands effected: 'nlst', 'dir', 'getbinary',
+'getlines', 'downloadbinary', 'downloadlines'.
+
+The corrolary is:
+
+/Actions that yield lazy data for data uploading must not issue FTP
+commands themselves./
+
+This will be fairly rare.  Just be aware of this.
 
 Useful standards:
 
@@ -49,10 +177,10 @@ Useful standards:
 -}
 
 module MissingH.Network.FTP.Client(-- * Establishing\/Removing connections
-                                   easyConnectTo, connectTo,
-                                   loginAnon, login, quit,
+                                   easyConnectFTP, connectFTP,
+                                   loginAnon, login, quit, 
                                    -- * Configuration
-                                   setPassive,
+                                   setPassive, enableFTPDebugging,
                                    -- * Directory listing
                                    nlst, dir, 
                                    -- * File downloads
@@ -102,13 +230,26 @@ sendcmd h c = do logsend c
 {- | Connect to the remote FTP server and read but discard
    the welcome.  Assumes
    default FTP port, 21, on remote. -}
-easyConnectTo :: Network.HostName -> IO FTPConnection
-easyConnectTo h = do x <- connectTo h 21
-                     return (fst x)
+easyConnectFTP :: Network.HostName -> IO FTPConnection
+easyConnectFTP h = do x <- connectFTP h 21
+                      return (fst x)
+
+{- | Enable logging of FTP messages through 'MissingH.Logging.Logger'.
+This sets the log levels of @"MissingH.Network.FTP.Parser"@ and
+@"MissingH.Network.FTP.Client"@ to DEBUG.  By default, this means that
+full protocol dumps will be sent to stderr.
+
+The effect is global and persists until changed.
+-}
+enableFTPDebugging :: IO ()
+enableFTPDebugging = 
+    do
+    updateGlobalLogger "MissingH.Network.FTP.Parser" (setLevel DEBUG)
+    updateGlobalLogger "MissingH.Network.FTP.Client" (setLevel DEBUG)
 
 {- | Connect to remote FTP server and read the welcome. -}
-connectTo :: Network.HostName -> PortNumber -> IO (FTPConnection, FTPResult)
-connectTo h p =
+connectFTP :: Network.HostName -> PortNumber -> IO (FTPConnection, FTPResult)
+connectFTP h p =
     let readchars :: Handle -> IO String
         readchars h = do
                       c <- hGetChar h
@@ -116,8 +257,6 @@ connectTo h p =
                       return (c : next)
         in
     do
-    updateGlobalLogger "MissingH.Network.FTP.Parser" (setLevel DEBUG)
-    updateGlobalLogger "MissingH.Network.FTP.Client" (setLevel DEBUG)
     s <- connectTCP h p
     r <- socketToHandle s ReadMode
     hSetBuffering r LineBuffering
