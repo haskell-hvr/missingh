@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 14:44:49 GMT	John Goerzen <jgoerzen@complete.org>	patch-87
+
+    Summary:
+      Start of HVFS
+    Revision:
+      missingh--head--0.7--patch-87
+
+
+    new files:
+     libsrc/MissingH/IO/HVFS.hs
+
+    modified files:
+     ChangeLog
+
+    renamed files:
+     pending/HVIO.hs
+       ==> libsrc/MissingH/IO/HVIO.hs
+
+
 2004-12-19 22:07:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-86
 
     Summary:
