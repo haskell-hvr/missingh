@@ -108,7 +108,7 @@ pOpen pm fp args func =
                                         hClose h
                                         return $! x
                          pOpen3 Nothing (Just (snd pipepair)) Nothing fp args
-                                callfunc
+                                callfunc (closeFd (fst pipepair))
          WriteToPipe -> do 
                         let callfunc _ = do
                                        closeFd (fst pipepair)
@@ -117,7 +117,7 @@ pOpen pm fp args func =
                                        hClose h
                                        return $! x
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
-                               callfunc
+                               callfunc (closeFd (snd pipepair))
 
 {- | Runs a command, redirecting things to pipes. -}
 pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
@@ -125,26 +125,31 @@ pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
        -> Maybe Fd                      -- ^ Get stderr from this fd
        -> FilePath                      -- ^ Command to run
        -> [String]                      -- ^ Command args
-       -> (ProcessID -> IO a)           -- ^ Action to run
+       -> (ProcessID -> IO a)           -- ^ Action to run in parent
+       -> IO ()                         -- ^ Action to run in child before execing (if you don't need something, set this to @return ()@)
        -> IO a
-pOpen3 pin pout perr fp args func = 
+pOpen3 pin pout perr fp args func childfunc = 
     let mayberedir Nothing _ = return ()
         mayberedir (Just fromfd) tofd = do
                                         dupTo fromfd tofd
+                                        closeFd fromfd
                                         return ()
         childstuff = do
                      mayberedir pin stdInput
                      mayberedir pout stdOutput
                      mayberedir perr stdError
+                     childfunc
                      debugM (logbase ++ ".pOpen3")
                             ("Running: " ++ fp ++ " " ++ (show args))
                      executeFile fp True args Nothing
+        realfunc p = do
+                     System.Posix.Signals.installHandler
+                           System.Posix.Signals.sigPIPE
+                           System.Posix.Signals.Ignore
+                           Nothing
+                     func p
         in
         do 
-        System.Posix.Signals.installHandler
-                      System.Posix.Signals.sigPIPE
-                      System.Posix.Signals.Ignore
-                      Nothing
         p <- try (forkProcess childstuff)
         pid <- case p of
                 Right x -> return x

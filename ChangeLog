@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-27 01:48:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-17
+
+    Summary:
+      Fixed bug in pipe (not closing write side in child)
+    Revision:
+      missingh--head--0.5--patch-17
+
+
+    new files:
+     mailprint.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Cmd.hs
+
+
 2004-10-26 21:39:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-16
 
     Summary:
