@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-22 22:17:09 GMT	John Goerzen <jgoerzen@complete.org>	patch-148
+
+    Summary:
+      Got RETR written!
+    Revision:
+      missingh--head--0.7--patch-148
+
+
+    modified files:
+     ChangeLog TODO libsrc/MissingH/IO.hs
+     libsrc/MissingH/IO/HVIO.hs
+     libsrc/MissingH/Network/FTP/Server.hs
+
+
 2004-12-22 19:49:29 GMT	John Goerzen <jgoerzen@complete.org>	patch-147
 
     Summary:

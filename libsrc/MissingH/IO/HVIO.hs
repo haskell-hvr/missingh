@@ -242,6 +242,15 @@ class (Show a) => HVIO a where
     -- | Indicate whether this instance supports seeking.
     vIsSeekable :: a -> IO Bool
 
+    -- | Set buffering; the default action is a no-op.
+    vSetBuffering :: a -> BufferMode -> IO ()
+
+    -- | Get buffering; the default action always returns NoBuffering.
+    vGetBuffering :: a -> IO BufferMode
+
+    vSetBuffering x _ = return ()
+    vGetBuffering x = return NoBuffering
+
     vShow x = return (show x)
 
     vMkIOError _ et desc mfp =
@@ -345,6 +354,8 @@ instance HVIO Handle where
     vSeek = hSeek
     vTell = hTell
     vIsSeekable = hIsSeekable
+    vSetBuffering = hSetBuffering
+    vGetBuffering = hGetBuffering
 
 ----------------------------------------------------------------------
 -- VIO Support
@@ -417,8 +428,7 @@ instance HVIO StreamReader where
 {- | A 'MemoryBuffer' simulates true I\/O, but uses an in-memory buffer instead
 of on-disk storage.
 
-
- It provides
+It provides
 a full interface like Handle (it implements 'HVIOReader', 'HVIOWriter',
 and 'HVIOSeeker').  However, it maintains an in-memory buffer with the 
 contents of the file, rather than an actual on-disk file.  You can access

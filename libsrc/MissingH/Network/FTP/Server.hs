@@ -61,6 +61,8 @@ import Data.Char
 import MissingH.Printf
 import Data.IORef
 import Data.List
+import Control.Exception(finally)
+import MissingH.IO
 
 data DataType = ASCII | Binary
               deriving (Eq, Show)
@@ -71,7 +73,6 @@ data AuthState = NoAuth
 data DataChan = NoChannel
               | PassiveMode SocketServer
               | PortMode SockAddr
-              | ActivePort Socket
 data FTPState = FTPState
               { auth :: IORef AuthState,
                 datatype :: IORef DataType,
@@ -80,7 +81,7 @@ data FTPState = FTPState
                 local :: SockAddr,
                 remote :: SockAddr}
 
-data FTPServer = forall a. HVFS a => FTPServer Handle a FTPState
+data FTPServer = forall a. HVFSOpenable a => FTPServer Handle a FTPState
 
 s_crlf = "\r\n"
 logname = "MissingH.Network.FTP.Server"
@@ -103,7 +104,7 @@ sendReply h codei text =
 {- | Main FTP handler; pass the result of applying this to one argument to 
 'MissingH.Network.SocketServer.handleHandler' -}
 
-anonFtpHandler :: forall a. HVFS a => a -> Handle -> SockAddr -> SockAddr -> IO ()
+anonFtpHandler :: forall a. HVFSOpenable a => a -> Handle -> SockAddr -> SockAddr -> IO ()
 anonFtpHandler f h saremote salocal =
     let serv r = FTPServer h f r
         in
@@ -162,6 +163,7 @@ commands =
     ,("STRU", (forceLogin cmd_stru,  help_stru))
     ,("PASV", (forceLogin cmd_pasv,  help_pasv))
     ,("PORT", (forceLogin cmd_port,  help_port))
+    ,("RETR", (forceLogin cmd_retr,  help_retr))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -271,11 +273,6 @@ cmd_type h@(FTPServer _ _ state) args =
 closeconn :: FTPServer -> IO ()
 closeconn h@(FTPServer _ _ state) =
     do dc <- readIORef (datachan state)
-       case dc of 
-           NoChannel -> return ()
-           PassiveMode ss -> closeSocketServer ss
-           PortMode _ -> return ()
-           ActivePort sock -> sClose sock
        writeIORef (datachan state) NoChannel
 
 help_port = ("Initiate a port-mode connection", "")
@@ -289,7 +286,6 @@ cmd_port h@(FTPServer _ _ state) args =
         in
         do closeconn h                      -- Close any existing connection
            trapIOError h (fromPortString args) $  (\clientsa -> 
-            do closeconn h
                case clientsa of
                    SockAddrInet _ ha -> 
                       case (local state) of
@@ -301,7 +297,22 @@ cmd_port h@(FTPServer _ _ state) args =
                                   return True
                    _ -> do sendReply h 501 "Require IPv4 in specified address"
                            return True
-                                                  )
+                                                   )
+
+runDataChan :: FTPServer -> (FTPServer -> Socket -> IO ()) -> IO ()
+runDataChan h@(FTPServer _ _ state) func =
+    do chan <- readIORef (datachan state)
+       case chan of
+          NoChannel -> fail "Can't connect when no data channel exists"
+          PassiveMode ss -> do finally (handleOne ss (\sock _ _ -> func h sock))
+                                       (do closeSocketServer ss
+                                           closeconn h
+                                       )
+          PortMode sa -> do proto <- getProtocolNumber "tcp"
+                            s <- socket AF_INET Stream proto
+                            connect s sa
+                            finally (func h s) $ closeconn h
+
 help_pasv = ("Initiate a passive-mode connection", "")
 cmd_pasv :: CommandHandler
 cmd_pasv h@(FTPServer _ _ state) args =
@@ -342,6 +353,36 @@ cmd_rnfr h@(FTPServer _ _ state) args =
        else do writeIORef (rename state) (Just args)
                sendReply h 350 "Noted rename from name; please send RNTO."
                return True
+
+help_retr = ("Retrieve a file", "")
+cmd_retr :: CommandHandler
+cmd_retr h@(FTPServer _ fs state) args =
+    let runit fhencap _ sock =
+            case fhencap of
+              HVFSOpenEncap fh -> 
+                do writeh <- socketToHandle sock WriteMode
+                   mode <- readIORef (datatype state)
+                   case mode of
+                    ASCII -> finally (hLineInteract fh writeh 
+                                        (\x -> map (\y -> y ++ "\r") x))
+                                     (hClose writeh)
+                    Binary -> finally (do vSetBuffering fh (BlockBuffering (Just 4096))
+                                          hCopy fh writeh
+                                      ) (hClose writeh)
+        in
+        if length args < 1
+           then do sendReply h 501 "Filename required"
+                   return True
+           else trapIOError h (vOpen fs args ReadMode) (\fhencap ->
+                             trapIOError h (runDataChan h (runit fhencap)) $
+                                                   (\_ ->
+                       do case fhencap of
+                             HVFSOpenEncap fh -> vClose fh
+                          sendReply h 226 "Closing data connection; transfer complete."
+                          return True
+                                                                )
+                                                  )
+       
 
 help_rnto = ("Specify TO name for a file name", "")
 cmd_rnto :: CommandHandler

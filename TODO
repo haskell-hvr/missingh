@@ -11,4 +11,5 @@ HVFStest:
 
 FTP server:
   timeouts
+  Proper error checking lots of places, esp. runDataChan
 

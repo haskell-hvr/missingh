@@ -52,13 +52,14 @@ module MissingH.IO(-- * Entire File\/Handle Utilities
 import System.IO.Unsafe
 import System.IO
 import Data.List
+import MissingH.IO.HVIO
 
 {- | Given a list of strings, output a line containing each item, adding
 newlines as appropriate.  The list is not expected to have newlines already.
 -}
 
-hPutStrLns :: Handle -> [String] -> IO ()
-hPutStrLns h = mapM_ $ hPutStrLn h
+hPutStrLns :: HVIO a => a -> [String] -> IO ()
+hPutStrLns h = mapM_ $ vPutStrLn h
 
 {- | Given a handle, returns a list of all the lines in that handle.
 Thanks to lazy evaluation, this list does not have to be read all at once.
@@ -75,13 +76,13 @@ Example:
 -}
 
 -- FIXME does hGetContents h >>= return.lines not work?
-hGetLines :: Handle -> IO [String]
+hGetLines :: HVIO a => a -> IO [String]
 hGetLines h = unsafeInterleaveIO (do
-                                  ieof <- hIsEOF h
+                                  ieof <- vIsEOF h
                                   if (ieof) 
                                      then return []
                                      else do
-                                          line <- hGetLine h
+                                          line <- vGetLine h
                                           remainder <- hGetLines h
                                           return (line : remainder)
                                  )
@@ -131,7 +132,7 @@ Though the actual implementation is this for efficiency:
 >     hPutStrLns foutput (func lines)
 -}
 
-hLineInteract :: Handle -> Handle -> ([String] -> [String]) -> IO ()
+hLineInteract :: (HVIO a, HVIO b) => a -> b -> ([String] -> [String]) -> IO ()
 hLineInteract finput foutput func =
     do
     lines <- hGetLines finput
@@ -140,10 +141,10 @@ hLineInteract finput foutput func =
 {- | Copies from one handle to another in raw mode (using
 hGetContents).
 -}
-hCopy :: Handle -> Handle -> IO ()
+hCopy :: (HVIO a, HVIO b) => a -> b -> IO ()
 hCopy hin hout = do
-                 c <- hGetContents hin
-                 hPutStr hout c
+                 c <- vGetContents hin
+                 vPutStr hout c
 
 {- | Copies from one handle to another in raw mode (using hGetContents).
 Takes a function to provide progress updates to the user.
