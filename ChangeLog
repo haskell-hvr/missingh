@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 15:12:29 GMT	John Goerzen <jgoerzen@complete.org>	patch-54
+
+    Summary:
+      Noted new e-mail module
+    Revision:
+      missingh--head--0.7--patch-54
+
+
+    modified files:
+     ChangeLog README Setup.description debian/changelog
+
+
 2004-12-09 04:02:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-53
 
     Summary:

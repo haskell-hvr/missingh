@@ -62,6 +62,12 @@ MissingH.ConfigParser    * Configuration file parser
 
 MissingH.Either          * Utilities for the Either type/Error monad
 
+MissingH.Email.Parser    * Parse a flat string into component parts
+                         * Walk through the components of a message
+
+MissingH.Email.Sendmail  * Send a message via a locally-installed Sendmail
+                           program
+
 MisssingH.FileArchive.   * Support for analyzing and extracting
   GZip                     GZip archives
 
