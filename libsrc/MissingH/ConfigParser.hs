@@ -29,9 +29,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Configuration file parsing, generation, and manipulation
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
+
+This module contains extensive documentation.  Please scroll down to the Introduction section to continue reading.
 -}
 module MissingH.ConfigParser
     (
+     -- * Introduction
+     -- $introduction
+
+     -- ** Features
+     -- $features
+
+     -- ** History
+     -- $history
+
+     -- * Configuration File Format
+     -- $format
+
+     -- ** White Space
+     -- $whitespace
+
+     -- ** Comments
+     -- $comments
+
+     -- ** Case Sensitivity
+     -- $casesens
+
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
      CPErrorData(..), CPError, CPResult,
@@ -349,6 +372,152 @@ to_string cp =
 ----------------------------------------------------------------------
 -- Docs
 ----------------------------------------------------------------------
+
+{- $introduction
+
+Many programs need configuration files. These configuration files are
+typically used to configure certain runtime behaviors that need to be
+saved across sessions. Various different configuration file formats
+exist.
+
+The ConfigParser module attempts to define a standard format that is
+easy for the user to edit, easy for the programmer to work with, yet
+remains powerful and flexible.
+-}
+
+{- $features
+
+For the programmer, this module provides:
+
+ * Simple calls to both read /and write/ configuration files
+
+ * Call that can generate a string version of a file that is
+   re-parsable by this module (useful for, for instance, sending the
+   file down a network)
+
+ * Segmented configuration files that let you separate configuration
+   into distinct sections, each with its own namespace. This can be
+   used to configure multiple modules in one file, to configure
+   multiple instances of a single object, etc.
+
+ * On-the-fly parsing of integer, boolean, float, multi-line string values,
+   and anything else Haskell's read can deal with
+
+ * It is possible to make a configuration file parsable by this
+   module, the Unix shell, and\/or Unix make, though some feautres are,
+   of course, not compatible with these other tools.
+
+ * Syntax checking with error reporting including line numbers
+
+ * Implemented in pure Haskell.  No dependencies on modules outside
+   the standard library distributed with Haskell compilers or interpreters.
+   All calls except those that read directly from a handle are pure calls
+   and can be used outside the IO monad.
+
+ * Comprehensive documentation
+
+ * Extensible API
+
+ * Complete compatibility with Python's ConfigParser module, or my
+   ConfigParser module for OCaml, part of my MissingLib package.
+
+For the user, this module provides:
+
+ * Easily human-editable configuration files with a clear, concise,
+   and consistent format
+
+ * Configuration file format consistent with other familiar formats
+   (\/etc\/passwd is a valid ConfigParser file)
+
+ * No need to understand semantics of markup languages like XML
+-}
+
+{- $history
+
+This module is based on Python's ConfigParser module at
+<http://www.python.org/doc/current/lib/module-ConfigParser.html>.  I had
+earlier developed an OCaml implementation as part of my MissingLib library
+at <gopher://gopher.quux.org/devel/missinglib>.
+
+While the API of these three modules is similar, and the aim is to preserve all
+useful features of the original Python module, there are some differences
+in the implementation details.  This module is a complete, clean re-implementation
+in Haskell, not a Haskell translation of a Python program.  As such, the feature
+set is slightly different.
+-}
+
+{- $format
+
+The basic configuration file format resembles that of an old-style
+Windows .INI file. Here are two samples:
+
+>debug = yes
+>inputfile = /etc/passwd
+>names = Peter, Paul, Mary, George, Abrahaham, John, Bill, Gerald, Richard,
+>        Franklin, Woodrow
+>color = red 
+
+This defines a file without any explicit section, so all items will
+occur within the default section @DEFAULT@. The @debug@ option can be read
+as a boolean or a string. The remaining items can be read as a string
+only. The @names@ entry spans two lines -- any line starting with
+whitespace, and containing something other than whitespace or
+comments, is taken as a continuation of the previous line.
+
+Here's another example: 
+
+># Default options
+>[DEFAULT]
+>hostname: localhost 
+># Options for the first file
+>[file1]
+>location: /usr/local
+>user: Fred
+>uid: 1000
+>optionaltext: Hello, this  entire string is included 
+>[file2]
+>location: /opt
+>user: Fred
+>uid: 1001 
+
+This file defines three sections. The @DEFAULT@ section specifies an
+entry @hostname@. If you attempt to read the hostname option in any
+section, and that section doesn't define @hostname@, you will get the
+value from @DEFAULT@ instead. This is a nice time-saver. You can also
+note that you can use colons instead of the = character to separate
+option names from option entries.
+-}
+
+{- $whitespace
+
+Whitespace (spaces, tabs, etc) is automatically stripped from the
+beginning and end of all strings. Thus, users can insert whitespace
+before\/after the colon or equal sign if they like, and it will be
+automatically stripped.
+
+Blank lines or lines consisting solely of whitespace are ignored. 
+
+-}
+
+{- $comments
+
+Comments are introduced with the pound sign @#@ or the semicolon @;@. They
+cause the parser to ignore everything from that character to the end
+of the line.
+
+Comments /may not/ occur within the definitions of options; that is, you
+may not place a comment in the middle of a line such as @user: Fred@. 
+That is because the parser considers the comment characters part
+of the string; otherwise, you'd be unable to use those characters in
+your strings. You can, however, \"comment out\" options by putting the
+comment character at the start of the line.
+
+-}
+
+{- $casesens
+
+By default, section names are case-sensitive but option names are
+not. The latter can be adjusted by adjusting 'optionxform'.  -}
 
 {- $initialization
 
