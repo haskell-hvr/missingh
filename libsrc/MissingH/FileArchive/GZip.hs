@@ -29,6 +29,7 @@ import Data.List
 import Data.Bits
 import Control.Monad.Error
 import Data.Char
+import Data.Word
 
 type GZipError = String
 
@@ -62,8 +63,21 @@ decompress s =
        let rem = snd x
        return $ inflate_string rem
 
-{- | Obtain the components of the file.
--}
+-- | Read the file's compressed data, returning
+-- (Decompressed, CRC32, Remainder)
+read_data :: String -> (String, Word32, String)
+read_data x = 
+    let (decompressed1, remainder) = inflate_string_remainder x
+        (decompressed, crc32) = read_data_internal decompressed1 0 0
+        in
+        (decompressed, crc32, remainder)
+    where
+    read_data_internal [] ck l = ([], calc_crc32 [] ck l)
+    read_data_internal (x:xs) ck l =
+        let n = read_data_internal xs (iter_crc32 ck x) (l+1)
+            in
+            (x : fst n, snd n)
+    
 
 
 {- | Read the GZip header.  Return (Header, Remainder).
