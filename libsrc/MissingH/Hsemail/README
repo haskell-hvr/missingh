@@ -1,7 +1,7 @@
 Parsers for the Internet Message Standard
 =========================================
 
-:Latest Release: hsemail-2004-10-24.tar.gz_
+:Latest Release: hsemail-2004-11-01.tar.gz_
 :Darcs:          darcs_ get --partial http://cryp.to/hsemail/
 
 Synopsis
@@ -40,7 +40,7 @@ Copyleft
 
 .. _darcs: http://abridgegame.org/darcs/
 
-.. _hsemail-2004-10-24.tar.gz: http://cryp.to/hsemail/hsemail-2004-10-24.tar.gz
+.. _hsemail-2004-11-01.tar.gz: http://cryp.to/hsemail/hsemail-2004-11-01.tar.gz
 
 .. _Reference Documentation: docs/index.html
 

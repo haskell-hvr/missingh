@@ -1,6 +1,7 @@
+{-# OPTIONS -fglasgow-exts #-}
 {- |
    Module      :  Rfc2821
-   Copyright   :  (c) 2004-10-24 by Peter Simons
+   Copyright   :  (c) 2004-11-01 by Peter Simons
    License     :  GPL2
 
    Maintainer  :  simons@cryp.to
@@ -47,6 +48,8 @@ import Control.Monad.State
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Error
 import Data.List ( intersperse )
+import Data.Char ( toLower )
+import Data.Typeable
 import MissingH.Hsemail.Rfc2234
 
 ----- Smtp Parsers ---------------------------------------------------
@@ -103,13 +106,19 @@ instance Read SmtpCmd where
   readsPrec _ = readWrapper smtpCmd
   readList    = error "reading [SmtpCmd] is not supported"
 
--- |The most generic e-mail address has the form:
+-- |The most general e-mail address has the form:
 -- @\<[\@route,...:]user\@domain\>@. This type, too,
 -- supports 'show' and 'read'. Note that a \"shown\" address
--- is /always/ enclosed in angular brackets.
+-- is /always/ enclosed in angular brackets. When comparing
+-- two mailboxes for equality, the hostname is case-insensitive.
 
 data Mailbox = Mailbox [String] String String
-             deriving (Eq)
+             deriving (Typeable)
+
+instance Eq Mailbox where
+  lhs == rhs  =  (norm lhs) == (norm rhs)
+    where
+    norm (Mailbox rt lp hp) = (rt, lp, map toLower hp)
 
 instance Show Mailbox where
   show (Mailbox [] [] []) = "<>"
@@ -149,10 +158,8 @@ postmaster = Mailbox [] "postmaster" []
 -- > 250-like
 -- > 250 a charm
 --
--- You might want to try it with an @[]@ and see what
--- great standard messages you will get. @:-)@
---
--- /TODO:/ Define 'read' for those as well.
+-- If the message is @[]@, you'll get a really helpful
+-- default text.
 
 data SmtpReply = Reply SmtpCode [String]
 
@@ -463,9 +470,9 @@ handleSmtpCmd cmd = get >>= \st -> match st cmd
 
 -- |Make the string 'crlf' terminated, no matter what.
 -- \'@\\n@\' is expanded, otherwise 'crlf' is appended. Note
--- that if the strong was incorrectly terminated before, it
--- still is. So using this is safe, and useful when reading
--- with 'hGetLine', for example.
+-- that if the string was terminated incorrectly before, it
+-- still is. This function is useful when reading input with
+-- 'hGetLine', for example.
 
 fixCRLF :: String -> String
 fixCRLF ('\r' :'\n':[]) = fixCRLF []
@@ -490,10 +497,10 @@ mkCmd0 str cons = (do
   skipMany wsp >> crlf
   return cons)                          <?> str
 
--- Construct a parser for a command with an argument which
--- the given parser can handle. The parsed result will be
--- applied to the given type constructor and returned.
--- Expects 'crlf'!
+-- Construct a parser for a command with an argument, which
+-- the given parser will handle. The result of the argument
+-- parser will be applied to the type constructor before it
+-- is returned. Expects 'crlf'!
 
 mkCmd1 :: String -> (a -> SmtpCmd) -> GenParser Char st a
        -> GenParser Char st SmtpCmd

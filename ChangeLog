@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-06 17:58:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-49
+
+    Summary:
+      Imported hsemail 2004-11-01.
+    Revision:
+      missingh--head--0.7--patch-49
+
+
+    modified files:
+     COPYRIGHT ChangeLog debian/changelog
+     libsrc/MissingH/Hsemail/README
+     libsrc/MissingH/Hsemail/Rfc2821.hs
+
+
 2004-12-05 20:59:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-48
 
     Summary:
