@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module ConfigParser.RunParsertest(tests) where
+module ConfigParser.Parsertest(tests) where
 import HUnit
-import MissingH.ConfigParser.RunParser
+import MissingH.ConfigParser.Parser
 import Testutil
 
 test_basic =

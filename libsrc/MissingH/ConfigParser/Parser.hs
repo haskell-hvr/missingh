@@ -33,19 +33,33 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.ConfigParser.Parser
 (
-       CPTok(..),
-       satisfyG,
-       main
+ parse_string,
+       --satisfyG,
+       --main
 ) where
 import Text.ParserCombinators.Parsec
 import MissingH.Str
+import MissingH.ConfigParser.Lexer
 
-data CPTok = EOFTOK
-           | NEWSECTION String
-           | NEWSECTION_EOF String
-           | EXTENSIONLINE String
-           | NEWOPTION (String, String)
-             deriving (Eq, Show, Ord)
+----------------------------------------------------------------------
+-- Exported funcs
+----------------------------------------------------------------------
+
+parse_string :: String -> [(String, [(String, String)])]
+parse_string s = 
+    detokenize "(string)" $ parse loken "(string)" s
+
+----------------------------------------------------------------------
+-- Private funcs
+----------------------------------------------------------------------
+detokenize fp l =
+    let r = case l of
+                   Left err -> error (show err)
+                   Right reply -> reply
+        in
+        case runParser main () fp r of
+                                    Left err -> error (show err)
+                                    Right reply -> reply
 
 main :: GenParser CPTok () [(String, [(String, String)])]
 main =

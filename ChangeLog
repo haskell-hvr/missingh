@@ -2,6 +2,27 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 17:26:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-75
+
+    Summary:
+      Removed need for RunParser.hs
+    Revision:
+      missingh--head--0.5--patch-75
+
+
+    removed files:
+     libsrc/MissingH/ConfigParser/RunParser.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser/Lexer.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+     testsrc/ConfigParser/Parsertest.hs testsrc/Tests.hs
+
+    renamed files:
+     testsrc/ConfigParser/RunParsertest.hs
+       ==> testsrc/ConfigParser/Parsertest.hs
+
+
 2004-11-18 17:17:15 GMT	John Goerzen <jgoerzen@complete.org>	patch-74
 
     Summary:

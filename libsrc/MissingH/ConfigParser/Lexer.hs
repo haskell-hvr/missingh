@@ -37,12 +37,19 @@ module MissingH.ConfigParser.Lexer
        --comment_chars, eol, optionsep, whitespace_chars, comment_line,
        --empty_line, sectheader_chars, sectheader, oname_chars, value_chars,
        --extension_line, optionkey, optionvalue, optionpair
-       loken
+       loken,
+       CPTok(..)
 ) where
 
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
-import MissingH.ConfigParser.Parser
+
+data CPTok = EOFTOK
+           | NEWSECTION String
+           | NEWSECTION_EOF String
+           | EXTENSIONLINE String
+           | NEWOPTION (String, String)
+             deriving (Eq, Show, Ord)
 
 comment_chars = oneOf "#;"
 eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"

@@ -27,7 +27,7 @@ import qualified IOtest
 import qualified Bitstest
 import qualified Printftest
 import qualified Network.FTP.Parsertest
-import qualified ConfigParser.RunParsertest
+import qualified ConfigParser.Parsertest
 
 test1 = TestCase ("x" @=? "x")
 
@@ -40,6 +40,6 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Bitstest" Bitstest.tests,
                  TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests,
                  TestLabel "Printftest" Printftest.tests,
-                 TestLabel "ConfigParser.RunParser" ConfigParser.RunParsertest.tests]
+                 TestLabel "ConfigParser.RunParser" ConfigParser.Parsertest.tests]
 
 
