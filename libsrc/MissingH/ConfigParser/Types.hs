@@ -124,13 +124,16 @@ defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult Strin
 defdefaulthandler cp sect opt = 
     let fm = content cp
         lookup :: SectionSpec -> OptionSpec -> CPResult String
-        lookup s o = do sect <- maybeToEither (NoSection s, "lookup handler") $ lookupFM fm s
-                        maybeToEither (NoOption o, "lookup handler") $ lookupFM sect o
+        lookup s o = do sect <- maybeToEither (NoSection s, "get") $ lookupFM fm s
+                        maybeToEither (NoOption o, "get") $ lookupFM sect o
         trydefault :: CPError -> CPResult String
         trydefault e = if (usedefault cp)
-                       then lookup "DEFAULT" opt
+                       then 
+                            lookup "DEFAULT" opt 
+                                       -- Use original error if it's not in DEFAULT either
+                                       `catchError` (\_ -> throwError e)
                        else throwError e
-        in
+        in 
         lookup sect opt `catchError` trydefault
 
 {- | Low-level tool to convert a parsed object into a 'CPData'
