@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-01 23:00:11 GMT	John Goerzen <jgoerzen@complete.org>	patch-186
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-186
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/AnyDBM/StringDBM.hs
+     libsrc/MissingH/IO/HVFS.hs
+
+
 2005-02-01 22:18:39 GMT	John Goerzen <jgoerzen@complete.org>	patch-185
 
     Summary:

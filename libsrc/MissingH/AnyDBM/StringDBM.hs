@@ -40,6 +40,8 @@ module MissingH.AnyDBM.StringDBM (StringDBM,
 where
 import MissingH.AnyDBM
 import System.IO
+import MissingH.IO.HVFS
+import MissingH.IO.HVIO
 import Data.HashTable
 
 {- | The type of the StringDBM instances. -}

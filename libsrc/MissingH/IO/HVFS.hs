@@ -227,8 +227,22 @@ eh :: HVFS a => a -> String -> IO c
 eh fs desc = vRaiseError fs illegalOperationErrorType 
              (desc ++ " is not implemented in this HVFS class") Nothing
 
+{- | Types that can open a HVIO object should be instances of this class.
+You need only implement 'vOpen'. -}
+
 class HVFS a => HVFSOpenable a where
     vOpen :: a -> FilePath -> IOMode -> IO HVFSOpenEncap
+    vReadFile :: a -> FilePath -> IO String
+    vWriteFile :: a -> FilePath -> String -> IO ()
+
+    vReadFile h fp = 
+        do oe <- vOpen h fp ReadMode
+           withOpen oe (\fh -> vGetContents fh)
+
+    vWriteFile h fp s =
+        do oe <- vOpen h fp WriteMode
+           withOpen oe (\fh -> do vPutStr fh s
+                                  vClose fh)
 
 instance Show FileStatus where
     show _ = "<FileStatus>"
