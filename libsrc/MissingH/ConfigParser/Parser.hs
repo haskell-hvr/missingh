@@ -50,45 +50,59 @@ type ParseOutput = [(String, [(String, String)])]
 
 comment_chars = oneOf "#;"
 eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"
-optionsep = oneOf ":=" <?> "Option separator"
-whitespace_chars = oneOf " \t" <?> "Whitespace"
+eoleof = eol <|> do {eof; return ""}
+optionsep = oneOf ":=" <?> "option separator"
+whitespace_chars = oneOf " \t" <?> "whitespace"
 comment_line = do skipMany whitespace_chars <?> "whitespace in comment"
                   comment_chars             <?> "start of comment"
-                  (many1 $ noneOf "\r\n")   <?> "content of comment"
-empty_line = many1 whitespace_chars         <?> "empty line"
+                  (many $ noneOf "\r\n")    <?> "content of comment"
+                  eoleof
+                  -- eol
+empty_line = do skipMany whitespace_chars
+                eoleof
+{-
+             <|> do many1 whitespace_chars
+                    eof
+                    return "" -}
 
-ignore1 = eol 
-          <|> try (do {comment_line; ignore1})
-          <|> do {empty_line; ignore1}
-ignorestuff = skipMany ignore1
+ignore1 = --do notFollowedBy (do {eof; return 'x'})
+          (try comment_line) <|> (try empty_line)
+          <?> "an item to ignore"
+ignorestuff = eof
+              <|> do {ignore1; ignorestuff}
+              <|> return ()
 
 sectheader_chars = noneOf "]\r\n"
 sectheader = do ignorestuff
                 char '['
                 sname <- many1 $ sectheader_chars
                 char ']'
+                ignore1
                 return sname
+             <?> "section header"
 oname_chars = noneOf ":=\r\n"
 value_chars = noneOf "\r\n"
-extension_line = do ignorestuff
+extension_line = do ignorestuff <?> "POINT3"
                     many1 whitespace_chars
                     c1 <- noneOf "\r\n#;"
                     remainder <- many value_chars
+                    eoleof
                     return (c1 : remainder)
                  <?> "extension line"
 
 optionkey = many1 oname_chars           <?> "option key"
 optionvalue = many1 value_chars         <?> "option value"
-optionpair = do ignorestuff
+optionpair = do ignorestuff <?> "POINT4"
                 key <- optionkey
                 optionsep
                 value <- optionvalue
+                eoleof
                 return (key, value)
              <?> "option pair"
 
 parsemain :: Parser [(String, [(String, String)])]
 parsemain =
-    sectionlist
+    try sectionlist
     <|> try (do o <- optionlist
                 s <- sectionlist
                 return $ ("DEFAULT", o) : s
@@ -97,9 +111,10 @@ parsemain =
     <?> "High-level error parsing config file"
 
 sectionlist = 
-    do {eof; return []}
+    do {ignorestuff <?> "POINT2"; eof; return []}
     <|> try (do
-             s <- sectionhead
+             s <- sectionhead <?> "POINT10"
+             ignorestuff  <?> "POINT1"
              eof
              return [(s, [])]
             )
@@ -139,6 +154,7 @@ procparse fp l =
     case l of
            Left err -> error (show err)
            Right reply -> reply
+
 ----------------------------------------------------------------------
 -- Exported funcs
 ----------------------------------------------------------------------
