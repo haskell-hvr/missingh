@@ -1,6 +1,6 @@
 -- arch-tag: MissingH main description file
 Name: MissingH
-Version: 0.6.0
+Version: 0.7.4
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
@@ -59,3 +59,5 @@ HS-Source-Dir: libsrc
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances
 Build-Depends: haskell-src, network, unix, parsec
+Options-GHC: -O
+

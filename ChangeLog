@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 03:26:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-51
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-51
+
+
+    new files:
+     libsrc/MissingH/Email/MailParser.hs
+
+    modified files:
+     ChangeLog Setup.description {arch}/=tagging-method
+
+
 2004-12-06 18:05:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-50
 
     Summary:
