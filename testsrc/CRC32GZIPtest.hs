@@ -23,6 +23,7 @@ import MissingH.Checksum.CRC32.GZip
 test_crcgzip =
     let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" exp (calc_crc32 inp) in
         [f "Simple" "Test 1" 0x9927f819
+        ,f "Empty" "" 0x0
          --f "Empty" "" 4294967295,
          --f "1" "1" 433426081,
          --f "some numbers" "153141341309874102987412" 2083856642,

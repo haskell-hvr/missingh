@@ -20,7 +20,8 @@ The GZip format is described in RFC1952
 
 module MissingH.FileArchive.GZip (
                                   decompress,
-                                  read_header
+                                  read_header,
+                                  Header(..)
                                  )
 where
 
@@ -80,6 +81,9 @@ read_sections s = do x <- read_section s
                                                     next <- read_sections remain
                                                     return $ (head, this) : next
 
+parseword :: String -> Word32
+parseword s = fromBytes $ map (fromIntegral . ord) $ reverse s
+
 -- | Read one section, returning (Header, ThisSection, Remainder)
 read_section :: String -> Either GZipError (Header, String, String)
 read_section s =
@@ -88,8 +92,7 @@ read_section s =
            let (decompressed, crc32, remainder) = read_data headerrem
            let (crc32str, rem) = splitAt 4 remainder
            let (sizestr, rem2) = splitAt 4 rem
-           let filecrc32 = fromBytes $
-                           map (fromIntegral . ord) $ reverse crc32str
+           let filecrc32 = parseword crc32str
            
            if filecrc32 == crc32 
               then return $ (fst x, decompressed, rem2)
@@ -131,6 +134,8 @@ read_header s =
           else ok
        let (flag_S, rem3) = split1 rem2
        let flag = ord flag_S
+       --let (mtimea, rem3a) = splitAt 4 rem2
+       --let mtime = 
        -- skip modtime (4), extraflag (1), and os (1)
        let rem4 = drop 6 rem3
        

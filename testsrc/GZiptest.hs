@@ -35,6 +35,16 @@ test_inflate =
                     "\x19\xf8\x27\x99\x06\x00\x00\x00") inflate_string_remainder
         ]
 
+test_header =
+    let f fn exp = mf fn exp (fst . forceEither . read_header)
+        in
+        [
+         f "t1.gz" Header {method = 8, flags = 0, extra = Nothing,
+                            filename = Nothing, comment = Nothing}
+        ,f "empty.gz" Header {method = 8, flags = 8, extra = Nothing,
+                              filename = Just "empty", 
+                              comment = Nothing}
+        ]
 
 test_gunzip =
     let f fn exp = mf fn (Right exp) decompress
@@ -44,6 +54,7 @@ test_gunzip =
         ]
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),
+                  TestLabel "header" (TestList test_header),
                   TestLabel "gunzip" (TestList test_gunzip)
 
                  ]
