@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-09 01:15:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-65
+
+    Summary:
+      Updated README file
+    Revision:
+      missingh--head--1.0--patch-65
+
+
+    modified files:
+     ChangeLog README
+
+
 2004-10-09 00:54:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-64
 
     Summary:

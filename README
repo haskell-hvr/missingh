@@ -3,29 +3,67 @@ What is MissingH?
 -------------------------
 
 It's a collection of Haskell-related utilities.  It is an extension of my
-earlier work developing MissingLib for OCaml.  The following modules are
-are provided at this time, and more are likely to follow:
+earlier work developing MissingLib for OCaml.  
 
-IOutil                  * Copying data between files or handles
-                        * Lazy operations on line input
-                        * Binary I/O with Haskell strings
-                        * Lazy operations on binary blocks
+-------------------------
+Major Features
+-------------------------
 
-Listutil                * Association list manipulation
-                        * List splitting and delimiter joining
-                        * Truncation
+ * Powerful Logging Framework for Haskell
+   This framework provides a system of hierarchical loggers and
+   modular handlers permitting fine-grained logging with a great deal
+   of control and yet a simple and fast interface.  It's based on
+   log4j for Java and logging for Python.
 
-Strutil                 * Leading/trailing whitespace removal
-                        * Beginning/ending tests
-                        * Joining, splitting, and truncation
+   Also included is a native-Haskell Syslog client.
+
+ * IO utilities make it easier to work with line-based text files
+   and binary files
+
+ * List utilities including association list tools,
+   list splitting, truncation, and delimiter joining
+
+ * String utilities including removal of leading or trailing
+   whitespace, joining, splitting, and truncation
+
+The following modules are are provided at this time, and more are
+likely to follow:
+
+MissingH.IO              * Copying data between files or handles
+                         * Lazy operations on line input
+
+MissingH.Io.Binary       * Binary I/O with Haskell strings
+                         * Lazy operations on binary blocks
+
+MissingH.List            * Association list manipulation
+                         * List splitting and delimiter joining
+                         * Truncation
+
+MissingH.Logging         * Base logging types
+
+MissingH.Logging.Handler * Base handler types
+
+MissingH.Logging.        * Logging to a stream
+ Handler.Simple          * Logging to a file
+
+MissingH.Logging.        * Logging to local or remote syslog
+ Handler.Syslog          * No C library implementation required
+
+MissingH.Logging.Logger  * Primary user interface to logging
+                         * Documentation for the logging system
 
 
-The entire library has no prerequisites save the Haskell standard library and
-findlib and is designed to install without complexity on a variety of systems.
-It could also easily be embedded within your own source trees so that users
-need not have it installed beforehand.
+MissingH.Str             * Leading/trailing whitespace removal
+                         * Beginning/ending tests
+                         * Joining, splitting, and truncation
 
-** THIS IS CURRENTLY ALPHA-QUALITY CODE; MAJOR API FLUCTUATIONS MAY YET OCCUR.
+
+The entire library has no prerequisites save the Haskell standard
+library and is designed to install without complexity on a variety of
+systems.  It could also easily be embedded within your own source
+trees so that users need not have it installed beforehand.
+
+** THIS IS CURRENTLY BETA-QUALITY CODE; MAJOR API FLUCTUATIONS MAY YET OCCUR.
 
 -------------------------
 Quick Start
