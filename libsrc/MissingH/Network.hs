@@ -31,12 +31,31 @@ This module provides various helpful utilities for dealing with networking
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Network(connectTCP, connectTCPAddr
+module MissingH.Network(niceSocketsDo, connectTCP, connectTCPAddr
                        )
 where
+import Network
 import Network.Socket
 import Network.BSD
 import System.IO
+import qualified System.Posix.Signals
+
+{- | Sets up the system for networking.  Similar to the built-in
+withSocketsDo (and actually, calls it), but also sets the SIGPIPE
+handler so that signal is ignored. 
+
+Example:
+
+> main = niceSocketsDo $ do { ... } 
+-}
+
+niceSocketsDo :: IO a -> IO a
+niceSocketsDo func = do
+                System.Posix.Signals.installHandler 
+                      System.Posix.Signals.sigPIPE
+                      System.Posix.Signals.Ignore
+                      Nothing
+                withSocketsDo func
 
 connectTCP :: HostName -> PortNumber -> IO Socket
 connectTCP host port = do

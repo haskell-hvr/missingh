@@ -45,6 +45,8 @@ module MissingH.IO(-- * Entire File\/Handle Utilities
                        hInteract,
                        -- ** Line-based
                        hLineInteract, lineInteract,
+                   -- * Optimizations
+                   optimizeForBatch, optimizeForInteraction
                         ) where
 
 import System.IO.Unsafe
@@ -206,3 +208,18 @@ copyFileLinesToFile infn outfn = do
                                  hClose hout
                                  return ()
 
+{- | Sets stdin and stdout to be block-buffered.  This can save a huge amount
+of system resources since far fewer syscalls are made, and can make programs
+run much faster. -}
+optimizeForBatch :: IO ()
+optimizeForBatch = do
+                   hSetBuffering stdin (BlockBuffering (Just 4096))
+                   hSetBuffering stdout (BlockBuffering (Just 4096))
+
+{- | Sets stdin and stdout to be line-buffered.  This saves resources
+on stdout, but not many on stdin, since it it still looking for newlines.
+-}
+optimizeForInteraction :: IO ()
+optimizeForInteraction = do
+                         hSetBuffering stdin LineBuffering
+                         hSetBuffering stdout LineBuffering
