@@ -51,6 +51,10 @@ import System.Directory
 
 data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
 
+{- | Evaluating types of files and information about them.
+
+This corresponds to the System.Posix.Types.FileStatus type.
+-}
 class HVFSStat a where
     vDeviceID :: a -> DeviceID
     vFileID :: a -> FileID
@@ -91,6 +95,9 @@ un-implemented.
 
 You should always provide at least a 'vGetFileStatus' call, and almost
 certainly several of the others.
+
+Most of these functions correspond to functions in System.Directory or
+System.Posix.Files.  Please see detailed documentation on them there.
  -}
 class HVFS a where
     vGetCurrentDirectory :: a -> IO FilePath
@@ -106,6 +113,7 @@ class HVFS a where
     vGetFileStatus :: a -> FilePath -> IO HVFSStatEncap
     vGetSymbolicLinkStatus :: a -> FilePath -> IO HVFSStatEncap
     vGetModificationTime :: a -> FilePath -> IO ClockTime
+    {- | Raise an error relating to actions on this class. -}
     vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO c
 
     vGetModificationTime fs fp = 
@@ -140,8 +148,8 @@ eh :: HVFS a => a -> String -> IO c
 eh fs desc = vRaiseError fs illegalOperationErrorType 
              (desc ++ " is not implemented in this HVFS class") Nothing
 
-class (HVFS a, HVIOGeneric c) => HVFSOpenable a b c where
-    vOpen :: a -> FilePath -> IO c
+class (HVFS a, HVIOGeneric c) => HVFSOpenable a c where
+    vOpen :: a -> FilePath -> IOMode -> IO c
 
 ----------------------------------------------------------------------
 -- Standard implementations
@@ -183,3 +191,6 @@ instance HVFS SystemFS where
     vGetFileStatus _ fp = getFileStatus fp >>= return . HVFSStatEncap
     vGetSymbolicLinkStatus _ fp = getSymbolicLinkStatus fp >>= return . HVFSStatEncap
     vGetModificationTime _ = getModificationTime
+
+instance HVFSOpenable SystemFS Handle where
+    vOpen _ fp iomode = openFile fp iomode
