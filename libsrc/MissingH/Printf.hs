@@ -167,7 +167,7 @@ sprintf (x:xs) y = x : sprintf xs y
 This is one of the map-style functions and provides a way for you to integrate
 your own lookup support into sprintf.  The first parameter is a lookup
 function.  It takes a variable name and a map data object and returns
-a sought-after Value.  It is expected to return Nothing if the given
+a sought-after 'Value'.  It is expected to return Nothing if the given
 key could not be found.
 
 You might be interested to know that related helper functions can be defined
