@@ -138,8 +138,7 @@ pOpen3 pin pout perr fp args func =
                      mayberedir perr stdError
                      debugM (logbase ++ ".pOpen3")
                             ("Running: " ++ fp ++ " " ++ (show args))
-                     catch (executeFile fp True args Nothing) (\_ -> return ())
-                     exitFailure
+                     executeFile fp True args Nothing
         in
         do 
         System.Posix.Signals.installHandler

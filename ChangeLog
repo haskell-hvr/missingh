@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-26 21:31:56 GMT	John Goerzen <jgoerzen@complete.org>	patch-15
+
+    Summary:
+      Cmd, sendmail stuff finally works
+    Revision:
+      missingh--head--0.5--patch-15
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Cmd.hs
+
+
 2004-10-26 21:16:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-14
 
     Summary:
