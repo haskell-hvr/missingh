@@ -33,6 +33,8 @@ test_inflate =
          f "t1.gz" "Test 1" inflate_string
         ,f "t1.gz" ("Test 1",
                     "\x19\xf8\x27\x99\x06\x00\x00\x00") inflate_string_remainder
+        ,f "empty.gz" "" inflate_string
+        ,f "zeros.gz" (replicate (10 * 1048576) '\0') inflate_string
         ]
 
 test_header =
