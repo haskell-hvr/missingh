@@ -27,7 +27,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Portability: systems with networking
 
 This module provides a server-side interface to the File Transfer Protocol
-as defined by RFC959 and RFC1123.
+as defined by:
+
+ * RFC959, basic protocol
+
+ * RFC1123, clarifications
+
+ * RFC1579, passive mode discussion
 
 Written by John Goerzen, jgoerzen\@complete.org
 
@@ -242,8 +248,10 @@ cmd_type h@(FTPServer _ _ state) _ args =
                return True
         in case args of
          "I" -> changetype Binary
+         "L 8" -> changetype Binary
          "A" -> changetype ASCII
          "AN" -> changetype ASCII
+         "AT" -> changetype ASCII
          _ -> do sendReply h 504 $ "Type \"" ++ args ++ "\" not supported."
                  return True
        
