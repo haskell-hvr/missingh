@@ -45,6 +45,10 @@ test_basic =
            do let cp = p "[sect1]\nfoo: bar\n"
               ["sect1"] @=? sections cp
               "bar" @=? get cp "sect1" "foo"
+        , f "comments in option text"
+            "[s1]\no1: v1#v2\n"
+            "v1#v2" (\cp -> get cp "s1" "o1")
+         
         ]
 
 {-
