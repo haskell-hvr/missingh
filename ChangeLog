@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-19 20:23:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-72
+
+    Summary:
+      Prep for 0.4.2
+    Revision:
+      missingh--head--1.0--patch-72
+
+
+    modified files:
+     ChangeLog debian/changelog
+
+
 2004-10-19 20:01:15 GMT	John Goerzen <jgoerzen@complete.org>	patch-71
 
     Summary:

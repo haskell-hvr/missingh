@@ -1,6 +1,7 @@
 missingh (0.4.2) unstable; urgency=low
 
   * Added MissingH.List.contains
+  * Added MissingH.Threads
 
  -- John Goerzen <jgoerzen@complete.org>  Mon, 18 Oct 2004 10:02:03 -0500
 
