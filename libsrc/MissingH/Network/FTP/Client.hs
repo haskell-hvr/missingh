@@ -43,8 +43,8 @@ run that with Hugs.)
 
 The above loads the module.
 
-Next, we enable the debugging.  This will turn on all the @"FTP sent"@ and
-@"FTP received"@ messages you'll see.
+Next, we enable the debugging.  This will turn on all the "FTP sent" and
+"FTP received" messages you'll see.
 
 > Prelude MissingH.Network.FTP.Client> enableFTPDebugging
 
@@ -149,7 +149,7 @@ are trying that, and confusion will ensue.  Either open two FTP connections
 or make sure you consume the 'nlst' data first.
 
 Here is a partial list of commands effected: 'nlst', 'dir', 'getbinary',
-'getlines', 'downloadbinary', 'downloadlines'.
+'getlines', 'downloadbinary'.
 
 The corrolary is:
 
@@ -180,19 +180,21 @@ module MissingH.Network.FTP.Client(-- * Establishing\/Removing connections
                                    easyConnectFTP, connectFTP,
                                    loginAnon, login, quit, 
                                    -- * Configuration
-                                   setPassive, enableFTPDebugging,
+                                   setPassive, isPassive, enableFTPDebugging,
                                    -- * Directory listing
                                    nlst, dir, 
                                    -- * File downloads
-                                   getlines, getbinary, downloadbinary,
+                                   getlines, getbinary,
+                                   downloadbinary,
                                    -- * File uploads
-                                   putlines, putbinary, uploadbinary,
+                                   putlines, putbinary,
+                                   uploadbinary,
                                    -- * File manipulation
                                    rename, delete, size,
                                    -- * Directory manipulation
                                    cwd, mkdir, rmdir, pwd, 
                                    -- * Low-level advanced commands
-                                   FTPConnection(isPassive),
+                                   FTPConnection,
                                    transfercmd, ntransfercmd,
                                    retrlines, storlines
                        )
@@ -235,8 +237,8 @@ easyConnectFTP h = do x <- connectFTP h 21
                       return (fst x)
 
 {- | Enable logging of FTP messages through 'MissingH.Logging.Logger'.
-This sets the log levels of @"MissingH.Network.FTP.Parser"@ and
-@"MissingH.Network.FTP.Client"@ to DEBUG.  By default, this means that
+This sets the log levels of @MissingH.Network.FTP.Parser@ and
+@MissingH.Network.FTP.Client@ to DEBUG.  By default, this means that
 full protocol dumps will be sent to stderr.
 
 The effect is global and persists until changed.
@@ -306,7 +308,6 @@ login h user pass acct =
 
 {- | Sets whether passive mode is used (returns new
 connection object reflecting this) -}
-
 setPassive :: FTPConnection -> Bool -> FTPConnection            
 setPassive f b = f{isPassive = b}
 
@@ -436,7 +437,7 @@ uploadbinary :: FTPConnection -> String -> IO FTPResult
 uploadbinary h fn = do input <- readFile fn
                        putbinary h fn input
 
-{- Downloads a file from remote and saves to disk in binary mode.  Note: filename is used for both local and remote. -}
+{- | Downloads a file from remote and saves to disk in binary mode.  Note: filename is used for both local and remote. -}
 downloadbinary :: FTPConnection -> String -> IO FTPResult
 downloadbinary h fn = do r <- getbinary h fn
                          writeFile fn (fst r)

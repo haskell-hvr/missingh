@@ -15,7 +15,8 @@ Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Str,
   MissingH.Cmd,
   MissingH.FiniteMap, MissingH.Path,
-  MissingH.Network.FTP.Client,
+  MissingH.Network,
+    MissingH.Network.FTP.Client,
     MissingH.Network.FTP.Parser,
   MissingH.Parsec,
   MissingH.Bits,
@@ -44,4 +45,4 @@ Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Wash.Utility.Unique
 HS-Source-Dir: libsrc
 Extensions: ExistentialQuantification
-Build-Depends: haskell-src
+Build-Depends: haskell-src, network, unix, parsec

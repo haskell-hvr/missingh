@@ -102,30 +102,29 @@ Here's an example to illustrate some of these concepts:
 > 
 >        -- Copy everything to syslog from here on out.
 >        s <- openlog "SyslogStuff" [PID] USER DEBUG
->       updateGlobalLogger rootLoggerName (addHandler s)
+>        updateGlobalLogger rootLoggerName (addHandler s)
 >       
 >        errorM "MyApp.Component" "This is going to stderr and syslog."
 >
 >        -- Now we'd like to see everything from BuggyComponent
->        -- at DEBUG or higher go to syslog, but only go to stderr
->        -- if it's WARNING or higher as before.  Also, we'd like to
->        -- still ignore things less than WARNING in other areas.
+>        -- at DEBUG or higher go to syslog and stderr.
+>        -- Also, we'd like to still ignore things less than
+>        -- WARNING in other areas.
 >        -- 
 >        -- So, we adjust the Logger for MyApp.Component.
 >
 >        updateGlobalLogger "MyApp.BuggyComponent"
->                           (setLevel DEBUG . setHandlers [s])
+>                           (setLevel DEBUG)
 >
 >        -- This message will go to syslog -- the default
 >        -- restrictions on the root logger will filter it out.
 >        debugM "MyApp.BuggyComponent" "This buggy component is buggy"
 > 
->        -- This message will go to syslog and stderr.
+>        -- This message will go to syslog and stderr too.
 >        warningM "MyApp.BuggyComponent" "Still Buggy"
 > 
 >        -- This message goes nowhere.
 >        debugM "MyApp.WorkingComponent" "Hello"
-
 
 -}
 
@@ -210,7 +209,7 @@ rootLoggerName = ""
 
 -- | Placeholders created when a new logger must be created.
 placeholder :: Logger
-placeholder = Logger {level = DEBUG, handlers = [], name = ""}
+placeholder = Logger {level = WARNING, handlers = [], name = ""}
 
 ---------------------------------------------------------------------------
 -- Logger Tree Storage
