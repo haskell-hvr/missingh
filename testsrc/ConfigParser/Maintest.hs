@@ -23,7 +23,7 @@ import MissingH.Either
 import Testutil
 import Control.Exception
 
-p inp = forceEither $ readstring empty inp
+p inp = forceEither $ readstring emptyCP inp
 f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv (p inp))
 f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
 f3 msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))

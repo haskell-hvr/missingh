@@ -36,7 +36,7 @@ module MissingH.ConfigParser.Types (
                                     CPOptions, CPData, 
                                     CPErrorData(..), CPError, CPResult,
                                     ConfigParser(..),
-                                    fromAL, SectionSpec,
+                                    SectionSpec,
                                     OptionSpec,
                                     ParseOutput
                                    ) where
@@ -87,7 +87,7 @@ data ConfigParser = ConfigParser
       content :: CPData,
       -- | How to transform an option into a standard representation
       optionxform :: (OptionSpec -> OptionSpec),
-      -- | Function to look up an option, considering a default value.
+      -- | Function to look up an option, considering a default value
       -- if 'usedefault' is True; or ignoring a default value otherwise.
       -- The option specification is assumed to be already transformed.
       defaulthandler :: (ConfigParser -> SectionSpec -> OptionSpec -> CPResult String),
@@ -95,17 +95,10 @@ data ConfigParser = ConfigParser
       -- is found.
       usedefault :: Bool,
       -- | Function that is used to perform lookups, do optional
-      -- interpolation, etc.
+      -- interpolation, etc.  It is assumed that accessfunc
+      -- will internally call defaulthandler to do the actual work.
+      -- The option value is not assumed to be transformed.
       accessfunc :: (ConfigParser -> SectionSpec -> OptionSpec -> CPResult String)
     }
 
 
-{- | Low-level tool to convert a parsed object into a 'CPData'
-representation.  Performs no option conversions or special handling
-of @DEFAULT@. -}
-fromAL :: ParseOutput -> CPData
-fromAL origal =
-    let conv :: CPData -> (String, [(String, String)]) -> CPData
-        conv fm sect = addToFM fm (fst sect) (listToFM $ snd sect)
-        in
-        foldl conv emptyFM origal

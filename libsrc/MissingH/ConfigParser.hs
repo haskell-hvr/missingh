@@ -37,7 +37,7 @@ module MissingH.ConfigParser
      CPErrorData(..), CPError, CPResult,
      -- * Initialization
      -- $initialization
-     empty,
+     emptyCP,
 
      -- * Reading
      -- $reading
@@ -83,12 +83,22 @@ The content contains only an empty mandatory @DEFAULT@ section.
 
 'usedefault' is set to @True@.
 -}
-empty :: ConfigParser
-empty = ConfigParser { content = fromAL [("DEFAULT", [])],
+emptyCP :: ConfigParser
+emptyCP = ConfigParser { content = fromAL [("DEFAULT", [])],
                        defaulthandler = defdefaulthandler,
                        optionxform = map toLower,
                        usedefault = True,
                        accessfunc = defaccessfunc}
+
+{- | Low-level tool to convert a parsed object into a 'CPData'
+representation.  Performs no option conversions or special handling
+of @DEFAULT@. -}
+fromAL :: ParseOutput -> CPData
+fromAL origal =
+    let conv :: CPData -> (String, [(String, String)]) -> CPData
+        conv fm sect = addToFM fm (fst sect) (listToFM $ snd sect)
+        in
+        foldl conv emptyFM origal
 
 -- internal function: default access function
 defaccessfunc :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
@@ -342,7 +352,7 @@ to_string cp =
 
 {- $initialization
 
-The variable 'empty' is exported, and contains a default empty
+The variable 'emptyCP' is exported, and contains a default empty
 'ConfigParser'.
 -}
 
@@ -352,8 +362,8 @@ You can use these functions to read data from a file.
 
 A common idiom for loading a new object from stratch is:
 
-@cp <- 'readfile' 'empty' \"\/etc\/foo.cfg\"@
+@cp <- 'readfile' 'emptyCP' \"\/etc\/foo.cfg\"@
 
-Note the use of 'empty'; this will essentially cause the file's data
+Note the use of 'emptyCP'; this will essentially cause the file's data
 to be merged with the empty 'ConfigParser'.
 -}
