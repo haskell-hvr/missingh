@@ -43,6 +43,7 @@ import Data.IORef
 import MissingH.Path
 import MissingH.Path.NameManip
 import Control.Monad.Error
+import System.IO.Error
 
 {- | A simple class that assumes that everything is either a file
 or a directory. -}
@@ -136,3 +137,10 @@ instance HVFS MemoryVFS where
                                              SimpleStat {isFile = True}
                      (MemoryDirectory _) -> return $ HVFSStatEncap $
                                              SimpleStat {isFile = False}
+    vGetDirectoryContents x fp =
+        do elem <- getMelem x fp
+           case elem of
+                MemoryFile _ -> vRaiseError x doesNotExistErrorType
+                                  "Can't list contents of a file"
+                                  (Just fp)
+                MemoryDirectory c -> return $ map fst c
