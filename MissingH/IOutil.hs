@@ -24,10 +24,12 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.IOutil(-- * Line Processing Utilities
                        hPutStrLns, hGetLines,
                        -- * Lazy Interaction
-                       hInteract, lineInteract, hLineInteract,
-                       -- * Binary Files
-                       hPutBufStr, hGetBufStr, hFullGetBufStr,
-                       hGetBlocks, hFullGetBlocks
+                       hInteract, hLineInteract, lineInteract,
+                       -- * Binary Single-Block I\/O
+                       hPutBufStr, putBufStr, hGetBufStr, getBufStr,
+                       hFullGetBufStr, fullGetBufStr,
+                       -- * Binary Multi-Block I\/O
+                       hGetBlocks, getBlocks, hFullGetBlocks, fullGetBlocks
                         ) where
 
 import Foreign.Ptr
@@ -133,6 +135,10 @@ the length of the string. -}
 hPutBufStr :: Handle -> String -> IO ()
 hPutBufStr f s = withCString s (\cs -> hPutBuf f cs (length s))
 
+-- | An alias for 'hPutBufStr' 'stdout'
+putBufStr :: String -> IO ()
+putBufStr = hPutBufStr stdout
+
 {- | As a wrapper around the standard function 'System.IO.hGetBuf',
 this function returns a standard Haskell string instead of modifying
 a 'Ptr a' buffer.  The length is the maximum length to read and the
@@ -147,6 +153,10 @@ hGetBufStr f count = do
                         haskstring <- peekCStringLen (buf, bytesread)
                         return haskstring)
 
+-- | An alias for 'hGetBufStr' 'stdin'
+getBufStr :: Int -> IO String
+getBufStr = hGetBufStr stdin
+
 {- | Like 'hGetBufStr', but guarantees that it will only return fewer than
 the requested number of bytes when EOF is encountered. -}
 hFullGetBufStr :: Handle -> Int -> IO String
@@ -159,16 +169,39 @@ hFullGetBufStr f count = do
                                  remainder <- hFullGetBufStr f (count - (length thisstr))
                                  return (thisstr ++ remainder)
 
+-- | An alias for 'hFullGetBufStr' 'stdin'
+fullGetBufStr :: Int -> IO String
+fullGetBufStr = hFullGetBufStr stdin
+
+{- | Writes the list of blocks to the given file handle -- a wrapper around
+'hPutBufStr'. -}
+hPutBlocks :: Handle -> [String] -> IO ()
+hPutBlocks _ [] = return ()
+hPutBlocks h (x:xs) = do
+                      hPutBufStr h x
+                      hPutBlocks h xs
+
+-- | An alias for 'hPutBlocks' 'stdout'
+putBlocks :: [String] -> IO ()
+putBlocks = hPutBlocks stdout
+
 {- | Returns a lazily-evaluated list of all blocks in the input file,
 as read by 'hGetBufStr'.  There will be no 0-length block in this list.
 The list simply ends at EOF. -}
 hGetBlocks :: Handle -> Int -> IO [String]
 hGetBlocks = hGetBlocksUtil hGetBufStr
 
+-- | An alias for 'hGetBlocks' 'stdin'
+getBlocks :: Int -> IO [String]
+getBlocks = hGetBlocks stdin
+
 {- | Same as 'hGetBlocks', but using 'hFullGetBufStr' underneath. -}
 hFullGetBlocks :: Handle -> Int -> IO [String]
 hFullGetBlocks = hGetBlocksUtil hFullGetBufStr
 
+-- | An alias for 'hFullGetBlocks' 'stdin'
+fullGetBlocks :: Int -> IO [String]
+fullGetBlocks = hFullGetBlocks stdin
 
 hGetBlocksUtil :: (Handle -> Int -> IO String) -> Handle -> Int -> IO [String]
 hGetBlocksUtil readfunc h count =
