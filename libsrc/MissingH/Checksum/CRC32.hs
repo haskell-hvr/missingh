@@ -26,7 +26,8 @@
    Stability  : provisional
    Portability: portable
 
-CRC32 checksumming
+CRC32 checksumming using POSIX 1003.2-1992 algorithm for the polynomial { 32 26
+23 22 16 12 11 10 8 7 5 4 2 1 }, also defined in  ISO 8802-3: 1989.
 
 Copyright (c) 2002 HardCore SoftWare, Doug Hoyte
 -}
