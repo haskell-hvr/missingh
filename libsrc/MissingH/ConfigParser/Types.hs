@@ -78,7 +78,7 @@ instance Error CPError where
 
 {- | Basic ConfigParser error handling.  The Left value indicates
 an error, while a Right value indicates success. -}
-type CPResult = Either CPError
+type CPResult a = MonadError CPError m => m a
 
 {- | This is the main record that is used by 'MissingH.ConfigParser'.
 -}
@@ -129,7 +129,7 @@ defdefaulthandler cp sect opt =
         trydefault :: CPError -> CPResult String
         trydefault e = if (usedefault cp)
                        then lookup "DEFAULT" opt
-                       else Left e
+                       else throwError e
         in
         lookup sect opt `catchError` trydefault
 

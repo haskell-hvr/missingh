@@ -34,11 +34,19 @@ module MissingH.Either
     (
      maybeToEither
 ) where
+import Control.Monad.Error
 
 {- | Converts a Maybe value to an Either value, using the supplied parameter
-as the Left value if the Maybe is Nothing. -}
-maybeToEither :: e                      -- ^ (Left e) will be returned if the Maybe value is Nothing
+as the Left value if the Maybe is Nothing.
+
+This function can be interpreted as:
+
+@matbeToEither :: e -> Maybe a -> Either e a
+
+-}
+maybeToEither :: MonadError e m =>
+                 e                      -- ^ (Left e) will be returned if the Maybe value is Nothing
               -> Maybe a                -- ^ (Right a) will be returned if this is (Just a)
-              -> Either e a
-maybeToEither errorval Nothing = Left errorval
-maybetoEither _ (Just normalval) = Right normalval
+              -> m a
+maybeToEither errorval Nothing = throwError errorval
+maybeToEither _ (Just normalval) = return normalval

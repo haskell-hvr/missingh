@@ -110,12 +110,8 @@ does not convey those options.
 
 May return an error if there is a syntax error.  May raise an exception if the file could not be accessed.
 -}
-
-retdata :: ConfigParser -> CPResult ParseOutput -> CPResult ConfigParser
-retdata cp x = do d <- x
-                  return $ readutil cp d
-
-readfile :: ConfigParser -> FilePath ->IO (CPResult ConfigParser)
+--readfile :: ConfigParser -> FilePath ->IO (CPResult ConfigParser)
+readfile :: MonadError CPError m => ConfigParser -> FilePath -> IO (m ConfigParser)
 {-
 readfile cp fp = do n <- parse_file fp
                     return $ do y <- n
@@ -124,6 +120,9 @@ readfile cp fp = do n <- parse_file fp
 readfile cp fp = do n <- parse_file fp
                     return $ retdata cp n
 
+retdata :: ConfigParser -> CPResult ParseOutput -> CPResult ConfigParser
+retdata cp x = do d <- x
+                  return $ readutil cp d
 
 {- | Like 'readfile', but uses an already-open handle.  You should
 use 'readfile' instead of this if possible, since it will be able to
@@ -131,7 +130,8 @@ generate better error messages.
 
 Errors would be returned on a syntax error.
 -}
-readhandle :: ConfigParser -> Handle -> IO (CPResult ConfigParser)
+--readhandle :: ConfigParser -> Handle -> IO (CPResult ConfigParser)
+readhandle :: MonadError CPError m => ConfigParser -> Handle -> IO (m ConfigParser)
 readhandle cp h = do n <- parse_handle h
                      return $ n >>= (return . (readutil cp))
 

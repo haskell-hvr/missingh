@@ -38,6 +38,7 @@ module MissingH.ConfigParser.Parser
        --main
 ) where
 import Text.ParserCombinators.Parsec
+import Control.Monad.Error(throwError, MonadError)
 import MissingH.Str
 import MissingH.ConfigParser.Lexer
 import System.IO(Handle, hGetContents)
@@ -52,12 +53,14 @@ parse_string :: String -> CPResult ParseOutput
 parse_string s = 
     detokenize "(string)" $ parse loken "(string)" s
 
-parse_file :: FilePath -> IO (CPResult ParseOutput)
+--parse_file :: FilePath -> IO (CPResult ParseOutput)
+parse_file :: MonadError CPError m => FilePath -> IO (m ParseOutput)
 parse_file f =
     do o <- parseFromFile loken f
        return $ detokenize f o
 
-parse_handle :: Handle -> IO (CPResult ParseOutput)
+--parse_handle :: Handle -> IO (CPResult ParseOutput)
+parse_handle :: MonadError CPError m => Handle -> IO (m ParseOutput)
 parse_handle h =
     do s <- hGetContents h
        let o = parse loken (show h) s
@@ -67,8 +70,8 @@ parse_handle h =
 -- Private funcs
 ----------------------------------------------------------------------
 detokenize fp l =
-    let conv msg (Left err) = Left $ (ParseError (msg ++ (show err)), msg)
-        conv msg (Right val) = Right val
+    let conv msg (Left err) = throwError $ (ParseError (msg ++ (show err)), msg)
+        conv msg (Right val) = return val
         in do r <- conv "lexer" l
               conv "parser" $ runParser main () fp r
 
