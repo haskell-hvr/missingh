@@ -23,11 +23,16 @@ LHSSOURCES := $(wildcard MissingH/*/*.lhs) \
 O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
 OBJS := $(O1:.lhs=.o)
 LHSCONVSOURCES := $(patsubst %.lhs,doctmp/%.hs,$(LHSSOURCES))
+HUGSCONVSOURCES := $(patsubst %.hs,dist/build/%.hs,$(SOURCES))
 UNLIT ?= $(shell ghc --print-libdir)/unlit
 
-.PHONY: all
-all: setup
+.PHONY: all hugsbuild
+all: setup			# GHC build
 	./setup configure
+	./setup build
+
+hugsbuild: setup
+	./setup configure --hugs
 	./setup build
 
 setup: Setup.lhs MissingH.cabal
@@ -52,12 +57,15 @@ doctmp:
 #
 
 .PHONY: doc
-doc: $(LHSCONVSOURCES)
+doc: $(LHSCONVSOURCES) hugsbuild
 	-rm -rf html
 	mkdir html
 	haddock $(HADDOCKARGS) --package=MissingH \
 	   --dump-interface=html/MissingH.haddock \
-	   -t 'MissingH API Manual' -h -o html $(SOURCES) $(LHSCONVSOURCES)
+	   -t 'MissingH API Manual' -h -o html $(HUGSCONVSOURCES) $(LHSCONVSOURCES)
+
+.PHONY: hugsbuild
+
 
 clean:
 	-./setup clean

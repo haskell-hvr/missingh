@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-05 17:52:11 GMT	John Goerzen <jgoerzen@complete.org>	patch-213
+
+    Summary:
+      More changes for Hugs compatibility
+    Revision:
+      missingh--head--0.7--patch-213
+
+    Use CPP to make show instance for FiniteMap conditional.  Adjust
+    Makefile to use Cabal to build the .hs files for haddock.
+
+    modified files:
+     ChangeLog Makefile MissingH.cabal MissingH/FiniteMap.hs
+
+
 2005-04-05 17:38:00 GMT	John Goerzen <jgoerzen@complete.org>	patch-212
 
     Summary:
