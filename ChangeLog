@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 17:55:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-95
+
+    Summary:
+      Fixed readMIMETypes -- it now works
+    Revision:
+      missingh--head--1.0--patch-95
+
+
+    new files:
+     testsrc/mime.types.test
+
+    modified files:
+     ChangeLog libsrc/MissingH/MIMETypes.hs
+     testsrc/MIMETypestest.hs
+
+
 2004-10-21 17:30:34 GMT	John Goerzen <jgoerzen@complete.org>	patch-94
 
     Summary:

@@ -1,0 +1,24 @@
+# arch-tag: test file for MIMETypes
+# Here are some comments
+#
+##
+
+# and some fun blank lines
+
+     
+
+# Some types with nothing
+
+application/activemessage
+application/applefile   
+application/atomicmail         # comment here
+
+# Some lines with real stuff
+
+application/andrew-inset       ez     # blah
+
+# Some lines with multiple things
+
+video/x-dv                                      dif dv
+text/x-c++hdr                                   h++ hpp hxx hh # foo
+

@@ -21,6 +21,23 @@ import HUnit
 import Data.List
 import MissingH.MIMETypes
 
+test_readMIMETypes =
+    do
+    mtd <- readMIMETypes defaultmtd True "testsrc/mime.types.test"
+    putStrLn "\nread\n"
+    let f = \strict inp exp -> exp @=? guessType mtd strict inp
+    let fe = \strict inp exp -> (sort exp) @=? sort (guessAllExtensions mtd strict inp)
+    f True "foo.bar.baz" (Nothing, Nothing)
+    f True "" (Nothing, Nothing)
+    f True "foo.ez" (Just "application/andrew-inset", Nothing)
+    fe True "application/andrew-inset" [".ez"]
+    f True "foo.dv" (Just "video/x-dv", Nothing)
+    fe True "video/x-dv" [".dif", ".dv"]
+    f True "test.h++" (Just "text/x-c++hdr", Nothing)
+    fe True "text/x-c++hdr" [".h++", ".hpp", ".hxx", ".hh"]
+    f True "foo.tgz" (Just "application/x-tar", Just "gzip")
+
+
 test_guessAllExtensions =
     let f strict inp exp = (sort exp) @=? sort (guessAllExtensions defaultmtd strict inp) in
         do
@@ -48,5 +65,6 @@ test_guessType =
         f False "foo.pict" (Just "image/pict", Nothing)
 
 tests = TestList [TestLabel "guessType" (TestCase test_guessType),
-                  TestLabel "guessAllExtensions" (TestCase test_guessAllExtensions)
+                  TestLabel "guessAllExtensions" (TestCase test_guessAllExtensions),
+                  TestLabel "readMIMETypes" (TestCase test_readMIMETypes)
                  ]

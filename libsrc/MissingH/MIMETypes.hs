@@ -98,7 +98,6 @@ readMIMETypes :: MIMETypeData            -- ^ Data to work with
 readMIMETypes mtd strict fn = do
                          h <- openFile fn ReadMode
                          retval <- hReadMIMETypes mtd strict h
-                         hClose h
                          return retval
 
 {- | Load a mime.types file from an already-open handle. -}
@@ -119,7 +118,7 @@ hReadMIMETypes mtd strict h =
                    let thetype = head l2
                        suffixlist = tail l2
                        in
-                       foldl (\o suff -> addType o strict thetype suff) obj suffixlist
+                       foldl (\o suff -> addType o strict thetype ('.' : suff)) obj suffixlist
                 else obj
         in
         do
@@ -154,7 +153,11 @@ guessType mtd strict fn =
 {- | Guess the extension of a file based on its MIME type.
    The return value includes the leading dot.
 
-   Returns Nothing if no extension could be found. -}
+   Returns Nothing if no extension could be found.
+
+   In the event that multiple possible extensions are available,
+   one of them will be picked and returned.  The logic to select one
+   of these should be considered undefined. -}
 guessExtension :: MIMETypeData          -- ^ Source data for guessing
                   -> Bool               -- ^ Whether to limit to strict data
                   -> String             -- ^ MIME type to consider
@@ -177,15 +180,16 @@ guessAllExtensions mtd strict fn =
         flippedLookupFM themap mimetype
         
 {- | Adds a new type to the data structures, replacing whatever data
-   may exist about it already. -}
+   may exist about it already.  That is, it overrides existing information
+   about the given extension, but the same type may occur more than once. -}
 
 addType :: MIMETypeData                 -- ^ Source data
            -> Bool                      -- ^ Whether to add to strict data set
            -> String                    -- ^ MIME type to add
            -> String                    -- ^ Extension to add
            -> MIMETypeData              -- ^ Result of addition
--- FIXME
-addType mtd strict thetype theext = mtd
+addType mtd strict thetype theext = 
+    setStrict mtd strict (\m -> addToFM m theext thetype)
 
 {- | Default MIME type data to use -}
 defaultmtd :: MIMETypeData
