@@ -164,7 +164,7 @@ You can use these functions to read data from a file.
 
 A common idiom for loading a new object from stratch is:
 
-@cp <- 'readfile' 'empty' \"/etc/foo.cfg\"@
+@cp <- 'readfile' 'empty' \"\/etc\/foo.cfg\"@
 
 Note the use of 'empty'; this will essentially cause the file's data
 to be merged with the empty 'ConfigParser'.
