@@ -1,0 +1,178 @@
+{- arch-tag: HVIO main file
+Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-}
+
+{- |
+   Module     : MissingH.HVIO
+   Copyright  : Copyright (C) 2004 John Goerzen
+   License    : GNU GPL, version 2 or above
+
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
+
+Haskell Virtual I\/O system main file
+
+Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
+
+-}
+
+module MissingH.HVIO(-- * Implementation Classes
+                     HVIOGeneric(..), 
+                     HVIOReader(..),
+                     HVIOWriter(..),
+                     HVIOSeeker(..)
+                     -- * Standard Virtual IO features
+                     -- | Note: Handle is a member of all classes by default.
+                    )
+where
+
+import System.IO
+import System.IO.Error
+
+{- | The HVIOGeneric class.
+
+Implementators must provide 'vClose' and 'vIsEOF'. -}
+class (Show a) => HVIOGeneric a where
+    -- | Close a file
+    vClose :: a -> IO ()
+    -- | Whether or not we're at EOF
+    vIsEOF :: a -> IO Bool
+    -- | Detailed show output.
+    vShow :: a -> IO String
+    -- | Make an IOError.
+    vMkIOError :: a -> IOErrorType -> String -> Maybe FilePath -> IOError
+    -- | Throw an IOError.
+    vThrow :: a -> IOErrorType -> IO b
+    -- | Get the filename\/object\/whatever that this corresponds to.
+    -- May be Nothing.
+    vGetFP :: a -> IO (Maybe FilePath)
+    -- | Throw an isEOFError if we're at EOF; returns nothing otherwise.
+    vTestEOF :: a -> IO ()
+
+    vShow x = return (show x)
+
+    vMkIOError _ et desc mfp =
+        mkIOError et desc Nothing mfp
+
+    vGetFP _ = return Nothing
+
+    vThrow h et = do
+                  fp <- vGetFP h
+                  ioError (vMkIOError h et "" fp)
+
+    vTestEOF h = do e <- vIsEOF h
+                    if e then vThrow h eofErrorType
+                       else return ()
+
+{- | Readers.  Implementators must provide at least 'vGetChar'.
+-}
+class (HVIOGeneric a) => HVIOReader a where
+    -- | Read one character
+    vGetChar :: a -> IO Char
+    -- | Read one line
+    vGetLine :: a -> IO String
+    -- | Get the remaining contents
+    vGetContents :: a -> IO String
+    -- | Indicate whether at least one item is ready for reading.
+    vReady :: a -> IO Bool
+
+    vGetLine h = 
+        let loop accum = do e <- vIsEOF h
+                            if e then return accum
+                               else do c <- vGetChar h
+                                       case c of
+                                           '\n' -> return accum
+                                           x -> accum `seq` loop (accum ++ [x])
+            in
+            do vTestEOF h
+               loop ""
+
+    vGetContents h =
+        let loop = do e <- vIsEOF h
+                      if e then return []
+                         else do c <- vGetChar h
+                                 next <- loop
+                                 c `seq` return (c : next)
+            in
+            do vTestEOF h
+               loop
+           
+    vReady h = do vTestEOF h
+                  return True
+
+{- | Writers.  Implementators must provide at least 'vPutChar'. -}
+
+class (HVIOGeneric a) => HVIOWriter a where
+    -- | Write one character
+    vPutChar :: a -> Char -> IO ()
+
+    -- | Write a string
+    vPutStr :: a -> String -> IO ()
+
+    -- | Write a string with newline character after it
+    vPutStrLn :: a -> String -> IO ()
+
+    -- | Write a string representation of the argument, plus a newline.
+    vPrint :: Show b => a -> b -> IO ()
+
+    vPutStr _ [] = return ()
+    vPutStr h (x:xs) = do vPutChar h x
+                          vPutStr h xs
+
+    vPutStrLn h s = vPutStr h (s ++ "\n")
+
+    vPrint h s = vPutStrLn h (show s)
+
+{- | Seekable items.  Implementators must provide all functions.
+
+-}
+
+class (HVIOGeneric a) => HVIOSeeker a where
+    -- | Seek to a specific location.
+    vSeek :: a -> SeekMode -> Integer -> IO ()
+
+    -- | Get the current position.
+    vTell :: a -> IO Integer
+
+----------------------------------------------------------------------
+-- Handle instances
+----------------------------------------------------------------------
+
+instance HVIOGeneric Handle where
+    vClose = hClose
+    vIsEOF = hIsEOF
+    vShow = hShow
+    vMkIOError h et desc mfp =
+        mkIOError et desc (Just h) mfp
+
+instance HVIOReader Handle where
+    vGetChar = hGetChar
+    vGetLine = hGetLine
+    vGetContents = hGetContents
+    vReady = hReady
+
+instance HVIOWriter Handle where
+    vPutChar = hPutChar
+    vPutStr = hPutStr
+    vPutStrLn = hPutStrLn
+    vPrint = hPrint
+
+instance HVIOSeeker Handle where
+    vSeek = hSeek
+    vTell = hTell
