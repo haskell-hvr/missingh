@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 20:41:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-62
+
+    Summary:
+      Association list printing working
+    Revision:
+      missingh--head--0.5--patch-62
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Printf.hs testsrc/Printftest.hs
+
+
 2004-11-15 20:27:31 GMT	John Goerzen <jgoerzen@complete.org>	patch-61
 
     Summary:

@@ -56,6 +56,7 @@ module MissingH.Printf(-- * Introduction
                        sprintf,
                        printf,
                        fprintf,
+                       sprintfAL,
                        -- ** Utility Function
                        v,
                        -- * Differences from C
@@ -108,7 +109,6 @@ mkflags x =
         in
         flags''
 
---type LookupFunc a :: String -> a -> (String, String, a)
 normLookup :: String -> [Value] -> (String, String, [Value])
 normLookup xs (y : ys) =
     case matchRegexAll sprintfre xs of
@@ -126,7 +126,23 @@ normLookup xs (y : ys) =
                  --(show width) ++ sprintf remainder ys
                  (fix_width flags width ((get_conversion_func fmt y flags width prec)), remainder, ys)
          _ -> error $ "Problem matching format string at %" ++ xs
-    
+
+alre = mkRegex "^\\(([^)]+)\\)"
+alLookup :: String -> PrintfAL -> (String, String)
+alLookup xs y =
+    case matchRegexAll alre xs of
+         Nothing -> error $ "No varname in keyed lookup at %" ++ xs
+         Just (_, _, remainder, [varname]) ->
+             let val = case lookup varname y of
+                               Just z -> z
+                               Nothing -> error $ 
+                                          "Failed to find key " ++ varname ++
+                                          " in keyed lookup table"
+                 in
+                 case normLookup remainder [val] of
+                      (a, b, _) -> (a, b)
+         _ -> error $ "Problem finding key in lookup at %" ++ xs
+
 {- | List version of 'vsprintf'. -}
 sprintf :: String -> [Value] -> String
 sprintf [] [] = []
@@ -137,18 +153,16 @@ sprintf ('%' : xs) y =
         this ++ sprintf remainder ys
 sprintf (x:xs) y = x : sprintf xs y
 
-{-
-sprintf :: String -> [Value] -> String
-sprintf = sprintfG id sprintf
--}
-
-{-
 {- | Association list printing -}
 sprintfAL :: String -> PrintfAL -> String
 sprintfAL [] _ = []
 sprintfAL ('%' : '%' : xs) y = '%' : sprintfAL xs y
-sprintfAL ('%' : xs) (y : ys) =
--}
+sprintfAL ('%' : xs) y =
+    let (this, remainder) = alLookup xs y
+        in
+        this ++ sprintfAL remainder y
+sprintfAL (x:xs) y = x : sprintfAL xs y
+
 {- | Given a format string and zero or more arguments, return a string
 that has formatted them appropriately.  This is the variable argument version
 of 'sprintf'. -}

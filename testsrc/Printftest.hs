@@ -40,6 +40,18 @@ test_vsprintf =
     "John, your age is 10\n" @=? sprintf "%s, your age is %d\n" [v "John",
                                                                  v (10::Integer)]
 
+test_al =
+    let testal = [("foo", v (1::Int)),
+                  ("bar", v "asdf"),
+                  ("baz", v (3.14::Double))]
+        f exp inp = exp @=? sprintfAL inp testal
+        in do
+           f "" ""
+           f "asdf" "%(bar)s"
+           f "001" "%(foo)03d"
+           f "asdf " "%(bar)-5s"
+           f "3.140" "%(baz).3f"
+
 test_vsprintf_generics =
     do
     "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Int)
@@ -69,5 +81,6 @@ test_vsprintf_strings =
     
 tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf),
                   TestLabel "vsprintf generics" (TestCase test_vsprintf_generics),
-                  TestLabel "vsprintf strings" (TestCase test_vsprintf_strings)
+                  TestLabel "vsprintf strings" (TestCase test_vsprintf_strings),
+                  TestLabel "vsprintf AL" (TestCase test_al)
                  ]
