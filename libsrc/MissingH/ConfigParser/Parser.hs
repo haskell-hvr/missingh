@@ -110,29 +110,18 @@ sectionhead =
         do {s <- tokeng wf; return $ strip s}
 
 optionlist :: GeneralizedTokenParser CPTok () [(String, String)]
-optionlist =
-    try (do {c <- coption; ol <- optionlist; return $ c : ol})
-    <|> do {c <- coption; return $ [c]}
-
-extensionlist :: GeneralizedTokenParser CPTok () [String]
-extensionlist =
-    let wf (EXTENSIONLINE x) = Just x
-        wf _ = Nothing
-        in
-        try (do {x <- tokeng wf; l <- extensionlist; return $ x : l})
-        <|> do {x <- tokeng wf; return [x]}
+optionlist = many1 coption
 
 coption :: GeneralizedTokenParser CPTok () (String, String)
 coption =
     let wf (NEWOPTION x) = Just x
         wf _ = Nothing
+        wfx (EXTENSIONLINE x) = Just x
+        wfx _ = Nothing
         in
-        try (do 
-             o <- tokeng wf
-             l <- extensionlist
-             return (strip (fst o), valmerge ((snd o) : l ))
-            )
-        <|> do {o <- tokeng wf; return $ (strip (fst o), strip (snd o))}
+        do o <- tokeng wf
+           l <- many $ tokeng wfx
+           return (strip (fst o), valmerge ((snd o) : l))
 
 valmerge :: [String] -> String
 valmerge vallist =
