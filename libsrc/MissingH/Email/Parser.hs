@@ -31,7 +31,7 @@ Parses an e-mail message
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Email.Parser(mailParser)
+module MissingH.Email.Parser(mailParser, flattenMessage)
 where
 
 import MissingH.Hsemail.Rfc2234(crlf)
@@ -70,3 +70,16 @@ mailParser s = do
                                      rawLines = lines (snd p)}
                return $ digestMessage raw
 
+{- | Given a 'MissingH.Wash.Mail.Message.Message' object, \"flatten\"
+it into a simple, non-hierarchical list of its component single parts.
+
+Data associated with a multipart will be lost, but each single child component
+of the multipart will be preserved.
+-}
+flattenMessage :: MissingH.Wash.Mail.Message.Message -> 
+                  [MissingH.Wash.Mail.Message.Message]
+flattenMessage x =
+    case x of
+       y@(MissingH.Wash.Mail.Message.Singlepart {}) -> [y]
+       y@(MissingH.Wash.Mail.Message.Multipart {}) ->
+           concatMap flattenMessage (MissingH.Wash.Mail.Message.getParts y)

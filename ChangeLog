@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 16:15:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-55
+
+    Summary:
+      Added some new logging code
+    Revision:
+      missingh--head--0.7--patch-55
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Email/Parser.hs
+     libsrc/MissingH/Logging/Logger.hs
+
+
 2004-12-09 15:12:29 GMT	John Goerzen <jgoerzen@complete.org>	patch-54
 
     Summary:

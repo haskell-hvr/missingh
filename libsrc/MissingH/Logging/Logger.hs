@@ -141,6 +141,7 @@ module MissingH.Logging.Logger(
                                -- make your job easier.
                                debugM, infoM, noticeM, warningM, errorM,
                                criticalM, alertM, emergencyM,
+                               traplogging,
                                -- ** Logging to a particular Logger by object
                                logL,
                                -- * Logger Manipulation
@@ -182,7 +183,7 @@ import System.IO.Unsafe
 import Data.IORef
 import Data.List(map)
 import Data.FiniteMap
-
+import qualified Control.Exception
 ---------------------------------------------------------------------------
 -- Basic logger types
 ---------------------------------------------------------------------------
@@ -429,3 +430,25 @@ updateGlobalLogger ln func =
     do 
     l <- getLogger ln
     saveGlobalLogger (func l)
+
+{- | Traps exceptions that may occur, logging them, then passing them on.
+
+Takes a logger name, priority, leading description text (you can set it to
+@\"\"@ if you don't want any), and action to run.
+-}
+
+traplogging :: String                   -- Logger name
+            -> Priority                 -- Logging priority
+            -> String                   -- Descriptive text to prepend to logged messages
+            -> IO a                     -- Action to run
+            -> IO a                     -- Return value
+traplogging logger priority desc action =
+    let realdesc = case desc of
+                             "" -> ""
+                             x -> x ++ ": "
+        handler e = do
+                    logM logger priority (realdesc ++ (show e))
+                    Control.Exception.throw e             -- Re-raise it
+        in
+        Control.Exception.catch action handler
+    
