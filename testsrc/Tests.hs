@@ -35,12 +35,14 @@ import qualified CRC32GZIPtest
 import qualified GZiptest
 import qualified HVIOtest
 import qualified HVFStest
+import qualified Timetest
 
 test1 = TestCase ("x" @=? "x")
 
 tests = TestList [TestLabel "test1" test1,
                  TestLabel "List" Listtest.tests,
                  TestLabel "Str" Strtest.tests,
+                 TestLabel "Time" Timetest.tests,
                  TestLabel "FiniteMap" FiniteMaptest.tests,
                  TestLabel "Path" Pathtest.tests,
                  TestLabel "HVIO" HVIOtest.tests,

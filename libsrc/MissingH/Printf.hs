@@ -36,6 +36,14 @@ Inspiration and ideas from haskell-xml-rpc by Bjorn Bringert
 
 Please scroll down to read the detailed documentation.
 
+/NOTE/: to compile this module under ghc, you must use:
+
+> -fallow-overlapping-instances
+
+With hugs:
+
+> -98 +o
+
 -}
 
 module MissingH.Printf(-- * Introduction
@@ -81,7 +89,8 @@ module MissingH.Printf(-- * Introduction
                        -- $fullexamples
 
                        -- * Underlying Types
-                       Value(..)
+                       Value(..),
+                       PFType(..)
                        ) where
 
 import MissingH.Str

@@ -46,6 +46,7 @@ import Data.FiniteMap
 
 -- data Wrapped a = Wrapped a
 
+{- | All items to be printed must be expressible as one of these. -}
 data Value =
            ValueRational Rational
            | ValueString String
@@ -57,6 +58,9 @@ showValue (ValueRational x) = show x
 showValue (ValueChar x) = [x]
 showValue (ValueString x) = x
 
+{- | The class to which all items must belong (unless you want to inconvenience
+everyone and force them to manually generate 'Value's.
+-}
 class PFType a where
     toValue :: a -> Value
     fromValue :: Value -> a
