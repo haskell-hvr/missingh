@@ -19,6 +19,7 @@ The GZip format is described in RFC1952
 -}
 
 module MissingH.FileArchive.GZip (
+                                  decompress
                                  )
 where
 
@@ -35,11 +36,11 @@ type GZipError = String
 magic = "\x1f\x8b"
 
 -- | Flags
-fFTEXT = 1
-fFHCRC = 2
-fFEXTRA = 4
-fFNAME = 8
-fFCOMMENT = 16
+fFTEXT = 1::Int
+fFHCRC = 2::Int
+fFEXTRA = 4::Int
+fFNAME = 8::Int
+fFCOMMENT = 16::Int
 
 split1 :: String -> (Char, String)
 split1 s = (head s, tail s)
@@ -62,36 +63,36 @@ read_header s =
        if mag /= magic
           then throwError "Not a GZip file"
           else ok
-       let (method, rem) = split1 rem
+       let (method, rem2) = split1 rem
        if (ord(method) /= 8)
           then throwError "Unknown compression method"
           else ok
-       let (flag_S, rem) = split1 rem
+       let (flag_S, rem3) = split1 rem2
        let flag = ord flag_S
        -- skip modtime (4), extraflag (1), and os (1)
-       let rem = drop 6 rem
+       let rem4 = drop 6 rem3
        
-       rem <- if (flag .&. fFEXTRA /= 0)
+       rem5 <- if (flag .&. fFEXTRA /= 0)
                   -- Skip past the extra field if we have it.
-                  then do let (xlen_S, rem2) = split1 rem
-                          let (xlen2_S, rem2) = split1 rem2
+                  then do let (xlen_S, rem4a) = split1 rem4
+                          let (xlen2_S, rem4a) = split1 rem4
                           let xlen = (ord xlen_S) + 256 * (ord xlen2_S)
-                          return $ drop xlen rem2
-                  else return rem
+                          return $ drop xlen rem4a
+                  else return rem4
        
-       rem <- if (flag .&. fFNAME /= 0)
+       rem6 <- if (flag .&. fFNAME /= 0)
                   -- Skip past the null-terminated filename
-                  then return $ tail $ dropWhile (/= '\x00') rem
-                  else return rem
+                  then return $ tail $ dropWhile (/= '\x00') rem5
+                  else return rem5
 
-       rem <- if (flag .&. fFCOMMENT /= 0)
+       rem7 <- if (flag .&. fFCOMMENT /= 0)
                   -- Skip past the null-terminated comment
-                  then return $ tail $ dropWhile (/= '\x00') rem
-                  else return rem
+                  then return $ tail $ dropWhile (/= '\x00') rem6
+                  else return rem6
        
-       rem <- if (flag .&. fFHCRC /= 0)
+       rem8 <- if (flag .&. fFHCRC /= 0)
                   -- Skip past the header CRC
-                  then return $ drop 2 rem
-                  else return rem
+                  then return $ drop 2 rem7
+                  else return rem7
                   
-       return ("foo", rem)
+       return ("foo", rem8)

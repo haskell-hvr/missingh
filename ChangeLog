@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-03 22:15:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-21
+
+    Summary:
+      Working prototype
+    Revision:
+      missingh--head--0.7--patch-21
+
+
+    new files:
+     testsrc/GZiptest.hs testsrc/gzfiles/.arch-ids/=id
+     testsrc/gzfiles/.arch-ids/t1.gz.id testsrc/gzfiles/t1.gz
+
+    modified files:
+     ChangeLog libsrc/MissingH/FileArchive/GZip.hs testsrc/Tests.hs
+
+    new directories:
+     testsrc/gzfiles testsrc/gzfiles/.arch-ids
+
+
 2004-12-03 22:03:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-20
 
     Summary:
