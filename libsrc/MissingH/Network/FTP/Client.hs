@@ -49,55 +49,89 @@ Useful standards:
 -}
 
 module MissingH.Network.FTP.Client(easyConnectTo, connectTo,
-                                   loginAnon, login
+                                   loginAnon, login, 
+                                   setPassive,
+                                   FTPConnection(isPassive),
                        )
 where
 import MissingH.Network.FTP.Parser
+import Network.BSD
 import Network.Socket
 import qualified Network
 import System.IO
+import System.IO.Unsafe
 import MissingH.Logging.Logger
 
-type FTPConnection = Handle
+data FTPConnection = FTPConnection {readh :: IO String,
+                                    writeh :: Handle,
+                                    isPassive :: Bool}
+                   deriving Eq
 
 {-
 getresp h = do c <- hGetContents h
                return (parseGoodReply c)
 -}
 
-getresp = debugParseGoodReplyHandle
-unexpectedresp m r = error ("Expected " ++ m ++ ", got " ++ (show r))
+getresp h = do
+            c <- (readh h)
+            debugParseGoodReply c
+
+unexpectedresp m r = "Expected " ++ m ++ ", got " ++ (show r)
 
 isxresp desired (r, _) = r >= desired && r < (desired + 100)
 
 forcexresp desired r = if isxresp desired r
                        then r
-                       else error (show desired)
+                       else error ((unexpectedresp (show desired)) r)
 
-sendcmd h c = do hPutStr h (c ++ "\r\n")
+forceioresp :: Int -> FTPResult -> IO ()
+forceioresp desired r = if isxresp desired r
+                        then return ()
+                        else fail (unexpectedresp (show desired) r)
+
+logsend m = debugM "MissingH.Network.FTP.Client" ("FTP sent: " ++ m)
+sendcmd h c = do logsend c
+                 hPutStr (writeh h) (c ++ "\r\n")
                  getresp h
 
 {- | Connect to the remote FTP server and read but discard
    the welcome.  Assumes
    default FTP port, 21, on remote. -}
 easyConnectTo :: Network.HostName -> IO FTPConnection
-easyConnectTo h = do x <- connectTo h (Network.PortNumber 21)
-                     let h = (fst x)
-                     -- hPutStr h "foo"
-                     return h
+easyConnectTo h = do x <- connectTo h 21
+                     return (fst x)
 
 {- | Connect to remote FTP server and read the welcome. -}
-connectTo :: Network.HostName -> Network.PortID -> IO (FTPConnection, FTPResult)
+connectTo :: Network.HostName -> PortNumber -> IO (FTPConnection, FTPResult)
 connectTo h p =
+    let readchars :: Handle -> IO String
+        readchars h = do
+                      c <- hGetChar h
+                      next <- unsafeInterleaveIO $ readchars h
+                      return (c : next)
+        in
     do
     updateGlobalLogger "MissingH.Network.FTP.Parser" (setLevel DEBUG)
-    h <- Network.connectTo h p
+    updateGlobalLogger "MissingH.Network.FTP.Client" (setLevel DEBUG)
+    proto <- getProtocolNumber "tcp"
+    he <- getHostByName h
+    s <- socket AF_INET Stream proto
+    connect s (SockAddrInet p (hostAddress he))
+    r <- socketToHandle s ReadMode
+    hSetBuffering r LineBuffering
+    w <- socketToHandle s WriteMode
+    hSetBuffering w LineBuffering
+    let h = FTPConnection {readh = readchars r, writeh = w, isPassive = True}
     --hIsReadable h >>= print
     --hIsWritable h >>= print
     -- hSetBuffering h LineBuffering
-    r <- getresp h
+    resp <- getresp h
+    forceioresp 200 resp
+    --foo <- return (forcexresp 200 resp)
+    --print foo
     -- hPutStr h "foo"
-    r `seq` return (h, r)
+    -- resp `seq` return (h, resp)
+    return (h, resp)
     --return (h, r)
 
 {- | Log in anonymously. -}
@@ -121,10 +155,21 @@ login h user pass acct =
                             case acct of
                                 Nothing -> error "FTP server demands account, but no account given"
                                 Just a -> do ar <- sendcmd h ("ACCT " ++ a)
-                                             return (forcexresp 200 ar)
+                                             forceioresp 200 ar
                                              return ar
-                            else return $ forcexresp 200 pr
-       else return $ forcexresp 200 ur
+                            else return $! forcexresp 200 pr
+       else return $! forcexresp 200 ur
 
-            
-      
+{- | Sets whether passive mode is used (returns new
+connection object reflecting this) -}
+
+setPassive :: FTPConnection -> Bool -> FTPConnection            
+setPassive f b = f{isPassive = True}
+
+{- | Establishes a passive connection to the remote. -}
+
+makepasv :: FTPConnection -> 
+makspasv h =
+    do
+    r <- sendcmd("PASV")
+    

@@ -37,7 +37,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
                                    toPortString, fromPortString,
                                    debugParseGoodReply,
-                                   debugParseGoodReplyHandle,
+                                   respToSockAddr,
                                    FTPResult)
 where
 
@@ -185,12 +185,6 @@ debugParseGoodReply contents =
         loggedStr <- logPlugin contents []
         return (parseGoodReply loggedStr)
 
--- | Parse a FTP reply.  Log debug messages.
-debugParseGoodReplyHandle :: Handle -> IO FTPResult
-debugParseGoodReplyHandle h = do
-                              c <- hGetContents h
-                              debugParseGoodReply c
-
 {- | Converts a socket address to a string suitable for a PORT command.
 
 Example:
@@ -212,4 +206,7 @@ fromPortString instr =
         hostbytes = map read (take 4 inbytes)
         portbytes = map read (drop 4 inbytes)
         in
-        SockAddrInet (PortNum (fromBytes portbytes)) (fromBytes hostbytes)
+        SockAddrInet (fromBytes portbytes) (fromBytes hostbytes)
+
+-- | Converts a response code to a socket address
+respToSockAddr :: FTPResult -> SockAddr
