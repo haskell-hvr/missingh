@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 18:21:15 GMT	John Goerzen <jgoerzen@complete.org>	patch-45
+
+    Summary:
+      Strict CRC calculation
+    Revision:
+      missingh--head--0.7--patch-45
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/FileArchive/GZip.hs
+
+
 2004-12-04 17:45:08 GMT	John Goerzen <jgoerzen@complete.org>	patch-44
 
     Summary:

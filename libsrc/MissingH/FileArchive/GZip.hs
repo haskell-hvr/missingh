@@ -113,6 +113,7 @@ decompress s =
         procs ((_, content, foot):xs) = 
             let (nexth, nextb) = procs xs in
                 (content ++ nexth, (crc32valid foot) && nextb)
+--                (content ++ nexth, (&&) nextb $! (crc32valid foot))
         in
         do x <- read_sections s
            return $ procs x
@@ -161,7 +162,8 @@ read_data x =
     where
     read_data_internal [] ck = ([], ck)
     read_data_internal (x:xs) ck =
-        let n = read_data_internal xs (update_crc ck x)
+        let newcrc = update_crc ck x
+            n = newcrc `seq` read_data_internal xs newcrc
             in
             (x : fst n, snd n)
     
