@@ -48,6 +48,7 @@ import MissingH.Str
 import MissingH.Printf
 import MissingH.IO.HVIO
 import MissingH.IO.HVFS
+import MissingH.IO.HVFS.InstanceHelpers
 import Data.Char
 import MissingH.Printf
 import Data.IORef
@@ -136,6 +137,10 @@ commands =
     ,("NOOP", (forceLogin cmd_noop,  help_noop))
     ,("RNFR", (forceLogin cmd_rnfr,  help_rnfr))
     ,("RNTO", (forceLogin cmd_rnto,  help_rnto))
+    ,("DELE", (forceLogin cmd_dele,  help_dele))
+    ,("RMD",  (forceLogin cmd_rmd,   help_rmd))
+    ,("MKD",  (forceLogin cmd_mkd,   help_mkd))
+    ,("PWD",  (forceLogin cmd_pwd,   help_pwd))
     ]
 
 commandLoop :: FTPServer -> SockAddr -> IO ()
@@ -167,7 +172,7 @@ help_quit =
 
 cmd_quit :: CommandHandler
 cmd_quit h sa args =
-    do sendReply h 211 "OK, Goodbye."
+    do sendReply h 221 "OK, Goodbye."
        return False
 
 help_user =
@@ -273,6 +278,44 @@ cmd_rnto h@(FTPServer _ fs state) _ args =
                                            ("File " ++ fromname ++ 
                                             " renamed to " ++ args)
                                          return True
+
+help_dele = ("Delete files", "")
+cmd_dele :: CommandHandler
+cmd_dele h@(FTPServer _ fs _) _ args =
+    if length args < 1
+       then do sendReply h 501 "Filename required"
+               return True
+       else trapIOError h (vRemoveFile fs args) $
+              \_ -> do sendReply h 250 $ "File " ++ args ++ " deleted."
+                       return True
+
+help_rmd = ("Remove directory", "")
+cmd_rmd :: CommandHandler
+cmd_rmd h@(FTPServer _ fs _) _ args =
+    if length args < 1
+       then do sendReply h 501 "Filename required"
+               return True
+       else trapIOError h (vRemoveDirectory fs args) $
+            \_ -> do sendReply h 250 $ "Directory " ++ args ++ " removed."
+                     return True
+
+help_mkd = ("Make directory", "")
+cmd_mkd :: CommandHandler
+cmd_mkd h@(FTPServer _ fs _) _ args =
+    if length args < 1
+       then do sendReply h 501 "Filename required"
+               return True
+       else trapIOError h (vCreateDirectory fs args) $
+            \_ -> do newname <- getFullPath fs args
+                     sendReply h 257 $ "\"" ++ newname ++ "\" created."
+                     return True
+
+help_pwd = ("Print working directory", "")
+cmd_pwd :: CommandHandler
+cmd_pwd h@(FTPServer _ fs _) _ _ =
+    do d <- vGetCurrentDirectory fs
+       sendReply h 257 $ "\"" ++ d ++ "\" is the current working directory."
+       return True
 
 help_help =
     ("Display help on available commands",

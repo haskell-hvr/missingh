@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-21 22:22:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-137
+
+    Summary:
+      Added a bunch of commands
+    Revision:
+      missingh--head--0.7--patch-137
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Server.hs
+
+
 2004-12-21 22:02:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-136
 
     Summary:
