@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-24 02:32:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-171
+
+    Summary:
+      really fixed iotest
+    Revision:
+      missingh--head--0.7--patch-171
+
+
+    modified files:
+     ChangeLog testsrc/IOtest.hs
+
+
 2004-12-24 02:26:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-170
 
     Summary:
