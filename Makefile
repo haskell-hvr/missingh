@@ -35,7 +35,9 @@ libmissingH.a: $(OBJS)
 doc:
 	-rm -rf html
 	mkdir html
-	haddock -t 'MissingH API Manual' -h -o html $(SOURCES)
+	haddock $(HADDOCKARGS) --package=MissingH \
+	   --dump-interface=html/MissingH.haddock \
+	   -t 'MissingH API Manual' -h -o html $(SOURCES)
 
 clean:
 	-./setup clean
