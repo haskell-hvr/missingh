@@ -39,6 +39,7 @@ module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                        )
 where
 import MissingH.IO.HVFS
+import Data.IORef
 
 {- | A simple class that assumes that everything is either a file
 or a directory. -}
@@ -53,5 +54,25 @@ instance HVFSStat SimpleStat where
 -- In-Memory Tree Types
 ----------------------------------------------------------------------
 
-data MemoryNode = MemoryFile String String -- ^ A file, defined by its name and contents
-                | MemoryDirectory String [MemoryNode] -- ^ A directory, defined by its name and list of component files
+type MemoryNode = (String, MemoryEntry)
+data MemoryEntry = MemoryDirectory [MemoryNode]
+                 | MemoryFile String
+data MemoryVFS = MemoryVFS 
+               { content :: IORef [MemoryNode],
+                 cwd :: IORef String
+               }
+
+-- | Create a new 'MemoryVFS' object from an existing tree.
+-- An empty filesystem may be created by using @[]@ for the parameter.
+newMemoryVFS :: [MemoryNode] -> IO MemoryVFS
+newMemoryVFS s = do r <- newIORef s
+                    newMemoryVFSRef r
+
+-- | Create a new 'MemoryVFS' object using an IORef to an
+-- existing tree.
+newMemoryVFSRef :: IORef [MemoryNode] -> IO MemoryVFS
+newMemoryVFSRef r = do
+                    c <- newIORef "/"
+                    return (MemoryVFS {content = r, cwd = c})
+
+
