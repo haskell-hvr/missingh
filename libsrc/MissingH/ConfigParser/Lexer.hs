@@ -59,7 +59,7 @@ optionsep = oneOf ":=" <?> "Option separator"
 whitespace_chars = oneOf " \t" <?> "Whitespace"
 comment_line = do skipMany whitespace_chars <?> "whitespace in comment"
                   comment_chars             <?> "start of comment"
-                  (many1 $ noneOf "\r\n")   <?> "content of comment"
+                  (many $ noneOf "\r\n")   <?> "content of comment"
                   eoleof
 eolstuff = (try comment_line) <|> (try empty_line)
 empty_line = do many whitespace_chars         <?> "empty line"
@@ -76,7 +76,7 @@ extension_line = do
                  many1 whitespace_chars
                  c1 <- noneOf "\r\n#;"
                  remainder <- many value_chars
-                 eoleof
+                 eolstuff
                  return (c1 : remainder)
 
 optionkey = many1 oname_chars
@@ -96,8 +96,8 @@ iloken =
     
     -- Real stuff
     <|> (do {sname <- sectheader; togtok $ NEWSECTION sname})
+    <|> try (do {extension <- extension_line; togtok $ EXTENSIONLINE extension})
     <|> try (do {pair <- optionpair; togtok $ NEWOPTION pair})
-    <|> (do {extension <- extension_line; togtok $ EXTENSIONLINE extension})
     <?> "Invalid syntax in configuration file"
         
 loken :: Parser [GeneralizedToken CPTok]

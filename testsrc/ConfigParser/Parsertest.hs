@@ -28,6 +28,9 @@ test_basic =
         f "empty string" "" []
 
         ,f "one empty line" "\n" []
+        -- These two should go to OCaml
+        ,f "one empty comment" "#" []
+        ,f "one empty comment eol" "#\n" []
         ,f "one comment line" "#foo bar" []
         ,f "one comment line with eol" "#foo bar\n" []
         ,f "one empty section" "[emptysect]" [("emptysect", [])]
