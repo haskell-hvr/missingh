@@ -1,0 +1,37 @@
+INSTALLATION INSTRUCTIONS
+
+There are several methods:
+
+1. Using Cabal -- recommended, especially for ghc users
+
+2. Using hmake -- not yet supported
+
+3. Manual
+
+--------------------------
+Cabal
+--------------------------
+
+First, install the Cabal distribution for your favorite compiler.
+Get it from http://www.haskell.org/cabal.  Debian users can
+apt-get install libghc6-cabal-dev.  Then run "make setup" (you may
+need to edit the Makefile if you don't use GHC).
+
+Then:
+
+ ./setup configure
+ ./setup build
+ ./setup install
+
+-------------------------
+Manual
+-------------------------
+
+Edit the Makefile to support your compiler.  The Makefile will
+require GNU make.  Type "make" or "gmake".  Copy the library and .hs or .hi
+files to the appropriate locations.  That may be all that you need to do.
+
+(More to come in this file)
+
+# arch-tag: Installation Instructions
+

@@ -1,0 +1,70 @@
+-------------------------
+What is MissingH?
+-------------------------
+
+It's a collection of Haskell-related utilities.  It is an extension of my
+earlier work developing MissingLib for OCaml.  The following modules are
+are provided at this time, and more are likely to follow:
+
+IOutil                  * Copying data between files or handles
+                        * Lazy operations on line input
+                        * Binary I/O with Haskell strings
+                        * Lazy operations on binary blocks
+
+Listutil                * Association list manipulation
+                        * List splitting and delimiter joining
+                        * Truncation
+
+Strutil                 * Leading/trailing whitespace removal
+                        * Beginning/ending tests
+                        * Joining, splitting, and truncation
+
+
+The entire library has no prerequisites save the Haskell standard library and
+findlib and is designed to install without complexity on a variety of systems.
+It could also easily be embedded within your own source trees so that users
+need not have it installed beforehand.
+
+** THIS IS CURRENTLY ALPHA-QUALITY CODE; MAJOR API FLUCTUATIONS MAY YET OCCUR.
+
+-------------------------
+Quick Start
+-------------------------
+
+See the file INSTALL.
+
+-------------------------
+Usage in programs
+-------------------------
+
+You can simply use -package MissingH in most compilers to enable
+this library.  
+
+The API docs can be built with "make doc", or you can find them at:
+
+http://quux.org/devel/missingh
+
+-------------------------
+Author & Homepage
+-------------------------
+
+MissingH was written by John Goerzen <jgoerzen@complete.org>.
+
+The latest version may be obtained at:
+
+   gopher://quux.org/1/devel/missingh
+
+or:
+
+   http://quux.org/devel/missingh
+
+Documentation is also available on that page.
+
+This program is copyrighted under the terms of the GNU General Public License.
+See the COPYRIGHT and COPYING files for more details.
+
+If the GPL is unacceptable for your uses, please e-mail me; alternative
+terms can be negotiated for your project.
+
+arch-tag: general information
+
