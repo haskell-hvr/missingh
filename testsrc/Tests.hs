@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Tests(tests) where
 import HUnit
+import qualified MIMETypestest
 import qualified Listtest
 import qualified FiniteMaptest
 import qualified Pathtest
@@ -30,6 +31,7 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "List" Listtest.tests,
                  TestLabel "Str" Strtest.tests,
                  TestLabel "FiniteMap" FiniteMaptest.tests,
-                 TestLabel "Path" Pathtest.tests]
+                 TestLabel "Path" Pathtest.tests,
+                 TestLabel "MIMETypes" MIMETypestest.tests]
 
 

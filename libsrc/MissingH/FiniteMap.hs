@@ -47,7 +47,8 @@ flipFM :: (Ord key, Ord val) => FiniteMap key val -> FiniteMap val [key]
 flipFM = listToFM . flipAL . fmToList
 
 {- | Returns a list of all keys in the finite map whose value matches the
-parameter. -}
+parameter. If the value does not occur in the finite map, the empty
+list is returned. -}
 
 flippedLookupFM :: (Ord val, Ord key) => FiniteMap key val -> val-> [key]
 flippedLookupFM fm v =

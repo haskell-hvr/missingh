@@ -32,7 +32,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.MIMETypes (-- * Creating Lookup Objects
-                           defaultMIMETypeData,
+                           defaultmtd,
                            readMIMETypes,
                            hReadMIMETypes,
                            readSystemMIMETypes,
@@ -51,6 +51,8 @@ import Monad
 import System.IO
 import System.IO.Error
 import MissingH.IO
+import MissingH.Path
+import Data.Char
 
 ----------------------------------------------------------------------
 -- Basic type decl
@@ -130,8 +132,23 @@ guessType :: MIMETypeData               -- ^ Source data for guessing
              -> Bool                    -- ^ Whether to limit to strict data
              -> String                  -- ^ File or URL name to consider
              -> MIMEResults             -- ^ Result of guessing (see 'MIMEResults' for details on interpreting it)
--- FIXME
-guessType mtd strict fn = (Nothing, Nothing)
+guessType mtd strict fn = 
+    let mapext (base, ext) =
+            case lookupFM (suffixMap mtd) ext of
+                Nothing -> (base, ext)
+                Just x -> mapext (splitext (base ++ x))
+        checkencodings (base, ext) =
+            case lookupFM (encodingsMap mtd) ext of
+                 Nothing -> (base, ext, Nothing)
+                 Just x -> (fst (splitext base),
+                            snd (splitext base),
+                            Just x)
+        (base, ext, enc) = checkencodings . mapext $ splitext fn
+        typemap = getStrict mtd strict
+        in
+        case lookupFM typemap ext of
+             Nothing -> (lookupFM typemap (map toLower ext), enc)
+             Just x -> (Just x, enc)
 
 {- | Guess the extension of a file based on its MIME type.
    The return value includes the leading dot.
@@ -156,8 +173,8 @@ addType :: MIMETypeData                 -- ^ Source data
 addType mtd strict thetype theext = mtd
 
 {- | Default MIME type data to use -}
-defaultMIMETypeData :: MIMETypeData
-defaultMIMETypeData = 
+defaultmtd :: MIMETypeData
+defaultmtd = 
     MIMETypeData {suffixMap = default_suffix_map,
                   encodingsMap = default_encodings_map,
                   typesMap = default_types_map,

@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 17:15:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-93
+
+    Summary:
+      Working guessType and tests for it
+    Revision:
+      missingh--head--1.0--patch-93
+
+
+    new files:
+     testsrc/MIMETypestest.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/FiniteMap.hs
+     libsrc/MissingH/MIMETypes.hs testsrc/Tests.hs
+
+
 2004-10-21 14:17:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-92
 
     Summary:
