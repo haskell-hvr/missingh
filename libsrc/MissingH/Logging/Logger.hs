@@ -25,8 +25,11 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Logging.Logger(-- * Basic Types
-                               Logger(..)
+                               Logger,
+                               componentsOfName
+
                                ) where
+import MissingH.Str
 import MissingH.Logging
 import MissingH.Logging.Handler
 import MissingH.Logging.Handler.Simple
@@ -34,19 +37,91 @@ import IO
 import System.IO.Unsafe
 import Data.IORef
 import Data.List(map)
+import Data.FiniteMap
+
+-----------------------------------------------------------------------
+-- Basic types
 
 data HandlerT = forall a. LogHandler a => HandlerT a
 
-data Logger = Logger { priority :: Priority,
+data Logger = Logger { level :: Priority,
                        handlers :: [HandlerT]}
 
-rootLogger :: IORef Logger
-rootLogger = unsafePerformIO $ do
-                               h <- streamHandler stdout DEBUG
-                               newIORef (Logger 
-                                         {priority = NOTICE,
-                                          handlers = [HandlerT h]})
+type LogTree = FiniteMap String Logger
 
+-----------------------------------------------------------------------
+-- Module shortcuts
+
+rootlogger = ""
+
+-----------------------------------------------------------------------
+-- Utilities
+
+-- | Placeholders created when a new logger must be created.
+placeholder :: Logger
+placeholder = Logger {level = DEBUG, handlers = []}
+
+-----------------------------------------------------------------------
+-- Logger Tree Storage
+
+-- | The log tree.  Initialize it with a default root logger 
+-- and (FIXME) a logger for MissingH itself.
+
+{-# NOINLINE logTree #-}
+
+logTree :: IORef LogTree
+-- note: only kick up tree if handled locally
+logTree = 
+    unsafePerformIO $ do
+                      h <- streamHandler stderr DEBUG
+                      newIORef (unitFM rootlogger (Logger 
+                                 {level = WARNING,
+                                  handlers = [HandlerT h]}))
+
+-- | Given a name, return all components of it, starting from the root.
+componentsOfName :: String -> [String]
+componentsOfName name =
+    let joinComp [] _ = []
+        joinComp (x:xs) [] = x : joinComp xs x
+        joinComp (x:xs) accum =
+            let newlevel = accum ++ "." ++ x in
+                newlevel : joinComp xs newlevel
+        in
+        rootlogger : joinComp (split "." name) []
+
+createLoggers :: [String] -> IO ()
+createLoggers [] = return ()
+createLoggers (x:xs) = 
+    do
+    lt <- readIORef logTree
+    if elemFM x lt
+       then createLoggers xs
+       else do
+         modifyIORef logTree (\a -> addToFM a x placeholder)
+         createLoggers xs
+
+
+-- | Returns the logger for the given name.  If no logger with that name
+-- exists, creates new loggers and any necessary parent loggers, with
+-- no connected handlers.
+
+getLogger :: String -> IO Logger
+getLogger lname =
+    do
+    lt <- readIORef logTree
+    case lookupFM lt lname of
+         Just x -> return x
+         Nothing -> do
+                    -- Add it.  Then call myself to retrieve it.
+                    createLoggers (componentsOfName lname)
+                    getLogger lname
+                            
+-- | Returns the root logger.
+
+getRootLogger :: IO Logger
+getRootLogger = getLogger ""
+
+{-
 callHandler :: Priority -> String -> HandlerT -> IO ()
 callHandler pri msg ht =
     case ht of
@@ -58,10 +133,11 @@ handlerActions pri msg = do
                          let h = map (callHandler pri msg) (handlers l)
                          return h
                          
-log :: Priority -> String -> IO ()
-log pri msg = do
+logM :: Priority -> String -> IO ()
+logM pri msg = do
               l <- readIORef rootLogger
               a <- handlerActions pri msg
               if (pri >= priority l) 
                  then sequence_ a
                  else return ()
+-}
