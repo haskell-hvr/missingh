@@ -36,6 +36,7 @@ The data is written out during a call to 'flush' or 'close'.
 
 module MissingH.AnyDBM.StringDBM (StringDBM,
                                   openStringDBM,
+                                  openStringVDBM,
                                   SystemFS(..),
                                   IOMode(..)
                                  )
@@ -49,29 +50,30 @@ import Data.HashTable
 {- | The type of the StringDBM instances. -}
 data StringDBM = forall a. HVFSOpenable a => StringDBM (HashTable String String) IOMode a FilePath
 
-{-
 {- | Opens a 'StringDBM' file.  Please note: only ReadMode, WriteMode,
 and ReadWriteMode are supported for the IOMode.  AppendMode is not supported. 
+
+>openStringDBM = openStringVDBM SystemFS
 -}
 openStringDBM :: FilePath -> IOMode -> IO StringDBM
-openStringDBM = openStringHVDBM SystemFS
--}
+openStringDBM = openStringVDBM SystemFS
+
 {- | Opens a 'StringDBM' file.  Please note: only ReadMode, WriteMode,
 and ReadWriteMode are supported for the IOMode.  AppendMode is not supported.
 
 To work on your system's normal (real) filesystem, just specify
 'SystemFS' for the first argument.
 -}
-openStringDBM :: HVFSOpenable a => a -> FilePath -> IOMode -> IO StringDBM
-openStringDBM _ _ AppendMode = fail "openStringDBM: AppendMode is not supported"
-openStringDBM h fp ReadMode =
+openStringVDBM :: HVFSOpenable a => a -> FilePath -> IOMode -> IO StringDBM
+openStringVDBM _ _ AppendMode = fail "openStringDBM: AppendMode is not supported"
+openStringVDBM h fp ReadMode =
     do ht <- new (==) hashString
        vReadFile h fp >>= strToA ht
        return $ StringDBM ht ReadMode h fp
-openStringDBM h fp WriteMode =
+openStringVDBM h fp WriteMode =
     do ht <- new (==) hashString
        return $ StringDBM ht WriteMode h fp
-openStringDBM h fp ReadWriteMode =
+openStringVDBM h fp ReadWriteMode =
     -- Nothing different to start with.  Later, we emulate WriteMode.
     -- Nothing is ever read after the object is created.
     do ht <- new (==) hashString

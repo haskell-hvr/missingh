@@ -75,8 +75,8 @@ generic_test initfunc openfunc =
 
 test_hashtable = generic_test (return ())
                   (\_ -> ((new (==) hashString)::IO (HashTable String String)))
-test_stringdbm = generic_test (newMemoryVFS [])
-                   (\f -> openStringDBM f "/foo" ReadWriteMode)
+test_stringdbm = generic_test (return SystemFS)
+                   (\f -> openStringVDBM f "testsrc/tmp/StringDBM" ReadWriteMode)
 
 tests = TestList [TestLabel "HashTable" (TestList test_hashtable),
                   TestLabel "StringDBM" (TestList test_stringdbm)

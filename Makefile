@@ -50,6 +50,7 @@ clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
 		`find . -name "*~"` *.a setup dist testsrc/runtests
+	-rm -rf testsrc/tmp/*
 	-cd doc && $(MAKE) clean
 
 testsrc/runtests: all $(shell find testsrc -name "*.hs")

@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-02 17:05:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-190
+
+    Summary:
+      checkpointing
+    Revision:
+      missingh--head--0.7--patch-190
+
+
+    new files:
+     testsrc/tmp/.arch-ids/=id
+
+    modified files:
+     ChangeLog Makefile libsrc/MissingH/AnyDBM/StringDBM.hs
+     testsrc/AnyDBMtest.hs
+
+    new directories:
+     testsrc/tmp testsrc/tmp/.arch-ids
+
+
 2005-02-02 16:47:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-189
 
     Summary:
