@@ -179,6 +179,12 @@ Usage in programs
 You can simply use -package MissingH in most compilers to enable
 this library.  
 
+Hugs users will need to use -98 +o to use certain modules.
+
+GHC users will need to use this for certain modules:
+ -fallow-overlapping-instances -fallow-undecidable-instances \
+ -fglasgow-exts
+
 The API docs can be built with "make doc", or you can find them at:
 
 http://quux.org/devel/missingh

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-03 21:59:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-202
+
+    Summary:
+      Added more info to README
+    Revision:
+      missingh--head--0.7--patch-202
+
+
+    modified files:
+     ChangeLog README
+
+
 2005-02-03 21:29:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-201
 
     Summary:
