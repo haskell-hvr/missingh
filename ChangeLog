@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 04:51:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-41
+
+    Summary:
+      Added concatenated gzip file
+    Revision:
+      missingh--head--0.7--patch-41
+
+
+    new files:
+     testsrc/gzfiles/.arch-ids/t2.gz.id testsrc/gzfiles/t2.gz
+
+    modified files:
+     ChangeLog Makefile testsrc/GZiptest.hs
+
+
 2004-12-04 04:36:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-40
 
     Summary:

@@ -54,7 +54,7 @@ testsrc/runtests: all $(shell find testsrc -name "*.hs")
 	ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
 
 test-ghc6: testsrc/runtests
-	testsrc/runtests
+	testsrc/runtests 
 
 test-hugs:
 	runhugs -98 +o -P$(PWD)/libsrc:$(PWD)/testsrc: testsrc/runtests.hs
