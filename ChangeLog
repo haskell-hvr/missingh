@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-26 20:20:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-9
+
+    Summary:
+      Checkpointing again
+    Revision:
+      missingh--head--0.5--patch-9
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Cmd.hs
+     libsrc/MissingH/Email/Sendmail.hs
+
+
 2004-10-26 20:13:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-8
 
     Summary:

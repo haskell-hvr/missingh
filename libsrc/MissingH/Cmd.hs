@@ -155,6 +155,7 @@ pOpen3 pin pout perr fp args func =
         pid <- forkProcess childstuff
         putStrLn "Parent 138"
         retval <- func
+        seq retval (return ())
         putStrLn "Parent 140"
         status <- getProcessStatus True False pid
         putStrLn "Parent 142"
@@ -164,4 +165,4 @@ pOpen3 pin pout perr fp args func =
            Just (Exited (ExitFailure fc)) -> cmdfailed fp args fc
            Just (Terminated sig) -> fail ("Command terminated by signal" ++ show sig)
            Just (Stopped sig) -> fail ("Command stopped by signal" ++ show sig)
-           
+        return retval

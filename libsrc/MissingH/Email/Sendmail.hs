@@ -82,10 +82,7 @@ sendmail (Just from) recipients msg =
     
 sendmail_worker :: [String] -> String -> IO ()
 sendmail_worker args msg =
-    let func h = do
-                 print "I am the func!"
-                 hPutStr h msg
-                 print "Func ending!"
+    let func h = hPutStr h msg
         in
         do
         pOpen WriteToPipe "/usr/sbin/sendmail" args func
