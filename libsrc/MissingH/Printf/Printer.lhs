@@ -45,8 +45,9 @@ get_conversion_func c = fromMaybe (error (c:": CF unknown")) $ lookup c cfs
 
 -- %d, %i
 print_signed_int :: ConversionFunc
-print_signed_int arg flags mw mp = res
-    where preci = fromMaybe 1 mp
+print_signed_int argv flags mw mp = res
+    where arg = (fromValue argv)::Integer
+          preci = read (fromMaybe "1" mp)
           width = fromMaybe 0 mw
           disp | Thousands `elem` flags = thousandify . show
                | otherwise              =               show
@@ -67,8 +68,9 @@ print_signed_int arg flags mw mp = res
 
 -- %o, u, x, X
 print_unsigned_int :: Char -> ConversionFunc
-print_unsigned_int base arg flags mw mp = res
-    where preci = fromMaybe 1  mp
+print_unsigned_int base argv flags mw mp = res
+    where arg = (fromValue argv)::Integer
+          preci = read (fromMaybe "1"  mp)
           width = fromMaybe 0 mw
           w = if ZeroPadded `elem` flags then (read preci) `max` width
                                          else     read preci
@@ -96,8 +98,9 @@ print_unsigned_int base arg flags mw mp = res
 
 -- %e, E
 print_exponent_double :: Char -> ConversionFunc
-print_exponent_double e arg flags mw mp = res
-    where preci = fromMaybe 6 mp
+print_exponent_double e argv flags mw mp = res
+    where arg = (fromValue argv)::Double
+          preci = read (fromMaybe "6" mp)
           width = fromMaybe 0 mw
           plus_sign = if Plus `elem` flags
                       then "+"
@@ -106,9 +109,9 @@ print_exponent_double e arg flags mw mp = res
                       else ""
           keep_dot = AlternateForm `elem` flags
           res =    let to_show = (fromRational $ toRational arg) :: Double
-                       shown = showEFloat (Just $preci) (abs to_show) ""
+                       shown = showEFloat (Just (read preci)) (abs to_show) ""
                        sign = if to_show < 0 then "-" else plus_sign
-                       fix_prec0 = if preci == 0
+                       fix_prec0 = if (read preci) == 0
                                    then case break (== '.') shown of
                                             (xs, _:_:ys)
                                                 | keep_dot  -> xs ++ '.':ys
@@ -121,15 +124,16 @@ print_exponent_double e arg flags mw mp = res
                        fix_exp = case break (== 'e') fix_exp_sign of
                                      (xs, [_,s,y]) -> xs ++ [e,s,'0',y]
                                      (xs, _:ys) -> xs ++ e:ys
-                       num_zeroes = (width - length fix_exp - length sign)
+                       num_zeroes = (width - genericLength fix_exp - genericLength sign)
                               `max` 0
-                   in sign ++ replicate num_zeroes '0' ++ fix_exp
+                   in sign ++ genericReplicate num_zeroes '0' ++ fix_exp
                  
 
 -- %f, F
 print_fixed_double :: Char -> ConversionFunc
-print_fixed_double f arg flags mw mp = res
-    where preci = fromMaybe 6  mp
+print_fixed_double f argv flags mw mp = res
+    where arg = (fromValue argv)::Double
+          preci = read (fromMaybe "6"  mp)
           width = fromMaybe 0  mw
           plus_sign = if Plus `elem` flags
                       then "+"
@@ -140,29 +144,30 @@ print_fixed_double f arg flags mw mp = res
           fix_case | f == 'f'  = map toLower
                    | otherwise = map toUpper
           res =    let to_show = (fromRational $ toRational arg) :: Double
-                       shown = showFFloat (Just preci) (abs to_show) ""
-                       shown' = if add_dot && preci == 0 then shown ++ "."
+                       shown = showFFloat (Just (read preci)) (abs to_show) ""
+                       shown' = if add_dot && (read preci) == 0 then shown ++ "."
                                                           else shown
                        sign = if to_show < 0 then "-" else plus_sign
-                       num_zeroes = (width - length shown' - length sign)
+                       num_zeroes = (width - genericLength shown' - genericLength sign)
                               `max` 0
-                   in sign ++ replicate num_zeroes '0' ++ fix_case shown'
+                   in sign ++ genericReplicate num_zeroes '0' ++ fix_case shown'
                  
 
 -- %c, C
 print_char :: ConversionFunc
-print_char arg _ _ _ = [arg]
+print_char arg _ _ _ = [(fromValue arg)::Char]
 
 -- %s, S
 print_string :: ConversionFunc
-print_string arg _ _ mp
+print_string argv _ _ mp
     = case mp of
-          Just preci -> if preci < 0 then arg else take preci arg
+          Just preci -> if (read preci) < 0 then arg else take (read preci) arg
           Nothing -> arg
+      where arg = fromValue argv
 
 -- Corresponds to %H (Haskell extension)
 show_arg :: ConversionFunc
-show_arg arg flags mw mp = (print_string show arg) flags mw mp
+show_arg argv flags mw mp = (print_string (toValue (show argv))) flags mw mp
 
 lower_hex, upper_hex :: Bool
 lower_hex = False

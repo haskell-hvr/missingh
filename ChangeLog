@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-14 23:38:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-38
+
+    Summary:
+      The printer compiles
+    Revision:
+      missingh--head--0.5--patch-38
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Printf/Printer.lhs
+     libsrc/MissingH/Printf/Types.lhs
+
+
 2004-11-14 23:09:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-37
 
     Summary:

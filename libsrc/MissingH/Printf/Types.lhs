@@ -7,7 +7,10 @@ import System.IO
 
 data Value =
            ValueInt Int
+           | ValueInteger Integer
            | ValueString String
+           | ValueChar Char
+           | ValueDouble Double
              deriving (Eq, Show)
 
 class PFType a where
@@ -19,10 +22,25 @@ instance PFType Int where
     fromValue (ValueInt x) = x
     fromValue _ = error "fromValue int"
 
+instance PFType Integer where
+    toValue = ValueInteger
+    fromValue (ValueInteger x) = x
+    fromValue _ = error "fromValue integer"
+
 instance PFType String where
     toValue = ValueString
     fromValue (ValueString x) = x
     fromValue _ = error "fromValue string"
+
+instance PFType Char where
+    toValue = ValueChar
+    fromValue (ValueChar x) = x
+    fromValue _ = error "fromValue char"
+
+instance PFType Double where
+    toValue = ValueDouble
+    fromValue (ValueDouble x) = x
+    fromValue _ = error "fromValue Double"
 
 {-
 instance PFType Value where
@@ -59,7 +77,7 @@ data Format = Literal String
             | CharCount
 
 type ArgNum = Integer
-type Arg = String
+type Arg = Value
 type Width = Integer
 type Precision = String
 data Flag = AlternateForm       -- "#"
