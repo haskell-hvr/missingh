@@ -43,11 +43,4 @@ separate thread.  When it is completed, the specified function is called with
 its result.  This is a simple way of doing callbacks. -}
 
 runInThread :: IO a -> (a -> IO b) -> IO ThreadId
-runInThread action callback = 
-    let computation :: IO ()
-        computation = do
-                      x <- action
-                      callback x
-                      return ()
-        in
-        forkIO computation
+runInThread action callback = forkIO $ action >>= callback >> return ()

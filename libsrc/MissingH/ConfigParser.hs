@@ -369,27 +369,30 @@ has_option cp s o =
     let c = content cp
         v = do secthash <- lookupFM c s
                return $ elemFM (optionxform cp $ o) secthash
-        in
-        case v of
-               Nothing -> False
-               Just x -> x
+        in maybe False id v
+
+
+class Get_C a where 
+    get :: MonadError CPError m => ConfigParser -> SectionSpec -> OptionSpec -> m a
                            
 {- | Retrieves a string from the configuration file.
 
 Returns an error if no such section\/option could be found.
 -}
-get :: MonadError CPError m =>
-       ConfigParser -> SectionSpec -> OptionSpec -> m String
--- used to be:
--- get cp = (accessfunc cp) cp
--- but I had to change the type of the accessfunc to return an Either,
--- so we now do this.
-get cp s o = eitherToMonadError $ (accessfunc cp) cp s o
+instance Get_C String where
+    get cp s o = eitherToMonadError $ (accessfunc cp) cp s o
+
+instance Get_C Bool where
+    get = getbool
+
+instance Read t => Get_C t where
+    get cp s o = get cp s o >>= return . read
 
 {- | Retrieves a string from the configuration file and attempts to parse it
 as a number.  Returns an error if no such option could be found.
 An exception may be raised if it
 could not be parsed as the destination number. -}
+-- FIXME delete this
 getnum :: (Read a, Num a,  MonadError CPError m) => 
           ConfigParser -> SectionSpec -> OptionSpec -> m a
 getnum cp s o = get cp s o >>= return . read
@@ -427,6 +430,7 @@ The following will produce a False value:
  *false
 
  -}
+-- FIXME don't export
 getbool ::  MonadError CPError m =>
             ConfigParser -> SectionSpec -> OptionSpec -> m Bool
 getbool cp s o = 

@@ -50,6 +50,8 @@ Example:
 > main = niceSocketsDo $ do { ... } 
 -}
 
+-- FIXME integrate with WebCont.Util.UDP
+
 niceSocketsDo :: IO a -> IO a
 niceSocketsDo func = do
                 System.Posix.Signals.installHandler 

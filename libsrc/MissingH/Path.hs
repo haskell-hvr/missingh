@@ -41,6 +41,9 @@ import MissingH.List
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
 dot after the last slash to the end.  Either returned string may be empty. -}
+
+-- FIXME - See 6.4 API when released.
+
 splitExt :: String -> (String, String)
 splitExt path = 
     let dotindex = alwaysElemRIndex '.' path

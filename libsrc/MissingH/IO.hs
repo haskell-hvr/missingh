@@ -58,10 +58,7 @@ newlines as appropriate.  The list is not expected to have newlines already.
 -}
 
 hPutStrLns :: Handle -> [String] -> IO ()
-hPutStrLns _ [] = return ()
-hPutStrLns h (x:xs) = do
-                      hPutStrLn h x
-                      hPutStrLns h xs
+hPutStrLns h = mapM_ $ hPutStrLn h
 
 {- | Given a handle, returns a list of all the lines in that handle.
 Thanks to lazy evaluation, this list does not have to be read all at once.
@@ -77,8 +74,8 @@ Example:
 
 -}
 
+-- FIXME does hGetContents h >>= return.lines not work?
 hGetLines :: Handle -> IO [String]
-
 hGetLines h = unsafeInterleaveIO (do
                                   ieof <- hIsEOF h
                                   if (ieof) 

@@ -28,6 +28,10 @@ nullfile = openFile "/dev/null" ReadWriteMode
 testfile = "testsrc/ConfigParser/test.cfg"
 p inp = forceEither $ readstring emptyCP inp
 f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv (p inp))
+f2s :: String -> Either CPError String -> Either CPError String -> Test
+f2s msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
+f2b :: String -> Either CPError Bool -> Either CPError Bool -> Test
+f2b msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
 f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
 f3 msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
 
@@ -76,16 +80,15 @@ test_basic =
              to_string
         ]
 
-
 test_defaults = 
     let cp = p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes\n[sect4]\ndef: different" in
       [
-       f2 "default item" (Right "ault") (get cp "sect1" "def")
-      ,f2 "normal item" (Right "bar") (get cp "sect1" "foo")
-      ,f2 "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
-      ,f2 "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
-      ,f2 "default from bad sect" (Right "ault") (get cp "sect2" "def")
-      ,f2 "overriding default" (Right "different") (get cp "sect4" "def")
+       f2s "default item" (Right "ault") (get cp "sect1" "def")
+      ,f2s "normal item" (Right "bar") (get cp "sect1" "foo")
+      ,f2s "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
+      ,f2s "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
+      ,f2s "default from bad sect" (Right "ault") (get cp "sect2" "def")
+      ,f2s "overriding default" (Right "different") (get cp "sect4" "def")
       -- not in haskell: ,f2 "using default feature"
       -- default int
       -- default float
@@ -95,17 +98,24 @@ test_defaults =
 test_nodefault =
     let cp = (p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes\n[sect4]\ndef: different"){usedefault = False} in
       [
-       f2 "default item" (Left (NoOption "def", "get")) (get cp "sect1" "def")
-      ,f2 "normal item" (Right "bar") (get cp "sect1" "foo")
-      ,f2 "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
-      ,f2 "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
-      ,f2 "default from bad sect" (Left (NoSection "sect2", "get")) (get cp "sect2" "def")
-      ,f2 "overriding default" (Right "different") (get cp "sect4" "def")
+       f2s "default item" (Left (NoOption "def", "get")) (get cp "sect1" "def")
+      ,f2s "normal item" (Right "bar") (get cp "sect1" "foo")
+      ,f2s "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
+      ,f2s "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
+      ,f2s "default from bad sect" (Left (NoSection "sect2", "get")) (get cp "sect2" "def")
+      ,f2s "overriding default" (Right "different") (get cp "sect4" "def")
       -- not in haskell: ,f2 "using default feature"
       -- default int
       -- default float
       -- default bool
       ]
+
+test_instances = 
+    let cp = p "[x]\na: true\nb: 1\n"
+	in [f2b "bool 1st" (Right True) (get cp "x" "a"),
+	    f2b "bool 1nd" (Right True) (get cp "x" "b")
+	   ]
+
 
 test_remove = 
     let cp = forceEither $ readstring emptyCP "def:ault\n[sect1]\ns1o1: v1\ns1o2:v2\n[sect2]\ns2o1: v1\ns2o2: v2\n[sect3]"
@@ -188,20 +198,20 @@ test_interp =
         cp = (forceEither $ (readstring emptyCP interpdoc)){ accessfunc = interpolatingAccess 5}
         in
         [
-         f2 "basic" (Right "i386") (get cp "DEFAULT" "arch")
-        ,f2 "filename" (Right "test_i386.c") (get cp "builder" "filename")
-        ,f2 "dir" (Right "/usr/src/test_i386.c") (get cp "builder" "dir")
-        ,f2 "percents" (Right "5%") (get cp "builder" "percent")
-        ,f2 "error" (Left (InterpolationError "unresolvable interpolation reference to \"nonexistent\"", "interpolatingAccess")) (get cp "builder" "bad")
-        ,f2 "recursive" (Left (InterpolationError "maximum interpolation depth exceeded", "interpolatingAccess"))
+         f2s "basic" (Right "i386") (get cp "DEFAULT" "arch")
+        ,f2s "filename" (Right "test_i386.c") (get cp "builder" "filename")
+        ,f2s "dir" (Right "/usr/src/test_i386.c") (get cp "builder" "dir")
+        ,f2s "percents" (Right "5%") (get cp "builder" "percent")
+        ,f2s "error" (Left (InterpolationError "unresolvable interpolation reference to \"nonexistent\"", "interpolatingAccess")) (get cp "builder" "bad")
+        ,f2s "recursive" (Left (InterpolationError "maximum interpolation depth exceeded", "interpolatingAccess"))
                         (get cp "builder" "recursive")
-        ,f2 "syn1" (Left (InterpolationError "\"builder/syn1\" (line 1, column 6):\nunexpected \")\"\nexpecting interpolation name","interpolatingAccess"))
+        ,f2s "syn1" (Left (InterpolationError "\"builder/syn1\" (line 1, column 6):\nunexpected \")\"\nexpecting interpolation name","interpolatingAccess"))
                    (get cp "builder" "syn1")
-        ,f2 "syn2" (Left (InterpolationError "\"builder/syn2\" (line 1, column 10):\nunexpected end of input\nexpecting \")s\"","interpolatingAccess"))
+        ,f2s "syn2" (Left (InterpolationError "\"builder/syn2\" (line 1, column 10):\nunexpected end of input\nexpecting \")s\"","interpolatingAccess"))
                    (get cp "builder" "syn2")
-        ,f2 "syn3" (Left (InterpolationError "\"builder/syn3\" (line 1, column 4):\nunexpected \"s\"\nexpecting \"%(\"","interpolatingAccess"))
+        ,f2s "syn3" (Left (InterpolationError "\"builder/syn3\" (line 1, column 4):\nunexpected \"s\"\nexpecting \"%(\"","interpolatingAccess"))
                    (get cp "builder" "syn3")
-        ,f2 "syn4" (Left (InterpolationError "\"builder/syn4\" (line 1, column 1):\nunexpected end of input\nexpecting \"%(\"","interpolatingAccess"))
+        ,f2s "syn4" (Left (InterpolationError "\"builder/syn4\" (line 1, column 1):\nunexpected end of input\nexpecting \"%(\"","interpolatingAccess"))
                    (get cp "builder" "syn4")
         ]
 
@@ -213,3 +223,4 @@ tests = TestList [TestLabel "test_basic" (TestList test_basic),
                  TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad),
                  TestLabel "test_ex_errormonad" (TestList test_ex_errormonad),
                  TestLabel "test_interp" (TestList test_interp)]
+
