@@ -43,6 +43,7 @@ import System.Posix.IO
 import System.Posix.Process
 import System.Posix.Types
 import System.IO
+import qualified System.Posix.Signals
 
 data PipeMode = ReadFromPipe | WriteToPipe
 
@@ -97,27 +98,29 @@ FIXME: this slowly leaks FDs!
 pOpen :: PipeMode -> FilePath -> [String] -> 
          (Handle -> IO a) -> IO a
 pOpen pm fp args func =
-    let realfunc h = do
-                     x <- func h
-                     hClose h
-                     return x
-        in
         do
         pipepair <- createPipe
-        fsth <- fdToHandle (fst pipepair)
-        sndh <- fdToHandle (snd pipepair)
         case pm of
          ReadFromPipe -> do
-                         let callfunc = do
-                                        --hClose sndh
-                                        x <- realfunc fsth
+                         let callfunc _ = do
+                                        closeFd (snd pipepair)
+                                        h <- fdToHandle (fst pipepair)
+                                        x <- func h
+                                        hClose h
                                         return $! x
                          pOpen3 Nothing (Just (snd pipepair)) Nothing fp args
                                 callfunc
          WriteToPipe -> do 
-                        let callfunc = do
-                                       --hClose fsth
-                                       x <- realfunc sndh
+                        let callfunc _ = do
+                                       print 114
+                                       closeFd (fst pipepair)
+                                       print 116
+                                       h <- fdToHandle (snd pipepair)
+                                       print 118
+                                       x <- func h
+                                       print 120
+                                       hClose h
+                                       print 122
                                        return $! x
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
                                callfunc
@@ -128,7 +131,7 @@ pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
        -> Maybe Fd                      -- ^ Get stderr from this fd
        -> FilePath                      -- ^ Command to run
        -> [String]                      -- ^ Command args
-       -> IO a                          -- ^ Action to run
+       -> (ProcessID -> IO a)           -- ^ Action to run
        -> IO a
 pOpen3 pin pout perr fp args func = 
     let mayberedir Nothing _ = return ()
@@ -141,14 +144,28 @@ pOpen3 pin pout perr fp args func =
                      mayberedir perr stdError
                      debugM (logbase ++ ".pOpen3")
                             ("Running: " ++ fp ++ " " ++ (show args))
-                     executeFile fp True args Nothing
+                     print 141
+                     catch (executeFile fp True args Nothing) (\_ -> return ())
+                     print 143
                      exitFailure
+                     print 144
         in
         do 
-        pid <- forkProcess childstuff
-        retval <- func
+        System.Posix.Signals.installHandler
+                      System.Posix.Signals.sigPIPE
+                      System.Posix.Signals.Ignore
+                      Nothing
+        print 145
+        p <- try (forkProcess childstuff)
+        print 147
+        pid <- case p of
+                Right x -> return x
+                Left e -> fail ("Error in fork: " ++ (show e))
+        print 150
+        retval <- func $! pid
+        print 152
         let rv = seq retval retval
-        status <- getProcessStatus True False pid
+        status <- getProcessStatus True False $! (seq retval pid)
         case status of
            Nothing -> fail "Got no process status back"
            Just (Exited (ExitSuccess)) -> return rv

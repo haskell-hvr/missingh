@@ -94,8 +94,11 @@ sendmail_worker args msg =
         --pOpen WriteToPipe "/usr/sbin/sendmail" args func
         rv <- try (pOpen WriteToPipe "sendmail" args func)
         case rv of
-            Right x -> return x
+            Right x -> do
+                       print 1
+                       return x
             Left _ -> do
+                      print 2
                       sn <- findsendmail
                       rv <- pOpen WriteToPipe sn args func
                       return $! rv
