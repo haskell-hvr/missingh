@@ -47,17 +47,23 @@ import MissingH.Network
 import MissingH.Str
 import MissingH.Printf
 import MissingH.IO.HVIO
+import MissingH.IO.HVFS
 import Data.Char
 import MissingH.Printf
 
+data FTPServer =  FTPServer
+    {handle :: Handle,
+     fs :: forall a. HVFS a => a
+    }
+
 s_crlf = "\r\n"
-ftpPutStrLn :: Handle -> String -> IO ()
+ftpPutStrLn :: FTPServer -> String -> IO ()
 ftpPutStrLn h text =
-    do hPutStr h (text ++ s_crlf)
-       hFlush h
+    do hPutStr (handle h) (text ++ s_crlf)
+       hFlush (handle h)
 
 {- | Send a reply code, handling multi-line text as necessary. -}
-sendReply :: Handle -> Int -> String -> IO ()
+sendReply :: FTPServer -> Int -> String -> IO ()
 sendReply h codei text =
     let codes = vsprintf "%03d" codei
         writethis [] = ftpPutStrLn h (codes ++ "  ")
@@ -70,27 +76,29 @@ sendReply h codei text =
 {- | Main FTP handler; pass this to 
 'MissingH.Network.SocketServer.handleHandler' -}
 
-ftpHandler :: Handle -> SockAddr -> IO ()
-ftpHandler h sa =
-    traplogging "MissingH.Network.FTP.Server" NOTICE "" $
-       do sendReply h 220 "Welcome to MissingH.Network.FTP.Server."
-          commandLoop h sa
+ftpHandler :: (forall a. HVFS a => a) -> Handle -> SockAddr -> IO ()
+ftpHandler f h sa =
+    let serv = FTPServer {fs = f, handle = h}
+        in
+        traplogging "MissingH.Network.FTP.Server" NOTICE "" $
+          do sendReply serv 220 "Welcome to MissingH.Network.FTP.Server."
+             commandLoop serv sa
 
-type CommandHandler = Handle -> SockAddr -> String -> IO Bool
+type CommandHandler = FTPServer -> SockAddr -> String -> IO Bool
 
 commands :: [(String, (CommandHandler, (String, String)))]
 commands =
     [("HELP", (cmd_help, help_help))
     ]
 
-commandLoop :: Handle -> SockAddr -> IO ()
+commandLoop :: FTPServer -> SockAddr -> IO ()
 commandLoop h sa =
     let errorhandler e = do noticeM "MissingH.Network.FTP.Server"
                                     ("Closing due to error: " ++ (show e))
-                            hClose h
+                            hClose (handle h)
                             return False
         in do continue <- (flip catch) errorhandler 
-               (do x <- parseCommand h
+               (do x <- parseCommand (handle h)
                    case x of
                      Left err -> do sendReply h 500 $
                                       "Couldn't parse command: " ++ (show err)
