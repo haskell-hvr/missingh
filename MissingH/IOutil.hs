@@ -23,13 +23,19 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.IOutil(-- * Line Processing Utilities
                        hPutStrLns, hGetLines,
-                       -- * Lazy Interaction
-                       hInteract, hLineInteract, lineInteract,
                        -- * Binary Single-Block I\/O
                        hPutBufStr, putBufStr, hGetBufStr, getBufStr,
                        hFullGetBufStr, fullGetBufStr,
                        -- * Binary Multi-Block I\/O
-                       hGetBlocks, getBlocks, hFullGetBlocks, fullGetBlocks
+                       hGetBlocks, getBlocks, hFullGetBlocks, fullGetBlocks,
+                       -- * Lazy Interaction
+                       -- ** Character-based
+                       hInteract,
+                       -- ** Line-based
+                       hLineInteract, lineInteract,
+                       -- ** Binary Block-based
+                       hBlockInteract, blockInteract,
+                       hFullBlockInteract, hFullBlockInteract
                         ) where
 
 import Foreign.Ptr
@@ -213,3 +219,32 @@ hGetBlocksUtil readfunc h count =
                                remainder <- hGetBlocksUtil readfunc h count
                                return (block : remainder)
                        )
+
+{- | Binary block-based interaction.  This is useful for scenarios that
+take binary blocks, manipulate them in some way, and then write them
+out.  Take a look at 'hBlockCopy' for an example.  The integer argument
+is the size of input binary blocks.  This function uses 'hGetBlocks'
+internally.
+-}
+hBlockInteract :: Int -> Handle -> Handle -> ([String] -> [String]) -> IO ()
+hBlockInteract = hBlockInteractUtil hGetBlocks
+
+-- | An alias for 'hBlockInteract' over 'stdin' and 'stdout'
+blockInteract :: Int -> ([String] -> [String]) -> IO ()
+blockInteract x = hBlockInteract x stdin stdout
+
+{- | Same as 'hBlockInteract', but uses 'hFullGetBlocks' instead of
+'hGetBlocks' internally. -}
+hFullBlockInteract :: Int -> Handle -> Handle -> ([String] -> [String]) -> IO ()
+hFullBlockInteract = hBlockInteractUtil hFullGetBlocks
+
+-- | An alias for 'hFullBlockInteract' over 'stdin' and 'stdout'
+fullBlockInteract :: Int -> ([String] -> [String]) -> IO ()
+fullBlockInteract x = hFullBlockInteract x stdin stdout
+
+hBlockInteractUtil :: (Handle -> Int -> IO [String]) -> Int ->
+                      Handle -> Handle -> ([String] -> [String]) -> IO ()
+hBlockInteractUtil blockreader blocksize hin hout func =
+    do
+    blocks <- blockreader hin blocksize
+    hPutBlocks hout (func blocks)
