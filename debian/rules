@@ -78,7 +78,7 @@ install: build
 
 	# Add here commands to install the package into debian/tmp
 	./setup install --install-prefix=$(CURDIR)/debian/$(PACKAGE)$(LIBPATH)
-	cp .installed-pkg-config $(CURDIR)/debian/$(PACKAGE)$(LIBPATH)/lib/$(LIBNAME)/installed-pkg-config
+	cp .installed-pkg-config $(CURDIR)/debian/$(PACKAGE)$(LIBPATH)/lib/$(LIBNAME)-$(VERSION)/installed-pkg-config
 	sed s/\@\@VERSION\@\@/$(VERSION)/g < \
 		debian/$(PACKAGE).postinst.tmpl > \
 		debian/$(PACKAGE).postinst
