@@ -37,6 +37,7 @@ import Network.Socket
 import Network.BSD
 import List
 import System.Posix.Process(getProcessID)
+import IO
 
 code_of_pri :: Priority -> Int
 code_of_pri p = case p of
@@ -168,8 +169,11 @@ instance LogHandler SyslogHandler where
             do
             pidstr <- getpid
             let outstr = "<" ++ (show code) ++ ">" 
-                         ++ (identity sh) ++ pidstr ++ ": " ++ msg ++ "\0"
-            sendstr outstr
+                         ++ (identity sh) ++ pidstr ++ ": " ++ msg
+            if (elem PERROR (options sh))
+               then hPutStrLn stderr outstr
+               else return ()
+            sendstr (outstr ++ "\0")
             return ()
     close sh = sClose (logsocket sh)
 

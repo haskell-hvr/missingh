@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 21:45:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-49
+
+    Summary:
+      Fixed handling of options in syslog handler
+    Revision:
+      missingh--head--1.0--patch-49
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging/Handler/Syslog.hs
+
+
 2004-10-07 21:28:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-48
 
     Summary:
