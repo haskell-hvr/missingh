@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-10 00:01:05 GMT	John Goerzen <jgoerzen@complete.org>	patch-62
+
+    Summary:
+      fixed a syntax error
+    Revision:
+      missingh--head--0.7--patch-62
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Email/Parser.hs
+
+
 2004-12-09 20:16:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-61
 
     Summary:

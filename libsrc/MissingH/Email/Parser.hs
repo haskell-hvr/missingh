@@ -31,7 +31,7 @@ Parses an e-mail message
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Email.Parser(mailParser, flattenMessage)
+module MissingH.Email.Parser(flattenMessage)
 where
 
 import MissingH.Hsemail.Rfc2234(crlf)
