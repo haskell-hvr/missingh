@@ -1,3 +1,9 @@
+missingh (0.5.4) unstable; urgency=low
+
+  * Added build-dep-indep on libhugs-hunit and re-enabled Hugs unit tests.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 29 Oct 2004 08:39:28 -0500
+
 missingh (0.5.3) unstable; urgency=low
 
   * Don't run Hugs tests for now.  Closes: #278802.

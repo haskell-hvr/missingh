@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-13 20:23:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-26
+
+    Summary:
+      Initial success
+    Revision:
+      missingh--head--0.5--patch-26
+
+
+    modified files:
+     ChangeLog debian/changelog debian/control debian/rules
+     libsrc/MissingH/Printf.hs
+
+
 2004-11-13 04:56:33 GMT	John Goerzen <jgoerzen@complete.org>	patch-25
 
     Summary:

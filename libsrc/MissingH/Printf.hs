@@ -31,7 +31,8 @@ This module provides various helpful utilities for using a C-style printf().
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Printf(
+module MissingH.Printf(sprintf,
+                       Value(..)
                        ) where
 
 import MissingH.Str
@@ -59,7 +60,7 @@ instance PFType String where
     fromValue (ValueString x) = x
     fromValue _ = error "fromValue string"
 
-
+{-
 instance PFFun String where
     toFun x (PFCall []) = x
     toFun _ _ = error "Too many arguments"
@@ -68,10 +69,29 @@ instance (PFType a, PFFun b) => PFFun (a -> b) where
     toFun f (PFCall (x:xs)) =
         toFun (f (fromValue x)) (PFCall xs)
     toFun _ _ = error "Too few arguments"
+-}
+
+{-
+instance PFFun String where
+    toFun [] (PFCall []) = []
+    toFun ('%' : xs) (PFCall (y:ys)) =
+        y : toFun 
+    toFun (x:xs) y =
+        x : toFun xs y
+    -}
+
+{- Sample attempt here -}
+sprintf :: String -> [Value] -> String
+
+sprintf [] [] = []
+sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
+sprintf ('!' : xs) (y : ys) = show (((fromValue y)::Int) + 1) ++ sprintf xs ys
+sprintf (x:xs) y = x : sprintf xs y
+
 
 {- To try next: define a third pffun instance that itself works off the format string -}
 ----------------------------------------------------
-
+{-
 printf :: String -> PFFun
 printf "" = toFun ""
 printf ('%' : xs) = toFun (\x -> x ++ printf xs)
@@ -80,4 +100,4 @@ printf x =
          [y] -> toFun y
          [y : z] -> toFun (\a -> y ++ a ++ printf (join "%" z))
 
-               
+               -}
