@@ -1,3 +1,13 @@
+missingh (0.7.1) unstable; urgency=low
+
+  * Applied some helpful patches from Einar Karttunen.  The main feature
+    is turning MissingH.ConfigParser.get into an instance of a class
+    so it can be extended to return various types.  Please note:
+    if you used getbool() or getnum() in 0.7.0, these functions are now
+    gone, since they are no longer needed.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri,  3 Dec 2004 10:07:44 -0600
+
 missingh (0.7.0) unstable; urgency=low
 
   * Major new feature: ConfigParser. 
