@@ -72,6 +72,16 @@ toflags (x:xs) = (case x of
                       '\'' -> Thousands
                       'I' -> AlternativeDigits) : toflags xs
 
+mkflags :: String -> [Flag]
+mkflags x =
+    let flags = toflags x
+        flags' = if LeftAdjust `elem` flags then filter (/= ZeroPadded) flags
+                                            else flags
+        flags'' = if Plus `elem` flags then filter (/= BlankPlus) flags
+                                       else flags'
+        in
+        flags''
+
 sprintf :: String -> [Value] -> String
 sprintf [] [] = []
 sprintf ('%' : '%' : xs) y = '%' : sprintf xs y
@@ -94,7 +104,7 @@ sprintf ('%' : xs) (y : ys) =
          Just (_, _, remainder, [flagstr, widthstr, precstr, [fmt]]) ->
              let width = if widthstr == "" then Nothing else Just ((read widthstr)::Width)
                  prec = if precstr == "" then Nothing else Just precstr
-                 flags = toflags flagstr
+                 flags = mkflags flagstr
                  in
                  --(show width) ++ sprintf remainder ys
                  (get_conversion_func fmt y flags width prec) ++ sprintf remainder ys
