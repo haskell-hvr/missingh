@@ -34,6 +34,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Printf(
                        ) where
 
+import MissingH.Str
+
 class PFFun a where
               toFun :: a -> PFCall -> String
 
@@ -41,7 +43,7 @@ data Value =
            ValueInt Int
            | ValueString String
 
-data PFCall = PFCall String [Value]
+data PFCall = PFCall [Value]
 
 class PFType a where
     toValue :: a -> Value
@@ -59,11 +61,22 @@ instance PFType String where
 
 
 instance PFFun String where
-    toFun x (PFCall _ []) = x
+    toFun x (PFCall []) = x
     toFun _ _ = error "Too many arguments"
 
 instance (PFType a, PFFun b) => PFFun (a -> b) where
-    toFun f (PFCall n (x:xs)) =
-        toFun (f (fromValue x)) (PFCall n xs)
+    toFun f (PFCall (x:xs)) =
+        toFun (f (fromValue x)) (PFCall xs)
     toFun _ _ = error "Too few arguments"
 
+----------------------------------------------------
+
+printf :: String -> PFFun
+printf "" = toFun ""
+printf ('%' : xs) = toFun (\x -> x ++ printf xs)
+printf x = 
+    case split "%" x of
+         [y] -> toFun y
+         [y : z] -> toFun (\a -> y ++ a ++ printf (join "%" z))
+
+               
