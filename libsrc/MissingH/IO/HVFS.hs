@@ -32,8 +32,8 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.IO.HVFS(-- * Implementation Classes
-                        HVFS(..), HVFSStat(..),
+module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
+                        HVFS(..), HVFSStat(..), HVFSStatEncap(..),
                         -- * Re-exported types from other modules
                         FilePath, DeviceID, FileID, FileMode, LinkCount,
                         UserID, GroupID, FileOffset, EpochTime,
@@ -95,10 +95,11 @@ class HVFS a where
     vGetSymbolicLinkStatus :: a -> FilePath -> IO HVFSStatEncap
     vGetModificationTime :: a -> FilePath -> IO ClockTime
     vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO c
-    {- vGetModificationTime fs fp = 
-        do s <- (vGetFileStatus fs fp)::IO b
-           let t = vModificationTime s
-           return $ TOD (fromIntegral t) 0 -}
+    vGetModificationTime fs fp = 
+        do s <- (vGetFileStatus fs fp)
+           case s of
+                  HVFSStatEncap x -> return $ 
+                                      TOD (fromIntegral (vModificationTime x)) 0
     vRaiseError _ et desc mfp =
         ioError $ mkIOError et desc Nothing mfp
 
