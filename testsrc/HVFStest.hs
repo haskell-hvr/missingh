@@ -41,6 +41,17 @@ testTree = [("test.txt", MemoryFile "line1\nline2\n"),
             )
            ]
 
+test_content = 
+    let f exp fp = TestLabel exp $ TestCase $
+                     do x <- newMemoryVFS testTree
+                        h <- vOpen x fp ReadMode
+                        exp `ioeq` vGetContents h
+        in
+        [
+         f "line1\nline2\n" "test.txt",
+         f "line1\nline2\n" "/test.txt"
+        ]
+
 test_structure =
     let f msg testfunc = TestLabel msg $ TestCase $ do x <- newMemoryVFS testTree
                                                        testfunc x
@@ -60,5 +71,5 @@ test_structure =
                             
 
 tests = TestList [TestLabel "structure" (TestList test_structure)
-
+                 ,TestLabel "content" (TestList test_content)
                  ]

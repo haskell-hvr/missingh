@@ -158,3 +158,6 @@ instance HVFSOpenable MemoryVFS StreamReader where
                                       "Can't open a directory"
                                       (Just fp)
                 MemoryFile y -> newStreamReader y
+    vOpen x fp _ = vRaiseError x permissionErrorType
+                     "Only ReadMode is supported with MemoryVFS files"
+                     (Just fp)
