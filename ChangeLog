@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-05 18:06:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-215
+
+    Summary:
+      New readBinaryFile, writeBinaryFile
+    Revision:
+      missingh--head--0.7--patch-215
+
+
+    modified files:
+     ChangeLog MissingH/IO/Binary.hs debian/changelog
+
+
 2005-04-05 17:57:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-214
 
     Summary:

@@ -1,5 +1,5 @@
 {- arch-tag: I/O utilities, binary tools
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.IO.Binary
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen, 
@@ -59,6 +59,7 @@ module MissingH.IO.Binary(-- * Entire File\/Handle Utilities
                        -- * Binary Multi-Block I\/O
                        hGetBlocks, getBlocks, hFullGetBlocks, fullGetBlocks,
                        -- * Lazy Interaction
+                       readBinaryFile, writeBinaryFile,
                        -- ** Binary Block-based
                        hBlockInteract, blockInteract,
                        hFullBlockInteract, fullBlockInteract
@@ -226,3 +227,15 @@ copyFileBlocksToFile bs infn outfn = do
                                      hClose hout
                                      return ()
 
+{- | Like the built-in 'readFile', but opens the file in binary instead
+of text mode. -}
+readBinaryFile :: FilePath -> IO String
+readBinaryFile name = openBinaryFile name ReadMode >>= hGetContents
+
+{- | Like the built-in 'writeFile', but opens the file in binary instead
+of text mode. -}
+writeBinaryFile :: FilePath -> String -> IO ()
+writeBinaryFile name str =
+    do h <- openBinaryFile name WriteMode
+       hPutStr h str
+       hClose h
