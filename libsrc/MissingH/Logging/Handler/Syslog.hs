@@ -44,7 +44,7 @@ import IO
 
 code_of_pri :: Priority -> Int
 code_of_pri p = case p of
-                       EMERG -> 0
+                       EMERGENCY -> 0
                        ALERT -> 1
                        CRITICAL -> 2
                        ERROR -> 3
