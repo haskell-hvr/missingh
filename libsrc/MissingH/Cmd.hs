@@ -93,7 +93,6 @@ Passes the handle on to the specified function.
 The 'PipeMode' specifies what you will be doing.  That is, specifing 'ReadFromPipe' 
 sets up a pipe from stdin, and 'WriteToPipe' sets up a pipe from stdout.
 
-FIXME: this slowly leaks FDs!
  -}
 pOpen :: PipeMode -> FilePath -> [String] -> 
          (Handle -> IO a) -> IO a
@@ -112,15 +111,10 @@ pOpen pm fp args func =
                                 callfunc
          WriteToPipe -> do 
                         let callfunc _ = do
-                                       print 114
                                        closeFd (fst pipepair)
-                                       print 116
                                        h <- fdToHandle (snd pipepair)
-                                       print 118
                                        x <- func h
-                                       print 120
                                        hClose h
-                                       print 122
                                        return $! x
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
                                callfunc
@@ -144,26 +138,19 @@ pOpen3 pin pout perr fp args func =
                      mayberedir perr stdError
                      debugM (logbase ++ ".pOpen3")
                             ("Running: " ++ fp ++ " " ++ (show args))
-                     print 141
                      catch (executeFile fp True args Nothing) (\_ -> return ())
-                     print 143
                      exitFailure
-                     print 144
         in
         do 
         System.Posix.Signals.installHandler
                       System.Posix.Signals.sigPIPE
                       System.Posix.Signals.Ignore
                       Nothing
-        print 145
         p <- try (forkProcess childstuff)
-        print 147
         pid <- case p of
                 Right x -> return x
                 Left e -> fail ("Error in fork: " ++ (show e))
-        print 150
         retval <- func $! pid
-        print 152
         let rv = seq retval retval
         status <- getProcessStatus True False $! (seq retval pid)
         case status of
