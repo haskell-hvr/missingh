@@ -16,47 +16,37 @@
 
 -- 	$Id: crc32.hs,v 1.2 2003/03/24 00:08:55 eris Exp $	
 
-module Main where
+{- |
+   Module     : MissingH.Checksum.CRC32
+   Copyright  : Copyright (C) 2002 HardCore SoftWare, Doug Hoyte
+   License    : GNU GPL
 
-import Array
-import Bits
-import IO
-import System (getArgs)
-import Word
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
 
+Configuration file parsing, generation, and manipulation
 
-main :: IO ()
-main  = do args <- getArgs
-           case args of
-             (f:fs) -> procFiles args
-             _      -> procStdin
+Copyright (c) 2002 HardCore SoftWare, Doug Hoyte
+-}
 
+{-
+Modified December, 2004 by John Goerzen:
+ * Integrate with MissingH
+ * Removed code we don't need in a library
+ * Updated things that didn't compile any more
+-}
 
-procStdin :: IO ()
-procStdin  = do contents <- getContents
-                dispCRC (crc32 contents) (length contents) ""
+module MissingH.Checksum.CRC32 where
 
-
-procFiles       :: [String] -> IO ()
-procFiles []     = do return ()
-procFiles (f:fs) = do handle <- openFile f ReadMode
-                      contents <- hGetContents handle
-                      dispCRC (crc32 contents) (length contents) f
-                      hClose handle
-                      procFiles fs
-
-
-dispCRC              :: Word32 -> Int -> String -> IO ()
-dispCRC crc len fname = do putStr $ show crc
-                           putStr " "
-                           putStr $ show len
-                           putStr " "
-                           putStr (fname ++ "\n")
-
+import Data.Array
+import Data.Bits
+import Data.Word
 
 iter_crc32       :: Word32 -> Char -> Word32
 iter_crc32 sum ch = (sum `shiftL` 8) `xor`
-                    crctab ! word32ToInt ((sum `shiftR` 24) `xor`
+                    crctab ! fromIntegral ((sum `shiftR` 24) `xor`
                     (fromIntegral (fromEnum ch)))
 
 
@@ -64,7 +54,7 @@ calc_crc32            :: [Char] -> Word32 -> Word32 -> Word32
 calc_crc32 []     ck 0 = ck `xor` 0xFFFFFFFF
 calc_crc32 []     ck l = calc_crc32
                            []
-                           (iter_crc32 ck (toEnum $ word32ToInt (l .&. 0xFF)))
+                           (iter_crc32 ck (toEnum $ fromIntegral (l .&. 0xFF)))
                            (l `shiftR` 8)
 calc_crc32 (x:xs) ck l = calc_crc32 xs (iter_crc32 ck x) (l+1)
 

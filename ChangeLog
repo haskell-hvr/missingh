@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-03 20:32:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-13
+
+    Summary:
+      Wrote unit tests for CRC32 module
+    Revision:
+      missingh--head--0.7--patch-13
+
+
+    new files:
+     testsrc/CRC32test.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Checksum/CRC32.hs testsrc/Tests.hs
+
+
 2004-12-03 20:18:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-12
 
     Summary:
