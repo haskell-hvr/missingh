@@ -215,11 +215,11 @@ Example:
 -}
 toPortString :: SockAddr -> IO String
 toPortString (SockAddrInet port hostaddr) =
-    let wport = (fromEnum(port))::Int
+    let wport = (fromIntegral (port))::Word16
         in do
            hn <- inet_ntoa hostaddr
-           return ((replace "." "," hn) ++ "," ++
-                   (genericJoin "," . drop 2 . getBytes $ wport))
+           return ((replace "." "," hn) ++ "," ++ 
+                   (genericJoin "," . getBytes $ wport))
 toPortString _ = 
     error "toPortString only works on AF_INET addresses"
 
