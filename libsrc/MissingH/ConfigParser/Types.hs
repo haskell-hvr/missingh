@@ -73,6 +73,7 @@ data CPErrorData = ParseError String        -- ^ Parse error
                  | NoSection SectionSpec    -- ^ The section does not exist
                  | NoOption OptionSpec      -- ^ The option does not exist
                  | OtherProblem String      -- ^ Miscellaneous error
+                 | InterpolationError String -- ^ Raised by 'MissingH.ConfigParser.interpolatingAccess' if a request was made for a non-existant option
                    deriving (Eq, Ord, Show)
 
 {- | Indicates an error occurred.  The String is an explanation of the location
@@ -103,7 +104,7 @@ data ConfigParser = ConfigParser
       usedefault :: Bool,
       -- | Function that is used to perform lookups, do optional
       -- interpolation, etc.  It is assumed that accessfunc
-      -- will internally call defaulthandler to do the actual work.
+      -- will internally call defaulthandler to do the underlying lookup.
       -- The option value is not assumed to be transformed.
       accessfunc :: (ConfigParser -> SectionSpec -> OptionSpec -> CPResult String)
     }

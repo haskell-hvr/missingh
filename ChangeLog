@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-12-01 16:43:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-137
+
+    Summary:
+      Checkpointing basic interpolation
+    Revision:
+      missingh--head--0.5--patch-137
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+     libsrc/MissingH/ConfigParser/Types.hs
+
+
 2004-12-01 16:09:58 GMT	John Goerzen <jgoerzen@complete.org>	patch-136
 
     Summary:

@@ -67,15 +67,18 @@ module MissingH.ConfigParser
      -- ** Combined Error\/IO Monad Usage
      -- $usageerroriomonad
 
-     -- ** Configuring the ConfigParser
-     -- $configuringcp
-
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
      CPErrorData(..), CPError, CPResult,
      -- * Initialization
      -- $initialization
      emptyCP,
+
+     -- * Configuring the ConfigParser
+     -- $configuringcp
+     
+     -- ** Access Functions
+     simpleAccess, interpolatingAccess,
 
      -- * Reading
      -- $reading
@@ -108,6 +111,11 @@ import System.IO(Handle)
 import Data.Char
 import Control.Monad.Error
 
+-- For interpolatingAccess
+import Text.ParserCombinators.Parsec.Error(ParseError, messageString,
+    errorMessages)
+import Text.ParserCombinators.Parsec(parse)
+
 ----------------------------------------------------------------------
 -- Basic types / default values
 ----------------------------------------------------------------------
@@ -119,13 +127,15 @@ The content contains only an empty mandatory @DEFAULT@ section.
 'optionxform' is set to @map toLower@.
 
 'usedefault' is set to @True@.
+
+'accessfunc' is set to 'simpleAccess'.
 -}
 emptyCP :: ConfigParser
 emptyCP = ConfigParser { content = fromAL [("DEFAULT", [])],
                        defaulthandler = defdefaulthandler,
                        optionxform = map toLower,
                        usedefault = True,
-                       accessfunc = defaccessfunc}
+                       accessfunc = simpleAccess}
 
 {- | Low-level tool to convert a parsed object into a 'CPData'
 representation.  Performs no option conversions or special handling
@@ -137,9 +147,31 @@ fromAL origal =
         in
         foldl conv emptyFM origal
 
--- internal function: default access function
-defaccessfunc :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
-defaccessfunc cp s o = defdefaulthandler cp s (optionxform cp $ o)
+{- | Default (non-interpolating) access function -}
+simpleAccess :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+simpleAccess cp s o = defdefaulthandler cp s (optionxform cp $ o)
+
+{- | Interpolating access function -}
+interpolatingAccess :: Int ->           -- ^ Maximum interpolation depth
+                       ConfigParser -> SectionSpec -> OptionSpec
+                       -> CPResult String
+interpolatingAccess maxdepth cp s o =
+    let lookupfunc :: (String -> CPResult String)
+        lookupfunc = interpolatingAccess (maxdepth - 1) cp s
+        error2str :: ParseError -> String
+        error2str = messageString . head . errorMessages
+        in
+        if maxdepth < 1 
+           then throwError $ 
+                    (InterpolationError "maximum interpolation depth exceeded",
+                     "interpolatingAccess")
+           else do
+                x <- simpleAccess cp s o
+                case parse (interpmain lookupfunc) "(string)" s of
+                     Left x -> throwError $ 
+                               (InterpolationError ("Unresolvable interpolation reference to \"" ++ error2str x ++ "\""),
+                                "interpolatingAccess")
+                     Right x -> return x
 
 -- internal function: default handler
 defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String

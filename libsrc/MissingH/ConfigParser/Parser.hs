@@ -33,7 +33,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.ConfigParser.Parser
 (
- parse_string, parse_file, parse_handle, ParseOutput
+ parse_string, parse_file, parse_handle, interpmain, ParseOutput
        --satisfyG,
        --main
 ) where
@@ -126,3 +126,37 @@ valmerge :: [String] -> String
 valmerge vallist =
     let vl2 = map strip vallist
         in join "\n" vl2
+
+----------------------------------------------------------------------
+-- Interpolation
+----------------------------------------------------------------------
+
+interpval :: (String -> CPResult String) -> Parser String
+interpval lookupfunc = do
+            string "%("
+            s <- (many1 $ noneOf ")") <?> "interpolation name"
+            string ")s"               <?> "end of interpolation name"
+            return $ case lookupfunc s of
+                       Left x -> fail s
+                       Right x -> x
+
+percentval :: Parser String
+percentval = do
+             string "%%"
+             return "%"
+
+interpother :: Parser String
+interpother = do
+              c <- anyChar
+              return [c]
+
+interptok :: (String -> CPResult String) -> Parser String
+interptok lookupfunc = (try percentval) <|>
+                       (try (interpval lookupfunc))
+                       <|> interpother
+
+interpmain :: (String -> CPResult String) -> Parser String
+interpmain lookupfunc =
+    do r <- many $ interptok lookupfunc
+       eof
+       return $ concat r
