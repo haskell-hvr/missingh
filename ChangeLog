@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-22 19:30:28 GMT	John Goerzen <jgoerzen@complete.org>	patch-145
+
+    Summary:
+      Checkpointing passive support
+    Revision:
+      missingh--head--0.7--patch-145
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Server.hs
+     libsrc/MissingH/Network/SocketServer.hs
+
+
 2004-12-22 17:01:31 GMT	John Goerzen <jgoerzen@complete.org>	patch-144
 
     Summary:

@@ -44,12 +44,14 @@ module MissingH.Network.FTP.Server(
                                   )
 where
 import MissingH.Network.FTP.ParserServer
+import MissingH.Network.FTP.ParserClient
 import Network.BSD
 import Network.Socket
 import qualified Network
 import System.IO
 import MissingH.Logging.Logger
 import MissingH.Network
+import MissingH.Network.SocketServer
 import MissingH.Str
 import MissingH.Printf
 import MissingH.IO.HVIO
@@ -67,8 +69,9 @@ data AuthState = NoAuth
               | Authenticated String
                 deriving (Eq, Show)
 data DataChan = NoChannel
-              | PassiveMode Socket SockAddr
+              | PassiveMode SocketServer
               | PortMode SockAddr
+              | ActivePort Socket
 data FTPState = FTPState
               { auth :: IORef AuthState,
                 datatype :: IORef DataType,
@@ -157,6 +160,7 @@ commands =
     ,("PWD",  (forceLogin cmd_pwd,   help_pwd))
     ,("MODE", (forceLogin cmd_mode,  help_mode))
     ,("STRU", (forceLogin cmd_stru,  help_stru))
+    ,("PASV", (forceLogin cmd_pasv,  help_pasv))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -262,6 +266,41 @@ cmd_type h@(FTPServer _ _ state) args =
          "AT" -> changetype ASCII
          _ -> do sendReply h 504 $ "Type \"" ++ args ++ "\" not supported."
                  return True
+
+closeconn :: FTPServer -> IO ()
+closeconn h@(FTPServer _ _ state) =
+    do dc <- readIORef (datachan state)
+       case dc of 
+           NoChannel -> return ()
+           PassiveMode ss -> closeSocketServer ss
+           PortMode _ -> return ()
+           ActivePort sock -> sClose sock
+       writeIORef (datachan state) NoChannel
+
+help_pasv = ("Initiate a passive-mode connection", "")
+cmd_pasv :: CommandHandler
+cmd_pasv h@(FTPServer _ _ state) args =
+    do closeconn h                      -- Close any existing connection
+       addr <- case (local state) of 
+                    (SockAddrInet _ ha) -> return ha
+                    _ -> fail "Require IPv4 sockets"
+       let ssopts = InetServerOptions 
+                    { listenQueueSize = 1,
+                      portNumber = aNY_PORT,
+                      interface = addr,
+                      reuse = False,
+                      family = AF_INET,
+                      sockType = Stream,
+                      protoStr = "tcp"
+                    }
+       ss <- setupSocketServer ssopts
+       sa <- getSocketName (sockSS ss)
+       portstring <- toPortString sa
+       sendReply h 227 $ "Entering passive mode (" ++ portstring ++ ")"
+       writeIORef (datachan state) (PassiveMode ss)
+       return True
+                 
+                                        
        
 help_noop = ("Do nothing", "")
 cmd_noop :: CommandHandler

@@ -45,6 +45,7 @@ module MissingH.Network.SocketServer(-- * Generic Options and Types
                                      setupSocketServer,
                                      handleOne,
                                      serveForever,
+                                     closeSocketServer,
                                      -- * Combinators
                                      loggingHandler,
                                      threadedHandler,
@@ -60,7 +61,7 @@ import qualified MissingH.Logging.Logger
 
 {- | Options for your server. -}
 data InetServerOptions  = InetServerOptions {listenQueueSize :: Int,
-                                             portNumber :: Int,
+                                             portNumber :: PortNumber,
                                              interface :: HostAddress,
                                              reuse :: Bool,
                                              family :: Family,
@@ -83,7 +84,7 @@ type HandlerT = Socket -> SockAddr -> SockAddr -> IO ()
 simpleTCPOptions :: Int                -- ^ Port Number
                  -> InetServerOptions
 simpleTCPOptions p = InetServerOptions {listenQueueSize = 5,
-                                        portNumber = p,
+                                        portNumber = (fromIntegral p),
                                         interface = iNADDR_ANY,
                                         reuse = False,
                                         family = AF_INET,
@@ -104,10 +105,16 @@ setupSocketServer opts =
        setSocketOption s ReuseAddr (case (reuse opts) of
                                     True -> 1
                                     False -> 0)
-       bindSocket s (SockAddrInet (fromIntegral (portNumber opts)) 
+       bindSocket s (SockAddrInet (portNumber opts)
                      (interface opts))
        listen s (listenQueueSize opts)
        return $ SocketServer {optionsSS = opts, sockSS = s}
+
+{- | Close the socket server.  Does not terminate active
+handlers, if any. -}
+closeSocketServer :: SocketServer -> IO ()
+closeSocketServer ss =
+    sClose (sockSS ss)
        
 {- | Handle one incoming request from the given 'SocketServer'. -}
 handleOne :: SocketServer -> HandlerT -> IO ()
