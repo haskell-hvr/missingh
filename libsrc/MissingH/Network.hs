@@ -70,10 +70,10 @@ connectTCPAddr addr = do
                       connect s addr
                       return s
                       
-listenTCPAddr :: SockAddr -> IO Socket
-listenTCPAddr addr = do
+listenTCPAddr :: SockAddr -> Int -> IO Socket
+listenTCPAddr addr queuelen = do
                      proto <- getProtocolNumber "tcp"
                      s <- socket AF_INET Stream proto
                      bindSocket s addr
-                     listen s 1
+                     listen s queuelen
                      return s

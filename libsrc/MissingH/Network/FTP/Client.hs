@@ -185,7 +185,7 @@ makeport h =
         listenaddr _ = error "Can't use port mode to non-TCP server"
         in
         do addr <- getSocketName (socket_internal h)
-           mastersock <- listenTCPAddr (listenaddr addr)
+           mastersock <- listenTCPAddr (listenaddr addr) 1
            newaddr <- getSocketName mastersock
            ps <- toPortString newaddr
            result <- sendcmd h ("PORT " ++ ps)
