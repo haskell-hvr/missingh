@@ -800,9 +800,9 @@ Using Haskell's monad transformers, you can run it in the combined
 Error\/IO monad.  That is, you will get an IO result back.  Here is a full
 standalone example of doing that:
 
-import MissingH.ConfigParser
-import Control.Monad.Error
-
+>import MissingH.ConfigParser
+>import Control.Monad.Error
+>
 >main = do
 >          rv <- runErrorT $
 >              do

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-12-02 21:12:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-145
+
+    Summary:
+      Minor doc touchups
+    Revision:
+      missingh--head--0.5--patch-145
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser.hs
+
+
 2004-12-02 20:30:29 GMT	John Goerzen <jgoerzen@complete.org>	patch-144
 
     Summary:
