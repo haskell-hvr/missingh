@@ -1,6 +1,8 @@
 missingh (0.7.5) unstable; urgency=low
 
   * New module: MissingH.Email.Parser.
+  * Added recurse directory funtions to MissingH.Path.
+  * Added temporary directory functions to MissingH.Path.
 
  -- John Goerzen <jgoerzen@complete.org>  Thu,  9 Dec 2004 09:10:35 -0600
 
