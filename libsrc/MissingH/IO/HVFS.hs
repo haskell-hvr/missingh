@@ -49,6 +49,8 @@ import System.Posix.Types
 import System.Time
 import System.Directory
 
+data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
+
 class HVFSStat a where
     vDeviceID :: a -> DeviceID
     vFileID :: a -> FileID
@@ -78,7 +80,7 @@ provided.
 Default implementations of all other functions
 will generate an isIllegalOperation error, since they are assumed to be
 un-implemented. -}
-class HVFSStat b => HVFS a b where
+class HVFS a where
     vGetCurrentDirectory :: a -> IO FilePath
     vSetCurrentDirectory :: a -> FilePath -> IO ()
     vGetDirectoryContents :: a -> FilePath -> IO [FilePath]
@@ -89,20 +91,20 @@ class HVFSStat b => HVFS a b where
     vRenameDirectory :: a -> FilePath -> FilePath -> IO ()
     vRemoveFile :: a -> FilePath -> IO ()
     vRenameFile :: a -> FilePath -> FilePath -> IO ()
-    vGetFileStatus :: a -> FilePath -> IO b
-    vGetSymbolicLinkStatus :: a -> FilePath -> IO b
+    vGetFileStatus :: a -> FilePath -> IO HVFSStatEncap
+    vGetSymbolicLinkStatus :: a -> FilePath -> IO HVFSStatEncap
     vGetModificationTime :: a -> FilePath -> IO ClockTime
     vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO c
-    vGetModificationTime fs fp = 
+    {- vGetModificationTime fs fp = 
         do s <- (vGetFileStatus fs fp)::IO b
            let t = vModificationTime s
-           return $ TOD (fromIntegral t) 0
+           return $ TOD (fromIntegral t) 0 -}
     vRaiseError _ et desc mfp =
         ioError $ mkIOError et desc Nothing mfp
 
     --vGetCurrentDirectory fs = vRaiseError fs 
 
-class (HVFS a b, HVIOGeneric c) => HVFSOpenable a b c where
+class (HVFS a, HVIOGeneric c) => HVFSOpenable a b c where
     vOpen :: a -> FilePath -> IO c
 
 ----------------------------------------------------------------------
@@ -131,7 +133,7 @@ instance HVFSStat FileStatus where
 data SystemFS = SystemFS
               deriving (Eq, Show)
 
-instance HVFS SystemFS FileStatus where
+instance HVFS SystemFS where
     vGetCurrentDirectory _ = getCurrentDirectory
     vSetCurrentDirectory _ = setCurrentDirectory
     vGetDirectoryContents _ = getDirectoryContents
@@ -142,6 +144,6 @@ instance HVFS SystemFS FileStatus where
     vRenameDirectory _ = renameDirectory
     vRemoveFile _ = removeFile
     vRenameFile _ = renameFile
-    vGetFileStatus _ = getFileStatus
-    vGetSymbolicLinkStatus _ = getSymbolicLinkStatus
-    --vGetModificationTime _ = getModificationTime
+    vGetFileStatus _ fp = getFileStatus fp >>= return . HVFSStatEncap
+    vGetSymbolicLinkStatus _ fp = getSymbolicLinkStatus fp >>= return . HVFSStatEncap
+    vGetModificationTime _ = getModificationTime
