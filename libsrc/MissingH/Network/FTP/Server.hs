@@ -53,11 +53,15 @@ import MissingH.Printf
 import Data.IORef
 import Data.List
 
+data DataType = ASCII | Binary
+              deriving (Eq, Show)
 data AuthState = NoAuth 
               | User String
               | Authenticated String
+                deriving (Eq, Show)
 data FTPState = FTPState
-              { auth :: IORef AuthState }
+              { auth :: IORef AuthState,
+                datatype :: IORef DataType}
 
 data FTPServer = forall a. HVFS a => FTPServer Handle a FTPState
 
@@ -87,8 +91,9 @@ anonFtpHandler f h sa =
     let serv r = FTPServer h f r
         in
         traplogging logname NOTICE "" $
-          do r <- newIORef (NoAuth)
-             let s = serv (FTPState {auth = r})
+          do authr <- newIORef (NoAuth)
+             typer <- newIORef ASCII
+             let s = serv (FTPState {auth = authr, datatype = typer})
              sendReply s 220 "Welcome to MissingH.Network.FTP.Server."
              commandLoop s sa
 
@@ -124,6 +129,8 @@ commands =
     ,("PASS", (cmd_pass,             help_pass))
     ,("CWD",  (forceLogin cmd_cwd,   help_cwd))
     ,("CDUP", (forceLogin cmd_cdup,  help_cdup))
+    ,("TYPE", (forceLogin cmd_type,  help_type))
+    ,("NOOP", (forceLogin cmd_noop,  help_noop))
     ]
 
 commandLoop :: FTPServer -> SockAddr -> IO ()
@@ -210,6 +217,29 @@ cmd_cwd h@(FTPServer _ fs _) _ args =
 help_cdup = 
     ("Change to parent directory", "Same as CWD ..")
 cmd_cdup h sa _ = cmd_cwd h sa ".."
+
+help_type =
+    ("Change the type of data transfer", "Valid args are A, AN, and I")
+cmd_type :: CommandHandler
+cmd_type h@(FTPServer _ _ state) _ args =
+    let changetype newt =
+            do oldtype <- readIORef (datatype state)
+               writeIORef (datatype state) newt
+               sendReply h 200 $ "Type changed from " ++ show oldtype ++
+                             " to " ++ show newt
+               return True
+        in case args of
+         "I" -> changetype Binary
+         "A" -> changetype ASCII
+         "AN" -> changetype ASCII
+         _ -> do sendReply h 504 $ "Type \"" ++ args ++ "\" not supported."
+                 return True
+       
+help_noop = ("Do nothing", "")
+cmd_noop :: CommandHandler
+cmd_noop h _ _ =
+    do sendReply h 200 "OK"
+       return True
 
 help_help =
     ("Display help on available commands",
