@@ -71,8 +71,9 @@ module MissingH.ConfigParser
      -- $usageerroriomonad
 
      -- * Types
+     -- $types
      SectionSpec, OptionSpec, ConfigParser(..),
-     CPErrorData(..), CPError, CPResult,
+     CPErrorData(..), CPError,
      -- * Initialization
      -- $initialization
      emptyCP,
@@ -151,7 +152,8 @@ fromAL origal =
         foldl conv emptyFM origal
 
 {- | Default (non-interpolating) access function -}
-simpleAccess :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+simpleAccess ::  MonadError CPError m =>
+                 ConfigParser -> SectionSpec -> OptionSpec -> m String
 simpleAccess cp s o = defdefaulthandler cp s (optionxform cp $ o)
 
 {- | Interpolating access function.  Please see the Interpolation section
@@ -195,11 +197,12 @@ Here is how you might enable interpolation:
 
 The @cp2@ object will now support interpolation with a maximum depth of 10.
  -}
-interpolatingAccess :: Int ->
+interpolatingAccess :: MonadError CPError m =>
+                       Int ->
                        ConfigParser -> SectionSpec -> OptionSpec
-                       -> CPResult String
+                       -> m String
 interpolatingAccess maxdepth cp s o =
-    let lookupfunc :: (String -> CPResult String)
+    let lookupfunc ::  MonadError CPError m => String -> m String
         lookupfunc = interpolatingAccess (maxdepth - 1) cp s
         error2str :: ParseError -> String
         error2str = messageString . head . errorMessages
@@ -220,14 +223,16 @@ interpolatingAccess maxdepth cp s o =
                      Right y -> return y
 
 -- internal function: default handler
-defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+defdefaulthandler ::  MonadError CPError m =>
+                      ConfigParser -> SectionSpec -> OptionSpec -> m String
 
 defdefaulthandler cp sect opt = 
     let fm = content cp
-        lookup :: SectionSpec -> OptionSpec -> CPResult String
+        lookup ::  MonadError CPError m =>
+                   SectionSpec -> OptionSpec -> m String
         lookup s o = do sect <- maybeToEither (NoSection s, "get") $ lookupFM fm s
                         maybeToEither (NoOption o, "get") $ lookupFM sect o
-        trydefault :: CPError -> CPResult String
+        trydefault ::  MonadError CPError m => CPError -> m String
         trydefault e = if (usedefault cp)
                        then 
                             lookup "DEFAULT" opt 
@@ -306,7 +311,8 @@ better error messages.
 
 Errors would be returned on a syntax error.
 -}
-readstring :: ConfigParser -> String -> CPResult ConfigParser
+readstring ::  MonadError CPError m =>
+               ConfigParser -> String -> m ConfigParser
 readstring cp s = do
                   n <- parse_string s
                   return $ readutil cp n
@@ -326,7 +332,8 @@ has_section cp x = elemFM x (content cp)
 'SectionAlreadyExists' error if the
 section was already present.  Otherwise, returns the new 
 'ConfigParser' object.-}
-add_section :: ConfigParser -> SectionSpec -> CPResult ConfigParser
+add_section ::  MonadError CPError m =>
+                ConfigParser -> SectionSpec -> m ConfigParser
 add_section cp s =
     if has_section cp s
        then throwError $ (SectionAlreadyExists s, "add_section")
@@ -339,7 +346,8 @@ object.
 This call may not be used to remove the @DEFAULT@ section.  Attempting to do
 so will always cause a 'NoSection' error.
  -}
-remove_section :: ConfigParser -> SectionSpec -> CPResult ConfigParser
+remove_section ::  MonadError CPError m =>
+                   ConfigParser -> SectionSpec -> m ConfigParser
 remove_section _ "DEFAULT" = throwError $ (NoSection "DEFAULT", "remove_section")
 remove_section cp s = 
     if has_section cp s
@@ -350,7 +358,8 @@ remove_section cp s =
 section does not exist and a 'NoOption' error if the option does not
 exist.  Otherwise, returns the new 'ConfigParser' object.
 -}
-remove_option :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult ConfigParser
+remove_option ::  MonadError CPError m =>
+                  ConfigParser -> SectionSpec -> OptionSpec -> m ConfigParser
 remove_option cp s passedo =
     do sectmap <- maybeToEither (NoSection s, "remove_option") $ lookupFM (content cp) s
        let o = (optionxform cp) passedo
@@ -365,7 +374,8 @@ given section.
 
 Returns an error if the given section does not exist.
 -}
-options :: ConfigParser -> SectionSpec -> CPResult [OptionSpec]
+options ::  MonadError CPError m =>
+            ConfigParser -> SectionSpec -> m [OptionSpec]
 options cp x = maybeToEither (NoSection x, "options") $ 
                do
                o <- lookupFM (content cp) x
@@ -390,14 +400,20 @@ has_option cp s o =
 
 Returns an error if no such section\/option could be found.
 -}
-get :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
-get cp = (accessfunc cp) cp
+get :: MonadError CPError m =>
+       ConfigParser -> SectionSpec -> OptionSpec -> m String
+-- used to be:
+-- get cp = (accessfunc cp) cp
+-- but I had to change the type of the accessfunc to return an Either,
+-- so we now do this.
+get cp s o = eitherToMonadError $ (accessfunc cp) cp s o
 
 {- | Retrieves a string from the configuration file and attempts to parse it
 as a number.  Returns an error if no such option could be found.
 An exception may be raised if it
 could not be parsed as the destination number. -}
-getnum :: (Read a, Num a) => ConfigParser -> SectionSpec -> OptionSpec -> CPResult a
+getnum :: (Read a, Num a,  MonadError CPError m) => 
+          ConfigParser -> SectionSpec -> OptionSpec -> m a
 getnum cp s o = get cp s o >>= return . read
 
 {- | Retrieves a string from the configuration file and attempts to parse
@@ -433,7 +449,8 @@ The following will produce a False value:
  *false
 
  -}
-getbool :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult Bool
+getbool ::  MonadError CPError m =>
+            ConfigParser -> SectionSpec -> OptionSpec -> m Bool
 getbool cp s o = 
     do val <- get cp s o
        case map toLower . strip $ val of
@@ -452,14 +469,16 @@ getbool cp s o =
 
 {- | Returns a list of @(optionname, value)@ pairs representing the content
 of the given section.  Returns an error the section is invalid. -}
-items :: ConfigParser -> SectionSpec -> CPResult [(OptionSpec, String)]
+items ::  MonadError CPError m =>
+          ConfigParser -> SectionSpec -> m [(OptionSpec, String)]
 items cp s = do fm <- maybeToEither (NoSection s, "items") $ lookupFM (content cp) s
                 return $ fmToList fm
 
 {- | Sets the option to a new value, replacing an existing one if it exists.
 
 Returns an error if the section does not exist. -}
-set :: ConfigParser -> SectionSpec -> OptionSpec -> String -> CPResult ConfigParser
+set ::  MonadError CPError m =>
+        ConfigParser -> SectionSpec -> OptionSpec -> String -> m ConfigParser
 set cp s passedo val = 
     do sectmap <- maybeToEither (NoSection s, "set") $ lookupFM (content cp) s
        let o = (optionxform cp) passedo
@@ -472,7 +491,8 @@ It requires only a showable value as its parameter.
 This can be used with bool values, as well as numeric ones.
 
 Returns an error if the section does not exist. -}
-setshow :: Show a => ConfigParser -> SectionSpec -> OptionSpec -> a -> CPResult ConfigParser
+setshow :: (Show a, MonadError CPError m) => 
+           ConfigParser -> SectionSpec -> OptionSpec -> a -> m ConfigParser
 setshow cp s o val = set cp s o (show val)
 
 {- | Converts the 'ConfigParser' to a string representation that could be
@@ -696,11 +716,10 @@ Let's take a look at some basic use cases.
 -}
 
 {- $usagenomonad
-You'll notice that many functions in this module return a 'CPResult' over some
-type.  Although its definition is not this simple, you can consider this to
-hold:
-
-@type 'CPResult' a = Either 'CPError' a@
+You'll notice that many functions in this module return a 
+@MonadError 'CPError'@ over some
+type.  Although its definition is not this simple, you can consider this to be
+the same as returning @Either CPError a@.
 
 That is, these functions will return @Left error@ if there's a problem
 or @Right result@ if things are fine.  The documentation for individual
@@ -719,7 +738,8 @@ You can transform errors into exceptions in your code by using
 >    putStrLn $ forceEither $ get cp "sect1" "opt1"
 
 In short, you can just put @forceEither $@ in front of every call that returns
-a 'CPResult'.  This is still a pure functional call, so it can be used outside
+something that is a MonadError.
+This is still a pure functional call, so it can be used outside
 of the IO monads.  The exception, however, can only be caught in the IO
 monad.
 
@@ -728,7 +748,7 @@ If you don't want to bother with 'forceEither', you can use the error monad.  It
 
 {- $usageerrormonad
 
-The 'CPResult' type is actually defined in terms of the Error monad, which is
+The return type is actually defined in terms of the Error monad, which is
 itself based on the Either data type.
 
 Here's a neat example of chaining together calls to build up a 'ConfigParser'
@@ -850,4 +870,22 @@ A common idiom for loading a new object from stratch is:
 
 Note the use of 'emptyCP'; this will essentially cause the file's data
 to be merged with the empty 'ConfigParser'.
+-}
+
+{- $types
+
+The code used to say this:
+
+>type CPResult a = MonadError CPError m => m a
+>simpleAccess :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+
+But Hugs did not support that type declaration.  Therefore, types are now
+given like this:
+
+>simpleAccess :: MonadError CPError m =>
+>                ConfigParser -> SectionSpec -> OptionSpec -> m String
+
+Although it looks more confusing than before, it still means the same.
+The return value can still be treated as @Either CPError String@ if you so
+desire.
 -}

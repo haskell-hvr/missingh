@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-12-02 20:28:03 GMT	John Goerzen <jgoerzen@complete.org>	patch-143
+
+    Summary:
+      Final, ugly, annoying changes to make ConfigParser work with Hugs
+    Revision:
+      missingh--head--0.5--patch-143
+
+
+    modified files:
+     ChangeLog README debian/changelog
+     libsrc/MissingH/ConfigParser.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+     libsrc/MissingH/ConfigParser/Types.hs
+     libsrc/MissingH/Either.hs
+
+
 2004-12-02 18:54:22 GMT	John Goerzen <jgoerzen@complete.org>	patch-142
 
     Summary:

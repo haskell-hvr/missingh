@@ -21,6 +21,7 @@ Major Features
    + FTP client library
    + E-mail client library
    + MIME types library to determine MIME types from files or URLs
+   + Configuration file parser/generator
 
  * IO utilities make it easier to work with line-based text files
    and binary files
@@ -37,12 +38,20 @@ Major Features
 
  * Printf utilities for formatting strings
 
+ * Hundreds of unit tests to verify proper functionality
+
 The following modules are are provided at this time, and more are
 likely to follow:
 
 MissingH.Bits            * Obtain individual bytes from a bitfield
 
 MissingH.Cmd             * Trap errors during calls to external programs
+
+MissingH.ConfigParser    * Configuration file parser
+                         * Interpolation supported
+                         * Compatible with Python and OCaml ConfigParsers
+
+MissingH.Either          * Utilities for the Either type/Error monad
 
 MissingH.FiniteMap       * Flip a finite map
 

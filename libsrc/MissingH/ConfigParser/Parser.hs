@@ -49,7 +49,8 @@ import MissingH.ConfigParser.Types
 -- Exported funcs
 ----------------------------------------------------------------------
 
-parse_string :: String -> CPResult ParseOutput
+parse_string :: MonadError CPError m =>
+                String -> m ParseOutput
 parse_string s = 
     detokenize "(string)" $ parse loken "(string)" s
 
@@ -148,7 +149,7 @@ interpother = do
               c <- noneOf "%"
               return [c]
 
-interptok :: (String -> CPResult String) -> Parser String
+interptok :: (String -> Either CPError String) -> Parser String
 interptok lookupfunc = (try percentval)
                        <|> interpother
                        <|> do s <- interpval
@@ -158,7 +159,7 @@ interptok lookupfunc = (try percentval)
                                  Right x -> return x
 
 
-interpmain :: (String -> CPResult String) -> Parser String
+interpmain :: (String -> Either CPError String) -> Parser String
 interpmain lookupfunc =
     do r <- manyTill (interptok lookupfunc) eof
        return $ concat r

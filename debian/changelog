@@ -4,7 +4,7 @@ missingh (0.7.0) unstable; urgency=low
   * Rewrote unit tests to use hunit more effectively.
   * Other new modules: MissingH.Either.
 
- -- John Goerzen <jgoerzen@complete.org>  Tue, 30 Nov 2004 12:37:14 -0600
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 02 Dec 2004 19:37:14 -0600
 
 missingh (0.6.2) unstable; urgency=low
 

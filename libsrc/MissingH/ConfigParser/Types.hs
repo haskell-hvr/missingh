@@ -34,7 +34,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.ConfigParser.Types (
                                     CPOptions, CPData, 
-                                    CPErrorData(..), CPError, CPResult,
+                                    CPErrorData(..), CPError, {-CPResult,-}
                                     ConfigParser(..),
                                     SectionSpec,
                                     OptionSpec,
@@ -84,9 +84,12 @@ instance Error CPError where
     noMsg = (OtherProblem "", "")
     strMsg x = (OtherProblem x, "")
 
-{- | Basic ConfigParser error handling.  The Left value indicates
-an error, while a Right value indicates success. -}
-type CPResult a = forall m. MonadError CPError m => m a
+{- Removed due to Hugs incompatibility.
+
+| Basic ConfigParser error handling.  The Left value indicates
+an error, while a Right value indicates success.
+type CPResult a = MonadError CPError m => m a
+-}
 
 {- | This is the main record that is used by 'MissingH.ConfigParser'.
 -}
@@ -98,7 +101,7 @@ data ConfigParser = ConfigParser
       -- | Function to look up an option, considering a default value
       -- if 'usedefault' is True; or ignoring a default value otherwise.
       -- The option specification is assumed to be already transformed.
-      defaulthandler :: (ConfigParser -> SectionSpec -> OptionSpec -> CPResult String),
+      defaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> Either CPError String,
       -- | Whether or not to seek out a default action when no match
       -- is found.
       usedefault :: Bool,
@@ -106,7 +109,7 @@ data ConfigParser = ConfigParser
       -- interpolation, etc.  It is assumed that accessfunc
       -- will internally call defaulthandler to do the underlying lookup.
       -- The option value is not assumed to be transformed.
-      accessfunc :: (ConfigParser -> SectionSpec -> OptionSpec -> CPResult String)
+      accessfunc :: (ConfigParser -> SectionSpec -> OptionSpec -> Either CPError String)
     }
 
 

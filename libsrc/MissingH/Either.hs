@@ -33,7 +33,8 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 module MissingH.Either
     (
      maybeToEither,
-     forceEither
+     forceEither,
+     eitherToMonadError
 ) where
 import Control.Monad.Error
 
@@ -59,3 +60,9 @@ Left, raises an exception with "error". -}
 forceEither :: Show e => Either e a -> a
 forceEither (Left x) = error (show x)
 forceEither (Right x) = x
+
+{- | Takes an either and transforms it into something of the more generic
+MonadError class. -}
+eitherToMonadError :: MonadError e m => Either e a -> m a
+eitherToMonadError (Left x) = throwError x
+eitherToMonadError (Right x) = return x
