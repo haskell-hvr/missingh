@@ -1,11 +1,49 @@
--- arch-tag: Printf type declarations
+{- arch-tag: Printf type declarations
+Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Portions Copyright (c) 2003 Ian Lynagh and released under the GNU LGPL 2.1.
+-}
+
+{- |
+   Module     : MissingH.Printf.Types
+   Copyright  : Copyright (C) 2004 John Goerzen; (C) 2003 Ian Lynagh
+   License    : GNU GPL, version 2 or above
+
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
+
+This module is used internally by "MissingH.Printf" and is /not intended
+to be used in your programs/.
+
+Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
+
+Portions Copyright (c) 2003 Ian Lynagh
+-}
+
+-- Begin John Goerzen's code  
+ 
 module MissingH.Printf.Types where
 
 import System.IO
 import Data.Ratio
 
-data Wrapped a = Wrapped a
+-- data Wrapped a = Wrapped a
 
 data Value =
            ValueRational Rational
@@ -74,16 +112,23 @@ instance IOPFRun (IO ()) where
 instance (PFType a, IOPFRun b) => IOPFRun (a -> b) where
     iopfrun h f x = iopfrun h (\xs -> f (toValue x : xs))
 
+{-
 -------------------------------------------
 -- Begin code from Ian Lynagh
+-- Copyright (c) 2003 Ian Lynagh.  Released under the GNU LGPL 2.1.
+
+Modified November 2004 by John Goerzen:
+ * Extraced from Printf sources
+ * Removed code I don't need
+ * Converted to work without TH
+ * Converted to work with MissingH module names
+-}
 
 type ConversionFunc = Arg
                    -> [Flag]
                    -> Maybe Width
                    -> Maybe Precision
                    -> String
-
-
 
 data Format = Literal String
             | Conversion ConversionFunc

@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 14:52:03 GMT	John Goerzen <jgoerzen@complete.org>	patch-58
+
+    Summary:
+      Clarified copyright status of Printf code from Ian Lynagh
+    Revision:
+      missingh--head--0.5--patch-58
+
+
+    new files:
+     3rd-party-licenses/.arch-ids/=id 3rd-party-licenses/LGPL-2.1
+
+    modified files:
+     COPYRIGHT ChangeLog TODO debian/copyright
+     libsrc/MissingH/Printf.hs libsrc/MissingH/Printf/Printer.hs
+     libsrc/MissingH/Printf/Types.hs
+
+    new directories:
+     3rd-party-licenses 3rd-party-licenses/.arch-ids
+
+
 2004-11-15 14:35:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-57
 
     Summary:

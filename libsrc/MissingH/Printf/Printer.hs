@@ -1,4 +1,31 @@
--- arch-tag: Printf printer declarations
+{- arch-tag: Printf printer declarations
+Copyright (C) 2003 Ian Lynagh
+Released under the GNU LGPL 2.1
+See the COPYRIGHT and 3rd-party-licenses/LGPL-2.1 files for more details
+-}
+
+{- |
+   Module     : MissingH.Printf.Types
+   Copyright  : Copyright (C) 2003 Ian Lynagh
+   License    : GNU GPL, version 2 or above OR GNU LGPL 2.1
+
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
+
+This module is used internally by "MissingH.Printf" and is /not intended
+to be used in your programs/.
+
+Copyright (c) 2003 Ian Lynagh
+-}
+
+{- Modified November 2004 by John Goerzen
+ * Extracted from Printf 0.1.0 Printer.lhs and Parser.lhs
+ * Converted from lhs to hs
+ * Converted to work without TH and with my Printf typing system
+ * Converted to work with MissingH module names
+-}
 
 module MissingH.Printf.Printer (get_conversion_func, thousandify, octalify, hexify, fix_width
 ) where

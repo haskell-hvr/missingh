@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 This module provides various helpful utilities for using a C-style printf().
 
-Written by John Goerzen, jgoerzen\@complete.org
+Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 Some code in sub-modules written by Ian Lynagh
 

@@ -37,7 +37,7 @@ completely independently of the rest of the library, you may treat them
 under the licenses shown below.
 
 ----------------------------------------------------
-The MissingH.Hsemail modules come from hsemail 2004-10-12 from 
+The MissingH.Hsemail modules come from hsemail 2004-10-24 from 
 http://cryp.to/hsemail/.
 
 Copyright/License:
@@ -90,6 +90,18 @@ Copyright/License for all Wash modules:
   STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE. 
+
+----------------------------------------------------
+Portions of the MissingH.Printf.* modules come from Ian Lynagh's
+Template Haskell Printf 0.1.0 module at
+http://web.comlab.ox.ac.uk/oucl/work/ian.lynagh/Printf/.  That module
+is Copyright (c) 2003 Ian Lynagh and is licensed under the GNU LGPL 2.1.
+Debian GNU/Linux users may find the GNU LGPL 2.1 at
+/usr/share/common-licenses/LGPL-2.1.  Alternatively, you may find it
+at 3rd-party-licenses/LGPL-2.1 in the source distribution.
+
+Pursuant to the terms of the LGPL, you may consider this code to fall
+under the GPL as part of the whole MissingH work.
 
 ------------------------------------------------------------------
 arch-tag: copyright statement
