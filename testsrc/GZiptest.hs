@@ -22,19 +22,29 @@ import MissingH.FileArchive.GZip
 import MissingH.Compression.Inflate
 import System.IO
 import MissingH.Either
+import Data.List
 
 mf fn exp conf = TestLabel fn $ TestCase $
                      do c <- readFile ("testsrc/gzfiles/" ++ fn)
                         assertEqual "" exp (conf c)
 
+test_bunches =
+    let f fn exp conv = mf fn exp (conv . snd . forceEither . read_header)
+        f2 c = let fn = "t/z" ++ (show c) ++ ".gz" in
+                   f fn c (length . inflate_string)
+        in
+        map f2 [0..1000]
+
 test_inflate = 
     let f fn exp conv = mf fn exp (conv . snd . forceEither . read_header) in
         [
          f "t1.gz" "Test 1" inflate_string
+        ,f "t1.gz" 6 (length . inflate_string)
         ,f "t1.gz" ("Test 1",
                     "\x19\xf8\x27\x99\x06\x00\x00\x00") inflate_string_remainder
         ,f "empty.gz" "" inflate_string
-        ,f "zeros.gz" (replicate (10 * 1048576) '\0') inflate_string
+        ,f "zeros.gz" 10485760 (length . inflate_string)
+        --,f "zeros.gz" (replicate (10 * 1048576) '\0') inflate_string
         ]
 
 test_header =
@@ -59,6 +69,7 @@ test_gunzip =
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),
                   TestLabel "header" (TestList test_header),
+                  TestLabel "bunches" (TestList test_bunches),
                   TestLabel "gunzip" (TestList test_gunzip)
 
                  ]

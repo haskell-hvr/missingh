@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 03:56:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-37
+
+    Summary:
+      Applied Inflate fix from Ian
+    Revision:
+      missingh--head--0.7--patch-37
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Compression/Inflate.hs
+     testsrc/GZiptest.hs
+
+
 2004-12-04 02:42:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-36
 
     Summary:

@@ -285,8 +285,8 @@ inflate_codes seen_last tabs@(tab_litlen, tab_dist)
                           return (pref ++ o)
 
 litlens :: [(Code, (LitLen, Word32))]
-litlens = zip [257..285] $ mk_bases 3 litlen_counts
-    where litlen_counts = [(8,0),(4,1),(4,2),(4,3),(4,4),(4,5),(1,0)]
+litlens = zip [257..285] $ mk_bases 3 litlen_counts ++ [(258, 0)]
+    where litlen_counts = [(8,0),(4,1),(4,2),(4,3),(4,4),(4,5)]
 
 dist_code :: Table -> InfM Dist
 dist_code tab
