@@ -70,7 +70,13 @@ If @sendmail@ is on the @PATH@, it will be used; otherwise, a list of system
 default locations will be searched.
 
 A failure will be logged, since this function uses 'MissingH.Cmd.safeSystem'
-internally. -}
+internally.
+
+This function will first try @sendmail@.  If it does not exist, an error is
+logged under @MissingH.Cmd.pOpen3@ and various default @sendmail@ locations
+are tried.  If that still fails, an error is logged and an exception raised.
+
+ -}
 sendmail :: Maybe String                -- ^ The envelope from address.  If not specified, takes the system's default, which is usually based on the effective userid of the current process.  This is not necessarily what you want, so I recommend specifying it.
          -> [String]                    -- ^ A list of recipients for your message.  An empty list is an error.
          -> String                      -- ^ The message itself.
@@ -82,7 +88,7 @@ sendmail (Just from) recipients msg =
     
 sendmail_worker :: [String] -> String -> IO ()
 sendmail_worker args msg =
-    let func h = hPutStr h msg
+    let func h = hPutStr h msg 
         in
         do
         --pOpen WriteToPipe "/usr/sbin/sendmail" args func

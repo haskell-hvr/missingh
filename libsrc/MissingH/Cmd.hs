@@ -75,14 +75,14 @@ safeSystem command args =
     ec <- rawSystem command args
     case ec of
             ExitSuccess -> return ()
-            ExitFailure fc -> cmdfailed command args fc
+            ExitFailure fc -> cmdfailed "safeSystem" command args fc
 
-cmdfailed :: FilePath -> [String] -> Int -> IO a
-cmdfailed command args failcode = do
+cmdfailed :: String -> FilePath -> [String] -> Int -> IO a
+cmdfailed funcname command args failcode = do
     let errormsg = "Command " ++ command ++ " " ++ (show args) ++
             " failed; exit code " ++ (show failcode)
     let e = userError (errormsg)
-    warningM (logbase ++ ".safeSystem") errormsg
+    warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
 
 {- | Open a pipe to the specified command.
@@ -97,25 +97,28 @@ FIXME: this slowly leaks FDs!
 pOpen :: PipeMode -> FilePath -> [String] -> 
          (Handle -> IO a) -> IO a
 pOpen pm fp args func =
-    do
-    pipepair <- createPipe
-    fsth <- fdToHandle (fst pipepair)
-    sndh <- fdToHandle (snd pipepair)
-    case pm of
+    let realfunc h = do
+                     x <- func h
+                     hClose h
+                     return x
+        in
+        do
+        pipepair <- createPipe
+        fsth <- fdToHandle (fst pipepair)
+        sndh <- fdToHandle (snd pipepair)
+        case pm of
          ReadFromPipe -> do
                          let callfunc = do
                                         --hClose sndh
-                                        x <- func fsth
-                                        hClose fsth
-                                        return x
+                                        x <- realfunc fsth
+                                        return $! x
                          pOpen3 Nothing (Just (snd pipepair)) Nothing fp args
                                 callfunc
          WriteToPipe -> do 
                         let callfunc = do
                                        --hClose fsth
-                                       x <- func sndh
-                                       hClose sndh
-                                       return x
+                                       x <- realfunc sndh
+                                       return $! x
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
                                callfunc
 
@@ -144,11 +147,11 @@ pOpen3 pin pout perr fp args func =
         do 
         pid <- forkProcess childstuff
         retval <- func
-        seq retval (return ())
+        let rv = seq retval retval
         status <- getProcessStatus True False pid
         case status of
            Nothing -> fail "Got no process status back"
-           Just (Exited (ExitSuccess)) -> return retval
-           Just (Exited (ExitFailure fc)) -> cmdfailed fp args fc
+           Just (Exited (ExitSuccess)) -> return rv
+           Just (Exited (ExitFailure fc)) -> cmdfailed "pOpen3" fp args fc
            Just (Terminated sig) -> fail ("Command terminated by signal" ++ show sig)
            Just (Stopped sig) -> fail ("Command stopped by signal" ++ show sig)
