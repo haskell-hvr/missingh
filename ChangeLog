@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 11:30:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-90
+
+    Summary:
+      Various enhancements to FiniteMap, etc.
+    Revision:
+      missingh--head--1.0--patch-90
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/FiniteMap.hs libsrc/MissingH/List.hs
+     testsrc/FiniteMaptest.hs
+
+
 2004-10-21 03:45:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-89
 
     Summary:

@@ -21,9 +21,6 @@ import HUnit
 import MissingH.FiniteMap
 import Data.FiniteMap
 
-instance (Show a, Show b) => Show (FiniteMap a b) where
-    show fm = show (fmToList fm)
-
 test_flipFM =
     let f inp exp = (listToFM exp) @=? flipFM (listToFM inp) in
         do

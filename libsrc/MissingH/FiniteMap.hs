@@ -29,6 +29,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 This module provides various helpful utilities for dealing with FiniteMaps.
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+In addition to the functions exported, this module also makes a FiniteMap
+showable.
 -}
 
 module MissingH.FiniteMap (flipFM)
@@ -42,3 +45,7 @@ function for lists. -}
 
 flipFM :: (Ord key, Ord val) => FiniteMap key val -> FiniteMap val [key]
 flipFM = listToFM . flipAL . fmToList
+
+{- | Makes a FiniteMap showable. -}
+instance (Show a, Show b) => Show (FiniteMap a b) where
+    show fm = show (fmToList fm)

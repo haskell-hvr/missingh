@@ -159,7 +159,7 @@ matches the given one. -}
 delFromAL :: Eq key => [(key, a)] -> key -> [(key, a)]
 delFromAL l key = filter (\a -> (fst a) /= key) l
 
-{- Flips an association list.  Converts (key1, val), (key2, val) pairs
+{- | Flips an association list.  Converts (key1, val), (key2, val) pairs
 to (val, [key1, key2]). -}
 flipAL :: (Eq key, Eq val) => [(key, val)] -> [(val, [key])]
 flipAL oldl =
