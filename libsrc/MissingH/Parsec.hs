@@ -30,8 +30,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Parsec(-- * Utilities
-                       notMatching)
+module MissingH.Parsec(notMatching)
 where
 
 import Text.ParserCombinators.Parsec

@@ -136,14 +136,14 @@ guessType mtd strict fn =
     let mapext (base, ext) =
             case lookupFM (suffixMap mtd) ext of
                 Nothing -> (base, ext)
-                Just x -> mapext (splitext (base ++ x))
+                Just x -> mapext (splitExt (base ++ x))
         checkencodings (base, ext) =
             case lookupFM (encodingsMap mtd) ext of
                  Nothing -> (base, ext, Nothing)
-                 Just x -> (fst (splitext base),
-                            snd (splitext base),
+                 Just x -> (fst (splitExt base),
+                            snd (splitExt base),
                             Just x)
-        (base, ext, enc) = checkencodings . mapext $ splitext fn
+        (base, ext, enc) = checkencodings . mapext $ splitExt fn
         typemap = getStrict mtd strict
         in
         case lookupFM typemap ext of

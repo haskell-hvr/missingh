@@ -20,8 +20,8 @@ module Pathtest(tests) where
 import HUnit
 import MissingH.Path
 
-test_splitext =
-    let f inp exp = exp @=? splitext inp in
+test_splitExt =
+    let f inp exp = exp @=? splitExt inp in
         do
         f "" ("", "")
         f "/usr/local" ("/usr/local", "")
@@ -30,5 +30,5 @@ test_splitext =
         f "foo.txt/bar" ("foo.txt/bar", "")
         f "foo.txt/bar.bz" ("foo.txt/bar", ".bz")
 
-tests = TestList [TestLabel "splitext" (TestCase test_splitext)
+tests = TestList [TestLabel "splitExt" (TestCase test_splitExt)
                  ]

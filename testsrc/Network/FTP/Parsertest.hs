@@ -1,4 +1,4 @@
-{- arch-tag: Tests main file
+{- arch-tag: MissingH.Network.FTP.Parser tests main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -16,24 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Tests(tests) where
+module Network.FTP.Parsertest(tests) where
 import HUnit
-import qualified MIMETypestest
-import qualified Listtest
-import qualified FiniteMaptest
-import qualified Pathtest
-import qualified Strtest
-import qualified IOtest
-import qualified Network.FTP.Parsertest
+import MissingH.Network.FTP.Parser
 
-test1 = TestCase ("x" @=? "x")
+test_parseReply =
+    let f inp exp = exp @=? parseReply inp in
+        do
+        f "200 Welcome to this server.\r\n" (200, ["Welcome to this server."])
 
-tests = TestList [TestLabel "test1" test1,
-                 TestLabel "List" Listtest.tests,
-                 TestLabel "Str" Strtest.tests,
-                 TestLabel "FiniteMap" FiniteMaptest.tests,
-                 TestLabel "Path" Pathtest.tests,
-                 TestLabel "MIMETypes" MIMETypestest.tests,
-                 TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests]
+tests = TestList [TestLabel "parseReply" (TestCase test_parseReply)
 
-
+                 ]

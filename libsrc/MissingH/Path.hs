@@ -32,7 +32,7 @@ names.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Path(splitext
+module MissingH.Path(splitExt
                     )
 where
 import Data.List
@@ -41,8 +41,8 @@ import MissingH.List
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
 dot after the last slash to the end.  Either returned string may be empty. -}
-splitext :: String -> (String, String)
-splitext path = 
+splitExt :: String -> (String, String)
+splitExt path = 
     let dotindex = alwaysElemRIndex '.' path
         slashindex = alwaysElemRIndex '/' path
         in

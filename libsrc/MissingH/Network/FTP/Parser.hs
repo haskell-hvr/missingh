@@ -34,12 +34,13 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Network.FTP.Parser(
-                       )
+module MissingH.Network.FTP.Parser(parseReply, parseGoodReply)
 where
 
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
+import MissingH.List
+-- import Control.Exception(Exception(PatternMatchFail), throw)
 
 ----------------------------------------------------------------------
 -- Utilities
@@ -118,3 +119,22 @@ multiReply = try (do
                   end <- expectedReplyLine (fst start)
                   return (fst start, snd start : (component ++ [snd end]))
                  )
+-- | Parse a FTP reply.  Returns a (result code, text) pair.
+
+parseReply :: String -> (Int, [String])
+parseReply input =
+    case parse multiReply "(unknown)" input of
+         Left err -> error (show err)
+         Right reply -> reply
+
+-- | Parse a FTP reply.  Returns a (result code, text) pair.
+-- If the result code indicates an error, raise an exception instead
+-- of just passing it back.
+
+parseGoodReply :: String -> (Int, [String])
+parseGoodReply input =
+    let reply = parseReply input
+        in
+        if (fst reply) >= 400
+        then error ((show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
+        else reply

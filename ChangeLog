@@ -2,6 +2,30 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-22 15:44:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-97
+
+    Summary:
+      Added initial tests for FTP parser
+    Revision:
+      missingh--head--1.0--patch-97
+
+
+    new files:
+     testsrc/Network/.arch-ids/=id
+     testsrc/Network/FTP/.arch-ids/=id
+     testsrc/Network/FTP/Parsertest.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/MIMETypes.hs
+     libsrc/MissingH/Network/FTP/Parser.hs
+     libsrc/MissingH/Parsec.hs libsrc/MissingH/Path.hs
+     testsrc/MIMETypestest.hs testsrc/Pathtest.hs testsrc/Tests.hs
+
+    new directories:
+     testsrc/Network testsrc/Network/.arch-ids testsrc/Network/FTP
+     testsrc/Network/FTP/.arch-ids
+
+
 2004-10-22 15:23:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-96
 
     Summary:

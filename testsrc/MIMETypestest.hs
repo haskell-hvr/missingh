@@ -24,7 +24,6 @@ import MissingH.MIMETypes
 test_readMIMETypes =
     do
     mtd <- readMIMETypes defaultmtd True "testsrc/mime.types.test"
-    putStrLn "\nread\n"
     let f = \strict inp exp -> exp @=? guessType mtd strict inp
     let fe = \strict inp exp -> (sort exp) @=? sort (guessAllExtensions mtd strict inp)
     f True "foo.bar.baz" (Nothing, Nothing)
