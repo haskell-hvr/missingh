@@ -161,6 +161,7 @@ commands =
     ,("MODE", (forceLogin cmd_mode,  help_mode))
     ,("STRU", (forceLogin cmd_stru,  help_stru))
     ,("PASV", (forceLogin cmd_pasv,  help_pasv))
+    ,("PORT", (forceLogin cmd_port,  help_port))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -277,6 +278,30 @@ closeconn h@(FTPServer _ _ state) =
            ActivePort sock -> sClose sock
        writeIORef (datachan state) NoChannel
 
+help_port = ("Initiate a port-mode connection", "")
+cmd_port :: CommandHandler
+cmd_port h@(FTPServer _ _ state) args =
+    let doIt clientsa = 
+            do writeIORef (datachan state) (PortMode clientsa)
+               str <- showSockAddr clientsa
+               sendReply h 200 $ "OK, later I will connect to " ++ str
+               return True
+        in
+        do closeconn h                      -- Close any existing connection
+           trapIOError h (fromPortString args) $  (\clientsa -> 
+            do closeconn h
+               case clientsa of
+                   SockAddrInet _ ha -> 
+                      case (local state) of
+                          SockAddrInet _ ha2 -> if ha /= ha2
+                                                  then do sendReply h 501 "Will only connect to same client as command channel."
+                                                          return True
+                                                  else doIt clientsa
+                          _ -> do sendReply h 501 "Require IPv4 on client"
+                                  return True
+                   _ -> do sendReply h 501 "Require IPv4 in specified address"
+                           return True
+                                                  )
 help_pasv = ("Initiate a passive-mode connection", "")
 cmd_pasv :: CommandHandler
 cmd_pasv h@(FTPServer _ _ state) args =
