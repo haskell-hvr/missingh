@@ -12,15 +12,38 @@ This module provides a Haskell implementation of the inflate function,
 as described by RFC 1951.
 
 -}
-module Inflate (inflate) where
 
-import Array
-import List
-import Maybe
-import Monad
+{- |
+   Module     : MissingH.Compression.Inflate
+   Copyright  : Copyright (C) 2004 Ian Lynagh 
+   License    : 3-clause BSD
 
-import Bits
-import Word
+   Maintainer : Ian Lynagh, 
+   Maintainer : <igloo@earth.li>
+   Stability  : provisional
+   Portability: portable
+
+Configuration file parsing, generation, and manipulation
+
+Copyright (C) 2004 Ian Lynagh
+-}
+
+module MissingH.Compression.Inflate (inflate_string,
+                                     inflate, Output, Bit,
+                                    bits_to_word32) where
+
+import Data.Array
+import Data.List
+import Data.Maybe
+import qualified Data.Char
+import Control.Monad
+
+import Data.Bits
+import Data.Word
+
+inflate_string :: String -> String
+inflate_string s = 
+    map (Data.Char.chr . fromIntegral) $ fst $ inflate $ map Data.Char.ord s
 
 {-
 \section{Types}
@@ -106,7 +129,7 @@ get_bits n = InfM $ \s -> case need n (bits s) of
                                            offset = (n + offset s) `mod` 8 } )
     where need 0 xs = ([], xs)
           need _ [] = error "get_bits: Don't have enough!"
-          need (i+1) (x:xs) = let (ys, zs) = need i xs in (x:ys, zs)
+          need i (x:xs) = let (ys, zs) = need (i-1) xs in (x:ys, zs)
 
 extract_InfM :: InfM a -> (a, [Bit])
 extract_InfM (InfM f) = let (x, s) = f undefined in (x, bits s)
