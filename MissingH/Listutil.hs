@@ -22,8 +22,11 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Listutil(-- * Tests
-                         startswith, endswith
+                         startswith, endswith,
+                         -- * Conversions
+                         split, join
                         ) where
+import Data.List(intersperse)
 
 {- | Returns true if the given list starts with the specified elements;
 false otherwise.
@@ -51,3 +54,35 @@ Example:
 -}
 endswith :: Eq a => [a] -> [a] -> Bool
 endswith x l = startswith (reverse x) (reverse l)
+
+{- | Given a delimiter and a list (or string), split into components.
+
+Example:
+
+> split "," "foo,bar,,baz," -> ["foo", "bar", "", "baz", ""]
+
+> split "ba" ",foo,bar,,baz," -> [",foo,","r,,","z,"]
+-}
+split :: Eq a => [a] -> [a] -> [[a]]
+split delim str =
+    let splitworker :: Eq a => [a] -> [a] -> [a] -> [[a]]
+        splitworker delim [] [] = []
+        splitworker delim [] accum = [accum]
+        splitworker delim str accum =
+            if delim == str then 
+               accum : [] : []
+            else if startswith delim str then
+               accum : splitworker delim (drop (length delim) str) []
+            else splitworker delim (tail str) (accum ++ [head str])
+        in
+        splitworker delim str []
+
+{- | Given a delimiter and a list of items (or strings), join the items
+by using the delimiter.
+
+Example:
+
+> join "|" ["foo", "bar", "baz"] -> "foo|bar|baz"
+-}
+join :: a -> [a] -> a
+join delim l = foldl (++) [] (intersperse delim l)
