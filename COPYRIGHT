@@ -103,5 +103,28 @@ at 3rd-party-licenses/LGPL-2.1 in the source distribution.
 Pursuant to the terms of the LGPL, you may consider this code to fall
 under the GPL as part of the whole MissingH work.
 
+----------------------------------------------------
+MissingH.Checksum.CRC32 is
+(C) 2002 HardCore SoftWare, Doug Hoyte
+and is "distributed under the terms of the GNU GPL."  This license is
+the same as the main license for MissingH.
+
+The code was obtained from 
+http://cvs.sourceforge.net/viewcvs.py/haskell-libs/libs/crypto/crc32.hs
+
+----------------------------------------------------
+MissingH.Compression.Inflate is
+Copyright 2004 Ian Lynagh <igloo@earth.li>
+Licence: 3 clause BSD.
+
+Debian GNU/Linux users may find the 3-clause BSD license at
+/usr/share/common-licenses/BSD.  Alternatively, you may find it at
+3rd-party-licenses/BSD.  Please note that the University of California
+has no claim on this code; simply substitute Ian Lynagh for the
+University wherever it may occur in that file.
+
+The code was obtained from
+http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
+
 ------------------------------------------------------------------
 arch-tag: copyright statement

@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-03 20:41:57 GMT	John Goerzen <jgoerzen@complete.org>	patch-14
+
+    Summary:
+      Preparing to import Inflate
+    Revision:
+      missingh--head--0.7--patch-14
+
+
+    new files:
+     3rd-party-licenses/BSD
+     libsrc/MissingH/Compression/.arch-ids/=id
+
+    modified files:
+     COPYRIGHT ChangeLog
+
+    new directories:
+     libsrc/MissingH/Compression
+     libsrc/MissingH/Compression/.arch-ids
+
+
 2004-12-03 20:32:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-13
 
     Summary:
