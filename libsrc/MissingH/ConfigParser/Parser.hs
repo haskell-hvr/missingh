@@ -33,11 +33,6 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.ConfigParser.Parser
 (
-       -- -- * Temporary for testing
-       --comment_chars, eol, optionsep, whitespace_chars, comment_line,
-       --empty_line, sectheader_chars, sectheader, oname_chars, value_chars,
-       --extension_line, optionkey, optionvalue, optionpair
-
        parse_string, parse_file, parse_handle, ParseOutput
 ) where
 
@@ -48,7 +43,7 @@ import System.IO(Handle, hGetContents)
 
 type ParseOutput = [(String, [(String, String)])]
 
-comment_chars = oneOf "#;"
+comment_chars = oneOf "#;"              <?> "Comment character"
 eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"
 eoleof = eol <|> do {eof; return ""}
 optionsep = oneOf ":=" <?> "option separator"
@@ -57,16 +52,11 @@ comment_line = do skipMany whitespace_chars <?> "whitespace in comment"
                   comment_chars             <?> "start of comment"
                   (many $ noneOf "\r\n")    <?> "content of comment"
                   eoleof
-                  -- eol
+
 empty_line = do skipMany whitespace_chars
                 eoleof
-{-
-             <|> do many1 whitespace_chars
-                    eof
-                    return "" -}
 
-ignore1 = --do notFollowedBy (do {eof; return 'x'})
-          (try comment_line) <|> (try empty_line)
+ignore1 = (try comment_line) <|> (try empty_line)
           <?> "an item to ignore"
 ignorestuff = eof
               <|> do {ignore1; ignorestuff}
@@ -91,7 +81,7 @@ extension_line = do many1 whitespace_chars
 
 optionkey = many1 oname_chars           <?> "option key"
 optionvalue = many1 value_chars         <?> "option value"
-optionpair = do ignorestuff <?> "POINT4"
+optionpair = do ignorestuff
                 key <- optionkey
                 optionsep
                 value <- optionvalue
@@ -110,10 +100,10 @@ parsemain =
     <?> "High-level error parsing config file"
 
 sectionlist = 
-    try (do {ignorestuff <?> "POINT2"; eof; return []})
+    try (do {ignorestuff; eof; return []})
     <|> try (do
-             s <- sectionhead <?> "POINT10"
-             ignorestuff  <?> "POINT1"
+             s <- sectionhead
+             ignorestuff
              eof
              return [(s, [])]
             )
