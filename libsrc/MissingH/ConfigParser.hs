@@ -111,7 +111,7 @@ does not convey those options.
 May raise an exception on a syntax error or if the file could not be
 accessed.
 -}
-readfile :: ConfigParser -> FilePath -> IO ConfigParser
+readfile :: ConfigParser -> FilePath -> IO (CPResult ConfigParser)
 readfile cp fp = do n <- parse_file fp
                     return $ readutil cp n
 
@@ -121,7 +121,7 @@ generate better error messages.
 
 May raise an exception on a syntax error.
 -}
-readhandle :: ConfigParser -> Handle -> IO ConfigParser
+readhandle :: ConfigParser -> Handle -> IO (CPResult ConfigParser)
 readhandle cp h = do n <- parse_handle h
                      return $ readutil cp n
 
@@ -131,7 +131,7 @@ better error messages.
 
 May raise an exception on a syntax error.
 -}
-readstring :: ConfigParser -> String -> ConfigParser
+readstring :: ConfigParser -> String -> CPResult ConfigParser
 readstring cp s = readutil cp $ parse_string s
 
 {- | Returns a list of sections in your configuration file.  Never includes

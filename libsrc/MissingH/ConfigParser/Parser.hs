@@ -42,23 +42,22 @@ import MissingH.Str
 import MissingH.ConfigParser.Lexer
 import System.IO(Handle, hGetContents)
 import MissingH.Parsec
-
-type ParseOutput = [(String, [(String, String)])]
+import MissingH.ConfigParser.Types
 
 ----------------------------------------------------------------------
 -- Exported funcs
 ----------------------------------------------------------------------
 
-parse_string :: String -> ParseOutput
+parse_string :: String -> CPResult ParseOutput
 parse_string s = 
     detokenize "(string)" $ parse loken "(string)" s
 
-parse_file :: FilePath -> IO ParseOutput
+parse_file :: FilePath -> IO (CPResult ParseOutput)
 parse_file f =
     do o <- parseFromFile loken f
        return $ detokenize f o
 
-parse_handle :: Handle -> IO ParseOutput
+parse_handle :: Handle -> IO (CPResult ParseOutput)
 parse_handle h =
     do s <- hGetContents h
        let o = parse loken (show h) s
@@ -68,13 +67,10 @@ parse_handle h =
 -- Private funcs
 ----------------------------------------------------------------------
 detokenize fp l =
-    let r = case l of
-                   Left err -> error $ "Lexer: " ++ (show err)
-                   Right reply -> reply
-        in
-        case runParser main () fp r of
-                                    Left err -> error $ "Parser: " ++ (show err)
-                                    Right reply -> reply
+    let conv msg (Left err) = Left $ (ParseError $ msg ++ (show err))
+        conv msg (Right val) = Right val
+        in do r <- conv "Lexer: " l
+              conv "Parser: " $ runParser main () fp r
 
 main :: GeneralizedTokenParser CPTok () ParseOutput
 main =

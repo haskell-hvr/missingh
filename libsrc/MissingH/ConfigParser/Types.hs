@@ -34,16 +34,19 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.ConfigParser.Types (
                                     CPOptions, CPData, 
-                                    CPError(..), CPResult,
+                                    CPErrorData(..), CPError, CPResult,
                                     ConfigParser(..), empty,
                                     fromAL, SectionSpec,
                                     OptionSpec,
+                                    ParseOutput
                                    ) where
 import Data.FiniteMap
 import Data.Char
 import Control.Monad.Error
-import MissingH.ConfigParser.Parser
 import MissingH.Either
+
+{- | Internal output from parser -}
+type ParseOutput = [(String, [(String, String)])]
 
 {- | Names of sections -}
 type SectionSpec = String
@@ -58,21 +61,23 @@ type CPOptions = FiniteMap OptionSpec String
 type CPData = FiniteMap SectionSpec CPOptions
 
 {- | Possible ConfigParser errors. -}
-data CPError = ParseError String        -- ^ Parse error
-             | SectionAlreadyExists String -- ^ Attempt to create an already-existing ection
-             | NoSection SectionSpec    -- ^ The section does not exist
-             | NoOption OptionSpec      -- ^ The option does not exist
-             | OtherProblem String      -- ^ Miscellaneous error
-               deriving (Eq, Ord, Show)
+data CPErrorData = ParseError String        -- ^ Parse error
+                 | SectionAlreadyExists String -- ^ Attempt to create an already-existing ection
+                 | NoSection SectionSpec    -- ^ The section does not exist
+                 | NoOption OptionSpec      -- ^ The option does not exist
+                 | OtherProblem String      -- ^ Miscellaneous error
+                   deriving (Eq, Ord, Show)
+
+{- | Indicates an error occurred. -}
+type CPError = (CPErrorData, String)
 
 instance Error CPError where
-    noMsg = OtherProblem ""
-    strMsg x = OtherProblem x
+    noMsg = (OtherProblem "", "")
+    strMsg x = (OtherProblem x, "")
 
 {- | Basic ConfigParser error handling.  The Left value indicates
 an error, while a Right value indicates success. -}
 type CPResult = Either CPError
-
 
 {- | This is the main record that is used by 'MissingH.ConfigParser'.
 -}
@@ -125,27 +130,7 @@ defdefaulthandler cp sect opt =
                        then lookup "DEFAULT" opt
                        else Left e
         in
-        case lookup sect opt of
-             Right x -> Right x
-             Left x -> trydefault x
-
-{-       
-defdefaulthandler cp sect opt =
-    let fm = content cp
-        lookup s o =
-            case lookupFM fm s of
-                Nothing -> Nothing
-                Just sect -> case lookupFM sect o of
-                                 Nothing -> Nothing
-                                 Just x -> Just x
-        in
-        case lookup sect opt of
-            Just r -> Just r
-            Nothing -> if (usedefault cp)
-                       then lookup "DEFAULT" opt
-                       else Nothing
--}
-
+        lookup sect opt `catchError` trydefault
 
 {- | Low-level tool to convert a parsed object into a 'CPData'
 representation.  Performs no option conversions or special handling
