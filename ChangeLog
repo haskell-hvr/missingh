@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 21:24:05 GMT	John Goerzen <jgoerzen@complete.org>	patch-47
+
+    Summary:
+      Fixed handling of PID in syslog
+    Revision:
+      missingh--head--1.0--patch-47
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging/Handler/Syslog.hs
+
+
 2004-10-07 21:17:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-46
 
     Summary:

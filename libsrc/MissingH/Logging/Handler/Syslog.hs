@@ -36,6 +36,7 @@ import Data.Bits
 import Network.Socket
 import Network.BSD
 import List
+import System.Posix.Process(getProcessID)
 
 code_of_pri :: Priority -> Int
 code_of_pri p = case p of
@@ -105,6 +106,7 @@ makeCode fac pri =
 
 data Option = PID                       -- ^ Automatically log process ID (PID) with each message
             | PERROR                    -- ^ Send a copy of each message to stderr
+            deriving (Eq,Show,Read)
 
 data SyslogHandler = SyslogHandler {options :: [Option],
                                     facility :: Facility,
@@ -150,7 +152,13 @@ instance LogHandler SyslogHandler where
     getLevel sh = priority sh
     emit sh (p, msg) = 
         let code = makeCode (facility sh) p
-            outstr = "<" ++ (show code) ++ ">" ++ msg ++ "\0"
+            getpid :: IO String
+            getpid = if (elem PID (options sh))
+                     then do
+                          pid <- getProcessID
+                          return ("[" ++ show pid ++ "]")
+                     else return ""
+                     
             sendstr :: String -> IO String
             sendstr [] = return []
             sendstr omsg = do
@@ -158,6 +166,9 @@ instance LogHandler SyslogHandler where
                            sendstr (genericDrop sent omsg)
             in
             do
+            pidstr <- getpid
+            let outstr = "<" ++ (show code) ++ ">" 
+                         ++ (identity sh) ++ pidstr ++ ": " ++ msg ++ "\0"
             sendstr outstr
             return ()
     close sh = sClose (logsocket sh)
