@@ -165,6 +165,8 @@ commands =
     ,("PORT", (forceLogin cmd_port,  help_port))
     ,("RETR", (forceLogin cmd_retr,  help_retr))
     ,("STOR", (forceLogin cmd_stor,  help_stor))
+    ,("STAT", (forceLogin cmd_stat,  help_stat))
+    ,("SYST", (forceLogin cmd_syst,  help_syst))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -498,6 +500,34 @@ cmd_stru h args =
                   return True
         x -> do sendReply h 504 $ "Structure \"" ++ x ++ "\" not supported."
                 return True
+
+help_syst = ("Display system type", "")
+cmd_syst :: CommandHandler
+cmd_syst h _ =
+    -- I have no idea what this L8 means, but everyone else seems to do
+    -- this, so I do too..
+    do sendReply h 215 "UNIX Type: L8"
+       return True
+
+help_stat = ("Display sever statistics", "")
+cmd_stat :: CommandHandler
+cmd_stat h@(FTPServer _ _ state) _ =
+    do loc <- showSockAddr (local state)
+       rem <- showSockAddr (remote state)
+       auth <- readIORef (auth state)
+       datm <- readIORef (datatype state)
+       sendReply h 211 $ unlines $
+         [" *** Sever statistics and information"
+         ," *** Please type HELP for more details"
+         ,""
+         ,"Server Software     : MissingH, http://quux.org/devel/missingh"
+         ,"Connected From      : " ++ rem
+         ,"Connected To        : " ++ loc
+         ,"Data Transfer Type  : " ++ (show datm)
+         ,"Auth Status         : " ++ (show auth)
+         ,"End of status."]
+       return True
+          
 
 help_help =
     ("Display help on available commands",
