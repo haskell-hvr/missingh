@@ -31,6 +31,12 @@ f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv
 f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
 f3 msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
 
+instance Show ConfigParser where
+    show x = show (content x)
+
+instance Eq ConfigParser where
+    x == y = (content x) == (content y)
+
 test_basic =
         [
          f3 "empty doc, no sections" "" [] sections,
@@ -101,6 +107,39 @@ test_nodefault =
       -- default bool
       ]
 
+test_remove = 
+    let cp = forceEither $ readstring emptyCP "def:ault\n[sect1]\ns1o1: v1\ns1o2:v2\n[sect2]\ns2o1: v1\ns2o2: v2\n[sect3]"
+        in [
+            f2 "setup" ["sect1", "sect2", "sect3"] (sections cp)
+           ,f2 "remove 1st s" (Right ["sect2", "sect3"])
+               (do x <- remove_section cp "sect1"
+                   return $ sections x
+                )
+           ,f2 "remove 2nd s" (Right ["sect1", "sect3"])
+               (do x <- remove_section cp "sect2"
+                   return $ sections x
+                )
+           ,f2 "remove 3rd s" (Right ["sect1", "sect2"])
+               (do x <- remove_section cp "sect3"
+                   return $ sections x
+                )
+           ,f2 "error handling s" (Left (NoSection "sect4", "remove_section"))
+                  (remove_section cp "sect4")
+           ,f2 "remove an option" (Right (["sect1", "sect2", "sect3"], ["s1o2"]))
+               (do x <- remove_option cp "sect1" "s1o1"
+                   y <- options x "sect1"
+                   return (sections x, y)
+                )
+           ,f2 "option err 1" (Left (NoSection "sect4", "remove_option"))
+               (remove_option cp "sect4" "s4o1")
+           ,f2 "option err 2" (Left (NoOption "s1o3", "remove_option"))
+               (remove_option cp "sect1" "s1o3")
+           ]
+                  
+        
+       
+              
+
 test_ex_nomonad = 
     do 
        fh <- nullfile
@@ -170,6 +209,7 @@ test_interp =
 tests = TestList [TestLabel "test_basic" (TestList test_basic),
                  TestLabel "test_defaults" (TestList test_defaults),
                  TestLabel "test_nodefault" (TestList test_nodefault),
+                 TestLabel "test_remove" (TestList test_remove),
                  TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad),
                  TestLabel "test_ex_errormonad" (TestList test_ex_errormonad),
                  TestLabel "test_interp" (TestList test_interp)]

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-12-01 20:42:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-141
+
+    Summary:
+      Tested more ConfigParser stuff
+    Revision:
+      missingh--head--0.5--patch-141
+
+
+    modified files:
+     ChangeLog TODO testsrc/ConfigParser/Maintest.hs
+
+
 2004-12-01 19:20:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-140
 
     Summary:

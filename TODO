@@ -1,15 +1,6 @@
 arch-tag: TODO file
 
-START WITH: test_interpolate from OCaml
 Printf:
  make %H work 
-
-test configparser:
- * according to ocaml spec
- * with various default options
- * exception system
- * remove_*
-
-document configparser
 
 tests for new Parsec stuff
