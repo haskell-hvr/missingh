@@ -34,6 +34,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 module MissingH.ConfigParser.Parser
 (
        CPTok(..),
+       satisfyG,
        main
 ) where
 import Text.ParserCombinators.Parsec

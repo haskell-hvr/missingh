@@ -52,4 +52,4 @@ detokenize fp l =
 
 parse_string :: String -> [(String, [(String, String)])]
 parse_string s = 
-    detokenize "(string)" $ parse (many1 loken) "(string)" s
+    detokenize "(string)" $ parse loken "(string)" s
