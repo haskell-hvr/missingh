@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 21:10:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-45
+
+    Summary:
+      Initial version of syslog handler
+    Revision:
+      missingh--head--1.0--patch-45
+
+
+    new files:
+     libsrc/MissingH/Logging/Handler/.arch-ids/=id
+     libsrc/MissingH/Logging/Handler/Syslog.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging/Handler.hs
+
+    new directories:
+     libsrc/MissingH/Logging/Handler
+     libsrc/MissingH/Logging/Handler/.arch-ids
+
+
 2004-10-07 19:54:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-44
 
     Summary:

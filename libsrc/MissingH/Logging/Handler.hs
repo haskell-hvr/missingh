@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 {- | Definition of log handlers
 
 Written by John Goerzen, jgoerzen\@complete.org
-n-}
+-}
 
 module MissingH.Logging.Handler(-- * Basic Types
                                 LogHandler(..),
