@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-27 13:40:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-19
+
+    Summary:
+      Added splitRe, subRe
+    Revision:
+      missingh--head--0.5--patch-19
+
+
+    modified files:
+     ChangeLog debian/changelog libsrc/MissingH/Str.hs notes.txt
+     testsrc/Strtest.hs
+
+
 2004-10-27 01:48:49 GMT	John Goerzen <jgoerzen@complete.org>	patch-18
 
     Summary:

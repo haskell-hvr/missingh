@@ -2,6 +2,7 @@ missingh (0.5.2) unstable; urgency=low
 
   * New module: sendmail
   * New popen functions in MissingH.Cmd.
+  * Added splitRe, subRe to Str.hs.
 
  -- John Goerzen <jgoerzen@complete.org>  Tue, 26 Oct 2004 16:38:01 -0500
 

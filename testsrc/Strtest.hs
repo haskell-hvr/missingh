@@ -20,6 +20,7 @@ module Strtest(tests) where
 import HUnit
 import MissingH.Str
 import Testutil
+import Text.Regex
 
 test_lstrip =
     mapassertEqual "lstrip" lstrip
@@ -50,9 +51,31 @@ test_strip =
                     ("\nbas", "bas"),
                     ("abc def", "abc def")]
 
+test_splitRe =
+    let f re inp exp = exp @=? splitRe (mkRegex re) inp
+        in do
+           f "foo" "" []
+           f "foo" "foo" ["", ""]
+           f "," "foo,bar,,baz," ["foo", "bar", "", "baz", ""]
+           f "ba" ",foo,bar,,baz," [",foo,","r,,","z,"]
+           f "," "" []
+           f "," "," ["", ""]
+
+test_subRe =
+    let f re inp repl exp = exp @=? subRe (mkRegex re) inp repl
+        in do
+           f "foo" "" "bar" ""
+           f "foo" "This is a foo test bar" "bar" "This is a bar test bar"
+           f "foo" "Test foo bar" "x\\0x" "Test xfoox bar"
+           f "(f)(o)o" "Test foo bar" "\\2\\1" "Test of bar"
+           f "foo" "Test foo then foo bar" "" "Test  then  bar"
+           f "foo" "Test foo bar" "x\\\\x" "Test x\\x bar"
+
 tests = TestList [TestLabel "lstrip" (TestCase test_lstrip),
                   TestCase test_rstrip,
-                  TestCase test_strip
+                  TestCase test_strip,
+                  TestCase test_subRe,
+                  TestCase test_splitRe
                   ]
 
 

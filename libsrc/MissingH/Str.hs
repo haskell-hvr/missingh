@@ -40,7 +40,7 @@ module MissingH.Str(-- * Whitespace Removal
                         -- * Conversions
                         -- | Note: Some of these functions are aliases for functions
                         -- in "MissingH.List".
-                        join, split, replace
+                        join, split, splitRe, replace, subRe
                        ) where
 import MissingH.List(startswith, endswith, join, split, replace)
 import Text.Regex
@@ -78,9 +78,43 @@ lstrip s = case s of
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
-{-
--- | Splits a string based on a regular expression.  The regular express
--- should identify one delimiter.
+{- | Replaces every occurance of the given regexp with the replacement string.
+
+In the replacement string, @\"\\1\"@ refers to the first substring; 
+@\"\\2\"@ to the second, etc; and @\"\\0\"@ to the entire match.
+@\"\\\\\\\\\"@ will insert a literal backslash.
+
+-}
+subRe :: Regex                          -- ^ Search pattern
+      -> String                         -- ^ Input string
+      -> String                         -- ^ Replacement text
+      -> String                         -- ^ Output string
+subRe _ "" _ = ""
+subRe regexp inp repl = 
+    let bre = mkRegex "\\\\(\\\\||[0-9]+)"
+        lookup _ [] _ = []
+        lookup [] _ _ = []
+        lookup match repl groups =
+            case matchRegexAll bre repl of
+                Nothing -> repl
+                Just (lead, _, trail, bgroups) ->
+                    let newval = if (head bgroups) == "\\"
+                                 then "\\"
+                                 else let index = (read (head bgroups)) - 1
+                                          in
+                                          if index == -1
+                                             then match
+                                             else groups !! index
+                        in
+                        lead ++ newval ++ lookup match trail groups
+        in
+        case matchRegexAll regexp inp of
+            Nothing -> inp
+            Just (lead, match, trail, groups) ->
+              lead ++ lookup match repl groups ++ (subRe regexp trail repl)
+
+{- | Splits a string based on a regular expression.  The regular expression
+should identify one delimiter.
 -}
 
 splitRe :: Regex -> String -> [String]
@@ -92,6 +126,7 @@ splitRe delim str =
            if remainder == ""
               then firstline : [] : []
               else firstline : splitRe delim remainder
+
 {-
 
 splitRe :: Regex -> String -> [String]
