@@ -64,10 +64,11 @@ data ConfigParser = ConfigParser
 
 The content contains only an empty mandatory @DEFAULT@ section.
 
-@optionxform@ is set to @map toLower@.
+'optionxform' is set to @map toLower@.
 
-@usedefault@ is set to @True@.
+'usedefault' is set to @True@.
 -}
+empty :: ConfigParser
 empty = ConfigParser { content = fromAL [("DEFAULT", [])],
                        optionxform = map toLower,
                        usedefault = True}

@@ -33,14 +33,24 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 module MissingH.ConfigParser
     (
      -- * Initialization
+     -- $initialization
      empty,
+
      -- * Reading
-     -- * Whole-File Manipulation
+     -- $reading
+     readfile, readhandle, readstring,
+
+     -- * Meta-queries
+     sections,
+
+     -- * Miscellaneous anipulation
      merge
 ) where
 import MissingH.ConfigParser.Types
 import MissingH.ConfigParser.Parser
 import Data.FiniteMap
+import Data.List
+import System.IO(Handle)
 
 {- | Combines two 'ConfigParser's into one.
 
@@ -60,3 +70,72 @@ merge src dest =
                                  (content dest),
                        optionxform = optionxform dest,
                        usedefault = usedefault dest }
+
+{- | Utility to do a special case merge. -}
+readutil :: ConfigParser -> ParseOutput -> ConfigParser
+readutil old new = 
+    let mergedest = ConfigParser {content = fromAL new,
+                                  optionxform = optionxform old,
+                                  usedefault = usedefault old}
+        in
+        merge old mergedest
+
+{- | Loads data from the specified file.  It is then combined with the
+given 'ConfigParser' using the semantics documented under 'merge' with the
+new data taking precedence over the old.  However, unlike
+'merge', all the options
+as set in the old object are preserved since the on-disk representation
+does not convey those options.
+
+May raise an exception on a syntax error or if the file could not be
+accessed.
+-}
+readfile :: ConfigParser -> FilePath -> IO ConfigParser
+readfile cp fp = do n <- parse_file fp
+                    return $ readutil cp n
+
+{- | Like 'readfile', but uses an already-open handle.  You should
+use 'readfile' instead of this if possible, since it will be able to
+generate better error messages.
+
+May raise an exception on a syntax error.
+-}
+readhandle :: ConfigParser -> Handle -> IO ConfigParser
+readhandle cp h = do n <- parse_handle h
+                     return $ readutil cp n
+
+{- | Like 'readfile', but uses a string.  You should use 'readfile'
+instead of this if you are processing a file, since it can generate
+better error messages.
+
+May raise an exception on a syntax error.
+-}
+readstring :: ConfigParser -> String -> ConfigParser
+readstring cp s = readutil cp $ parse_string s
+
+{- | Returns a list of sections in your configuration file.  Never includes
+the always-present section @DEFAULT@. -}
+sections :: ConfigParser -> [String]
+sections = filter (/= "DEFAULT") . keysFM . content
+
+----------------------------------------------------------------------
+-- Docs
+----------------------------------------------------------------------
+
+{- $initialization
+
+The variable 'empty' is exported, and contains a default empty
+'ConfigParser'.
+-}
+
+{- $reading
+
+You can use these functions to read data from a file.
+
+A common idiom for loading a new object from stratch is:
+
+@cp <- 'readfile' 'empty' \"/etc/foo.cfg\"@
+
+Note the use of 'empty'; this will essentially cause the file's data
+to be merged with the empty 'ConfigParser'.
+-}
