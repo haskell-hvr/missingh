@@ -1,3 +1,9 @@
+missingh (0.4.1) unstable; urgency=low
+
+  * Added haskell-src to build-depends.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 15 Oct 2004 15:46:57 -0500
+
 missingh (0.4.0) unstable; urgency=low
 
   * Added logging infrastructure and Syslog handler.
