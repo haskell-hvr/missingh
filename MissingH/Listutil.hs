@@ -30,7 +30,7 @@ module MissingH.Listutil(-- * Tests
                          for association lists. -}
                          addToAL, delFromAL,
                          -- * Conversions
-                         split, join, trunc,
+                         split, join, genericJoin, trunc,
                          -- -- * Sub-List Selection
                          -- sub,
                         ) where
@@ -92,6 +92,18 @@ Example:
 -}
 join :: [a] -> [[a]] -> [a]
 join delim l = concat (intersperse delim l)
+
+{- | Like 'join', but works with a list of anything showable, converting
+it to a String.
+
+Examples:
+
+> genericJoin ", " [1, 2, 3, 4] -> "1, 2, 3, 4"
+> genericJoin "|" ["foo", "bar", "baz"] -> "\"foo\"|\"bar\"|\"baz\""
+
+-}
+genericJoin :: Show a => String -> [a] -> String
+genericJoin delim l = join delim (map show l)
 
 {- | Given a length and a list, remove any elements at the end of the list
 that make it longer than the length.  If the list is shorter than the

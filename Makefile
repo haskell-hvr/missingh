@@ -30,7 +30,7 @@ libmissingH.a: $(OBJS)
 doc:
 	-rm -rf html
 	mkdir html
-	haddock -h -o html $(SOURCES)
+	haddock -t 'MissingH API Manual' -h -o html $(SOURCES)
 
 clean:
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
