@@ -33,9 +33,12 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
-                                        SimpleStat,
+                                        SimpleStat(..),
                                         -- * HVFS objects & types
-                                        
+                                        MemoryVFS,
+                                        newMemoryVFS,
+                                        MemoryNode,
+                                        MemoryEntry(..),
                                        )
 where
 import MissingH.IO.HVFS
