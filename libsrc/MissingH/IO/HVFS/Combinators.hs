@@ -67,7 +67,9 @@ newHVFSChroot fh fp =
     do full <- getFullPath fh fp
        isdir <- vDoesDirectoryExist fh full
        if isdir
-          then return (HVFSChroot full fh)
+          then do let newobj = (HVFSChroot full fh)
+                  vSetCurrentDirectory newobj "/"
+                  return newobj
           else vRaiseError fh doesNotExistErrorType
                  ("Attempt to instantiate HVFSChroot over non-directory " ++ full)
                  (Just full)
@@ -77,15 +79,17 @@ dch (HVFSChroot _ a) = a
 
 {- | Convert a local (chroot) path to a full path. -}
 dch2fp (HVFSChroot fp h) locfp = 
-    do full <- getFullPath h locfp
-       case secureAbsNormPath fp (fp ++ "/" ++ full) of
+    do full <- case (head locfp) of
+                  '/' -> return (fp ++ locfp)
+                  x -> getFullPath h locfp
+       case secureAbsNormPath fp full of
            Nothing -> vRaiseError h doesNotExistErrorType  
                         ("Trouble normalizing path") (Just (fp ++ "/" ++ full))
            Just x -> return x
 
 {- | Convert a full path to a local (chroot) path. -}
 fp2dch (HVFSChroot fp h) locfp =
-    do newpath <- case secureAbsNormPath fp (fp ++ "/" ++ locfp) of
+    do newpath <- case secureAbsNormPath fp locfp of
                      Nothing -> vRaiseError h doesNotExistErrorType
                                   ("Unable to securely normalize path")
                                   (Just (fp ++ "/" ++ locfp))

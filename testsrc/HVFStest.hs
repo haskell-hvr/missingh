@@ -21,6 +21,7 @@ import HUnit
 import MissingH.IO.HVIO
 import MissingH.IO.HVFS
 import MissingH.IO.HVFS.InstanceHelpers
+import MissingH.IO.HVFS.Combinators
 import Testutil
 import System.IO
 import System.IO.Error
@@ -63,6 +64,34 @@ test_content =
          f "subdir test" "/dir1/test.txt"
         ]
 
+test_chroot =
+    let f msg testfunc = TestLabel msg $ TestCase $ 
+                         do x <- newMemoryVFS testTree
+                            vSetCurrentDirectory x "/emptydir"
+                            y <- newHVFSChroot x "/dir1"
+                            testfunc y
+        in
+        [
+         f "root" (\x -> ["file3.txt", "test.txt", "dir2"]
+                   `ioeq` vGetDirectoryContents x "/")
+        ,f "cwd" (\x -> "/" `ioeq` vGetCurrentDirectory x)
+        ,f "dir2" (\x -> [] `ioeq` vGetDirectoryContents x "/dir2")
+        ,f "dot" (\x -> ["file3.txt", "test.txt", "dir2"]
+                  `ioeq` vGetDirectoryContents x ".")
+        ,f "cwd tests" $
+          (\x -> do a <- vGetDirectoryContents x "/"
+                    ["file3.txt", "test.txt", "dir2"] @=? a
+                    vSetCurrentDirectory x "/dir2"
+                    cwd <- vGetCurrentDirectory x
+                    "/dir2" @=? cwd
+                    y <- vGetDirectoryContents x "."
+                    [] @=? y
+          )
+        --,f "test.txt" (\x -> "subdir test" `ioeq` 
+        --               (vOpen x "/test.txt" ReadMode >>= vGetContents))
+        ]
+
+
 test_structure =
     let f msg testfunc = TestLabel msg $ TestCase $ do x <- newMemoryVFS testTree
                                                        testfunc x
@@ -70,6 +99,11 @@ test_structure =
         [
          f "root" (\x -> ["test.txt", "file2.txt", "emptydir", "dir1"]
                          `ioeq` vGetDirectoryContents x "/")
+        ,f "dot" (\x -> ["test.txt", "file2.txt", "emptydir", "dir1"]
+                  `ioeq` vGetDirectoryContents x ".")
+        ,f "dot2" (\x -> ["file3.txt", "test.txt", "dir2"]
+                   `ioeq` do vSetCurrentDirectory x "./dir1"
+                             vGetDirectoryContents x ".")
         ,f "emptydir" (\x -> [] `ioeq` vGetDirectoryContents x "/emptydir")
         ,f "dir1" (\x -> ["file3.txt", "test.txt", "dir2"] `ioeq`
                    vGetDirectoryContents x "/dir1")
@@ -84,4 +118,5 @@ test_structure =
 tests = TestList [TestLabel "nice_slice" (TestList test_nice_slice)
                  ,TestLabel "structure" (TestList test_structure)
                  ,TestLabel "content" (TestList test_content)
+                 ,TestLabel "chroot" (TestList test_chroot)
                  ]
