@@ -256,7 +256,10 @@ class (HVIOGeneric a) => HVIOReader a where
                                 else ioError e
                     in catch func handler
             in
-            do vGetChar h >>= \x -> loop [x]
+            do firstchar <- vGetChar h
+               case firstchar of
+                   '\n' -> return []
+                   x -> loop [x]
 
     vGetContents h =
         let loop = 

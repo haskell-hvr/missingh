@@ -19,6 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module HVIOtest(tests) where
 import HUnit
 import MissingH.IO.HVIO
+import Testutil
+import System.IO
+import System.IO.Error
+import Control.Exception
 
 ioeq :: (Show a, Eq a) => a -> IO a -> Assertion
 ioeq exp inp = do x <- inp
@@ -31,9 +35,27 @@ test_StreamReader =
         [
          f "" (\x -> do True `ioeq` vIsEOF x
                         True `ioeq` vIsOpen x
+                        assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
                         vClose x
                         False `ioeq` vIsOpen x
+                        
               )
+        ,f "abcd" (\x -> do False `ioeq` vIsEOF x
+                            True `ioeq` vIsOpen x
+                            'a' `ioeq` vGetChar x
+                            "bcd" `ioeq` vGetContents x
+                            vClose x
+               )
+        ,f "line1\nline2\n\n\nline5\nlastline"
+           (\x -> do False `ioeq` vIsEOF x
+                     "line1" `ioeq` vGetLine x
+                     "line2" `ioeq` vGetLine x
+                     "" `ioeq` vGetLine x
+                     "" `ioeq` vGetLine x
+                     "line5" `ioeq` vGetLine x
+                     "lastline" `ioeq` vGetLine x
+                     assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
+           )
         ]
 
 tests = TestList [TestLabel "streamReader" (TestList test_StreamReader)
