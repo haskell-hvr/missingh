@@ -117,7 +117,7 @@ test_instances =
     let cp = p "[x]\na: true\nb: 1\nbad: never"
 	in [f2 "bool 1st" (Right True) (get cp "x" "a"),
 	    f2 "bool 1nd" (Right True) (get cp "x" "b"),
-            f2b "bad bool" (Left (ParseError "Couldn't parse bool never from x/bad", "getbool")) (get cp "x" "bad")
+            f2b "bad bool" (Left (ParseError "couldn't parse bool never from x/bad", "getbool")) (get cp "x" "bad")
 	   ]
 
 
@@ -226,5 +226,6 @@ tests = TestList [TestLabel "test_basic" (TestList test_basic),
                  TestLabel "test_remove" (TestList test_remove),
                  TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad),
                  TestLabel "test_ex_errormonad" (TestList test_ex_errormonad),
-                 TestLabel "test_interp" (TestList test_interp)]
+                 TestLabel "test_interp" (TestList test_interp),
+                 TestLabel "test_instances" (TestList test_instances)]
 
