@@ -55,6 +55,9 @@ module MissingH.ConfigParser
      -- ** Case Sensitivity
      -- $casesens
 
+     -- ** Interpolation
+     -- $interpolation
+
      -- * Usage Examples
      -- $usage
 
@@ -151,8 +154,48 @@ fromAL origal =
 simpleAccess :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
 simpleAccess cp s o = defdefaulthandler cp s (optionxform cp $ o)
 
-{- | Interpolating access function -}
-interpolatingAccess :: Int ->           -- ^ Maximum interpolation depth
+{- | Interpolating access function.  Please see the Interpolation section
+above for a background on interpolation.
+
+Although the format string looks similar to one used by "MissingH.Printf",
+it is not the same.  In particular, only the %(...)s format is supported.
+No width specifiers are supported and no conversions other than s are supported.
+
+To use this function, you must specify a maximum recursion depth for
+interpolation.  This is used to prevent a stack overflow in the event that
+the configuration file contains an endless interpolation loop.  Values of 10
+or so are usually more than enough, though you could probably go into the
+hundreds or thousands before you have actual problems.
+
+A value less than one will cause an instant error every time you attempt
+a lookup.
+
+This access method can cause 'get' and friends to return a new 'CPError':
+'InterpolationError'.  This error would be returned when:
+
+ * The configuration file makes a reference to an option that does
+   not exist
+
+ * The maximum interpolation depth is exceeded
+
+ * There is a syntax error processing a %-directive in the configuration
+   file
+
+An interpolation lookup name specifies an option only.  There is no provision
+to specify a section.  Interpolation variables are looked up in the current
+section, and, if 'usedefault' is True, in @DEFAULT@ according to the normal
+logic.
+
+To use a literal percent sign, you must place @%%@ in the configuration
+file when interpolation is used.
+
+Here is how you might enable interpolation:
+
+>let cp2 = cp {accessfunc = interpolatingAccess 10}
+
+The @cp2@ object will now support interpolation with a maximum depth of 10.
+ -}
+interpolatingAccess :: Int ->
                        ConfigParser -> SectionSpec -> OptionSpec
                        -> CPResult String
 interpolatingAccess maxdepth cp s o =
@@ -608,6 +651,30 @@ comment character at the start of the line.
 
 By default, section names are case-sensitive but option names are
 not. The latter can be adjusted by adjusting 'optionxform'.  -}
+
+{- $interpolation
+
+Interpolation is an optional feature, disabled by default.  If you replace
+the default 'accessfunc' ('simpleAccess') with 'interpolatingAccess',
+then you get interpolation support with 'get' and the other 'get'-based functions.
+
+As an example, consider the following file:
+
+>arch = i386
+>project = test
+>filename = test_%(arch)s.c
+>dir = /usr/src/%(filename)s 
+>percent = 5%% 
+
+With interpolation, you would get these results:
+
+>get cp "DEFAULT" "filename" -> "test_i386.c"
+>get cp "DEFAULT" "dir" -> "/usr/src/test_i386.c"
+>get cp "DEFAULT" "percent" -> "5%"
+
+For more details on interpolation, please see the documentation for the
+'interpolatingAccess' function.
+-}
 
 {- $usage
 

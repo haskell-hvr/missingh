@@ -86,7 +86,7 @@ instance Error CPError where
 
 {- | Basic ConfigParser error handling.  The Left value indicates
 an error, while a Right value indicates success. -}
-type CPResult a = MonadError CPError m => m a
+type CPResult a = forall m. MonadError CPError m => m a
 
 {- | This is the main record that is used by 'MissingH.ConfigParser'.
 -}
