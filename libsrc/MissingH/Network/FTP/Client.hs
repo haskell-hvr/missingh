@@ -231,7 +231,6 @@ import MissingH.Logging.Logger
 import MissingH.Network
 import MissingH.Str
 data FTPConnection = FTPConnection {readh :: IO String,
-                                    readh_internal :: Handle,
                                     writeh :: Handle,
                                     socket_internal :: Socket,
                                     isPassive :: Bool}
@@ -282,14 +281,11 @@ connectFTP h p =
         in
     do
     s <- connectTCP h p
-    r <- socketToHandle s ReadMode
-    hSetBuffering r LineBuffering
-    w <- socketToHandle s WriteMode
-    hSetBuffering w LineBuffering
-    let h = FTPConnection {readh = readchars r, 
-                           readh_internal = r,
+    newh <- socketToHandle s ReadWriteMode
+    hSetBuffering newh LineBuffering
+    let h = FTPConnection {readh = readchars newh, 
                            socket_internal = s,
-                           writeh = w, isPassive = True}
+                           writeh = newh, isPassive = True}
     --hIsReadable h >>= print
     --hIsWritable h >>= print
     -- hSetBuffering h LineBuffering
