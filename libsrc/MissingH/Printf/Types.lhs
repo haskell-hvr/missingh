@@ -6,8 +6,7 @@ module MissingH.Printf.Types where
 import System.IO
 
 data Value =
-           ValueInt Int
-           | ValueInteger Integer
+           ValueInteger Integer
            | ValueString String
            | ValueChar Char
            | ValueDouble Double
@@ -16,11 +15,6 @@ data Value =
 class PFType a where
     toValue :: a -> Value
     fromValue :: Value -> a
-
-instance PFType Int where
-    toValue = ValueInt
-    fromValue (ValueInt x) = x
-    fromValue _ = error "fromValue int"
 
 instance PFType Integer where
     toValue = ValueInteger
