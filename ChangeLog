@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-24 02:17:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-168
+
+    Summary:
+      Updated examples
+    Revision:
+      missingh--head--0.7--patch-168
+
+
+    new files:
+     examples/.arch-ids/test2.hs.id examples/.arch-ids/test3.hs.id
+     examples/test2.hs examples/test3.hs
+
+    removed files:
+     .arch-ids/test2.hs.id .arch-ids/test3.hs.id test2.hs test3.hs
+
+    modified files:
+     ChangeLog
+
+
 2004-12-24 02:16:39 GMT	John Goerzen <jgoerzen@complete.org>	patch-167
 
     Summary:
