@@ -117,6 +117,8 @@ MissingH.Network.        * Parse FTP protocol replies
 MissingH.Parsec          * Invert the sense of a parser
 
 MissingH.Path            * Split apart filename components
+                         * Recursive directory scanning
+                         * Recursive file/directory removal (rm -r)
 
 MissingH.Printf          * Format strings using C-like syntax
                          * Support for args as a list or as
