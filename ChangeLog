@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 22:48:59 GMT	John Goerzen <jgoerzen@complete.org>	patch-90
+
+    Summary:
+      Backed out patch-82 through patch-89; going back to separate lexer
+    Revision:
+      missingh--head--0.5--patch-90
+
+
+    new files:
+     libsrc/MissingH/ConfigParser/Lexer.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+
+    removed files:
+     libsrc/MissingH/ConfigParser/Parser.hs
+
+    modified files:
+     ChangeLog testsrc/ConfigParser/Parsertest.hs
+
+
 2004-11-18 22:13:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-89
 
     Summary:
