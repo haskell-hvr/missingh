@@ -1,6 +1,5 @@
-arch-tag: Printf printer declarations
+-- arch-tag: Printf printer declarations
 
-\begin{code}
 module MissingH.Printf.Printer (get_conversion_func, thousandify, octalify, hexify, fix_width
 ) where
 
@@ -168,7 +167,7 @@ print_string argv _ _ mp
 
 -- Corresponds to %H (Haskell extension)
 show_arg :: ConversionFunc
-show_arg argv flags mw mp = (print_string (toValue (show argv))) flags mw mp
+show_arg argv flags mw mp = (print_string (toValue (showValue argv))) flags mw mp
 
 lower_hex, upper_hex :: Bool
 lower_hex = False
@@ -197,14 +196,12 @@ thousandify :: String -> String
 thousandify = reverse . t . reverse
     where t (x1:x2:x3:xs@(_:_)) = x1:x2:x3:',':t xs
           t xs = xs
-\end{code}
 
 
 ----------------------------------------------------------------------
 -- FROM Ian Lynagh's Parser.lhs
 ----------------------------------------------------------------------
 
-\begin{code}
 
 fix_width :: [Flag] -> Maybe Width -> String -> String
 fix_width _ Nothing e = e
@@ -220,4 +217,4 @@ fix_width flags (Just w) e = exp_spaced
                        else if w < 0 then exp_left_padded
                                       else exp_right_padded
 
-\end{code}
+

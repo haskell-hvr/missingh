@@ -13,6 +13,11 @@ data Value =
            | ValueChar Char
              deriving (Eq, Show)
 
+showValue :: Value -> String
+showValue (ValueRational x) = show x
+showValue (ValueChar x) = [x]
+showValue (ValueString x) = x
+
 class PFType a where
     toValue :: a -> Value
     fromValue :: Value -> a
