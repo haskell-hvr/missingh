@@ -83,12 +83,12 @@ test_basic =
 test_defaults = 
     let cp = p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes\n[sect4]\ndef: different" in
       [
-       f2s "default item" (Right "ault") (get cp "sect1" "def")
-      ,f2s "normal item" (Right "bar") (get cp "sect1" "foo")
+       f2 "default item" (Right "ault") (get cp "sect1" "def")
+      ,f2 "normal item" (Right "bar") (get cp "sect1" "foo")
       ,f2s "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
       ,f2s "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
-      ,f2s "default from bad sect" (Right "ault") (get cp "sect2" "def")
-      ,f2s "overriding default" (Right "different") (get cp "sect4" "def")
+      ,f2 "default from bad sect" (Right "ault") (get cp "sect2" "def")
+      ,f2 "overriding default" (Right "different") (get cp "sect4" "def")
       -- not in haskell: ,f2 "using default feature"
       -- default int
       -- default float
@@ -111,9 +111,9 @@ test_nodefault =
       ]
 
 test_instances = 
-    let cp = p "[x]\na: true\nb: 1\n"
-	in [f2b "bool 1st" (Right True) (get cp "x" "a"),
-	    f2b "bool 1nd" (Right True) (get cp "x" "b")
+    let cp = p "[x]\na: true\nb: 1\nbad: never"
+	in [f2 "bool 1st" (Right True) (get cp "x" "a"),
+	    f2 "bool 1nd" (Right True) (get cp "x" "b")
 	   ]
 
 
