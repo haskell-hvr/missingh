@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-26 20:13:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-8
+
+    Summary:
+      Checkpointing sendmail support
+    Revision:
+      missingh--head--0.5--patch-8
+
+
+    new files:
+     libsrc/MissingH/Email/.arch-ids/=id
+     libsrc/MissingH/Email/Sendmail.hs
+
+    modified files:
+     ChangeLog Setup.description libsrc/MissingH/Cmd.hs
+
+    new directories:
+     libsrc/MissingH/Email libsrc/MissingH/Email/.arch-ids
+
+
 2004-10-25 19:51:57 GMT	John Goerzen <jgoerzen@complete.org>	patch-7
 
     Summary:
