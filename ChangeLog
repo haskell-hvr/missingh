@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 02:16:05 GMT	John Goerzen <jgoerzen@complete.org>	patch-38
+
+    Summary:
+      Added test utilities and first string test
+    Revision:
+      missingh--head--1.0--patch-38
+
+
+    new files:
+     testsrc/Strtest.hs testsrc/Testutil.hs
+
+    modified files:
+     ChangeLog testsrc/Tests.hs
+
+
 2004-10-07 02:06:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-37
 
     Summary:

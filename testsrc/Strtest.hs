@@ -1,4 +1,4 @@
-{- arch-tag: Tests main file
+{- arch-tag: Str tests main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -16,15 +16,23 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Tests(tests) where
+module Strtest(tests) where
 import HUnit
-import qualified Listtest
-import qualified Strtest
+import MissingH.Str
+import Testutil
 
-test1 = TestCase ("x" @=? "x")
+test_lstrip =
+    mapassertEqual "lstrip" lstrip
+                       [("", ""),
+                        ("a", "a"),
+                        (" a ", "a "),
+                        ("  abas", "abas"),
+                        ("\n\t fdsa", "fdsa"),
+                        ("abc def", "abc def")]
 
-tests = TestList [TestLabel "test1" test1,
-                 TestLabel "List" Listtest.tests,
-                 TestLabel "Str" Strtest.tests]
+tests = TestList [TestLabel "lstrip" (TestCase test_lstrip)
+                  ]
+
+
 
 
