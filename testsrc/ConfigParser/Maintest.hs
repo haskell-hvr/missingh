@@ -117,7 +117,8 @@ test_instances =
     let cp = p "[x]\na: true\nb: 1\nbad: never"
 	in [f2 "bool 1st" (Right True) (get cp "x" "a"),
 	    f2 "bool 1nd" (Right True) (get cp "x" "b"),
-            f2b "bad bool" (Left (ParseError "couldn't parse bool never from x/bad", "getbool")) (get cp "x" "bad")
+            f2b "bad bool" (Left (ParseError "couldn't parse bool never from x/bad", "getbool")) (get cp "x" "bad"),
+            f2 "number" (Right (1::Int)) (get cp "x" "b")
 	   ]
 
 
