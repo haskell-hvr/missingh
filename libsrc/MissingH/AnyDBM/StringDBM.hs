@@ -35,7 +35,8 @@ The data is written out during a call to 'flush' or 'close'.
 -}
 
 module MissingH.AnyDBM.StringDBM (StringDBM,
-                                  openStringDBM
+                                  openStringDBM,
+                                  SystemFS(..)
                                  )
 where
 import MissingH.AnyDBM
@@ -45,34 +46,44 @@ import MissingH.IO.HVIO
 import Data.HashTable
 
 {- | The type of the StringDBM instances. -}
-data StringDBM = StringDBM (HashTable String String) IOMode FilePath
+data StringDBM = forall a. HVFSOpenable a => StringDBM (HashTable String String) IOMode a FilePath
 
+{-
 {- | Opens a 'StringDBM' file.  Please note: only ReadMode, WriteMode,
 and ReadWriteMode are supported for the IOMode.  AppendMode is not supported. 
 -}
 openStringDBM :: FilePath -> IOMode -> IO StringDBM
-openStringDBM _ AppendMode = fail "openStringDBM: AppendMode is not supported"
-openStringDBM fp ReadMode =
+openStringDBM = openStringHVDBM SystemFS
+-}
+{- | Opens a 'StringDBM' file.  Please note: only ReadMode, WriteMode,
+and ReadWriteMode are supported for the IOMode.  AppendMode is not supported.
+
+To work on your system's normal (real) filesystem, just specify
+'SystemFS' for the first argument.
+-}
+openStringDBM :: HVFSOpenable a => a -> FilePath -> IOMode -> IO StringDBM
+openStringDBM _ _ AppendMode = fail "openStringDBM: AppendMode is not supported"
+openStringDBM h fp ReadMode =
     do ht <- new (==) hashString
-       readFile fp >>= strToA ht
-       return $ StringDBM ht ReadMode fp
-openStringDBM fp WriteMode =
+       vReadFile h fp >>= strToA ht
+       return $ StringDBM ht ReadMode h fp
+openStringDBM h fp WriteMode =
     do ht <- new (==) hashString
-       return $ StringDBM ht WriteMode fp
-openStringDBM fp ReadWriteMode =
+       return $ StringDBM ht WriteMode h fp
+openStringDBM h fp ReadWriteMode =
     -- Nothing different to start with.  Later, we emulate WriteMode.
     -- Nothing is ever read after the object is created.
-    do o <- openStringDBM fp ReadMode
+    do o <- openStringDBM h fp ReadMode
        case o of
-              StringDBM x _ y -> return $ StringDBM x WriteMode y
+              StringDBM x _ y z -> return $ StringDBM x WriteMode y z
 
 g :: StringDBM -> HashTable String String
-g (StringDBM ht _ _) = ht
+g (StringDBM ht _ _ _) = ht
 
 instance AnyDBM StringDBM where
-    flushA (StringDBM ht WriteMode fp) = 
+    flushA (StringDBM ht WriteMode h fp) = 
         do s <- strFromA ht
-           writeFile fp s
+           vWriteFile h fp s
     flushA _ = return ()
 
     insertA = insertA . g
