@@ -22,10 +22,11 @@ import MissingH.ConfigParser
 import Testutil
 import Control.Exception
 
+p inp = readstring empty inp
+f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
+f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
+
 test_basic =
-    let p inp = readstring empty inp
-        f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
-        in
         [
          f "empty doc, no sections" "" [] sections,
          f "one empty line" "\n" [] sections,
@@ -60,4 +61,13 @@ test_basic =
               "o1" @=? get cp "DEFAULT" "v1"
         ]
 
-tests = TestList [TestLabel "test_basic" (TestList test_basic)]
+test_defaults = 
+    let cp = p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes" in
+      [
+       f2 "default item" "ault" (get cp "sect1" "def")
+      ]
+
+     
+
+tests = TestList [TestLabel "test_basic" (TestList test_basic),
+                 TestLabel "test_defaults" (TestList test_defaults)]
