@@ -175,6 +175,7 @@ class HVFS a where
     vRemoveDirectory fs _ = eh fs "vRemoveDirectory"
     vRemoveFile fs _ = eh fs "vRemoveFile"
     vRenameFile fs _ _ = eh fs "vRenameFile"
+    vRenameDirectory fs _ _ = eh fs "vRenameDirectory"
     vCreateSymbolicLink fs _ _ = eh fs "vCreateSymbolicLink"
     vReadSymbolicLink fs _ = eh fs "vReadSymbolicLink"
     vCreateLink fs _ _ = eh fs "vCreateLink"

@@ -62,7 +62,7 @@ data MemoryEntry = MemoryDirectory [MemoryNode]
                  | MemoryFile String
 data MemoryVFS = MemoryVFS 
                { content :: IORef [MemoryNode],
-                 cwd :: IORef String
+                 cwd :: IORef FilePath
                }
 
 -- | Create a new 'MemoryVFS' object from an existing tree.
@@ -113,11 +113,26 @@ findMelem x path =
 getMelem :: MemoryVFS -> String -> IO MemoryEntry
 getMelem x s = 
     do base <- readIORef $ cwd x
-       case secureAbsNormPath base s of
+       case absNormPath base s of
            Nothing -> fail $ "Trouble normalizing path " ++ s
            Just newpath -> findMelem x newpath
 
-{-                       
 instance HVFS MemoryVFS where
     vGetCurrentDirectory x = readIORef $ cwd x
--}
+    vSetCurrentDirectory x fp =
+        do curpath <- vGetCurrentDirectory x
+           -- Make sure new dir is valid
+           newdir <- getMelem x fp
+           case newdir of 
+               (MemoryFile _) -> fail $ "Attempt to cwd to non-directory " ++ fp
+               (MemoryDirectory _) -> 
+                   case absNormPath curpath fp of
+                       Nothing -> fail $ "Bad internal error"
+                       Just y -> writeIORef (cwd x) y
+    vGetFileStatus x fp = 
+        do elem <- getMelem x fp
+           case elem of
+                     (MemoryFile _) -> return $ HVFSStatEncap $
+                                             SimpleStat {isFile = True}
+                     (MemoryDirectory _) -> return $ HVFSStatEncap $
+                                             SimpleStat {isFile = False}
