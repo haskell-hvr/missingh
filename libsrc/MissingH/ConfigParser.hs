@@ -108,31 +108,37 @@ new data taking precedence over the old.  However, unlike
 as set in the old object are preserved since the on-disk representation
 does not convey those options.
 
-May raise an exception on a syntax error or if the file could not be
-accessed.
+May return an error if there is a syntax error.  May raise an exception if the file could not be accessed.
 -}
-readfile :: ConfigParser -> FilePath -> IO (CPResult ConfigParser)
+readfile :: ConfigParser -> FilePath ->IO (CPResult ConfigParser)
+{-
 readfile cp fp = do n <- parse_file fp
-                    return $ readutil cp n
+                    return $ do y <- n
+                                return $ readutil cp y
+-}
+readfile cp fp = do n <- parse_file fp
+                    return $ n >>= (return . (readutil cp))
 
 {- | Like 'readfile', but uses an already-open handle.  You should
 use 'readfile' instead of this if possible, since it will be able to
 generate better error messages.
 
-May raise an exception on a syntax error.
+Errors would be returned on a syntax error.
 -}
 readhandle :: ConfigParser -> Handle -> IO (CPResult ConfigParser)
 readhandle cp h = do n <- parse_handle h
-                     return $ readutil cp n
+                     return $ n >>= (return . (readutil cp))
 
 {- | Like 'readfile', but uses a string.  You should use 'readfile'
 instead of this if you are processing a file, since it can generate
 better error messages.
 
-May raise an exception on a syntax error.
+Errors would be returned on a syntax error.
 -}
 readstring :: ConfigParser -> String -> CPResult ConfigParser
-readstring cp s = readutil cp $ parse_string s
+readstring cp s = do
+                  n <- parse_string s
+                  return $ readutil cp n
 
 {- | Returns a list of sections in your configuration file.  Never includes
 the always-present section @DEFAULT@. -}
@@ -151,7 +157,7 @@ section was already present.  Otherwise, returns the new
 add_section :: ConfigParser -> SectionSpec -> CPResult ConfigParser
 add_section cp s =
     if has_section cp s
-       then throwError $ SectionAlreadyExists ("add_section: section " ++ s ++ " already exists")
+       then throwError $ (SectionAlreadyExists s, "add_section")
        else return $ cp {content = addToFM (content cp) s emptyFM}
 
 {- | Returns a list of the names of all the options present in the
@@ -160,7 +166,7 @@ given section.
 Returns an error if the given section does not exist.
 -}
 options :: ConfigParser -> SectionSpec -> CPResult [OptionSpec]
-options cp x = maybeToEither (NoSection x) $ 
+options cp x = maybeToEither (NoSection x, "options") $ 
                do
                o <- lookupFM (content cp) x
                return $ keysFM o
@@ -210,13 +216,13 @@ getbool cp s o =
                   "no" -> return False
                   "off" -> return False
                   "disabled" -> return False
-                  _ -> throwError (ParseError $ "getbool: couldn't parse " ++
-                                   val ++ " from " ++ s ++ "/" ++ o)
+                  _ -> throwError (ParseError $ "couldn't parse bool " ++
+                                   val ++ " from " ++ s ++ "/" ++ o, "getbool")
 
 {- | Returns a list of @(optionname, value)@ pairs representing the content
 of the given section.  Returns an error the section is invalid. -}
 items :: ConfigParser -> SectionSpec -> CPResult [(OptionSpec, String)]
-items cp s = do fm <- maybeToEither (NoSection s) $ lookupFM (content cp) s
+items cp s = do fm <- maybeToEither (NoSection s, "items") $ lookupFM (content cp) s
                 return $ fmToList fm
 
 {- | Sets the option to a new value, replacing an existing one if it exists.
@@ -224,7 +230,7 @@ items cp s = do fm <- maybeToEither (NoSection s) $ lookupFM (content cp) s
 Returns an error if the section does not exist. -}
 set :: ConfigParser -> SectionSpec -> OptionSpec -> String -> CPResult ConfigParser
 set cp s passedo val = 
-    do sectmap <- maybeToEither (NoSection s) $ lookupFM (content cp) s
+    do sectmap <- maybeToEither (NoSection s, "set") $ lookupFM (content cp) s
        let o = (optionxform cp) passedo
        let newsect = addToFM sectmap o val
        let newmap = addToFM (content cp) s newsect

@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-29 20:00:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-116
+
+    Summary:
+      Converted error types
+    Revision:
+      missingh--head--0.5--patch-116
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+     libsrc/MissingH/ConfigParser/Types.hs
+
+
 2004-11-29 18:47:31 GMT	John Goerzen <jgoerzen@complete.org>	patch-115
 
     Summary:

@@ -67,10 +67,10 @@ parse_handle h =
 -- Private funcs
 ----------------------------------------------------------------------
 detokenize fp l =
-    let conv msg (Left err) = Left $ (ParseError $ msg ++ (show err))
+    let conv msg (Left err) = Left $ (ParseError (msg ++ (show err)), msg)
         conv msg (Right val) = Right val
-        in do r <- conv "Lexer: " l
-              conv "Parser: " $ runParser main () fp r
+        in do r <- conv "lexer" l
+              conv "parser" $ runParser main () fp r
 
 main :: GeneralizedTokenParser CPTok () ParseOutput
 main =

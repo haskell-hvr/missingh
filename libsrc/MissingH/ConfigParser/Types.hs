@@ -68,8 +68,11 @@ data CPErrorData = ParseError String        -- ^ Parse error
                  | OtherProblem String      -- ^ Miscellaneous error
                    deriving (Eq, Ord, Show)
 
-{- | Indicates an error occurred. -}
-type CPError = (CPErrorData, String)
+{- | Indicates an error occurred.  The String is an explanation of the location
+of the error. -}
+type CPError = (CPErrorData -- ^ The error itself
+               , String -- ^ Where it occurred
+               )
 
 instance Error CPError where
     noMsg = (OtherProblem "", "")
@@ -123,8 +126,8 @@ defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult Strin
 defdefaulthandler cp sect opt = 
     let fm = content cp
         lookup :: SectionSpec -> OptionSpec -> CPResult String
-        lookup s o = do sect <- maybeToEither (NoSection s) $ lookupFM fm s
-                        maybeToEither (NoOption o) $ lookupFM sect o
+        lookup s o = do sect <- maybeToEither (NoSection s, "lookup handler") $ lookupFM fm s
+                        maybeToEither (NoOption o, "lookup handler") $ lookupFM sect o
         trydefault :: CPError -> CPResult String
         trydefault e = if (usedefault cp)
                        then lookup "DEFAULT" opt
