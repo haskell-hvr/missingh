@@ -36,6 +36,7 @@ doc:
 	haddock -t 'MissingH API Manual' -h -o html $(SOURCES)
 
 clean:
+	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
-		`find . -name "*~"` *.a setup
+		`find . -name "*~"` *.a setup dist
 

@@ -5,5 +5,5 @@ License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2004 John Goerzen
-Exposed-Modules: MissingH.Listutil, MissingH.Strutil, MissingH.IOutil
+Modules: MissingH.Listutil, MissingH.Strutil, MissingH.IOutil
 HS-Source-Dir: libsrc
