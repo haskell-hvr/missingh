@@ -110,6 +110,11 @@ does not convey those options.
 
 May return an error if there is a syntax error.  May raise an exception if the file could not be accessed.
 -}
+
+retdata :: ConfigParser -> CPResult ParseOutput -> CPResult ConfigParser
+retdata cp x = do d <- x
+                  return $ readutil cp d
+
 readfile :: ConfigParser -> FilePath ->IO (CPResult ConfigParser)
 {-
 readfile cp fp = do n <- parse_file fp
@@ -117,7 +122,8 @@ readfile cp fp = do n <- parse_file fp
                                 return $ readutil cp y
 -}
 readfile cp fp = do n <- parse_file fp
-                    return $ n >>= (return . (readutil cp))
+                    return $ retdata cp n
+
 
 {- | Like 'readfile', but uses an already-open handle.  You should
 use 'readfile' instead of this if possible, since it will be able to
