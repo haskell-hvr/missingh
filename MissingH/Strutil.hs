@@ -26,7 +26,9 @@ module MissingH.Strutil(-- * Whitespace Removal
                         -- * Tests
                         -- | Note: These functions are aliases for functions
                         -- in "MissingH.Listutil".
-                        startswith, endswith
+                        startswith, endswith,
+                        -- * Conversions
+                        split
                        ) where
 import MissingH.Listutil(startswith, endswith)
 
@@ -63,3 +65,20 @@ lstrip s = case s of
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
+{- | Given a delimiter and a list (or string), split into components.
+
+Example:
+
+> split "," "foo,bar,,baz" -> ["foo", "bar", "", "baz"]
+-}
+split :: String -> String -> [String]
+split delim str =
+    let splitworker :: String -> String -> String -> [String]
+        splitworker delim [] [] = []
+        splitworker delim [] accum = [accum]
+        splitworker delim str accum =
+            if startswith delim str then
+               accum : splitworker delim (drop (length delim) str) []
+            else splitworker delim (tail str) (accum ++ [head str])
+        in
+        splitworker delim str []
