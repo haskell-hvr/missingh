@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-01 17:44:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-209
+
+    Summary:
+      New CSV module
+    Revision:
+      missingh--head--0.7--patch-209
+
+
+    new files:
+     MissingH/Str/.arch-ids/=id MissingH/Str/CSV.hs
+     testsrc/Str/.arch-ids/=id testsrc/Str/CSVtest.hs
+
+    modified files:
+     ChangeLog MissingH.cabal testsrc/Tests.hs
+
+    new directories:
+     MissingH/Str MissingH/Str/.arch-ids testsrc/Str
+     testsrc/Str/.arch-ids
+
+
 2005-03-15 16:28:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-208
 
     Summary:

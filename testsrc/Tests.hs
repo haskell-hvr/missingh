@@ -37,12 +37,14 @@ import qualified GZiptest
 import qualified HVIOtest
 import qualified HVFStest
 import qualified Timetest
+import qualified Str.CSVtest
 
 test1 = TestCase ("x" @=? "x")
 
 tests = TestList [TestLabel "test1" test1,
                  TestLabel "List" Listtest.tests,
                  TestLabel "Str" Strtest.tests,
+                 TestLabel "CSV" Str.CSVtest.tests,
                  TestLabel "Time" Timetest.tests,
                  TestLabel "FiniteMap" FiniteMaptest.tests,
                  TestLabel "AnyDBM" AnyDBMtest.tests,
