@@ -24,11 +24,16 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.IOutil(-- * Line Processing Utilities
                        hPutStrLns, hGetLines,
                        -- * Lazy Interaction
-                       hInteract, lineInteract, hLineInteract
+                       hInteract, lineInteract, hLineInteract,
+                       -- * Binary Files
+                       hPutBufStr, hGetBufStr, hFullGetBufStr
                         ) where
-import IO
-import System.IO.Unsafe
 
+import Foreign.Ptr
+import Foreign.ForeignPtr
+import Foreign.C.String
+import System.IO.Unsafe
+import System.IO
 
 {- | Given a list of strings, output a line containing each item, adding
 newlines as appropriate.  The list is not expected to have newlines already.
@@ -113,3 +118,43 @@ hLineInteract finput foutput func =
     do
     lines <- hGetLines finput
     hPutStrLns foutput (func lines)
+
+-- . **************************************************
+-- . Binary Files
+-- . **************************************************
+
+
+{- | As a wrapper around the standard function 'System.IO.hPutBuf',
+this function takes a standard Haskell 'String' instead of the far less
+convenient 'Ptr a'.  The entire contents of the string will be written
+as a binary buffer using 'hPutBuf'.  The length of the output will be
+the length of the string. -}
+hPutBufStr :: Handle -> String -> IO ()
+hPutBufStr f s = withCString s (\cs -> hPutBuf f cs (length s))
+
+{- | As a wrapper around the standard function 'System.IO.hGetBuf',
+this function returns a standard Haskell string instead of modifying
+a 'Ptr a' buffer.  The length is the maximum length to read and the
+semantice are the same as with 'hGetBuf'; namely, the empty string
+is returned with EOF is reached, and any given read may read fewer
+bytes than the given length. -}
+hGetBufStr :: Handle -> Int -> IO String
+hGetBufStr f count = do
+   fbuf <- mallocForeignPtrArray (count + 1)
+   withForeignPtr fbuf (\buf -> do
+                        bytesread <- hGetBuf f buf count
+                        haskstring <- peekCStringLen (buf, bytesread)
+                        return haskstring)
+
+{- | Like 'hGetBufStr', but guarantees that it will only return fewer than
+the requested number of bytes when EOF is encountered. -}
+hFullGetBufStr :: Handle -> Int -> IO String
+hFullGetBufStr f 0 = return ""
+hFullGetBufStr f count = do
+                         thisstr <- hGetBufStr f count
+                         if thisstr == "" -- EOF
+                            then return ""
+                            else do
+                                 remainder <- hFullGetBufStr f (count - (length thisstr))
+                                 return (thisstr ++ remainder)
+
