@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-29 13:37:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-22
+
+    Summary:
+      Disabled hugs tests
+    Revision:
+      missingh--head--0.5--patch-22
+
+
+    modified files:
+     ChangeLog debian/changelog debian/control debian/rules
+
+
 2004-10-29 13:27:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-21
 
     Summary:
