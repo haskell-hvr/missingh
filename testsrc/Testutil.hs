@@ -22,17 +22,15 @@ import qualified Control.Exception
 
 assertRaises :: Show a => Control.Exception.Exception -> IO a -> IO ()
 assertRaises selector action =
-    let test e =  if e == selector
-                  then Just e
-                  else Nothing
-        in
-        do
-        result <- Control.Exception.tryJust test action
-        case result of
-             Left e -> return ()
-             Right x -> assertFailure ("Received " ++ (show x) ++
-                                       " instead of expected exception "
-                                       ++ (show selector))
+    let thetest e = if e == selector then return ()
+                    else assertFailure $ "Received unexpected exception: "
+                             ++ (show e) ++ "\ninstead of exception: " ++ (show selector)
+        in do
+           r <- Control.Exception.try action
+           case r of
+                  Left e -> thetest e
+                  Right x -> assertFailure $ "Received no exception, but was expecting exception: " ++ (show selector)
+
 mapassertEqual :: (Show b, Eq b) => String -> (a -> b) -> [(a, b)] -> Assertion
 mapassertEqual descrip func [] = return ()
 mapassertEqual descrip func ((inp,result):xs) =

@@ -20,6 +20,7 @@ module ConfigParser.Parsertest(tests) where
 import HUnit
 import MissingH.ConfigParser.Parser
 import Testutil
+import Control.Exception
 
 test_basic =
     let f inp exp = exp @=? parse_string inp in
@@ -35,6 +36,10 @@ test_basic =
           [("Cemptysect", [])]
         f "[emptysect]\n# [nonexistant]\n" [("emptysect", [])]
         f "[sect1]\nfoo: bar\n" [("sect1", [("foo", "bar")])]
+        f "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\n o3: v3"
+          [("sect1", [("o1", "v1"), ("o2", "v2"), ("o3", "v3")])]
+        assertRaises (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
+                      (f "#foo\nthis is bad data" [])
         f "foo: bar" [("DEFAULT", [("foo", "bar")])]
 
 tests = TestList [TestLabel "test_basic" (TestCase test_basic)
