@@ -45,7 +45,8 @@ test_content =
     let f exp fp = TestLabel exp $ TestCase $
                      do x <- newMemoryVFS testTree
                         h <- vOpen x fp ReadMode
-                        exp `ioeq` vGetContents h
+                        case h of
+                           HVFSOpenEncap h2 -> exp `ioeq` vGetContents h2
         in
         [
          f "line1\nline2\n" "test.txt",

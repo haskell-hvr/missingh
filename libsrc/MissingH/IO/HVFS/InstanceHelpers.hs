@@ -150,14 +150,14 @@ instance HVFS MemoryVFS where
                                   (Just fp)
                 MemoryDirectory c -> return $ map fst c
 
-instance HVFSOpenable MemoryVFS StreamReader where
+instance HVFSOpenable MemoryVFS where
     vOpen x fp (ReadMode) = 
         do elem <- getMelem x fp
            case elem of 
                 MemoryDirectory _ -> vRaiseError x doesNotExistErrorType
                                       "Can't open a directory"
                                       (Just fp)
-                MemoryFile y -> newStreamReader y
+                MemoryFile y -> newStreamReader y >>= return . HVFSOpenEncap
     vOpen x fp _ = vRaiseError x permissionErrorType
                      "Only ReadMode is supported with MemoryVFS files"
                      (Just fp)

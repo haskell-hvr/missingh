@@ -34,7 +34,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
                         HVFS(..), HVFSStat(..), HVFSStatEncap(..),
-                        HVFSOpenable(..),
+                        HVFSOpenable(..), HVFSOpenEncap(..),
                         -- * Re-exported types from other modules
                         FilePath, DeviceID, FileID, FileMode, LinkCount,
                         UserID, GroupID, FileOffset, EpochTime,
@@ -57,6 +57,10 @@ typing restrictions.  You can get at it with:
 >    HVFSStatEncap x -> -- now use x
 -}
 data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
+
+{- | Similar for 'vOpen' result.
+-}
+data HVFSOpenEncap = forall a. HVIO a => HVFSOpenEncap a
 
 {- | Evaluating types of files and information about them.
 
@@ -187,8 +191,8 @@ eh :: HVFS a => a -> String -> IO c
 eh fs desc = vRaiseError fs illegalOperationErrorType 
              (desc ++ " is not implemented in this HVFS class") Nothing
 
-class (HVFS a, HVIOGeneric c) => HVFSOpenable a c where
-    vOpen :: a -> FilePath -> IOMode -> IO c
+class HVFS a => HVFSOpenable a where
+    vOpen :: a -> FilePath -> IOMode -> IO HVFSOpenEncap
 
 ----------------------------------------------------------------------
 -- Standard implementations
@@ -234,5 +238,5 @@ instance HVFS SystemFS where
     vReadSymbolicLink _ = readSymbolicLink
     vCreateLink _ = createLink
 
-instance HVFSOpenable SystemFS Handle where
-    vOpen _ fp iomode = openFile fp iomode
+instance HVFSOpenable SystemFS where
+    vOpen _ fp iomode = openFile fp iomode >>= return . HVFSOpenEncap

@@ -50,10 +50,7 @@ HVIO provides the following general features:
  * Provide easier unit testing capabilities for I\/O actions
 
 HVIO defines several basic type classes that you can use.  You will mostly
-be interested in 'HVIOReader', 'HVIOWriter', and 'HVIOSeeker'.  Objects that
-support reading will be an instance of 'HVIOReader'; those that suport writing,
-'HVIOWriter'; and those that support seeking (random access), 'HVIOSeeker'.
-Some, such as Handle, will be an instance of all of these.
+be interested in 'HVIO'.
 
 It's trivial to adapt old code to work with HVIO.  For instance, consider
 this example of old and new code:
@@ -63,7 +60,7 @@ this example of old and new code:
 
 And now, the new way:
 
->printMsg :: HVIOWriter h => h -> String -> IO ()
+>printMsg :: HVIO h => h -> String -> IO ()
 >printMsg h msg = vPutStr h ("msg: " ++ msg)
 
 There are several points to note about this conversion:
@@ -113,10 +110,7 @@ with a call to 'newHVIOPipe'.
 -}
 
 module MissingH.IO.HVIO(-- * Implementation Classes
-                     HVIOGeneric(..), 
-                     HVIOReader(..),
-                     HVIOWriter(..),
-                     HVIOSeeker(..),
+                     HVIO(..), 
                      -- * Standard HVIO Implementations
 
                      -- ** Handle
@@ -139,16 +133,28 @@ import Control.Concurrent.MVar
 import Data.IORef
 
 {- | This is the generic I\/O support class.  All objects that are to be used
-in the HVIO system must provide an instance of 'HVIOGeneric'.
+in the HVIO system must provide an instance of 'HVIO'.
 
 Functions in this class provide an interface with the same specification as
 the similar functions in System.IO.  Please refer to that documentation
 for a more complete specification than is provided here.
 
-Instances of 'HVIOGeneric' must provide 'vClose', 'vIsEOF', and either
+Instances of 'HVIO' must provide 'vClose', 'vIsEOF', and either
 'vIsOpen' or 'vIsClosed'.
+
+Implementators of readable objects must provide at least 'vGetChar'
+and 'vIsReadable'.
+An implementation of 'vGetContents' is also highly suggested, since
+the default cannot implement proper partial closing semantics.
+
+Implementators of writable objects must provide at least 'vPutChar' and
+'vIsWritable'.
+
+Implementators of seekable objects must provide at least 
+'vIsSeekable', 'vTell', and 'vSeek'.
+
 -}
-class (Show a) => HVIOGeneric a where
+class (Show a) => HVIO a where
     -- | Close a file
     vClose :: a -> IO ()
     -- | Test if a file is open
@@ -179,45 +185,6 @@ class (Show a) => HVIOGeneric a where
     -- a wrapper around a call to 'vIsEOF'.
     vTestEOF :: a -> IO ()
 
-    vShow x = return (show x)
-
-    vMkIOError _ et desc mfp =
-        mkIOError et desc Nothing mfp
-
-    vGetFP _ = return Nothing
-
-    vThrow h et = do
-                  fp <- vGetFP h
-                  ioError (vMkIOError h et "" fp)
-
-    vTestEOF h = do e <- vIsEOF h
-                    if e then vThrow h eofErrorType
-                       else return ()
-
-    vIsOpen h = vIsClosed h >>= return . not
-    vIsClosed h = vIsOpen h >>= return . not
-    vTestOpen h = do e <- vIsClosed h
-                     if e then vThrow h illegalOperationErrorType
-                        else return ()
-
-{- | This class defines reading functions.  Any object that can provide
-reading capabilities should define an instance of this type class.
-
-Functions in this class provide an interface with the same specification as
-the similar functions in System.IO.  Please refer to that documentation
-for a more complete specification than is provided here.
-
-Implementators must provide at least 'vGetChar'.
-An implementation of 'vGetContents' is also highly suggested, since
-the default cannot implement proper partial closing semantics.
-
-Being a member of the 'HVIOReader' class only means that an object, in general,
-has reading capabilities -- and not that any particular one supports reading.
-For instance, Handle implements HVIOReader, but a Handle could be open
-write-only, and thus read attempts on it would fail.  You may use 'vIsReadable'
-to ensure that a particular instance is open for reading.
--}
-class (HVIOGeneric a) => HVIOReader a where
     -- | Read one character
     vGetChar :: a -> IO Char
     -- | Read one line
@@ -244,7 +211,59 @@ class (HVIOGeneric a) => HVIOReader a where
     -- | Indicate whether a particular item is available for reading.
     vIsReadable :: a -> IO Bool
 
-    vIsReadable _ = return True
+    -- | Write one character
+    vPutChar :: a -> Char -> IO ()
+    -- | Write a string
+    vPutStr :: a -> String -> IO ()
+    -- | Write a string with newline character after it
+    vPutStrLn :: a -> String -> IO ()
+    -- | Write a string representation of the argument, plus a newline.
+    vPrint :: Show b => a -> b -> IO ()
+    -- | Flush any output buffers.
+    -- Note: implementations should assure that a vFlush is automatically 
+    -- performed
+    -- on file close, if necessary to ensure all data sent is written.
+    vFlush :: a -> IO ()
+    -- | Indicate whether or not this particular object supports writing.
+    vIsWritable :: a -> IO Bool
+
+    -- | Seek to a specific location.
+    vSeek :: a -> SeekMode -> Integer -> IO ()
+
+    -- | Get the current position.
+    vTell :: a -> IO Integer
+
+    -- | Convenience function to reset the file pointer to the beginning
+    -- of the file.  A call to @vRewind h@ is the
+    -- same as @'vSeek' h AbsoluteSeek 0@.
+    vRewind :: a -> IO ()
+
+    -- | Indicate whether this instance supports seeking.
+    vIsSeekable :: a -> IO Bool
+
+    vShow x = return (show x)
+
+    vMkIOError _ et desc mfp =
+        mkIOError et desc Nothing mfp
+
+    vGetFP _ = return Nothing
+
+    vThrow h et = do
+                  fp <- vGetFP h
+                  ioError (vMkIOError h et "" fp)
+
+    vTestEOF h = do e <- vIsEOF h
+                    if e then vThrow h eofErrorType
+                       else return ()
+
+    vIsOpen h = vIsClosed h >>= return . not
+    vIsClosed h = vIsOpen h >>= return . not
+    vTestOpen h = do e <- vIsClosed h
+                     if e then vThrow h illegalOperationErrorType
+                        else return ()
+
+
+    vIsReadable _ = return False
 
     vGetLine h = 
         let loop accum = 
@@ -277,40 +296,8 @@ class (HVIOGeneric a) => HVIOReader a where
     vReady h = do vTestEOF h
                   return True
 
-{- | Objects that implement 'HVIOWriter' provide writing capabilities.
-Any object that can handle output should define an instance of this class.
 
-Functions in this class provide an interface with the same specification as
-the similar functions in System.IO.  Please refer to that documentation
-for a more complete specification than is provided here.
-
-Implementators of 'HVIOWriter' objects must provide at least 'vPutChar'.
-
-Being a member of the 'HVIOWriter' class only means that an object, in general,
-has writing capabilities -- and not that any particular one supports writing.
-For instance, Handle implements HVIOWriter, but a Handle could be open
-read-only, and thus write attempts on it would fail.  You may use 'vIsWritable'
-to ensure that a particular instance is open for reading.
- -}
-
-class (HVIOGeneric a) => HVIOWriter a where
-    -- | Write one character
-    vPutChar :: a -> Char -> IO ()
-    -- | Write a string
-    vPutStr :: a -> String -> IO ()
-    -- | Write a string with newline character after it
-    vPutStrLn :: a -> String -> IO ()
-    -- | Write a string representation of the argument, plus a newline.
-    vPrint :: Show b => a -> b -> IO ()
-    -- | Flush any output buffers.
-    -- Note: implementations should assure that a vFlush is automatically 
-    -- performed
-    -- on file close, if necessary to ensure all data sent is written.
-    vFlush :: a -> IO ()
-    -- | Indicate whether or not this particular object supports writing.
-    vIsWritable :: a -> IO Bool
-
-    vIsWritable _ = return True
+    vIsWritable _ = return False
 
     vPutStr _ [] = return ()
     vPutStr h (x:xs) = do vPutChar h x
@@ -322,71 +309,38 @@ class (HVIOGeneric a) => HVIOWriter a where
                  
     vFlush = vTestOpen
 
-{- | This class defines seekable (random-access) objects.  Anything that is
-a member of this class can have its file pointer repositioned forwards or
-backwards.
 
-Implementators must provide at least 'vTell' and 'vSeek'.
-
-Functions in this class provide an interface with the same specification as
-the similar functions in System.IO.  Please refer to that documentation
-for a more complete specification than is provided here.
-
-Being a member of the 'HVIOSeeker' class only means that an object, in general,
-has seeker capabilities -- and not that any particular one supports writing.
-For instance, Handle implements HVIOSeeker, but a Handle could be open
-on a terminal device, and thus seek attempts on it would fail.  You may use
-'vIsSeekable' to ensure that a particular instance supports seeking.
-
--}
-
-class (HVIOGeneric a) => HVIOSeeker a where
-    -- | Seek to a specific location.
-    vSeek :: a -> SeekMode -> Integer -> IO ()
-
-    -- | Get the current position.
-    vTell :: a -> IO Integer
-
-    -- | Convenience function to reset the file pointer to the beginning
-    -- of the file.  A call to @vRewind h@ is the
-    -- same as @'vSeek' h AbsoluteSeek 0@.
-    vRewind :: a -> IO ()
-
-    -- | Indicate whether this instance supports seeking.
-    vIsSeekable :: a -> IO Bool
-
-    vIsSeekable _ = return True
+    vIsSeekable _ = return False
 
     vRewind h = vSeek h AbsoluteSeek 0
+
+    vPutChar h _ = vThrow h illegalOperationErrorType
+    vSeek h _ _ = vThrow h illegalOperationErrorType
+    vTell h = vThrow h illegalOperationErrorType
+    vGetChar h = vThrow h illegalOperationErrorType
+    
 
 ----------------------------------------------------------------------
 -- Handle instances
 ----------------------------------------------------------------------
 
--- | FOO2
-instance HVIOGeneric Handle where
+instance HVIO Handle where
     vClose = hClose
     vIsEOF = hIsEOF
     --vShow = hShow
     vMkIOError h et desc mfp =
         mkIOError et desc (Just h) mfp
-
-instance HVIOReader Handle where
     vGetChar = hGetChar
     vGetLine = hGetLine
     vGetContents = hGetContents
     vReady = hReady
     vIsReadable = hIsReadable
-
-instance HVIOWriter Handle where
     vPutChar = hPutChar
     vPutStr = hPutStr
     vPutStrLn = hPutStrLn
     vPrint = hPrint
     vFlush = hFlush
     vIsWritable = hIsWritable
-
-instance HVIOSeeker Handle where
     vSeek = hSeek
     vTell = hTell
     vIsSeekable = hIsSeekable
@@ -435,7 +389,7 @@ srv (StreamReader x) = x
 instance Show StreamReader where
     show _ = "<StreamReader>"
 
-instance HVIOGeneric StreamReader where
+instance HVIO StreamReader where
     vClose = vioc_close . srv
     vIsEOF h = do vTestOpen h
                   d <- vioc_get (srv h)
@@ -443,8 +397,6 @@ instance HVIOGeneric StreamReader where
                                   [] -> True
                                   _ -> False
     vIsOpen = vioc_isopen . srv
-
-instance HVIOReader StreamReader where
     vGetChar h = do vTestEOF h
                     c <- vioc_get (srv h)
                     let retval = head c
@@ -455,6 +407,7 @@ instance HVIOReader StreamReader where
                         c <- vioc_get (srv h)
                         vClose h
                         return c
+    vIsReadable _ = return True
 
 ----------------------------------------------------------------------
 -- Buffers
@@ -502,14 +455,12 @@ getMemoryBuffer h = do c <- vioc_get (vrv h)
 instance Show MemoryBuffer where
     show _ = "<MemoryBuffer>"
 
-instance HVIOGeneric MemoryBuffer where
+instance HVIO MemoryBuffer where
     vClose = vioc_close . vrv
     vIsEOF h = do vTestOpen h
                   c <- vioc_get (vrv h)
                   return ((length (snd c)) == (fst c))
     vIsOpen = vioc_isopen . vrv
-
-instance HVIOReader MemoryBuffer where
     vGetChar h = do vTestEOF h
                     c <- vioc_get (vrv h)
                     let retval = (snd c) !! (fst c)
@@ -521,15 +472,14 @@ instance HVIOReader MemoryBuffer where
                         vioc_set (vrv h) (-1, "")
                         vClose h
                         return retval
+    vIsReadable h = return True
 
-instance HVIOWriter MemoryBuffer where
     vPutStr h s = do (pos, buf) <- vioc_get (vrv h)
                      let (pre, post) = splitAt pos buf
                      let newbuf = pre ++ s ++ (drop (length buf) post)
                      vioc_set (vrv h) (pos + (length s), newbuf)
     vPutChar h c = vPutStr h [c]
-
-instance HVIOSeeker MemoryBuffer where
+    vIsWritable h = return True
     vTell h = do v <- vioc_get (vrv h)
                  return . fromIntegral $ (fst v)
     vSeek h seekmode seekposp = 
@@ -543,6 +493,7 @@ instance HVIOSeeker MemoryBuffer where
                                 then replicate (newpos - (length buf)) '\0'
                                 else []
            vioc_set (vrv h) (newpos, buf2)
+    vIsSeekable h = return True
 
 ----------------------------------------------------------------------
 -- Pipes
@@ -590,7 +541,10 @@ prv (PipeReader x) = x
 instance Show PipeReader where
     show x = "<PipeReader>"
 
-instance HVIOGeneric PipeReader where
+pr_getc h = do mv <- vioc_get (prv h)
+               takeMVar mv
+
+instance HVIO PipeReader where
     vClose = vioc_close . prv
     vIsOpen = vioc_isopen . prv
     vIsEOF h = do vTestOpen h
@@ -598,10 +552,6 @@ instance HVIOGeneric PipeReader where
                   dat <- readMVar mv
                   return (dat == PipeEOF)
 
-pr_getc h = do mv <- vioc_get (prv h)
-               takeMVar mv
-
-instance HVIOReader PipeReader where
     vGetChar h = do vTestEOF h
                     c <- pr_getc h
                     case c of 
@@ -616,6 +566,7 @@ instance HVIOReader PipeReader where
                                           return (x : next)
         in do vTestEOF h
               loop
+    vIsReadable _ = return True
                         
 ------------------------------
 -- Pipe Writer
@@ -629,7 +580,7 @@ pwmv (PipeWriter x) = do mv1 <- vioc_get x
 instance Show PipeWriter where
     show x = "<PipeWriter>"
 
-instance HVIOGeneric PipeWriter where
+instance HVIO PipeWriter where
     vClose h = do o <- vIsOpen h
                   if o then do
                             mv <- pwmv h
@@ -640,7 +591,6 @@ instance HVIOGeneric PipeWriter where
     vIsEOF h = do vTestOpen h
                   return False
 
-instance HVIOWriter PipeWriter where
     -- FIXME: race condition below (could be closed after testing)
     vPutChar h c = do vTestOpen h
                       child <- vioc_get (pwv h)
@@ -649,3 +599,4 @@ instance HVIOWriter PipeWriter where
                          then do mv <- pwmv h
                                  putMVar mv (PipeBit c)
                          else fail "PipeWriter: Couldn't write to pipe because child end is closed"
+    vIsWritable _ = return True

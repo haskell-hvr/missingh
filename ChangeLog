@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 22:31:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-114
+
+    Summary:
+      Eliminated separate HVIO clases; unified under one main HVIO class
+    Revision:
+      missingh--head--0.7--patch-114
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS.hs
+     libsrc/MissingH/IO/HVFS/InstanceHelpers.hs
+     libsrc/MissingH/IO/HVIO.hs testsrc/HVFStest.hs
+
+
 2004-12-20 21:59:05 GMT	John Goerzen <jgoerzen@complete.org>	patch-113
 
     Summary:
