@@ -69,7 +69,6 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.AnyDBM,
     MissingH.AnyDBM.FiniteMapDBM,
     MissingH.AnyDBM.StringDBM
-HS-Source-Dir: libsrc
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances
 Build-Depends: haskell-src, network, unix, parsec

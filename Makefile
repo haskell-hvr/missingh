@@ -15,11 +15,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-SOURCES := $(wildcard libsrc/MissingH/*.hs) \
-	$(wildcard libsrc/MissingH/*/*.hs) \
-	$(wildcard libsrc/MissingH/*/*/*.hs) 
-LHSSOURCES := $(wildcard libsrc/MissingH/*/*.lhs) \
-	$(wildcard libsrc/MissingH/*/*/*.lhs)
+SOURCES := $(wildcard MissingH/*.hs) \
+	$(wildcard MissingH/*/*.hs) \
+	$(wildcard MissingH/*/*/*.hs) 
+LHSSOURCES := $(wildcard MissingH/*/*.lhs) \
+	$(wildcard MissingH/*/*/*.lhs)
 O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
 OBJS := $(O1:.lhs=.o)
 
@@ -80,13 +80,13 @@ test-ghc6: testsrc/runtests
 	testsrc/runtests 
 
 test-hugs:
-	runhugs -98 +o -P$(PWD)/libsrc:$(PWD)/testsrc: testsrc/runtests.hs
+	runhugs -98 +o -P$(PWD):$(PWD)/testsrc: testsrc/runtests.hs
 
 interact-hugs:
-	hugs -98 +o -P$(PWD)/libsrc:
+	hugs -98 +o -P$(PWD):
 
 interact-ghci: all
-	ghci -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc
+	ghci -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts
 
 interact: interact-hugs
 
