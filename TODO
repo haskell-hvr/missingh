@@ -3,6 +3,9 @@ arch-tag: TODO file
 Printf:
  make %H work 
 
-Test configparser according to spec
+test configparser:
+ * according to ocaml spec
+ * with various default options
+ * exception system
 
 tests for new Parsec stuff
