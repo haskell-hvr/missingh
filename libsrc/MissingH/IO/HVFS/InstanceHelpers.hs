@@ -40,6 +40,9 @@ module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
 where
 import MissingH.IO.HVFS
 import Data.IORef
+import MissingH.Path
+import MissingH.Path.NameManip
+import Control.Monad.Error
 
 {- | A simple class that assumes that everything is either a file
 or a directory. -}
@@ -75,4 +78,46 @@ newMemoryVFSRef r = do
                     c <- newIORef "/"
                     return (MemoryVFS {content = r, cwd = c})
 
+-- | Find an element on the tree, assuming a normalized path
+findMelem :: MemoryVFS -> String -> IO MemoryEntry
+findMelem x "/" = readIORef (content x) >>= return . MemoryDirectory
+findMelem x path =
+    let sliced1 = slice_path path
+        h = head sliced1
+        t = tail sliced1
+        newh = if (h /= "/") && head h == '/' then tail h else h
+        sliced2 = newh : t
+                  
+        -- Walk the tree
+        walk :: MemoryEntry -> [String] -> Either String MemoryEntry
+        -- Empty list -- return the item we have
+        walk y [] = Right y
+        -- Root directory -- return the item we have
+        walk y ["/"] = Right y
+        -- File but stuff: error
+        walk (MemoryFile _) (x : _) = 
+            Left $ "Attempt to look up name " ++ x ++ " in file"
+        walk (MemoryDirectory y) (x : xs) =
+            let newentry = case lookup x y of
+                                Nothing -> Left $ "Couldn't find entry " ++ x
+                                Just z -> Right z
+                in do newobj <- newentry
+                      walk newobj xs
+        in do
+           c <- readIORef $ content x
+           case walk (MemoryDirectory c) (slice_path path) of
+              Left err -> fail err
+              Right result -> return result
 
+-- | Find an element on the tree, normalizing the path first
+getMelem :: MemoryVFS -> String -> IO MemoryEntry
+getMelem x s = 
+    do base <- readIORef $ cwd x
+       case secureAbsNormPath base s of
+           Nothing -> fail $ "Trouble normalizing path " ++ s
+           Just newpath -> findMelem x newpath
+
+{-                       
+instance HVFS MemoryVFS where
+    vGetCurrentDirectory x = readIORef $ cwd x
+-}
