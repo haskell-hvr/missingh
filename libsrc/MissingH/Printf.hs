@@ -128,12 +128,12 @@ normLookup xs (y : ys) =
          _ -> error $ "Problem matching format string at %" ++ xs
 
 alre = mkRegex "^\\(([^)]+)\\)"
-alLookup :: String -> PrintfAL -> (String, String)
-alLookup xs y =
+gLookup :: (String -> a -> Maybe Value) -> String -> a -> (String, String)
+gLookup lookupfunc xs y =
     case matchRegexAll alre xs of
          Nothing -> error $ "No varname in keyed lookup at %" ++ xs
          Just (_, _, remainder, [varname]) ->
-             let val = case lookup varname y of
+             let val = case lookupfunc varname y of
                                Just z -> z
                                Nothing -> error $ 
                                           "Failed to find key " ++ varname ++
@@ -158,7 +158,7 @@ sprintfAL :: String -> PrintfAL -> String
 sprintfAL [] _ = []
 sprintfAL ('%' : '%' : xs) y = '%' : sprintfAL xs y
 sprintfAL ('%' : xs) y =
-    let (this, remainder) = alLookup xs y
+    let (this, remainder) = (gLookup lookup) xs y
         in
         this ++ sprintfAL remainder y
 sprintfAL (x:xs) y = x : sprintfAL xs y

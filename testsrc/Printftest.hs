@@ -56,7 +56,7 @@ test_vsprintf_generics =
     do
     "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Int)
     "%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
-    "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Rational)
+                          "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Rational)
     "quux: 3.140000e+02" @=? vsprintf "%s: %e" "quux" (314::Double)
     "fe" @=? vsprintf "%x" (254::Int)
     "FE" @=? vsprintf "%X" (254::Int)
