@@ -55,10 +55,10 @@ comment_chars = oneOf "#;"
 eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"
 optionsep = oneOf ":=" <?> "Option separator"
 whitespace_chars = oneOf " \t" <?> "Whitespace"
-comment_line = do skipMany whitespace_chars
-                  comment_chars
-                  many1 $ noneOf "\r\n"
-empty_line = many1 whitespace_chars
+comment_line = do skipMany whitespace_chars <?> "whitespace in comment"
+                  comment_chars             <?> "start of comment"
+                  (many1 $ noneOf "\r\n")   <?> "content of comment"
+empty_line = many1 whitespace_chars         <?> "empty line"
 sectheader_chars = noneOf "]\r\n"
 sectheader = do char '['
                 sname <- many1 $ sectheader_chars
@@ -83,9 +83,9 @@ optionpair = do
 loken :: Parser [CPTok]
 loken =
     -- Ignore these things
-    do {eol; loken}
-    <|> do {comment_line; loken}
-    <|> do {empty_line; loken}
+    do {eol; loken}                     
+    <|> try (do {comment_line; loken})
+    <|> try (do {empty_line; loken})
     
     -- Real stuff
     <|> do {sname <- sectheader; next <- loken; return $ NEWSECTION sname : next}

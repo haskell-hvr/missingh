@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 18:44:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-78
+
+    Summary:
+      Fixed comment line / empty line conflict
+    Revision:
+      missingh--head--0.5--patch-78
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser/Lexer.hs
+     testsrc/ConfigParser/Parsertest.hs
+
+
 2004-11-18 18:36:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-77
 
     Summary:
