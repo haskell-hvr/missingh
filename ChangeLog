@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 15:37:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-121
+
+    Summary:
+      Checkpointing work on tests
+    Revision:
+      missingh--head--0.5--patch-121
+
+
+    new files:
+     testsrc/Eithertest.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser/Parser.hs
+     libsrc/MissingH/Either.hs testsrc/ConfigParser/Maintest.hs
+     testsrc/ConfigParser/Parsertest.hs testsrc/Tests.hs
+
+
 2004-11-30 15:08:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-120
 
     Summary:

@@ -19,11 +19,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module ConfigParser.Parsertest(tests) where
 import HUnit
 import MissingH.ConfigParser.Parser
+import MissingH.ConfigParser.Types
 import Testutil
 import Control.Exception
 
 test_basic =
-    let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" exp (parse_string inp) in
+    let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (parse_string inp) in
         [
         f "empty string" "" []
 
@@ -56,16 +57,26 @@ test_basic =
                ]
 
 test_asserts =
-        do
+    let f msg inp exp = TestLabel msg $ TestCase $ exp @=? parse_string inp in
+        [
+         f "e test1" "#foo\nthis is bad data"
+                     (Left (ParseError "\"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator", "Lexer"))
+        ,f "e test2" "[sect1]\n#iiiiii \n  extensionline\n#foo"
+                     (Left (ParseError "\"(string)\" (line 2, column 9):\nunexpected \"\\n\"\nexpecting Option separator", "Lexer"))
+        ]
+        
+{-
+        
 
         assertRaises "e test1" (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
                       ([] @=? parse_string "#foo\nthis is bad data")
 
         assertRaises "e test2" (ErrorCall "Lexer: \"(string)\" (line 2, column 9):\nunexpected \"\\n\"\nexpecting Option separator")
                      ([] @=? parse_string "[sect1]\n#iiiiii \n  extensionline\n#foo")
+-}
 
 test_extensionlines =
-    let f inp exp = exp @=? parse_string inp in
+    let f inp exp = (Right exp) @=? parse_string inp in
         do
         f "[sect1]\nfoo: bar\nbaz: l1\n l2\n   l3\n# c\nquux: asdf"
           [("sect1", [("foo", "bar"),
@@ -73,6 +84,6 @@ test_extensionlines =
                       ("quux", "asdf")])]
 
 tests = TestList [TestLabel "test_basic" (TestList test_basic),
-                  TestLabel "test_asserts" (TestCase test_asserts),
+                  TestLabel "test_asserts" (TestList test_asserts),
                   TestLabel "test_extensionlines" (TestCase test_extensionlines)
                  ]

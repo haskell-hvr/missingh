@@ -19,52 +19,54 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module ConfigParser.Maintest(tests) where
 import HUnit
 import MissingH.ConfigParser
+import MissingH.Either
 import Testutil
 import Control.Exception
 
-p inp = readstring empty inp
-f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
+p inp = forceEither $ readstring empty inp
+f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv (p inp))
 f2 msg exp res = TestLabel msg $ TestCase $ assertEqual "" exp res
+f3 msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" exp (conv (p inp))
 
 test_basic =
         [
-         f "empty doc, no sections" "" [] sections,
-         f "one empty line" "\n" [] sections,
-         f "comment line only" "#foo bar" [] sections,
-         f "comment line with \\n" "#foo bar\n" [] sections,
-         f "one empty sect" "[emptysect]" ["emptysect"] sections,
-         f "one empty sect w comment" "#foo bar\n[emptysect]\n" ["emptysect"]
-           sections,
-         f "assure comments not processed"
-           "# [nonexistant]\n[emptysect]\n" ["emptysect"] sections,
-         f "1 empty s w/comments"
-           "#fo\n[Cemptysect]\n#asdf boo\n  \n  # fnonexistantg"
-           ["Cemptysect"] sections,
-         f "1 empty s, comments, EOL"
-           "[emptysect]\n# [nonexistant]\n" ["emptysect"] sections,
+         f3 "empty doc, no sections" "" [] sections,
+         f3 "one empty line" "\n" [] sections,
+         f3 "comment line only" "#foo bar" [] sections,
+         f3 "comment line with \\n" "#foo bar\n" [] sections,
+         f3 "one empty sect" "[emptysect]" ["emptysect"] sections,
+         f3 "one empty sect w comment" "#foo bar\n[emptysect]\n" ["emptysect"]
+            sections,
+         f3 "assure comments not processed"
+            "# [nonexistant]\n[emptysect]\n" ["emptysect"] sections,
+         f3 "1 empty s w/comments"
+            "#fo\n[Cemptysect]\n#asdf boo\n  \n  # fnonexistantg"
+            ["Cemptysect"] sections,
+         f3 "1 empty s, comments, EOL"
+            "[emptysect]\n# [nonexistant]\n" ["emptysect"] sections,
          TestLabel "1 sec w/option" $ TestCase $
            do let cp = p "[sect1]\nfoo: bar\n"
               ["sect1"] @=? sections cp
-              "bar" @=? get cp "sect1" "foo"
+              (Right "bar") @=? get cp "sect1" "foo"
         , f "comments in option text"
             "[s1]\no1: v1#v2\n"
             "v1#v2" (\cp -> get cp "s1" "o1")
         , TestLabel "mult options" $ TestCase $
            do let cp = p "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\no3: v3"
-              ["o1", "o2", "o3"] @=? options cp "sect1"
+              Right ["o1", "o2", "o3"] @=? options cp "sect1"
               ["sect1"] @=? sections cp
-              "v2" @=? get cp "sect1" "o2"
+              Right "v2" @=? get cp "sect1" "o2"
         , TestLabel "sectionless option" $ TestCase $
            do let cp = p "v1: o1\n[sect1]\nv2: o2"
-              "o1" @=? get cp "sect1" "v1"
-              "o2" @=? get cp "sect1" "v2"
-              "o1" @=? get cp "DEFAULT" "v1"
+              Right "o1" @=? get cp "sect1" "v1"
+              Right "o2" @=? get cp "sect1" "v2"
+              Right "o1" @=? get cp "DEFAULT" "v1"
         ]
 
 test_defaults = 
     let cp = p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes" in
       [
-       f2 "default item" "ault" (get cp "sect1" "def")
+       f2 "default item" (Right "ault") (get cp "sect1" "def")
       ]
 
      

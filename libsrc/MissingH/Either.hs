@@ -32,7 +32,8 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.Either
     (
-     maybeToEither
+     maybeToEither,
+     forceEither
 ) where
 import Control.Monad.Error
 
@@ -52,3 +53,9 @@ maybeToEither :: MonadError e m =>
               -> m a
 maybeToEither errorval Nothing = throwError errorval
 maybeToEither _ (Just normalval) = return normalval
+
+{- | Pulls a "Right" value out of an Either value.  If the Either value is
+Left, raises an exception with "error". -}
+forceEither :: Show e => Either e a -> a
+forceEither (Left x) = error (show x)
+forceEither (Right x) = x

@@ -70,7 +70,7 @@ parse_handle h =
 -- Private funcs
 ----------------------------------------------------------------------
 detokenize fp l =
-    let conv msg (Left err) = throwError $ (ParseError (msg ++ (show err)), msg)
+    let conv msg (Left err) = throwError $ (ParseError (show err), msg)
         conv msg (Right val) = return val
         in do r <- conv "lexer" l
               conv "parser" $ runParser main () fp r
