@@ -31,7 +31,8 @@ This module provides various helpful utilities for dealing with networking
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Network(niceSocketsDo, connectTCP, connectTCPAddr
+module MissingH.Network(niceSocketsDo, connectTCP, connectTCPAddr,
+                        listenTCPAddr
                        )
 where
 import Network
@@ -69,3 +70,10 @@ connectTCPAddr addr = do
                       connect s addr
                       return s
                       
+listenTCPAddr :: SockAddr -> IO Socket
+listenTCPAddr addr = do
+                     proto <- getProtocolNumber "tcp"
+                     s <- socket AF_INET Stream proto
+                     bindSocket s addr
+                     listen s 1
+                     return s

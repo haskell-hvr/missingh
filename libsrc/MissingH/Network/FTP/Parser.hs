@@ -56,6 +56,7 @@ import Network.Socket(SockAddr(..), PortNumber(..), inet_addr)
 import System.IO(Handle, hGetContents)
 import System.IO.Unsafe
 import Text.Regex
+import Data.Word
 type FTPResult = (Int, [String])
 
 -- import Control.Exception(Exception(PatternMatchFail), throw)
@@ -214,8 +215,11 @@ Example:
 -}
 toPortString :: SockAddr -> String
 toPortString (SockAddrInet (PortNum port) hostaddr) =
-    (genericJoin "," (getBytes hostaddr)) ++ "," ++ 
-       (genericJoin "," (getBytes port))
+    let wport = fromInteger(toInteger(port))::Word32
+        whost = fromInteger(toInteger(hostaddr))::Word16
+        in
+        (genericJoin "," . getBytes $ whost) ++ "," ++ 
+         (genericJoin "," . getBytes $ wport)
 toPortString _ = 
     error "toPortString only works on AF_INET addresses"
 

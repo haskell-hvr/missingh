@@ -48,7 +48,7 @@ Useful standards:
 
 -}
 
-module MissingH.Network.FTP.Client(-- * Establishing/Removing connections
+module MissingH.Network.FTP.Client(-- * Establishing\/Removing connections
                                    easyConnectTo, connectTo,
                                    loginAnon, login, quit,
                                    -- * Configuration
@@ -57,6 +57,8 @@ module MissingH.Network.FTP.Client(-- * Establishing/Removing connections
                                    nlst, dir, 
                                    -- * File downloads
                                    getlines, getbinary,
+                                   -- * File uploads
+                                   putlines, putbinary,
                                    -- * File manipulation
                                    rename, delete, size,
                                    -- * Directory manipulation
@@ -78,6 +80,7 @@ import MissingH.Str
 data FTPConnection = FTPConnection {readh :: IO String,
                                     readh_internal :: Handle,
                                     writeh :: Handle,
+                                    socket_internal :: Socket,
                                     isPassive :: Bool}
 
 {-
@@ -92,7 +95,6 @@ getresp h = do
 
 logsend m = debugM "MissingH.Network.FTP.Client" ("FTP sent: " ++ m)
 sendcmd h c = do logsend c
-                 hPutStr (writeh h) (c ++ "\r\n")
                  getresp h
 
 {- | Connect to the remote FTP server and read but discard
@@ -121,6 +123,7 @@ connectTo h p =
     hSetBuffering w LineBuffering
     let h = FTPConnection {readh = readchars r, 
                            readh_internal = r,
+                           socket_internal = s,
                            writeh = w, isPassive = True}
     --hIsReadable h >>= print
     --hIsWritable h >>= print
@@ -171,8 +174,19 @@ makepasv :: FTPConnection -> IO SockAddr
 makepasv h =
     do
     r <- sendcmd h "PASV"
-    putStrLn "makepasv returning "
     respToSockAddr r
+
+{- | Opens a port and sends it to the remote. -}
+makeport :: FTPConnection -> IO (Socket, FTPResult)
+makeport h =
+    let listenaddr (SockAddrInet _ h) = SockAddrInet aNY_PORT h
+        listenaddr _ = error "Can't use port mode to non-TCP server"
+        in
+        do addr <- getSocketName (socket_internal h)
+           mastersock <- listenTCPAddr (listenaddr addr)
+           newaddr <- getSocketName mastersock
+           result <- sendcmd h ("PORT " ++ toPortString newaddr)
+           return (mastersock, result)
 
 {- | Establishes a connection to the remote. 
 
@@ -183,25 +197,47 @@ ntransfercmd h cmd =
     let sock = if isPassive h
                then do
                     addr <- makepasv h
-                    putStrLn "connecting"
                     s <- connectTCPAddr addr
-                    putStrLn "connected"
                     return s
-               else fail "FIXME: No support for non-passive yet"
+               else do 
+                    masterresult <- makeport h
+                    forceioresp 100 (snd masterresult)
+                    acceptres <- accept (fst masterresult)
+                    sClose (fst masterresult)
+                    return (fst acceptres)
         in do
            s <- sock
            newh <- socketToHandle s ReadWriteMode
-           putStrLn "Have socket"
+           hSetBuffering newh (BlockBuffering (Just 4096))
            r <- sendcmd h cmd
-           putStrLn "Sending command"
            forceioresp 100 r
-           putStrLn "ntransfercmd returning"
            return (newh, Nothing)
 
 {- | Returns the socket part from calling 'ntransfercmd'. -}
 transfercmd :: FTPConnection -> String -> IO Handle
 transfercmd h cmd = do x <- ntransfercmd h cmd
                        return (fst x)
+
+{- | Stores the lines of data to the remote.  The string gives the
+commands to issue. -}
+storlines :: FTPConnection -> String -> [String] -> IO FTPResult
+storlines h cmd input =
+    do
+    sendcmd h "TYPE A"
+    newh <- transfercmd h cmd
+    hPutStr newh (concatMap (++ "\r\n") input)
+    hClose newh
+    getresp h
+
+{- | Stores the binary data to the remote.  The first string gives the
+commands to issue. -}
+storbinary :: FTPConnection -> String -> String -> IO FTPResult
+storbinary h cmd input =
+    do sendcmd h "TYPE I"
+       newh <- transfercmd h cmd
+       hPutStr newh input
+       hClose newh
+       getresp h
 
 {- | Retrieves lines of data from the remote. The string gives 
 the command to issue. -}
@@ -242,6 +278,15 @@ getlines h fn = retrlines h ("RETR " ++ fn)
 {- | Retrieves the specified file in binary mode. -}
 getbinary :: FTPConnection -> String -> IO (String, FTPResult)
 getbinary h fn = retrbinary h ("RETR " ++ fn)
+
+{- | Puts data in the specified file in text mode.  The first string
+is the filename. -}
+putlines :: FTPConnection -> String -> [String] -> IO FTPResult
+putlines h fn input = storlines h ("STOR " ++ fn) input 
+
+{- | Puts data in the specified file in binary.  Ths first string is the filename. -}
+putbinary :: FTPConnection -> String -> String -> IO FTPResult
+putbinary h fn input = storbinary h ("STOR " ++ fn) input 
 
 {- | Retrieves a list of files in the given directory. 
 
