@@ -73,7 +73,7 @@ Inplementators must, at minimum, implement 'vIsDirectory' and
 Default implementations of everything else are provided, returning
 reasonable values.
 -}
-class HVFSStat a where
+class (Show a) => HVFSStat a where
     vDeviceID :: a -> DeviceID
     vFileID :: a -> FileID
     {- | Refers to file permissions, NOT the st_mode field from stat(2) -}
@@ -135,7 +135,7 @@ certainly several of the others.
 Most of these functions correspond to functions in System.Directory or
 System.Posix.Files.  Please see detailed documentation on them there.
  -}
-class HVFS a where
+class (Show a) => HVFS a where
     vGetCurrentDirectory :: a -> IO FilePath
     vSetCurrentDirectory :: a -> FilePath -> IO ()
     vGetDirectoryContents :: a -> FilePath -> IO [FilePath]
@@ -193,6 +193,9 @@ eh fs desc = vRaiseError fs illegalOperationErrorType
 
 class HVFS a => HVFSOpenable a where
     vOpen :: a -> FilePath -> IOMode -> IO HVFSOpenEncap
+
+instance Show FileStatus where
+    show _ = "<FileStatus>"
 
 ----------------------------------------------------------------------
 -- Standard implementations

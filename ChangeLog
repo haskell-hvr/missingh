@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 22:34:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-115
+
+    Summary:
+      Added Show requirements
+    Revision:
+      missingh--head--0.7--patch-115
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS.hs
+     libsrc/MissingH/IO/HVFS/InstanceHelpers.hs
+
+
 2004-12-20 22:31:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-114
 
     Summary:

@@ -66,10 +66,14 @@ instance HVFSStat SimpleStat where
 type MemoryNode = (String, MemoryEntry)
 data MemoryEntry = MemoryDirectory [MemoryNode]
                  | MemoryFile String
+                   deriving (Eq, Show)
 data MemoryVFS = MemoryVFS 
                { content :: IORef [MemoryNode],
                  cwd :: IORef FilePath
                }
+
+instance Show MemoryVFS where
+    show _ = "<MemoryVFS>"
 
 -- | Create a new 'MemoryVFS' object from an existing tree.
 -- An empty filesystem may be created by using @[]@ for the parameter.
