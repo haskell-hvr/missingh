@@ -142,13 +142,12 @@ that make it longer than the length.  If the list is shorter than the
 length, do nothing.
 
 > trunc 2 "Hello" -> "He"
+
+This is the same as Data.List.take.
 -}
 
 trunc :: Int -> [a] -> [a]
-trunc maxlen list =
-    let removecount = (length list) - maxlen in
-        if (removecount < 1) then list
-        else reverse $ drop removecount $ reverse list
+trunc = take
 
 {- | Adds the specified (key, value) pair to the given list, removing any
 existing pair with the same key already present. -}

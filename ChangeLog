@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-22 18:44:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-99
+
+    Summary:
+      Fixed tests, moved trunc to take
+    Revision:
+      missingh--head--1.0--patch-99
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/List.hs
+     libsrc/MissingH/Network/FTP/Parser.hs testsrc/Testutil.hs
+
+
 2004-10-22 18:10:09 GMT	John Goerzen <jgoerzen@complete.org>	patch-98
 
     Summary:

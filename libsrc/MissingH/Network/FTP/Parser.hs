@@ -59,13 +59,13 @@ code = do
 
 codeString :: Parser String
 codeString = do
-             first <- oneOf "123456789"
+             first <- oneOf "123456789" <?> "3-digit reply code"
              remaining <- count 2 digit <?> "3-digit reply code"
              return (first : remaining)
 
 specificCode :: Int -> Parser Int
 specificCode exp = do
-                   s <- string (show exp)
+                   s <- string (show exp) <?> ("Code " ++ (show exp))
                    return (read s)
 
 line :: Parser String
@@ -143,3 +143,4 @@ parseGoodReply input =
         if (fst reply) >= 400
         then error ((show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
         else reply
+
