@@ -36,7 +36,7 @@ module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                         SimpleStat(..),
                                         -- * HVFS objects & types
                                         MemoryVFS,
-                                        newMemoryVFS,
+                                        newMemoryVFS, newMemoryVFSRef,
                                         MemoryNode,
                                         MemoryEntry(..),
                                        )
@@ -47,6 +47,8 @@ import MissingH.Path
 import MissingH.Path.NameManip
 import Control.Monad.Error
 import System.IO.Error
+import System.IO
+import MissingH.IO.HVIO
 
 {- | A simple class that assumes that everything is either a file
 or a directory. -}
@@ -147,3 +149,12 @@ instance HVFS MemoryVFS where
                                   "Can't list contents of a file"
                                   (Just fp)
                 MemoryDirectory c -> return $ map fst c
+
+instance HVFSOpenable MemoryVFS StreamReader where
+    vOpen x fp (ReadMode) = 
+        do elem <- getMelem x fp
+           case elem of 
+                MemoryDirectory _ -> vRaiseError x doesNotExistErrorType
+                                      "Can't open a directory"
+                                      (Just fp)
+                MemoryFile y -> newStreamReader y
