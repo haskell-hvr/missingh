@@ -69,6 +69,7 @@ instance (PFType a, PFFun b) => PFFun (a -> b) where
         toFun (f (fromValue x)) (PFCall xs)
     toFun _ _ = error "Too few arguments"
 
+{- To try next: define a third pffun instance that itself works off the format string -}
 ----------------------------------------------------
 
 printf :: String -> PFFun
