@@ -1,5 +1,5 @@
 -- © 2002 Peter Thiemann
-module IntToString where
+module MissingH.Wash.Utility.IntToString where
 
 import Char
 

@@ -1,7 +1,10 @@
-module RFC2397 where
+module MissingH.Wash.Utility.RFC2397 where
 
-import URLCoding
-import Base64
+import MissingH.Wash.Utility.URLCoding
+import MissingH.Wash.Utility.Base64
+
+import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified MissingH.Wash.Utility.URLCoding as URLCoding
 
 data ENC = BASE64 | URL
   deriving Eq

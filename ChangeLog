@@ -2,6 +2,50 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 02:38:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-80
+
+    Summary:
+      Adjust WASH stuff for MissingH
+    Revision:
+      missingh--head--1.0--patch-80
+
+
+    removed files:
+     libsrc/MissingH/Wash/Utility/.arch-ids/Makefile.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/SHA1.hs.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/sha1lib.c.id
+     libsrc/MissingH/Wash/Utility/.arch-ids/sha1lib.h.id
+     libsrc/MissingH/Wash/Utility/Makefile
+     libsrc/MissingH/Wash/Utility/SHA1.hs
+     libsrc/MissingH/Wash/Utility/sha1lib.c
+     libsrc/MissingH/Wash/Utility/sha1lib.h
+
+    modified files:
+     ChangeLog libsrc/MissingH/Wash/Mail/Email.hs
+     libsrc/MissingH/Wash/Mail/EmailConfig.hs
+     libsrc/MissingH/Wash/Mail/HeaderField.hs
+     libsrc/MissingH/Wash/Mail/MIME.hs
+     libsrc/MissingH/Wash/Mail/MailParser.hs
+     libsrc/MissingH/Wash/Mail/Message.hs
+     libsrc/MissingH/Wash/Utility/Auxiliary.hs
+     libsrc/MissingH/Wash/Utility/Base32.hs
+     libsrc/MissingH/Wash/Utility/Base64.hs
+     libsrc/MissingH/Wash/Utility/FileNames.hs
+     libsrc/MissingH/Wash/Utility/Hex.hs
+     libsrc/MissingH/Wash/Utility/ISO8601.hs
+     libsrc/MissingH/Wash/Utility/IntToString.hs
+     libsrc/MissingH/Wash/Utility/JavaScript.hs
+     libsrc/MissingH/Wash/Utility/Locking.hs
+     libsrc/MissingH/Wash/Utility/QuotedPrintable.hs
+     libsrc/MissingH/Wash/Utility/RFC2047.hs
+     libsrc/MissingH/Wash/Utility/RFC2279.hs
+     libsrc/MissingH/Wash/Utility/RFC2397.hs
+     libsrc/MissingH/Wash/Utility/Shell.hs
+     libsrc/MissingH/Wash/Utility/SimpleParser.hs
+     libsrc/MissingH/Wash/Utility/URLCoding.hs
+     libsrc/MissingH/Wash/Utility/Unique.hs
+
+
 2004-10-20 02:21:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-79
 
     Summary:

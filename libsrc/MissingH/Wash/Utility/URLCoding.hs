@@ -1,9 +1,9 @@
 -- © 2001, 2002 Peter Thiemann
 -- |Implements coding of non-alphanumeric characters in URLs and CGI-requests.
-module URLCoding (encode, decode) where
+module MissingH.Wash.Utility.URLCoding (encode, decode) where
 
 import Char
-import Hex
+import MissingH.Wash.Utility.Hex
 
 encode, decode :: String -> String
 encode = urlEncode

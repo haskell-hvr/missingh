@@ -1,13 +1,13 @@
 -- © 2001 Peter Thiemann
-module Unique (inventStdKey, inventKey, inventFilePath) where
+module MissingH.Wash.Utility.Unique (inventStdKey, inventKey, inventFilePath) where
 
 import Random
 import IO
 import Directory
-import Auxiliary
+import MissingH.Wash.Utility.Auxiliary
 import List
 import Monad
-import Locking
+import MissingH.Wash.Utility.Locking
 
 registryDir = "/tmp/Unique/"
 

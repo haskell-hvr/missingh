@@ -1,12 +1,12 @@
-module RFC2047 where
+module MissingH.Wash.Utility.RFC2047 where
 -- decoding of header fields
 import Char
 import List
 
-import qualified Base64
-import qualified QuotedPrintable
-import Hex
-import Parsec
+import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
+import MissingH.Wash.Utility.Hex
+import Text.ParserCombinators.Parsec
 
 lineString =
   do initial <- many (noneOf "\n\r=")

@@ -1,20 +1,21 @@
 -- © 2001, 2002 Peter Thiemann
-module Email (
+module MissingH.Wash.Mail.Email (
 	sendmail, inventMessageId, exitcodeToSYSEXIT, SYSEXIT(..),
-	module MIME, module HeaderField) where
+	module MissingH.Wash.Mail.MIME, 
+        module MissingH.Wash.Mail.HeaderField) where
 
 -- from standard library
 import IO
 import System
 
 -- from utility
-import Auxiliary
-import Unique
+import MissingH.Wash.Utility.Auxiliary
+import MissingH.Wash.Utility.Unique
 
 -- from package
-import EmailConfig
-import HeaderField
-import MIME
+import MissingH.Wash.Mail.EmailConfig
+import MissingH.Wash.Mail.HeaderField
+import MissingH.Wash.Mail.MIME
 
 -- |from sysexit.h
 data SYSEXIT =
