@@ -103,7 +103,10 @@ class PFRun a where
 instance PFRun String where
     pfrun f = f $ []
 instance (PFType a, PFRun b) => PFRun (a -> b) where
-    pfrun f x = pfrun (\xs -> f (toValue x : xs))
+    pfrun f x = 
+        let nextfunc xs = f ((toValue x) : xs)
+            in
+            pfrun nextfunc
 
 class IOPFRun a where
     iopfrun :: Handle -> ([Value] -> String) -> a
