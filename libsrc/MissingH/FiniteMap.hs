@@ -1,4 +1,4 @@
-{- arch-tag: Tests main file
+{- arch-tag: FiniteMap utilities main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -16,18 +16,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Tests(tests) where
-import HUnit
-import qualified Listtest
-import qualified FiniteMaptest
-import qualified Strtest
-import qualified IOtest
+{- |
+   Module     : MissingH.FiniteMap
+   Copyright  : Copyright (C) 2004 John Goerzen
+   License    : GNU GPL, version 2 or above
 
-test1 = TestCase ("x" @=? "x")
+   Maintainer : John Goerzen, 
+   Maintainer : jgoerzen@complete.org
+   Stability  : provisional
+   Portability: portable
 
-tests = TestList [TestLabel "test1" test1,
-                 TestLabel "List" Listtest.tests,
-                 TestLabel "Str" Strtest.tests,
-                 TestLabel "FiniteMap" FiniteMaptest.tests]
+This module provides various helpful utilities for dealing with FiniteMaps.
 
+Written by John Goerzen, jgoerzen\@complete.org
+-}
 
+module MissingH.FiniteMap (flipFM)
+where
+
+import Data.FiniteMap
+import MissingH.List(flipAL)
+
+{- | Flips a finite map.  See 'MissingH.List.flipAL' for more on the similar
+function for lists. -}
+
+flipFM :: (Ord key, Ord val) => FiniteMap key val -> FiniteMap val [key]
+flipFM = listToFM . flipAL . fmToList

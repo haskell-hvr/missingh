@@ -1,4 +1,4 @@
-{- arch-tag: Tests main file
+{- arch-tag: FiniteMap tests main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -16,18 +16,24 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Tests(tests) where
+module FiniteMaptest(tests) where
 import HUnit
-import qualified Listtest
-import qualified FiniteMaptest
-import qualified Strtest
-import qualified IOtest
+import MissingH.FiniteMap
+import Data.FiniteMap
 
-test1 = TestCase ("x" @=? "x")
+instance (Show a, Show b) => Show (FiniteMap a b) where
+    show fm = show (fmToList fm)
 
-tests = TestList [TestLabel "test1" test1,
-                 TestLabel "List" Listtest.tests,
-                 TestLabel "Str" Strtest.tests,
-                 TestLabel "FiniteMap" FiniteMaptest.tests]
+test_flipFM =
+    let f inp exp = (listToFM exp) @=? flipFM (listToFM inp) in
+        do
+        f ([]::[(Int,Int)]) ([]::[(Int,[Int])])
+        f [("a", "b")] [("b", ["a"])]
+        f [("a", "b"),
+           ("c", "b"),
+           ("d", "e"),
+           ("b", "b")] [("b", ["c", "b", "a"]),
+                        ("e", ["d"])]
 
-
+tests = TestList [TestLabel "flipFM" (TestCase test_flipFM)
+                 ]

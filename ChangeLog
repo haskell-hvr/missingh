@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 03:45:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-89
+
+    Summary:
+      Added flipAL, flipFM and appropriate tests
+    Revision:
+      missingh--head--1.0--patch-89
+
+
+    new files:
+     libsrc/MissingH/FiniteMap.hs testsrc/FiniteMaptest.hs
+
+    modified files:
+     ChangeLog testsrc/Listtest.hs testsrc/Tests.hs
+
+
 2004-10-21 03:32:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-88
 
     Summary:

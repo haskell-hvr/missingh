@@ -74,7 +74,7 @@ test_flipAL =
         f [("a", "b"),
            ("c", "b"),
            ("d", "e"),
-           ("b", "b")] [("b", ["a", "c", "d"]),
+           ("b", "b")] [("b", ["b", "c", "a"]),
                         ("e", ["d"])]
 
 test_trunc =
@@ -111,6 +111,7 @@ tests = TestList [TestLabel "delFromAL" (TestCase test_delFromAL),
                   TestLabel "join" (TestCase test_join),
                   TestLabel "genericJoin" (TestCase test_genericJoin),
                   TestLabel "trunc" (TestCase test_trunc),
+                  TestLabel "flipAL" (TestCase test_flipAL),
                   TestLabel "contains" (TestCase test_contains)]
 
 
