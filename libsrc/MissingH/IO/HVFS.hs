@@ -61,7 +61,14 @@ typing restrictions.  You can get at it with:
 data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
 
 {- | Convenience function for working with stat -- takes a stat result
-and a function that uses it, and returns the result. -}
+and a function that uses it, and returns the result. 
+
+Here is an example from the HVFS source:
+
+>    vGetModificationTime fs fp = 
+>       do s <- vGetFileStatus fs fp
+>          return $ TOD (fromIntegral (withStat s vModificationTime)) 0
+-}
 withStat :: forall b. HVFSStatEncap -> (forall a. HVFSStat a => a -> b) -> b
 withStat s f =
     case s of
@@ -172,9 +179,7 @@ class (Show a) => HVFS a where
 
     vGetModificationTime fs fp = 
         do s <- vGetFileStatus fs fp
-           case s of
-                  HVFSStatEncap x -> return $ 
-                                      TOD (fromIntegral (vModificationTime x)) 0
+           return $ TOD (fromIntegral (withStat s vModificationTime)) 0
     vRaiseError _ et desc mfp =
         ioError $ mkIOError et desc Nothing mfp
 
@@ -183,13 +188,11 @@ class (Show a) => HVFS a where
     vGetDirectoryContents fs _ = eh fs "vGetDirectoryContents"
     vDoesFileExist fs fp = 
         catch (do s <- vGetFileStatus fs fp
-                  case s of
-                     HVFSStatEncap x -> return $ vIsRegularFile x
+                  return $ withStat s vIsRegularFile
               ) (\_ -> return False)
     vDoesDirectoryExist fs fp = 
         catch (do s <- vGetFileStatus fs fp
-                  case s of
-                     HVFSStatEncap x -> return $ vIsDirectory x
+                  return $ withStat s vIsDirectory
               ) (\_ -> return False)
     vCreateDirectory fs _ = eh fs "vCreateDirectory"
     vRemoveDirectory fs _ = eh fs "vRemoveDirectory"
