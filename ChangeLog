@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-05 20:59:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-48
+
+    Summary:
+      Added missing ConfigParser.Lexer to Setup.description
+    Revision:
+      missingh--head--0.7--patch-48
+
+
+    removed files:
+     debian/libghc6-missingh-dev.postinst.debhelper
+     debian/libghc6-missingh-dev.prerm.debhelper
+
+    modified files:
+     ChangeLog README Setup.description debian/changelog
+     libsrc/MissingH/FileArchive/GZip.hs
+
+
 2004-12-04 19:18:00 GMT	John Goerzen <jgoerzen@complete.org>	patch-47
 
     Summary:

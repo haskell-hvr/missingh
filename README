@@ -38,6 +38,8 @@ Major Features
 
  * Printf utilities for formatting strings
 
+ * GZip decompression
+
  * Hundreds of unit tests to verify proper functionality
 
 The following modules are are provided at this time, and more are
@@ -47,11 +49,21 @@ MissingH.Bits            * Obtain individual bytes from a bitfield
 
 MissingH.Cmd             * Trap errors during calls to external programs
 
+MissingH.Checksum.*      * Utilities for calculating checksums over strings
+
+MissingH.Compression.*   * Compression/decompression algorithms
+
+MissingH.Compression.    * The Inflate algorithm from unzip and
+  Inflate                  gunzip
+
 MissingH.ConfigParser    * Configuration file parser
                          * Interpolation supported
                          * Compatible with Python and OCaml ConfigParsers
 
 MissingH.Either          * Utilities for the Either type/Error monad
+
+MisssingH.FileArchive.   * Support for analyzing and extracting
+  GZip                     GZip archives
 
 MissingH.FiniteMap       * Flip a finite map
 

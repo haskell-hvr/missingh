@@ -1,3 +1,16 @@
+missingh (0.7.3) unstable; urgency=low
+
+  * Adding missing ConfigParser.Lexer to Setup.Description.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sun,  5 Dec 2004 14:59:02 -0600
+
+missingh (0.7.2) unstable; urgency=low
+
+  * New modules: MissingH.FileArchive.GZip, MissingH.Checksum.CRC32.GZip,
+    MissingH.Checksum.CRC32.Posix, MissingH.Compression.Inflate
+
+ -- John Goerzen <jgoerzen@complete.org>  Sat,  4 Dec 2004 17:25:25 -0600
+
 missingh (0.7.1) unstable; urgency=low
 
   * Applied some helpful patches from Einar Karttunen.  The main feature

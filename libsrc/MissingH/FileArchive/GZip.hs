@@ -41,6 +41,7 @@ module MissingH.FileArchive.GZip (
                                   Footer(..),
                                   -- * Whole-File Processing
                                   decompress,
+                                  hDecompress,
                                   read_sections,
                                   -- * Section Processing
                                   read_header,
@@ -56,6 +57,7 @@ import Control.Monad.Error
 import Data.Char
 import Data.Word
 import MissingH.Bits
+import System.IO
 
 data GZipError = CRCError               -- ^ CRC-32 check failed
                | NotGZIPFile            -- ^ Couldn't find a GZip header
@@ -103,6 +105,24 @@ type Section = (Header, String, Footer)
 
 split1 :: String -> (Char, String)
 split1 s = (head s, tail s)
+
+{- | Read a GZip file, decompressing all sections found.
+
+Writes the decompressed data stream to the given output handle.
+
+Returns Nothing if the action was successful, or Just GZipError if there
+was a problem.  If there was a problem, the data written to the output
+handle should be discarded.
+-}
+
+hDecompress :: Handle                   -- ^ Input handle
+            -> Handle                   -- ^ Output handle
+            -> IO (Maybe GZipError)
+hDecompress infd outfd = 
+    do inc <- hGetContents infd
+       let (outstr, err) = decompress inc
+       hPutStr outfd outstr
+       return err
 
 {- | Read a GZip file, decompressing all sections that are found.
 
