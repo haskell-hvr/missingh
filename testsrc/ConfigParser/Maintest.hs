@@ -109,10 +109,35 @@ test_ex_nomonad =
        hPutStr fh "Your setting is:"
        hPutStr fh $ forceEither $ get cp "file1" "location"
 
-                 
+test_ex_errormonad = 
+    [ 
+      TestLabel "chaining1" $ TestCase $ 
+      (Right ["opt1", "opt2"]) @=? 
+       do let cp = emptyCP
+          cp <- add_section cp "sect1"
+          cp <- set cp "sect1" "opt1" "foo"
+          cp <- set cp "sect1" "opt2" "bar"
+          options cp "sect1"
+     ,TestLabel "chaining2" $ TestCase $ 
+      (Left (NoSection "sect2", "set")) @=? 
+       do let cp = emptyCP
+          cp <- add_section cp "sect1"
+          cp <- set cp "sect1" "opt1" "foo"
+          cp <- set cp "sect2" "opt2" "bar"
+          options cp "sect1"
+     ,TestLabel "chaining3" $ TestCase $ 
+      ["opt1", "opt2"] @=? (
+       forceEither $ do let cp = emptyCP
+                        cp <- add_section cp "sect1"
+                        cp <- set cp "sect1" "opt1" "foo"
+                        cp <- set cp "sect1" "opt2" "bar"
+                        options cp "sect1"
+       )
+    ]
      
 
 tests = TestList [TestLabel "test_basic" (TestList test_basic),
                  TestLabel "test_defaults" (TestList test_defaults),
                  TestLabel "test_nodefault" (TestList test_nodefault),
-                 TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad)]
+                 TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad),
+                 TestLabel "test_ex_errormonad" (TestList test_ex_errormonad)]

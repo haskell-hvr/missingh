@@ -62,6 +62,7 @@ module MissingH.ConfigParser
      -- $usagenomonad
 
      -- ** Error Monad Usage
+     -- $usageerrormonad
 
      -- * Types
      SectionSpec, OptionSpec, ConfigParser(..),
@@ -571,7 +572,55 @@ You can transform errors into exceptions in your code by using
 
 In short, you can just put @forceEither $@ in front of every call that returns
 a 'CPResult'.  This is still a pure functional call, so it can be used outside
-of any monads.
+of the IO monads.  The exception, however, can only be caught in the IO
+monad.
+
+If you don't want to bother with 'forceEither', you can use the error monad.  It's simple and better... read on.
+-}
+
+{- $usageerrormonad
+
+The 'CPResult' type is actually defined in terms of the Error monad, which is
+itself based on the Either data type.
+
+Here's a neat example of chaining together calls to build up a 'ConfigParser'
+object:
+
+>do let cp = emptyCP
+>   cp <- add_section cp "sect1"
+>   cp <- set cp "sect1" "opt1" "foo"
+>   cp <- set cp "sect1" "opt2" "bar"
+>   options cp "sect1"
+
+The return value of this little snippet is @Right [\"opt1\", \"opt2\"]@.
+(Note to beginners: unlike the IO monad, you /can/ escape from the Error
+monad.)
+
+Although it's not obvious, there actually was error checking there.  If
+any of those calls would have generated an error, processing would have
+stopped immediately and a @Left@ value would have been returned.  Consider
+this example:
+
+>do let cp = emptyCP
+>   cp <- add_section cp "sect1"
+>   cp <- set cp "sect1" "opt1" "foo"
+>   cp <- set cp "sect2" "opt2" "bar"
+>   options cp "sect1"
+
+The return value from this is @Left ('NoSection' \"sect2\", \"set\")@.  The
+second call to 'set' failed, so the final call was skipped, and the result
+of the entire computation was considered to be an error.
+
+You can combine this with the non-monadic style to get a final, pure value
+out of it:
+
+>forceEither $ do let cp = emptyCP
+>                 cp <- add_section cp "sect1"
+>                 cp <- set cp "sect1" "opt1" "foo"
+>                 cp <- set cp "sect1" "opt2" "bar"
+>                 options cp "sect1"
+
+This returns ["opt1", "opt2"].  A quite normal value.
 
 -}
 
