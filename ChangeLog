@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-22 22:06:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-107
+
+    Summary:
+      Checkpointing initial configparser development
+    Revision:
+      missingh--head--0.5--patch-107
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser.hs
+     libsrc/MissingH/ConfigParser/Types.hs
+
+
 2004-11-22 21:35:07 GMT	John Goerzen <jgoerzen@complete.org>	patch-106
 
     Summary:

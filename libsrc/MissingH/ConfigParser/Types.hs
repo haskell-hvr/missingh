@@ -61,8 +61,9 @@ data ConfigParser = ConfigParser
       content :: CPData,
       -- | How to transform an option into a standard representation
       optionxform :: (OptionSpec -> OptionSpec),
-      -- | Function to look up an option, considering a default value
-      -- | if 'usedefault' is True; or ignoring a default value otherwise.
+      -- | Function to look up an option, considering a default value.
+      -- if 'usedefault' is True; or ignoring a default value otherwise.
+      -- The option specification is assumed to be already transformed.
       defaulthandler :: (ConfigParser -> SectionSpec -> OptionSpec -> Maybe String),
       -- | Whether or not to seek out a default action when no match
       -- is found.
@@ -82,8 +83,31 @@ The content contains only an empty mandatory @DEFAULT@ section.
 -}
 empty :: ConfigParser
 empty = ConfigParser { content = fromAL [("DEFAULT", [])],
+                       defaulthandler = defdefaulthandler,
                        optionxform = map toLower,
-                       usedefault = True}
+                       usedefault = True,
+                       accessfunc = defaccessfunc}
+
+-- internal function: default access function
+defaccessfunc :: ConfigParser -> SectionSpec -> OptionSpec -> Maybe String
+defaccessfunc cp s o = defdefaulthandler cp s (optionxform cp $ o)
+
+-- internal function: default handler
+defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> Maybe String
+defdefaulthandler cp sect opt =
+    let fm = content cp
+        lookup s o =
+            case lookupFM fm s of
+                Nothing -> Nothing
+                Just sect -> case lookupFM sect o of
+                                 Nothing -> Nothing
+                                 Just x -> Just x
+        in
+        case lookup sect opt of
+            Just r -> Just r
+            Nothing -> if (usedefault cp)
+                       then lookup "DEFAULT" opt
+                       else Nothing
 
 {- | Low-level tool to convert a parsed object into a 'CPData'
 representation.  Performs no option conversions or special handling

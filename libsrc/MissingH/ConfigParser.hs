@@ -82,14 +82,18 @@ merge src dest =
         ConfigParser { content = plusFM (mapFM convFM (content src)) 
                                  (content dest),
                        optionxform = optionxform dest,
-                       usedefault = usedefault dest }
+                       usedefault = usedefault dest,
+                       defaulthandler = defaulthandler dest,
+                       accessfunc = accessfunc dest}
 
 {- | Utility to do a special case merge. -}
 readutil :: ConfigParser -> ParseOutput -> ConfigParser
 readutil old new = 
     let mergedest = ConfigParser {content = fromAL new,
                                   optionxform = optionxform old,
-                                  usedefault = usedefault old}
+                                  usedefault = usedefault old,
+                                  defaulthandler = defaulthandler old,
+                                  accessfunc = accessfunc old}
         in
         merge old mergedest
 
@@ -169,22 +173,22 @@ has_option cp s o =
 no such option could be found. -}
 get :: ConfigParser -> SectionSpec -> OptionSpec -> String
 get cp s o = 
-    case (accessfunc cp) s o of
+    case (accessfunc cp) cp s o of
          Nothing -> error $ "get: no option " ++ s ++ "/" ++ o
          Just x -> x
 
 {- | Retrieves a string from the configuration file and attempts to parse it
 as a number.  Raises an exception if no such option could be found or if it
 could not be parsed as the destination number. -}
-getnum :: Num a => ConfigParser -> SectionSpec -> OptionSpec -> a
-getnum = read . get
+getnum :: (Read a, Num a) => ConfigParser -> SectionSpec -> OptionSpec -> a
+getnum cp s o = read $ get cp s o
 
 {- | Retrieves a string from the configuration file and attempts to parse
 it as a boolean.  Raises an exception if no such option could be found or
 if it could not be parsed as a boolean. -}
 getbool :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
 getbool cp s o = 
-    case map toLower . strip . get $ cp s o of
+    case map toLower . strip . get cp s $ o of
          "1" -> True
          "yes" -> True
          "on" -> True
@@ -209,7 +213,7 @@ set cp s passedo val =
     where newmap = addToFM (content cp) s newsect
           newsect = addToFM sectmap o val
           sectmap = forceLookupFM "ConfigParser.set" (content cp) s
-          o = (optionxform cp) cp passedo
+          o = (optionxform cp) passedo
 
 {- | Sets the option to a new value, replacing an existing one if it exists.
 It requires only a showable value as its parameter.
@@ -218,7 +222,17 @@ an error if the section does not exist. -}
 setshow :: Show a => ConfigParser -> SectionSpec -> OptionSpec -> a -> ConfigParser
 setshow cp s o val = set cp s o (show val)
 
-
+{- | Converts the 'ConfigParser' to a string representation that could be
+later re-parsed by this module. -}
+to_string :: ConfigParser -> String
+to_string cp = 
+    let gen_option (key, value) = 
+            key ++ ": " ++ (replace "\n" "\n " value) ++ "\n"
+        gen_section (sect, valfm) = 
+            "[" ++ sect ++ "]\n" ++
+                (concat $ map gen_option (fmToList valfm)) ++ "\n"
+        in
+        concat $ map gen_section (fmToList (content cp))
 
 ----------------------------------------------------------------------
 -- Docs
