@@ -43,6 +43,7 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.IO.HVFS.Utils,
   MissingH.IO.HVIO,
   MissingH.Email.Parser,
+  MissingH.Debian, MissingH.Debian.ControlParser,
   MissingH.Wash.Mail.Email,
     MissingH.Wash.Mail.EmailConfig,
     MissingH.Wash.Mail.HeaderField,
@@ -72,5 +73,5 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances
 Build-Depends: haskell-src, network, unix, parsec
-Options-GHC: -O2
+GHC-Options: -O2
 

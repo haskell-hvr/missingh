@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-03-14 19:40:09 GMT	John Goerzen <jgoerzen@complete.org>	patch-204
+
+    Summary:
+      Checkpointing new Debian tools
+    Revision:
+      missingh--head--0.7--patch-204
+
+
+    new files:
+     MissingH/Debian.hs MissingH/Debian/.arch-ids/=id
+     MissingH/Debian/ControlParser.hs
+
+    modified files:
+     ChangeLog MissingH.cabal
+
+    new directories:
+     MissingH/Debian MissingH/Debian/.arch-ids
+
+
 2005-02-14 22:37:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-203
 
     Summary:
