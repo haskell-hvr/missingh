@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-22 22:00:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-103
+
+    Summary:
+      Added split/splitRE stuff
+    Revision:
+      missingh--head--1.0--patch-103
+
+    Rewrote split to be simpler.  Added takeWhileList, breakList, etc.
+
+    modified files:
+     ChangeLog libsrc/MissingH/List.hs
+     libsrc/MissingH/Network/FTP/Parser.hs libsrc/MissingH/Str.hs
+     notes.txt
+
+
 2004-10-22 20:53:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-102
 
     Summary:

@@ -1,3 +1,5 @@
+ see if splitre works
+ 
  basename p = reverse $ takeWhile (/= '/') $ reverse p
 
  dirname p  = case reverse $ dropWhile (/= '/') $ reverse p of

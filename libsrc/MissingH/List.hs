@@ -40,7 +40,8 @@ module MissingH.List(-- * Tests
                      for association lists. -}
                      addToAL, delFromAL, flipAL,
                      -- * Conversions
-                     split, join, genericJoin,
+                     split, join, genericJoin, takeWhileList,
+                     dropWhileList, spanList, breakList,
                      -- * Miscellaneous
                      countElem, elemRIndex, alwaysElemRIndex
                      -- -- * Sub-List Selection
@@ -74,6 +75,38 @@ Example:
 endswith :: Eq a => [a] -> [a] -> Bool
 endswith = isSuffixOf
 
+{- | Similar to Data.List.takeWhile, takes elements while the func is true.
+The function is given the remainder of the list to examine. -}
+takeWhileList :: ([a] -> Bool) -> [a] -> [a]
+takeWhileList _ [] = []
+takeWhileList func list@(x:xs) =
+    if func list 
+       then x : takeWhileList func xs
+       else []
+
+{- | Similar to Data.List.dropWhile, drops elements while the func is true.
+The function is given the remainder of the list to examine. -}
+dropWhileList :: ([a] -> Bool) -> [a] -> [a]
+dropWhileList _ [] = []
+dropWhileList func list@(x:xs) =
+    if func list
+       then dropWhileList func xs
+       else list
+
+{- | Similar to Data.List.span, but performs the test on the entire remaining
+list instead of just one element. 
+
+@spanList p xs@ is the same as @(takeWhileList p xs, dropWhileList p xs)@ 
+-}
+spanList :: ([a] -> Bool) -> [a] -> ([a], [a])
+spanList p xs = (takeWhileList p xs, dropWhileList p xs)
+
+{- | Similar to Data.List.break, but performs the test on the entire remaining
+list instead of just one element.
+-}
+breakList :: ([a] -> Bool) -> [a] -> ([a], [a])
+breakList func = spanList (not . func)
+
 {- | Given a delimiter and a list (or string), split into components.
 
 Example:
@@ -83,18 +116,17 @@ Example:
 > split "ba" ",foo,bar,,baz," -> [",foo,","r,,","z,"]
 -}
 split :: Eq a => [a] -> [a] -> [[a]]
+split _ [] = []
 split delim str =
-    let splitworker :: Eq a => [a] -> [a] -> [a] -> [[a]]
-        splitworker delim [] [] = []
-        splitworker delim [] accum = [accum]
-        splitworker delim str accum =
-            if delim == str then 
-               accum : [] : []
-            else if startswith delim str then
-               accum : splitworker delim (drop (length delim) str) []
-            else splitworker delim (tail str) (accum ++ [head str])
-        in
-        splitworker delim str []
+    let (firstline, remainder) = breakList (startswith delim) str
+        in 
+        firstline : case remainder of
+                                   [] -> []
+                                   x -> if x == delim
+                                        then [] : []
+                                        else split delim 
+                                                 (drop (length delim) x)
+
 
 {- | Given a delimiter and a list of items (or strings), join the items
 by using the delimiter.

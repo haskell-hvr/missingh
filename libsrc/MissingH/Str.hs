@@ -81,6 +81,18 @@ rstrip = reverse . lstrip . reverse
 {-
 -- | Splits a string based on a regular expression.  The regular express
 -- should identify one delimiter.
+-}
+
+splitRe :: Regex -> String -> [String]
+splitRe _ [] = []
+splitRe delim str =
+    case matchRegexAll delim str of
+       Nothing -> [str]
+       Just (firstline, _, remainder, _) ->
+           if remainder == ""
+              then firstline : [] : []
+              else firstline : splitRe delim remainder
+{-
 
 splitRe :: Regex -> String -> [String]
 splitRe delim [] = []

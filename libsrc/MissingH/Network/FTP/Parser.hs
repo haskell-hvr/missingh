@@ -157,7 +157,7 @@ parseGoodReply input =
 Example:
 
 > toPortString (SockAddrInet (PortNum 0x1234) (0xaabbccdd)) ->
-                              "170,187,204,221,18,52"
+>                              "170,187,204,221,18,52"
 -}
 toPortString :: SockAddr -> String
 toPortString (SockAddrInet (PortNum port) hostaddr) =
