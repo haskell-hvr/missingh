@@ -44,6 +44,8 @@ module MissingH.IO.HVFS.Utils (recurseDir,
 where
 
 import MissingH.IO.HVFS
+import System.Posix.Files
+import MissingH.Printf
 
 {- | Obtain a recursive listing of all files\/directories beneath 
 the specified directory.  The traversal is depth-first and the original
@@ -88,10 +90,26 @@ recursiveRemove h fn =
         recurseDirStat h fn >>= worker
 
 {- | Provide a result similar to the command ls -l over a directory.
+
+Known bug: setuid bit semantics are inexact compared with standard ls.
 -}
 lsl :: HVFS a => a -> FilePath -> IO String
 lsl fs fp =
-    let showentry (state, fp) = 
+    let showmodes mode = 
+            let i m = (intersectFileModes mode m /= 0)
+                in
+                (if i ownerReadMode then 'r' else '-') :
+                (if i ownerWriteMode then 'w' else '-') :
+                (if i setUserIDMode then 's' else
+                    if i ownerExecuteMode then 'x' else '-') :
+                (if i groupReadMode then 'r' else '-') :
+                (if i groupWriteMode then 'w' else '-') :
+                (if i setGroupIDMode then 's' else
+                    if i groupExecuteMode then 'x' else '-') :
+                (if i otherReadMode then 'r' else '-') :
+                (if i otherWriteMode then 'w' else '-') :
+                (if i otherExecuteMode then 'x' else '-') : []
+        showentry (state, fp) = 
             case state of
               HVFSStatEncap se -> 
                let typechar = 
@@ -102,7 +120,7 @@ lsl fs fp =
                        else if vIsSocket se then 's'
                        else if vIsNamedPipe se then 's'
                        else '-'
-                   in [typechar]
+                   in [typechar] ++ showmodes (vFileMode se)
                                            
         in do c <- vGetDirectoryContents fs fp
               pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs x
