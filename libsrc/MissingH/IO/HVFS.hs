@@ -43,31 +43,41 @@ where
 
 import MissingH.IO.HVIO
 import System.IO
+import System.IO.Error
 import System.Posix.Files
 import System.Posix.Types
 import System.Time
 
-class HVFSStat b where
-    vDeviceID :: b -> DeviceID
-    vFileID :: b -> FileID
-    vFileMode :: b -> FileMode
-    vLinkCount :: b -> LinkCount
-    vFileOwner :: b -> UserID
-    vFileGroup :: b -> GroupID
-    vSpecialDeviceID :: b -> DeviceID
-    vFileSize :: b -> FileOffset
-    vAccessTime :: b -> EpochTime
-    vModificationTime :: b -> EpochTime
-    vStatusChangeTime :: b -> EpochTime
-    vIsBlockDevice :: b -> Bool
-    vIsCharacterDevice :: b -> Bool
-    vIsNamedPipe :: b -> Bool
-    vIsRegularFile :: b -> Bool
-    vIsDirectory :: b -> Bool
-    vIsSymbolicLink :: b -> Bool
-    vIsSocket :: b -> Bool
+class HVFSStat a where
+    vDeviceID :: a -> DeviceID
+    vFileID :: a -> FileID
+    vFileMode :: a -> FileMode
+    vLinkCount :: a -> LinkCount
+    vFileOwner :: a -> UserID
+    vFileGroup :: a -> GroupID
+    vSpecialDeviceID :: a -> DeviceID
+    vFileSize :: a -> FileOffset
+    vAccessTime :: a -> EpochTime
+    vModificationTime :: a -> EpochTime
+    vStatusChangeTime :: a -> EpochTime
+    vIsBlockDevice :: a -> Bool
+    vIsCharacterDevice :: a -> Bool
+    vIsNamedPipe :: a -> Bool
+    vIsRegularFile :: a -> Bool
+    vIsDirectory :: a -> Bool
+    vIsSymbolicLink :: a -> Bool
+    vIsSocket :: a -> Bool
 
-class HVFS a where
+{- | The main HVFS class.
+
+A default implementation of 'vGetModificationTime' is provided (in terms
+of 'vGetFileStatus').  A standard implementation of 'vRaiseError' is also
+provided.
+
+Default implementations of all other functions
+will generate an isIllegalOperation error, since they are assumed to be
+un-implemented. -}
+class HVFSStat b => HVFS a b where
     vGetCurrentDirectory :: a -> IO FilePath
     vSetCurrentDirectory :: a -> FilePath -> IO ()
     vGetDirectoryContents :: a -> FilePath -> IO [FilePath]
@@ -78,12 +88,23 @@ class HVFS a where
     vRenameDirectory :: a -> FilePath -> FilePath -> IO ()
     vRemoveFile :: a -> FilePath -> IO ()
     vRenameFile :: a -> FilePath -> FilePath -> IO ()
-    vGetFileStatus :: HVFSStat b => a -> FilePath -> IO b
-    vGetSymbolicLinkStatus :: HVFSStat b => a -> FilePath -> IO b
+    vGetFileStatus :: a -> FilePath -> IO b
+    vGetSymbolicLinkStatus :: a -> FilePath -> IO b
     vGetModificationTime :: a -> FilePath -> IO ClockTime
+    vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO b
 
-class (HVFS a, HVIOGeneric b) => HVFSOpenable a b where
-    vOpen :: a -> FilePath -> IO b
+    vGetModificationTime fs fp = 
+        do s <- (vGetFileStatus fs fp)::IO b
+           let t = vModificationTime s
+           return $ TOD (fromIntegral t) 0
+
+    vRaiseError fs et desc mfp =
+        ioError $ mkIOError et desc Nothing mfp
+
+    --vGetCurrentDirectory fs = vRaiseError fs 
+
+class (HVFS a b, HVIOGeneric c) => HVFSOpenable a b c where
+    vOpen :: a -> FilePath -> IO c
 
 ----------------------------------------------------------------------
 -- Standard implementations
