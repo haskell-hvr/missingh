@@ -116,7 +116,7 @@ findMelem x path =
         in do
            c <- readIORef $ content x
            case walk (MemoryDirectory c) (sliced2) of
-              Left err -> fail err
+              Left err -> vRaiseError x doesNotExistErrorType err Nothing
               Right result -> return result
 
 -- | Find an element on the tree, normalizing the path first
@@ -124,7 +124,8 @@ getMelem :: MemoryVFS -> String -> IO MemoryEntry
 getMelem x s = 
     do base <- readIORef $ cwd x
        case absNormPath base s of
-           Nothing -> fail $ "Trouble normalizing path " ++ s
+           Nothing -> vRaiseError x doesNotExistErrorType
+                        ("Trouble normalizing path " ++ s) (Just s)
            Just newpath -> findMelem x newpath
 
 instance HVFS MemoryVFS where
@@ -134,10 +135,14 @@ instance HVFS MemoryVFS where
            -- Make sure new dir is valid
            newdir <- getMelem x fp
            case newdir of 
-               (MemoryFile _) -> fail $ "Attempt to cwd to non-directory " ++ fp
+               (MemoryFile _) -> vRaiseError x doesNotExistErrorType 
+                                 ("Attempt to cwd to non-directory " ++ fp)
+                                 (Just fp)
                (MemoryDirectory _) -> 
                    case absNormPath curpath fp of
-                       Nothing -> fail $ "Bad internal error"
+                       Nothing -> -- should never happen due to above getMelem call
+                                  vRaiseError x illegalOperationErrorType
+                                              "Bad internal error" (Just fp)
                        Just y -> writeIORef (cwd x) y
     vGetFileStatus x fp = 
         do elem <- getMelem x fp

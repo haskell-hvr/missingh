@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 22:38:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-116
+
+    Summary:
+      Checkpointing (compiles)
+    Revision:
+      missingh--head--0.7--patch-116
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS/InstanceHelpers.hs
+
+
 2004-12-20 22:34:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-115
 
     Summary:
