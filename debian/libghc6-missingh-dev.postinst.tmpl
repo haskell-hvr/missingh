@@ -20,7 +20,7 @@ set -e
 case "$1" in
     configure)
         ghc-pkg -g --add-package \
-                < /usr/share/doc/libghc6-missingh-dev/installed-pkg-config
+                < /usr/lib/haskell-packages/ghc6/lib/MissingH-@@VERSION@@/installed-pkg-config
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

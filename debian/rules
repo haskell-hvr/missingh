@@ -15,8 +15,9 @@ PATH:=$(GHCPATH):$(PATH)
 
 export PATH
 LIBPATH=/usr/lib/haskell-packages/ghc6
+LIBNAME=MissingH
 PACKAGE=libghc6-missingh-dev
-
+VERSION:=$(shell dpkg-parsechangelog | grep Version | awk '{ print $$2 }')
 
 CFLAGS = -Wall -g
 
@@ -65,7 +66,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
-	rm -f .*config*
+	rm -f .*config* debian/$(PACKAGE).postinst debian/$(PACKAGE).prerm
 
 	dh_clean 
 
@@ -77,7 +78,13 @@ install: build
 
 	# Add here commands to install the package into debian/tmp
 	./setup install --install-prefix=$(CURDIR)/debian/$(PACKAGE)$(LIBPATH)
-	cp .installed-pkg-config $(CURDIR)/debian/$(PACKAGE)/usr/share/doc/$(PACKAGE)/installed-pkg-config
+	cp .installed-pkg-config $(CURDIR)/debian/$(PACKAGE)$(LIBPATH)/lib/$(LIBNAME)/installed-pkg-config
+	sed s/\@\@VERSION\@\@/$(VERSION)/g < \
+		debian/$(PACKAGE).postinst.tmpl > \
+		debian/$(PACKAGE).postinst
+	sed s/\@\@VERSION\@\@/$(VERSION)/g < \
+		debian/$(PACKAGE).prerm.tmpl > \
+		debian/$(PACKAGE).prerm
 
 builddocs: builddocs-stamp
 builddocs-stamp:

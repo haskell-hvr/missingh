@@ -1,7 +1,7 @@
 Source: missingh
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.1), ghc6 (<< 6.2.2)
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.1), ghc6 (<< 6.2.2), ssed
 Build-Depends-Indep: debhelper (>= 4.0.0), haddock
 Standards-Version: 3.6.1
 
