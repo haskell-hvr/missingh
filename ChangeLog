@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 17:24:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-125
+
+    Summary:
+      Checkpointing test conversions
+    Revision:
+      missingh--head--0.5--patch-125
+
+
+    modified files:
+     ChangeLog testsrc/MIMETypestest.hs testsrc/Pathtest.hs
+     testsrc/Printftest.hs testsrc/Strtest.hs testsrc/Testutil.hs
+
+
 2004-11-30 16:32:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-124
 
     Summary:

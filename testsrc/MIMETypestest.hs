@@ -22,19 +22,23 @@ import Data.List
 import MissingH.MIMETypes
 
 test_readMIMETypes =
-    do
-    mtd <- readMIMETypes defaultmtd True "testsrc/mime.types.test"
-    let f = \strict inp exp -> exp @=? guessType mtd strict inp
-    let fe = \strict inp exp -> (sort exp) @=? sort (guessAllExtensions mtd strict inp)
-    f True "foo.bar.baz" (Nothing, Nothing)
-    f True "" (Nothing, Nothing)
-    f True "foo.ez" (Just "application/andrew-inset", Nothing)
-    fe True "application/andrew-inset" [".ez"]
-    f True "foo.dv" (Just "video/x-dv", Nothing)
-    fe True "video/x-dv" [".dif", ".dv"]
-    f True "test.h++" (Just "text/x-c++hdr", Nothing)
-    fe True "text/x-c++hdr" [".h++", ".hpp", ".hxx", ".hh"]
-    f True "foo.tgz" (Just "application/x-tar", Just "gzip")
+    let omtd = readMIMETypes defaultmtd True "testsrc/mime.types.test"
+        f = \strict inp exp -> TestCase $ do 
+                                          mtd <- omtd
+                                          exp @=? guessType mtd strict inp
+        fe = \strict inp exp -> TestCase $ do mtd <- omtd
+                                              (sort exp) @=? sort (guessAllExtensions mtd strict inp)
+        in [
+            f True "foo.bar.baz" (Nothing, Nothing)
+           ,f True "" (Nothing, Nothing)
+           ,f True "foo.ez" (Just "application/andrew-inset", Nothing)
+           ,fe True "application/andrew-inset" [".ez"]
+           ,f True "foo.dv" (Just "video/x-dv", Nothing)
+           ,fe True "video/x-dv" [".dif", ".dv"]
+           ,f True "test.h++" (Just "text/x-c++hdr", Nothing)
+           ,fe True "text/x-c++hdr" [".h++", ".hpp", ".hxx", ".hh"]
+           ,f True "foo.tgz" (Just "application/x-tar", Just "gzip")
+           ]
 
 
 test_guessAllExtensions =
@@ -65,5 +69,5 @@ test_guessType =
 
 tests = TestList [TestLabel "guessType" (TestCase test_guessType),
                   TestLabel "guessAllExtensions" (TestCase test_guessAllExtensions),
-                  TestLabel "readMIMETypes" (TestCase test_readMIMETypes)
+                  TestLabel "readMIMETypes" (TestList test_readMIMETypes)
                  ]

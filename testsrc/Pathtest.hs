@@ -21,14 +21,15 @@ import HUnit
 import MissingH.Path
 
 test_splitExt =
-    let f inp exp = exp @=? splitExt inp in
-        do
-        f "" ("", "")
-        f "/usr/local" ("/usr/local", "")
-        f "../foo.txt" ("../foo", ".txt")
-        f "../bar.txt.gz" ("../bar.txt", ".gz")
-        f "foo.txt/bar" ("foo.txt/bar", "")
-        f "foo.txt/bar.bz" ("foo.txt/bar", ".bz")
+    let f inp exp = TestCase $ exp @=? splitExt inp in
+        [
+         f "" ("", "")
+        ,f "/usr/local" ("/usr/local", "")
+        ,f "../foo.txt" ("../foo", ".txt")
+        ,f "../bar.txt.gz" ("../bar.txt", ".gz")
+        ,f "foo.txt/bar" ("foo.txt/bar", "")
+        ,f "foo.txt/bar.bz" ("foo.txt/bar", ".bz")
+        ]
 
-tests = TestList [TestLabel "splitExt" (TestCase test_splitExt)
+tests = TestList [TestLabel "splitExt" (TestList test_splitExt)
                  ]

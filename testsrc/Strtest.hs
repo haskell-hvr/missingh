@@ -52,30 +52,32 @@ test_strip =
                     ("abc def", "abc def")]
 
 test_splitRe =
-    let f re inp exp = exp @=? splitRe (mkRegex re) inp
-        in do
-           f "foo" "" []
-           f "foo" "foo" ["", ""]
-           f "," "foo,bar,,baz," ["foo", "bar", "", "baz", ""]
-           f "ba" ",foo,bar,,baz," [",foo,","r,,","z,"]
-           f "," "" []
-           f "," "," ["", ""]
+    let f re inp exp = TestCase $ exp @=? splitRe (mkRegex re) inp
+        in [
+            f "foo" "" []
+           ,f "foo" "foo" ["", ""]
+           ,f "," "foo,bar,,baz," ["foo", "bar", "", "baz", ""]
+           ,f "ba" ",foo,bar,,baz," [",foo,","r,,","z,"]
+           ,f "," "" []
+           ,f "," "," ["", ""]
+           ]
 
 test_subRe =
-    let f re inp repl exp = exp @=? subRe (mkRegex re) inp repl
-        in do
-           f "foo" "" "bar" ""
-           f "foo" "This is a foo test bar" "bar" "This is a bar test bar"
-           f "foo" "Test foo bar" "x\\0x" "Test xfoox bar"
-           f "(f)(o)o" "Test foo bar" "\\2\\1" "Test of bar"
-           f "foo" "Test foo then foo bar" "" "Test  then  bar"
-           f "foo" "Test foo bar" "x\\\\x" "Test x\\x bar"
+    let f re inp repl exp = TestCase $ exp @=? subRe (mkRegex re) inp repl
+        in [
+            f "foo" "" "bar" ""
+           ,f "foo" "This is a foo test bar" "bar" "This is a bar test bar"
+           ,f "foo" "Test foo bar" "x\\0x" "Test xfoox bar"
+           ,f "(f)(o)o" "Test foo bar" "\\2\\1" "Test of bar"
+           ,f "foo" "Test foo then foo bar" "" "Test  then  bar"
+           ,f "foo" "Test foo bar" "x\\\\x" "Test x\\x bar"
+           ]
 
-tests = TestList [TestLabel "lstrip" (TestCase test_lstrip),
-                  TestCase test_rstrip,
-                  TestCase test_strip,
-                  TestCase test_subRe,
-                  TestCase test_splitRe
+tests = TestList [TestLabel "lstrip" (TestList test_lstrip),
+                  TestLabel "rstrip" $ TestList test_rstrip,
+                  TestLabel "strip" $ TestList test_strip,
+                  TestLabel "subRe" $ TestList test_subRe,
+                  TestLabel "splitRe" $ TestList test_splitRe
                   ]
 
 

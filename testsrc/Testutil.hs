@@ -31,9 +31,7 @@ assertRaises msg selector action =
                   Left e -> thetest e
                   Right x -> assertFailure $ msg ++ "\nReceived no exception, but was expecting exception: " ++ (show selector)
 
-mapassertEqual :: (Show b, Eq b) => String -> (a -> b) -> [(a, b)] -> Assertion
-mapassertEqual descrip func [] = return ()
+mapassertEqual :: (Show b, Eq b) => String -> (a -> b) -> [(a, b)] -> [Test]
+mapassertEqual descrip func [] = []
 mapassertEqual descrip func ((inp,result):xs) =
-    do
-    assertEqual descrip result (func inp)
-    mapassertEqual descrip func xs
+    (TestCase $ assertEqual descrip result (func inp)) : mapassertEqual descrip func xs

@@ -22,72 +22,76 @@ import MissingH.Printf
 import Data.FiniteMap
 
 test_vsprintf = 
-    do
-    "" @=? vsprintf ""
-    "%" @=? vsprintf "%%"
-    "asdf" @=? vsprintf "%s" "asdf"
-    "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Integer)
-    "%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
-    "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Double)
-    "quux: 3.140000e+02" @=? vsprintf "%s: %e" "quux" (314::Double)
-    "fe" @=? vsprintf "%x" (254::Integer)
-    "FE" @=? vsprintf "%X" (254::Integer)
-    "10" @=? vsprintf "%o" (8::Integer)
-    "Hello" @=? vsprintf "Hello"
-    "Hello, John\n" @=? vsprintf "Hello, %s\n" "John"
-    "John, your age is 10\n" @=? vsprintf "%s, your age is %d\n" "John" (10::Integer)
-    "Hello" @=? sprintf "Hello" []
-    "Hello, John\n" @=? sprintf "Hello, %s\n" [v "John"]
-    "John, your age is 10\n" @=? sprintf "%s, your age is %d\n" [v "John",
+    map TestCase [
+      "" @=? vsprintf ""
+      ,"%" @=? vsprintf "%%"
+      ,"asdf" @=? vsprintf "%s" "asdf"
+      ,"foo: 5" @=? vsprintf "%s: %d" "foo" (5::Integer)
+      ,"%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
+      ,"baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Double)
+      ,"quux: 3.140000e+02" @=? vsprintf "%s: %e" "quux" (314::Double)
+      ,"fe" @=? vsprintf "%x" (254::Integer)
+      ,"FE" @=? vsprintf "%X" (254::Integer)
+      ,"10" @=? vsprintf "%o" (8::Integer)
+      ,"Hello" @=? vsprintf "Hello"
+      ,"Hello, John\n" @=? vsprintf "Hello, %s\n" "John"
+      ,"John, your age is 10\n" @=? vsprintf "%s, your age is %d\n" "John" (10::Integer)
+      ,"Hello" @=? sprintf "Hello" []
+      ,"Hello, John\n" @=? sprintf "Hello, %s\n" [v "John"]
+      ,"John, your age is 10\n" @=? sprintf "%s, your age is %d\n" [v "John",
                                                                  v (10::Integer)]
+                           ]
 
 test_al_fm =
     let testal = [("foo", v (1::Int)),
                   ("bar", v "asdf"),
                   ("baz", v (3.14::Double))]
         testfm = listToFM testal
-        f exp inp = do 
-                    exp @=? sprintfAL inp testal
-                    exp @=? sprintfFM inp testfm
-        in do
-           f "" ""
-           f "%" "%%"
-           f "asdf" "%(bar)s"
-           f "001" "%(foo)03d"
-           f "asdf " "%(bar)-5s"
-           f "3.140" "%(baz).3f"
-           f "%asdf%" "%%%(bar)s%%"
-           f "Str: asdf % Int: 1" "Str: %(bar)s %% Int: %(foo)d"
+        f exp inp = TestList $ [ 
+                                TestCase $ exp @=? sprintfAL inp testal,
+                                TestCase $ exp @=? sprintfFM inp testfm]
+        in [
+            f "" ""
+           ,f "%" "%%"
+           ,f "asdf" "%(bar)s"
+           ,f "001" "%(foo)03d"
+           ,f "asdf " "%(bar)-5s"
+           ,f "3.140" "%(baz).3f"
+           ,f "%asdf%" "%%%(bar)s%%"
+           ,f "Str: asdf % Int: 1" "Str: %(bar)s %% Int: %(foo)d"
+           ]
 
 test_vsprintf_generics =
-    do
-    "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Int)
-    "%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
-    "baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Rational)
-    "quux: 3.140000e+02" @=? vsprintf "%s: %e" "quux" (314::Double)
-    "fe" @=? vsprintf "%x" (254::Int)
-    "FE" @=? vsprintf "%X" (254::Int)
-    "10" @=? vsprintf "%o" (8::Int)
-    "10 3.140" @=? sprintf "%d %.3f" [v (10::Int), v (3.14::Float)]
+    map TestCase [
+      "foo: 5" @=? vsprintf "%s: %d" "foo" (5::Int)
+     ,"%foo%:% %-1%\n%" @=? vsprintf "%%%s%%:%% %%%d%%\n%%" "foo" (-1::Integer)
+     ,"baz: 3.140000" @=? vsprintf "%s: %f" "baz" (3.14::Rational)
+     ,"quux: 3.140000e+02" @=? vsprintf "%s: %e" "quux" (314::Double)
+     ,"fe" @=? vsprintf "%x" (254::Int)
+     ,"FE" @=? vsprintf "%X" (254::Int)
+     ,"10" @=? vsprintf "%o" (8::Int)
+     ,"10 3.140" @=? sprintf "%d %.3f" [v (10::Int), v (3.14::Float)]
+                 ]
 
 test_vsprintf_strings =
-    do
-    ".     ." @=? vsprintf ".%5s." ""
-    "     " @=? vsprintf "%5s" ""
-    "     " @=? vsprintf "%-5s" ""
-    "    x" @=? vsprintf "%5s" "x"
-    "x    " @=? vsprintf "%-5s" "x"
-    "abcde" @=? vsprintf "%.5s" "abcde"
-    "abcde" @=? vsprintf "%.5s" "abcdef"
-    "abcde" @=? vsprintf "%.5s" "abcdefghij"
-    "abcde" @=? vsprintf "%5.5s" "abcdefg"
-    " abcde" @=? vsprintf "%6.5s" "abcdefg"
-    "abcde " @=? vsprintf "%-6.5s" "abcdefg"
+    map TestCase [
+      ".     ." @=? vsprintf ".%5s." ""
+     ,"     " @=? vsprintf "%5s" ""
+     ,"     " @=? vsprintf "%-5s" ""
+     ,"    x" @=? vsprintf "%5s" "x"
+     ,"x    " @=? vsprintf "%-5s" "x"
+     ,"abcde" @=? vsprintf "%.5s" "abcde"
+     ,"abcde" @=? vsprintf "%.5s" "abcdef"
+     ,"abcde" @=? vsprintf "%.5s" "abcdefghij"
+     ,"abcde" @=? vsprintf "%5.5s" "abcdefg"
+     ," abcde" @=? vsprintf "%6.5s" "abcdefg"
+     ,"abcde " @=? vsprintf "%-6.5s" "abcdefg"
+                 ]
     
   -- TODO: test numeric types  
     
-tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf),
-                  TestLabel "vsprintf generics" (TestCase test_vsprintf_generics),
-                  TestLabel "vsprintf strings" (TestCase test_vsprintf_strings),
-                  TestLabel "vsprintf AL&FM" (TestCase test_al_fm)
+tests = TestList [TestLabel "vsprintf" (TestList test_vsprintf),
+                  TestLabel "vsprintf generics" (TestList test_vsprintf_generics),
+                  TestLabel "vsprintf strings" (TestList test_vsprintf_strings),
+                  TestLabel "vsprintf AL&FM" (TestList test_al_fm)
                  ]
