@@ -73,7 +73,9 @@ data FTPState = FTPState
               { auth :: IORef AuthState,
                 datatype :: IORef DataType,
                 rename :: IORef (Maybe String),
-                datachan :: IORef DataChan}
+                datachan :: IORef DataChan,
+                local :: SockAddr,
+                remote :: SockAddr}
 
 data FTPServer = forall a. HVFS a => FTPServer Handle a FTPState
 
@@ -98,8 +100,8 @@ sendReply h codei text =
 {- | Main FTP handler; pass the result of applying this to one argument to 
 'MissingH.Network.SocketServer.handleHandler' -}
 
-anonFtpHandler :: forall a. HVFS a => a -> Handle -> SockAddr -> IO ()
-anonFtpHandler f h sa =
+anonFtpHandler :: forall a. HVFS a => a -> Handle -> SockAddr -> SockAddr -> IO ()
+anonFtpHandler f h saremote salocal =
     let serv r = FTPServer h f r
         in
         traplogging logname NOTICE "" $
@@ -108,11 +110,12 @@ anonFtpHandler f h sa =
              renamer <- newIORef (Nothing::Maybe String)
              chanr <- newIORef (NoChannel)
              let s = serv (FTPState {auth = authr, datatype = typer,
-                                    rename = renamer, datachan = chanr})
+                                    rename = renamer, datachan = chanr,
+                                    local = salocal, remote = saremote})
              sendReply s 220 "Welcome to MissingH.Network.FTP.Server."
-             commandLoop s sa
+             commandLoop s
 
-type CommandHandler = FTPServer -> SockAddr -> String -> IO Bool
+type CommandHandler = FTPServer -> String -> IO Bool
 type Command = (String, (CommandHandler, (String, String)))
 
 instance Eq Command where
@@ -129,10 +132,10 @@ trapIOError h testAction remainingAction =
          Right result -> remainingAction result
 
 forceLogin :: CommandHandler -> CommandHandler
-forceLogin func h@(FTPServer _ _ state) sa args =
+forceLogin func h@(FTPServer _ _ state) args =
     do state <- readIORef (auth state)
        case state of 
-          Authenticated _ -> func h sa args
+          Authenticated _ -> func h args
           x -> do sendReply h 530 "Command not possible in non-authenticated state."
                   return True
 
@@ -156,8 +159,8 @@ commands =
     ,("STRU", (forceLogin cmd_stru,  help_stru))
     ]
 
-commandLoop :: FTPServer -> SockAddr -> IO ()
-commandLoop h@(FTPServer fh _ _) sa =
+commandLoop :: FTPServer -> IO ()
+commandLoop h@(FTPServer fh _ _) =
     let errorhandler e = do noticeM logname
                                     ("Closing due to error: " ++ (show e))
                             hClose fh
@@ -173,10 +176,10 @@ commandLoop h@(FTPServer fh _ _) sa =
                             Nothing -> do sendReply h 502 $
                                            "Unrecognized command " ++ cmd
                                           return True
-                            Just hdlr -> (fst hdlr) h sa args
+                            Just hdlr -> (fst hdlr) h args
                )
               if continue
-                 then commandLoop h sa
+                 then commandLoop h
                  else return ()
 
 help_quit =
@@ -184,7 +187,7 @@ help_quit =
      "")
 
 cmd_quit :: CommandHandler
-cmd_quit h sa args =
+cmd_quit h args =
     do sendReply h 221 "OK, Goodbye."
        return False
 
@@ -196,7 +199,7 @@ help_user =
      ])
 
 cmd_user :: CommandHandler
-cmd_user h@(FTPServer _ _ state) _ passedargs =
+cmd_user h@(FTPServer _ _ state) passedargs =
     let args = strip passedargs
         in
         case args of
@@ -211,7 +214,7 @@ help_pass =
     ("Provide a password",
      "PASS password will provide the password for authentication.")
 cmd_pass :: CommandHandler
-cmd_pass h@(FTPServer _ _ state) _ passedargs =
+cmd_pass h@(FTPServer _ _ state) passedargs =
     do curstate <- readIORef (auth state)
        case curstate of
          User "anonymous" -> 
@@ -230,7 +233,7 @@ help_cwd =
      ,"Changes the working directory to the specified item"])
 
 cmd_cwd :: CommandHandler
-cmd_cwd h@(FTPServer _ fs _) _ args =
+cmd_cwd h@(FTPServer _ fs _) args =
     do trapIOError h (vSetCurrentDirectory fs args)
          $ \_ -> do
                  newdir <- vGetCurrentDirectory fs
@@ -239,12 +242,12 @@ cmd_cwd h@(FTPServer _ fs _) _ args =
 
 help_cdup = 
     ("Change to parent directory", "Same as CWD ..")
-cmd_cdup h sa _ = cmd_cwd h sa ".."
+cmd_cdup h _ = cmd_cwd h ".."
 
 help_type =
     ("Change the type of data transfer", "Valid args are A, AN, and I")
 cmd_type :: CommandHandler
-cmd_type h@(FTPServer _ _ state) _ args =
+cmd_type h@(FTPServer _ _ state) args =
     let changetype newt =
             do oldtype <- readIORef (datatype state)
                writeIORef (datatype state) newt
@@ -262,13 +265,13 @@ cmd_type h@(FTPServer _ _ state) _ args =
        
 help_noop = ("Do nothing", "")
 cmd_noop :: CommandHandler
-cmd_noop h _ _ =
+cmd_noop h _ =
     do sendReply h 200 "OK"
        return True
 
 help_rnfr = ("Specify FROM name for a file rename", "")
 cmd_rnfr :: CommandHandler
-cmd_rnfr h@(FTPServer _ _ state) _ args = 
+cmd_rnfr h@(FTPServer _ _ state) args = 
     if length args < 1
        then do sendReply h 501 "Filename required"
                return True
@@ -278,7 +281,7 @@ cmd_rnfr h@(FTPServer _ _ state) _ args =
 
 help_rnto = ("Specify TO name for a file name", "")
 cmd_rnto :: CommandHandler
-cmd_rnto h@(FTPServer _ fs state) _ args =
+cmd_rnto h@(FTPServer _ fs state) args =
     if length args < 1
        then do sendReply h 501 "Filename required"
                return True
@@ -296,7 +299,7 @@ cmd_rnto h@(FTPServer _ fs state) _ args =
 
 help_dele = ("Delete files", "")
 cmd_dele :: CommandHandler
-cmd_dele h@(FTPServer _ fs _) _ args =
+cmd_dele h@(FTPServer _ fs _) args =
     if length args < 1
        then do sendReply h 501 "Filename required"
                return True
@@ -306,7 +309,7 @@ cmd_dele h@(FTPServer _ fs _) _ args =
 
 help_rmd = ("Remove directory", "")
 cmd_rmd :: CommandHandler
-cmd_rmd h@(FTPServer _ fs _) _ args =
+cmd_rmd h@(FTPServer _ fs _) args =
     if length args < 1
        then do sendReply h 501 "Filename required"
                return True
@@ -316,7 +319,7 @@ cmd_rmd h@(FTPServer _ fs _) _ args =
 
 help_mkd = ("Make directory", "")
 cmd_mkd :: CommandHandler
-cmd_mkd h@(FTPServer _ fs _) _ args =
+cmd_mkd h@(FTPServer _ fs _) args =
     if length args < 1
        then do sendReply h 501 "Filename required"
                return True
@@ -327,14 +330,14 @@ cmd_mkd h@(FTPServer _ fs _) _ args =
 
 help_pwd = ("Print working directory", "")
 cmd_pwd :: CommandHandler
-cmd_pwd h@(FTPServer _ fs _) _ _ =
+cmd_pwd h@(FTPServer _ fs _) _ =
     do d <- vGetCurrentDirectory fs
        sendReply h 257 $ "\"" ++ d ++ "\" is the current working directory."
        return True
 
 help_mode = ("Provided for compatibility only", "")
 cmd_mode :: CommandHandler
-cmd_mode h _ args =
+cmd_mode h args =
     case args of
         "S" -> do sendReply h 200 "Mode is Stream."
                   return True
@@ -343,7 +346,7 @@ cmd_mode h _ args =
 
 help_stru = ("Provided for compatibility only", "")
 cmd_stru :: CommandHandler
-cmd_stru h _ args =
+cmd_stru h args =
     case args of
         "F" -> do sendReply h 200 "Structure is File."
                   return True
@@ -357,7 +360,7 @@ help_help =
      ++ "on that specific command.")
 
 cmd_help :: CommandHandler
-cmd_help h sa args =
+cmd_help h@(FTPServer _ _ state) args =
     let genericreply addr = unlines $
           [" --- General Help Response ---"
           ,""
@@ -375,7 +378,7 @@ cmd_help h sa args =
           ]
         in
         if args == ""
-           then do sastr <- showSockAddr sa
+           then do sastr <- showSockAddr (remote state)
                    sendReply h 214 (genericreply sastr)
                    return True
            else let newargs = map toUpper args
