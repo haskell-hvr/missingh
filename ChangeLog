@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 16:55:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-56
+
+    Summary:
+      Added basic directory recursion
+    Revision:
+      missingh--head--0.7--patch-56
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Path.hs
+
+
 2004-12-09 16:15:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-55
 
     Summary:

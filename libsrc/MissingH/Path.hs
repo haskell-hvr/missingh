@@ -26,17 +26,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-This module provides various helpful utilities for dealing with path and file
-names.
+This module provides various helpful utilities for dealing with path and
+file names, directories, and related support.
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Path(splitExt
+module MissingH.Path(-- * Name processing
+                     splitExt,
+                     -- * Directory Processing
+                     recurseDir, recurseDirStat
                     )
 where
 import Data.List
 import MissingH.List
+import System.Directory
+import System.Posix.Files
 
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
@@ -52,3 +57,34 @@ splitExt path =
         if dotindex <= slashindex
            then (path, "")
            else ((take dotindex path), (drop dotindex path))
+
+{- | Obtain a recursive listing of all files\/directories beneath 
+the specified directory.  The traversal is depth-first and the original
+item is always present in the returned list.
+
+If the passed value is not a directory, the return value
+be only that value.
+-}
+recurseDir :: FilePath -> IO [FilePath]
+recurseDir x = recurseDirStat x >>= return . map fst
+
+{- | Like 'recurseDir', but return the stat() (System.Posix.Files.FileStatus)
+information with them.  This is an optimization if you will be statting files
+yourself later.
+-}
+
+recurseDirStat :: FilePath -> IO [(FilePath, FileStatus)]
+recurseDirStat fn =
+    do fs <- getFileStatus fn
+       if isDirectory fs then do
+                              dirc <- getDirectoryContents fn
+                              let contents = map ((++) (fn ++ "/")) $ 
+                                     filter (\x -> x /= "." && x /= "..") dirc
+                              subdirs <- mapM recurseDirStat contents
+                              return $ (concat subdirs) ++ [(fn, fs)]
+          else return [(fn, fs)]
+
+
+                              
+                              
+          
