@@ -44,6 +44,15 @@ fFCOMMENT = 16
 split1 :: String -> (Char, String)
 split1 s = (head s, tail s)
 
+{- | Read a GZip file.
+-}
+
+decompress :: String -> Either GZipError String
+decompress s = 
+    do x <- read_header s
+       let rem = snd x
+       return $ inflate_string rem
+
 {- | Read the GZip header.  Return (Header, Remainder).
 -}
 read_header :: String -> Either GZipError (String, String)
@@ -63,9 +72,26 @@ read_header s =
        let rem = drop 6 rem
        
        rem <- if (flag .&. fFEXTRA /= 0)
+                  -- Skip past the extra field if we have it.
                   then do let (xlen_S, rem2) = split1 rem
                           let (xlen2_S, rem2) = split1 rem2
                           let xlen = (ord xlen_S) + 256 * (ord xlen2_S)
                           return $ drop xlen rem2
                   else return rem
+       
+       rem <- if (flag .&. fFNAME /= 0)
+                  -- Skip past the null-terminated filename
+                  then return $ tail $ dropWhile (/= '\x00') rem
+                  else return rem
+
+       rem <- if (flag .&. fFCOMMENT /= 0)
+                  -- Skip past the null-terminated comment
+                  then return $ tail $ dropWhile (/= '\x00') rem
+                  else return rem
+       
+       rem <- if (flag .&. fFHCRC /= 0)
+                  -- Skip past the header CRC
+                  then return $ drop 2 rem
+                  else return rem
+                  
        return ("foo", rem)
