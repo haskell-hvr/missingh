@@ -31,20 +31,26 @@ This module provides various helpful utilities for using a C-style printf().
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Printf(
-                       Value(..),
-                       PFRun(..),
-                       PFType(..),
+module MissingH.Printf(-- * Variable-Argument Ouptut
+                       vsprintf,
+                       vprintf,
+                       vfprintf,
+                       -- * List-Argument Output
                        sprintf,
-                       sprintf_real,
---                       ssprintf,
---                       printf,
-                       wrapper,
-                       v
+                       printf,
+                       fprintf,
+                       -- * Utility Function
+                       v,
+                       -- * Underlying Types
+                       Value(..),
+                       PFRun,
+                       PFType(..),
+                       IOPFRun,
                        ) where
 
 import MissingH.Str
 import Data.List
+import System.IO
 
 data Value =
            ValueInt Int
@@ -65,43 +71,47 @@ instance PFType String where
     fromValue (ValueString x) = x
     fromValue _ = error "fromValue string"
 
+{-
 instance PFType Value where
     toValue = id
     fromValue = id
+-}
 
 v :: PFType a => a -> Value
 v = toValue
 
 class PFRun a where
     pfrun :: ([Value] -> String) -> a
-
 instance PFRun String where
     pfrun f = f $ []
-
 instance (PFType a, PFRun b) => PFRun (a -> b) where
     pfrun f x = pfrun (\xs -> f (toValue x : xs))
 
-sprintf_real :: String -> [Value] -> String
+class IOPFRun a where
+    iopfrun :: Handle -> ([Value] -> String) -> a
+instance IOPFRun (IO ()) where
+    iopfrun h f = hPutStr h $ pfrun f
+instance (PFType a, IOPFRun b) => IOPFRun (a -> b) where
+    iopfrun h f x = iopfrun h (\xs -> f (toValue x : xs))
 
-sprintf_real [] [] = []
-sprintf_real ('%' : xs) (y : ys) = (fromValue y) ++ sprintf_real xs ys
-sprintf_real ('!' : xs) (y : ys) = 
-    show (((fromValue y)::Int) + 1) ++ sprintf_real xs ys
-sprintf_real (x:xs) y = x : sprintf_real xs y
+sprintf :: String -> [Value] -> String
+sprintf [] [] = []
+sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
+sprintf ('!' : xs) (y : ys) = 
+    show (((fromValue y)::Int) + 1) ++ sprintf xs ys
+sprintf (x:xs) y = x : sprintf xs y
 
-forcestring :: String -> String
-forcestring x = x
+vsprintf :: (PFRun a) => String -> a
+vsprintf f = pfrun $ sprintf f
 
-wrapper :: String -> [Value] -> Value
-wrapper f v = toValue $ sprintf_real f v
+fprintf :: Handle -> String -> [Value] -> IO ()
+fprintf h f v = hPutStr h $ sprintf f v
 
-sprintf :: (PFRun a) => String -> a
-sprintf f = pfrun $ sprintf_real f
+printf :: String -> [Value] -> IO ()
+printf f v = fprintf stdout f v
 
---printf :: (PFRun a) => String -> IO a
---printf = return . sprintf
+vfprintf :: IOPFRun a => Handle -> String -> a
+vfprintf h f = iopfrun h $ sprintf f
 
---printf :: (PFRun a) => String -> a
-
---printf :: PFRun a => String -> a -> IO ()
-
+vprintf :: IOPFRun a => String -> a
+vprintf f = vfprintf stdout f
