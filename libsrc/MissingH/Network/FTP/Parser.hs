@@ -68,7 +68,7 @@ logit m = debugM "MissingH.Network.FTP.Parser" ("FTP received: " ++ m)
 -- Utilities
 ----------------------------------------------------------------------
 
-unexpectedresp m r = "Expected " ++ m ++ ", got " ++ (show r)
+unexpectedresp m r = "FTP: Expected " ++ m ++ ", got " ++ (show r)
 
 isxresp desired (r, _) = r >= desired && r < (desired + 100)
 
@@ -170,7 +170,7 @@ multiReply = try (do
 parseReply :: String -> FTPResult
 parseReply input =
     case parse multiReply "(unknown)" input of
-         Left err -> error (show err)
+         Left err -> error ("FTP: " ++ (show err))
          Right reply -> reply
 
 -- | Parse a FTP reply.  Returns a (result code, text) pair.
@@ -182,7 +182,7 @@ parseGoodReply input =
     let reply = parseReply input
         in
         if (fst reply) >= 400
-        then fail ((show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
+        then fail ("FTP:" ++ (show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
         else return reply
 
 -- | Parse a FTP reply.  Logs debug messages.

@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-24 20:48:36 GMT	John Goerzen <jgoerzen@complete.org>	patch-121
+
+    Summary:
+      Updated FTP logs and standardized failures
+    Revision:
+      missingh--head--1.0--patch-121
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/List.hs
+     libsrc/MissingH/Network/FTP/Client.hs
+     libsrc/MissingH/Network/FTP/Parser.hs
+
+
 2004-10-24 06:47:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-120
 
     Summary:

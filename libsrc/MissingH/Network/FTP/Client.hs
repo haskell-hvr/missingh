@@ -43,8 +43,8 @@ run that with Hugs.)
 
 The above loads the module.
 
-Next, we enable the debugging.  This will turn on all the "FTP sent" and
-"FTP received" messages you'll see.
+Next, we enable the debugging.  This will turn on all the @FTP sent@ and
+@FTP received@ messages you'll see.
 
 > Prelude MissingH.Network.FTP.Client> enableFTPDebugging
 
@@ -151,12 +151,34 @@ or make sure you consume the 'nlst' data first.
 Here is a partial list of commands effected: 'nlst', 'dir', 'getbinary',
 'getlines', 'downloadbinary'.
 
+The 'MissingH.List.seqList' function could be quite helpful here.  For instance:
+
+> x <- nlst h Nothing
+> map (\fn -> ...download files from FTP... ) (seqList x)
+
+If you omit the call to 'MissingH.List.seqList', commands to download files
+will be issued before the entire directory listing is read.  FTP cannot handle
+this.
+
 The corrolary is:
 
 /Actions that yield lazy data for data uploading must not issue FTP
 commands themselves./
 
 This will be fairly rare.  Just be aware of this.
+
+This module logs messages under @MissingH.Network.FTP.Client@ for outgoing
+traffic and @MissingH.Network.FTP.Parser@ for incoming traffic, all with the
+'MissingH.Logging.DEBUG' priority, so by default, no log messages are seen.
+The 'enableFTPDebugging' function will adjust the priorities of these
+two handlers so debug messages are seen.  Only control channel conversations
+are logged.  Data channel conversations are never logged.
+
+All exceptions raised by this module have a string beginning with
+@\"FTP: \"@.  Most errors will be IO userErrors.  In a few extremely rare
+cases, errors may be raised by the Prelude error function, though these
+will also have a string beginning with @\"FTP: \"@.  Exceptions raised by
+the underlying networking code will be passed on to you unmodified.
 
 Useful standards:
 
@@ -295,11 +317,11 @@ login h user pass acct =
     ur <- sendcmd h ("USER " ++ user)
     if isxresp 300 ur then
        case pass of
-            Nothing -> error "FTP server demands password, but no password given"
+            Nothing -> fail "FTP: Server demands password, but no password given"
             Just p -> do pr <- sendcmd h ("PASS " ++ p)
                          if isxresp 300 pr then
                             case acct of
-                                Nothing -> error "FTP server demands account, but no account given"
+                                Nothing -> fail "FTP: server demands account, but no account given"
                                 Just a -> do ar <- sendcmd h ("ACCT " ++ a)
                                              forceioresp 200 ar
                                              return ar
@@ -322,7 +344,7 @@ makepasv h =
 makeport :: FTPConnection -> IO (Socket, FTPResult)
 makeport h =
     let listenaddr (SockAddrInet _ h) = SockAddrInet aNY_PORT h
-        listenaddr _ = error "Can't use port mode to non-TCP server"
+        listenaddr _ = error "FTP: Can't use port mode to non-TCP server"
         in
         do addr <- getSocketName (socket_internal h)
            mastersock <- listenTCPAddr (listenaddr addr) 1

@@ -43,7 +43,7 @@ module MissingH.List(-- * Tests
                      split, join, replace, genericJoin, takeWhileList,
                      dropWhileList, spanList, breakList,
                      -- * Miscellaneous
-                     countElem, elemRIndex, alwaysElemRIndex
+                     countElem, elemRIndex, alwaysElemRIndex, seqList
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
@@ -222,3 +222,8 @@ alwaysElemRIndex item list =
     case elemRIndex item list of
                               Nothing -> -1
                               Just x -> x
+
+{- | Forces the evaluation of the entire list. -}
+seqList :: [a] -> [a]
+seqList [] = []
+seqList (x:xs) = seq (seqList xs) (x:xs)
