@@ -35,15 +35,22 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
-                                  toPortString, fromPortString)
+                                  toPortString, fromPortString,
+                                  debugParseGoodReplyHandle)
 where
 
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
 import MissingH.List
 import MissingH.Bits
+import MissingH.Str
+import MissingH.Logging.Logger
 import Network.Socket(SockAddr(..), PortNumber(..))
+import System.IO(Handle, hGetContents)
 -- import Control.Exception(Exception(PatternMatchFail), throw)
+
+logit :: String -> IO ()
+logit m = debugM "MissingH.Network.FTP.Parser" ("FTP received: " ++ m)
 
 ----------------------------------------------------------------------
 -- Utilities
@@ -151,6 +158,33 @@ parseGoodReply input =
         if (fst reply) >= 400
         then error ((show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
         else reply
+
+-- | Parse a FTP reply.  Logs debug messages.
+debugParseGoodReply :: String -> IO (Int, [String])
+debugParseGoodReply contents =
+    let logPlugin :: String -> String -> IO String
+        logPlugin [] [] = return []
+        logPlugin [] accum = do
+                             logit accum 
+                             return []
+        logPlugin (x:xs) accum = 
+            case x of
+                   '\n' -> do logit (strip (accum))
+                              next <- logPlugin xs []
+                              return (x : next)
+                   y -> do
+                        next <- logPlugin xs (accum ++ [x])
+                        return (x : next)
+        in
+        do
+        loggedStr <- logPlugin contents []
+        return (parseGoodReply loggedStr)
+
+-- | Parse a FTP reply.  Log debug messages.
+debugParseGoodReplyHandle :: Handle -> IO (Int, [String])
+debugParseGoodReplyHandle h = do
+                              c <- hGetContents h
+                              debugParseGoodReply c
 
 {- | Converts a socket address to a string suitable for a PORT command.
 

@@ -356,16 +356,25 @@ logL l pri msg = handle l (pri, msg)
 -- | Handle a log request.
 handle :: Logger -> LogRecord -> IO ()
 handle l (pri, msg) = 
-    if pri >= (level l)
-       then do 
-            sequence_ (handlerActions (handlers l) (pri, msg))
-            -- Send it upstairs if we can
-            case (name l) of
-                "" -> return ()
-                x -> do 
-                     parent <- (getLogger . head . drop 1 . reverse . componentsOfName) x
-                     handle parent (pri, msg)
-       else return ()
+    let parentHandlers [] = return []
+        parentHandlers name =
+            let pname = (head . drop 1 . reverse . componentsOfName) name
+                in
+                do 
+                --putStrLn (join "," foo)
+                --putStrLn pname
+                --putStrLn "1"
+                parent <- getLogger pname
+                --putStrLn "2"
+                next <- parentHandlers pname
+                --putStrLn "3"
+                return ((handlers parent) ++ next)
+        in
+        if pri >= (level l)
+           then do 
+                ph <- parentHandlers (name l)
+                sequence_ (handlerActions (ph ++ (handlers l)) (pri, msg))
+           else return ()
 
 
 -- | Call a handler given a HandlerT.

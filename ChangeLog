@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-23 15:32:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-104
+
+    Summary:
+      Added debugging support to FTP parser
+    Revision:
+      missingh--head--1.0--patch-104
+
+
+    new files:
+     debian/libghc6-missingh-dev.postinst.debhelper
+     debian/libghc6-missingh-dev.prerm.debhelper
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging/Logger.hs
+     libsrc/MissingH/Network/FTP/Parser.hs
+
+
 2004-10-22 22:00:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-103
 
     Summary:
