@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 16:12:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-43
+
+    Summary:
+      Added initial logging infrastructure
+    Revision:
+      missingh--head--1.0--patch-43
+
+
+    new files:
+     libsrc/MissingH/Logging.hs
+     libsrc/MissingH/Logging/.arch-ids/=id
+     libsrc/MissingH/Logging/Handler.hs
+
+    modified files:
+     ChangeLog Makefile {arch}/=tagging-method
+
+    new directories:
+     libsrc/MissingH/Logging libsrc/MissingH/Logging/.arch-ids
+
+
 2004-10-07 02:47:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-42
 
     Summary:
