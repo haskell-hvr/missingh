@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-29 13:27:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-21
+
+    Summary:
+      Added build-dep-indep in libhugs-hunit-dev
+    Revision:
+      missingh--head--0.5--patch-21
+
+
+    new files:
+     libsrc/MissingH/Cmd/.arch-ids/=id
+
+    modified files:
+     ChangeLog debian/changelog debian/control
+
+    new directories:
+     libsrc/MissingH/Cmd libsrc/MissingH/Cmd/.arch-ids
+
+
 2004-10-27 13:42:06 GMT	John Goerzen <jgoerzen@complete.org>	patch-20
 
     Summary:

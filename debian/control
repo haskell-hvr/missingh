@@ -2,7 +2,7 @@ Source: missingh
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.2), ghc6 (<< 6.2.3), haskell-devscripts (>= 0.5.1), libghc6-hunit-dev
-Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs, haskell-devscripts (>= 0.5.1)
+Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs, haskell-devscripts (>= 0.5.1), libhugs-hunit-dev
 Standards-Version: 3.6.1
 Section: devel
 

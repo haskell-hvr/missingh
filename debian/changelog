@@ -1,3 +1,9 @@
+missingh (0.5.3) unstable; urgency=low
+
+  * Added build-dep-indep on libhugs-hunit-dev.  Closes: #278802.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 29 Oct 2004 08:25:21 -0500
+
 missingh (0.5.2) unstable; urgency=low
 
   * New module: sendmail
