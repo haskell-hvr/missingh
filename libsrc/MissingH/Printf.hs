@@ -33,9 +33,11 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.Printf(sprintf,
                        Value(..)
+
                        ) where
 
 import MissingH.Str
+import Data.List
 
 class PFFun a where
               toFun :: a -> PFCall -> String
@@ -60,7 +62,7 @@ instance PFType String where
     fromValue (ValueString x) = x
     fromValue _ = error "fromValue string"
 
-{-
+
 instance PFFun String where
     toFun x (PFCall []) = x
     toFun _ _ = error "Too many arguments"
@@ -69,7 +71,15 @@ instance (PFType a, PFFun b) => PFFun (a -> b) where
     toFun f (PFCall (x:xs)) =
         toFun (f (fromValue x)) (PFCall xs)
     toFun _ _ = error "Too few arguments"
--}
+
+class PFRun a where
+    pfrun :: ([Value] -> Value) -> a
+
+--instance PFType a => PFRun a where
+--    pfrun f = f . fromValue
+
+instance (PFType a, PFRun b) => PFRun (a -> b) where
+    pfrun f x = pfrun (\xs -> f (toValue x : xs))
 
 {-
 instance PFFun String where
@@ -88,7 +98,10 @@ sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
 sprintf ('!' : xs) (y : ys) = show (((fromValue y)::Int) + 1) ++ sprintf xs ys
 sprintf (x:xs) y = x : sprintf xs y
 
-
+{-
+wrapper :: String -> [PFType] -> String
+wrapper x v = sprintf x (map toValue v)
+-}
 {- To try next: define a third pffun instance that itself works off the format string -}
 ----------------------------------------------------
 {-
