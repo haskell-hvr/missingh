@@ -50,10 +50,7 @@ data Value =
            ValueRational Rational
            | ValueString String
            | ValueChar Char
-             deriving (Eq, Show)
-
-type PrintfAL = [(String, Value)]
-type PrintfFM = FiniteMap String Value
+             deriving (Eq, Show, Ord)
 
 showValue :: Value -> String
 showValue (ValueRational x) = show x

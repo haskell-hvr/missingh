@@ -1,3 +1,9 @@
+missingh (0.6.0) unstable; urgency=low
+
+  * Major new feature: Printf module.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 15 Nov 2004 15:28:29 -0600
+
 missingh (0.5.4) unstable; urgency=low
 
   * Added build-dep-indep on libhugs-hunit and re-enabled Hugs unit tests.

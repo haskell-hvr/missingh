@@ -56,9 +56,17 @@ module MissingH.Printf(-- * Introduction
                        sprintf,
                        printf,
                        fprintf,
-                       sprintfAL,
-                       sprintfFM,
-                       -- ** Utility Function
+
+                       -- ** Mapping Output Types
+                       -- $mappingoutput
+
+                       -- *** Association List Output
+                       sprintfAL, printfAL, fprintfAL,
+
+                       -- *** FiniteMap Output
+                       sprintfFM, printfFM, fprintfFM,
+
+                       -- * Utility Function
                        v,
                        -- * Differences from C
                        -- $differencesfromc
@@ -70,11 +78,7 @@ module MissingH.Printf(-- * Introduction
                        -- $fullexamples
 
                        -- * Underlying Types
-                       Value(..),
-                       PFRun,
-                       PFType(..),
-                       IOPFRun
-
+                       Value(..)
                        ) where
 
 import MissingH.Str
@@ -83,7 +87,7 @@ import System.IO
 import MissingH.Printf.Types
 import MissingH.Printf.Printer(get_conversion_func, fix_width)
 import Text.Regex
-import Data.FiniteMap(lookupFM)
+import Data.FiniteMap(lookupFM, FiniteMap)
 
 v :: PFType a => a -> Value
 v = toValue
@@ -156,7 +160,7 @@ sprintf ('%' : xs) y =
 sprintf (x:xs) y = x : sprintf xs y
 
 {- | Association list version of 'sprintf'. -}
-sprintfAL :: String -> PrintfAL -> String
+sprintfAL :: String -> [(String, Value)] -> String
 sprintfAL [] _ = []
 sprintfAL ('%' : '%' : xs) y = '%' : sprintfAL xs y
 sprintfAL ('%' : xs) y =
@@ -166,7 +170,7 @@ sprintfAL ('%' : xs) y =
 sprintfAL (x:xs) y = x : sprintfAL xs y
 
 {- | Finite map version of 'sprintf'. -}
-sprintfFM :: String -> PrintfFM -> String
+sprintfFM :: String -> FiniteMap String Value -> String
 sprintfFM [] _ = []
 sprintfFM ('%' : '%' : xs) y = '%' : sprintfFM xs y
 sprintfFM ('%' : xs) y =
@@ -186,10 +190,30 @@ to the given Handle. -}
 fprintf :: Handle -> String -> [Value] -> IO ()
 fprintf h f v = hPutStr h $ sprintf f v
 
+{- | Like 'sprintfAL', but instead of returning a string, directs output
+to the given Handle. -}
+fprintfAL :: Handle -> String -> [(String, Value)] -> IO ()
+fprintfAL h f v = hPutStr h $ sprintfAL f v
+
+{- | Like 'sprintfFM', but instead of returning a string, directs output
+to the given Handle. -}
+fprintfFM :: Handle -> String -> FiniteMap String Value -> IO ()
+fprintfFM h f v = hPutStr h $ sprintfFM f v
+
 {- | Like 'fprintf', but directs output to standard out instead of
 taking an explicit Handle. -}
 printf :: String -> [Value] -> IO ()
 printf f v = fprintf stdout f v
+
+{- | Like 'fprintfAL', but directs output to standard out instead of
+taking an explicit Handle. -}
+printfAL :: String -> [(String, Value)] -> IO ()
+printfAL = fprintfAL stdout
+
+{- | Like 'fprintfFM', but directs output to standard out instead of
+taking an explicit Handle. -}
+printfFM :: String -> FiniteMap String Value -> IO ()
+printfFM = fprintfFM stdout
 
 {- | Like 'vsprintf', but instead of returning a string, directs output to
 the given Handle. -}
@@ -233,6 +257,13 @@ Or, using the list-passing method:
 >sprintf "Hello, %s\n" [v "John"]
 >> "Hello, John\n"
 >sprintf "%s, your age is %d\n" [v "John", v (10::Integer)]
+>> "John, your age is 10\n"
+
+Or, using the association list method:
+
+>sprintfAL "%(name)s, your age is %(age)d\n"
+>  [("name", v "John"),
+>   ("age", v (10::Integer))]
 >> "John, your age is 10\n"
 
 You can also work with I\/O with these:
@@ -284,7 +315,34 @@ would have been required there as well.
 
 These special cases apply only to the \"v\" functions.
 -}
-   
+
+{- $mappingoutput
+
+As a special extension to the printf() format string syntax, special functions
+can take a key name in the format string.  This key will then be looked up
+in an association list or FiniteMap passed in.  Python programmers will
+find this very similar to Python's @%@ operator, which can look up inside
+dicts.
+
+#alexample#
+
+Here's an example:
+
+>import MissingH.Printf
+>
+>al = [("item1", v "Test One"),
+>      ("blah", v (5::Int)),
+>      ("zip", v (3.14::Float))]
+>
+>main :: IO ()
+>main = do
+>       printfAL "%(item1)s: %(blah)03d, %(zip)06.3f; %(item1)s\n" al
+
+This will print:
+
+>Test One: 005, 03.140; Test One
+
+-}   
 
 {- $differencesfromc
 These functions are very similar to the C functions.  Here is a list of the
@@ -403,4 +461,8 @@ When applied to the same example file as before, the output will be:
 >3          0000000015 000000000F
 >4          0000000023 0000000017
 
+There's a full association list example at
+"MissingH.Printf#alexample".
+
 -}
+

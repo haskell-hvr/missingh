@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 21:31:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-65
+
+    Summary:
+      Updated control file to use more recent haskell-devscripts
+    Revision:
+      missingh--head--0.5--patch-65
+
+
+    modified files:
+     ChangeLog debian/changelog debian/control
+     libsrc/MissingH/Printf.hs libsrc/MissingH/Printf/Types.hs
+
+
 2004-11-15 21:05:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-64
 
     Summary:
