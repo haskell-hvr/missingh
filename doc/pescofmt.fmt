@@ -1,0 +1,35 @@
+
+\renewcommand{\Conid}[1]{\mathrm{#1}}
+
+%format forall a = "\forall " a
+
+%format . = "\circ "
+%format * = "\cdot "
+%format =~ = "\simeq "
+%format ~= = "\backsimeq "
+% %format $~ = "\$\center{~} "
+% %format ~$ = "\center{~}\$ "
+% %format //~ = "//\sim "
+% %format ~// = "\sim// "
+% %format /~ = "/\sim "
+% %format ~/ = "\sim/ "
+
+%format alpha = "\alpha "
+%format beta = "\beta "
+%format gamma = "\gamma "
+%format delta = "\delta "
+%format epsilon = "\varepsilon "
+%format zeta = "\zeta "
+%format eta = "\eta "
+%format theta = "\vartheta "
+%format iota = "\iota "
+%format kappa = "\kappa "
+%format pi = "\pi "
+%format rho = "\rho "
+%format sigma = "\sigma "
+%format tau = "\tau "
+%format upsilon = "\upsilon"
+%format phi = "\varphi "
+%format chi = "\chi "
+%format psi = "\psi "
+%format omega = "\omega "

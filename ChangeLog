@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-28 17:43:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-181
+
+    Summary:
+      Added doc directory
+    Revision:
+      missingh--head--0.7--patch-181
+
+
+    new files:
+     doc/.arch-ids/=id doc/.arch-ids/Pesco.pdf.id
+     doc/.arch-ids/pescofmt.fmt.id doc/Makefile doc/Pesco.pdf
+     doc/pescofmt.fmt
+
+    modified files:
+     COPYRIGHT ChangeLog Makefile libsrc/MissingH/Regex/Pesco.lhs
+
+    new directories:
+     doc doc/.arch-ids
+
+
 2005-01-28 17:29:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-180
 
     Summary:

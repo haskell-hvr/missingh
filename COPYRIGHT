@@ -157,7 +157,9 @@ http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
 MissingH.Regex.Pesco was written by Sven Moritz Hallberg,
 <pesco@@gmx.de>, on December 6, 2004.  It was pulled from the darcs
 repository at http://www.scannedinavian.org/~pesco/code/Regex/ as of
-January 28, 2005.
+January 28, 2005.  The pescofmt.fmt in the doc/ directory was also
+written by him.  The Pesco.pdf in the doc/ directory is generated from
+these two files.
 
 Sven's license is:
 

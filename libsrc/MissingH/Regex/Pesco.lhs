@@ -39,8 +39,7 @@ escape characters.
 
 \begin{code}
 {-# OPTIONS -fglasgow-exts #-}
-{- | Documentation for this module can be found in the doc directory
-in the MissingH distribution. -}
+{- | Documentation for this module can be found in the doc directory in the MissingH distribution. | -}
 
 module MissingH.Regex.Pesco
     (  Regex (match)       -- type class
