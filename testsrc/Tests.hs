@@ -33,6 +33,7 @@ import qualified ConfigParser.Maintest
 import qualified CRC32POSIXtest
 import qualified CRC32GZIPtest
 import qualified GZiptest
+import qualified HVIOtest
 
 test1 = TestCase ("x" @=? "x")
 
@@ -41,6 +42,7 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Str" Strtest.tests,
                  TestLabel "FiniteMap" FiniteMaptest.tests,
                  TestLabel "Path" Pathtest.tests,
+                 TestLabel "HVIO" HVIOtest.tests,
                  TestLabel "MIMETypes" MIMETypestest.tests,
                  TestLabel "Bitstest" Bitstest.tests,
                  TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests,

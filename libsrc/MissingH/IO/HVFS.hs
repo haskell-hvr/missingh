@@ -49,6 +49,12 @@ import System.Posix.Types
 import System.Time
 import System.Directory
 
+{- | Encapsulate a 'HVFSStat' result.  This is required due to Haskell
+typing restrictions.  You can get at it with:
+
+> case encap of
+>    HVFSStatEncap x -> -- now use x
+-}
 data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
 
 {- | Evaluating types of files and information about them.

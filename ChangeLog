@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 17:01:25 GMT	John Goerzen <jgoerzen@complete.org>	patch-98
+
+    Summary:
+      Disabled vShow; apparently hShow is unsupported in Hugs
+    Revision:
+      missingh--head--0.7--patch-98
+
+
+    new files:
+     libsrc/MissingH/IO/HVFS/InstanceHelpers.hs testsrc/HVIOtest.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS.hs
+     libsrc/MissingH/IO/HVIO.hs testsrc/Tests.hs
+
+
 2004-12-20 16:33:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-97
 
     Summary:

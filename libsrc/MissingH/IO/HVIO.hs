@@ -364,7 +364,7 @@ class (HVIOGeneric a) => HVIOSeeker a where
 instance HVIOGeneric Handle where
     vClose = hClose
     vIsEOF = hIsEOF
-    vShow = hShow
+    --vShow = hShow
     vMkIOError h et desc mfp =
         mkIOError et desc (Just h) mfp
 
