@@ -16,13 +16,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Testutil(mapassertEqual) where
+module Testutil(assertRaises) where
 import HUnit
+import qualified Control.Exception
 
-mapassertEqual :: (Show b, Eq b) => String -> (a -> b) -> [(a, b)] -> Assertion
-mapassertEqual descrip func [] = return ()
-mapassertEqual descrip func ((inp,result):xs) = 
-    do
-    assertEqual descrip result (func inp)
-    mapassertEqual descrip func xs
-
+assertRaises :: Show a => Exception -> IO a -> IO ()
+assertRaises selector action =
+    let test e =  if e == selector
+                  then Just e
+                  else Nothing
+        in
+        result <- tryJust test action
+        case result of
+             Left e -> return ()
+             Right x -> assertFailure ("Received " ++ (show x) ++
+                                       " instead of expected exception "
+                                       ++ (show selector))

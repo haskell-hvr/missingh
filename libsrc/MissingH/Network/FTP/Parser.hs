@@ -69,7 +69,11 @@ specificCode exp = do
                    return (read s)
 
 line :: Parser String
-line = many (noneOf "\r\n")
+line = do
+       x <- many (noneOf "\r\n")
+       crlf
+       -- return $ unsafePerformIO $ putStrLn ("line: " ++ x)
+       return x
 
 ----------------------------------------------------------------------
 -- The parsers
@@ -80,7 +84,6 @@ singleReplyLine = do
                   x <- code
                   sp
                   text <- line
-                  crlf
                   return (x, text)
 
 expectedReplyLine :: Int -> Parser (Int, String)
@@ -88,7 +91,6 @@ expectedReplyLine expectedcode = do
                                  x <- specificCode expectedcode
                                  sp
                                  text <- line
-                                 crlf
                                  return (x, text)
 
 startOfMultiReply :: Parser (Int, String)
@@ -96,17 +98,20 @@ startOfMultiReply = do
                     x <- code
                     char '-'
                     text <- line
-                    crlf
                     return (x, text)
 
 multiReplyComponent :: Parser [String]
-multiReplyComponent = try (do
-                           notMatching codeString "found unexpected code"
-                           thisLine <- line
-                           remainder <- multiReplyComponent
-                           return (thisLine : remainder)
-                          )
-                      <|> return []
+multiReplyComponent = (try (do
+                            notMatching (do 
+                                         codeString
+                                         sp
+                                        ) "found unexpected code"
+                            thisLine <- line
+                            -- return $ unsafePerformIO (putStrLn ("MRC: got " ++ thisLine))
+                            remainder <- multiReplyComponent
+                            return (thisLine : remainder)
+                           )
+                      ) <|> return []
 
 multiReply :: Parser (Int, [String])
 multiReply = try (do
