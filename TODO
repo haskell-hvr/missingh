@@ -4,3 +4,8 @@ Printf:
  make %H work 
 
 tests for new Parsec stuff
+
+HVFStest:
+  test all sorts of exceptions
+  test .. et al
+

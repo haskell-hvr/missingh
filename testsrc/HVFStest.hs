@@ -42,7 +42,7 @@ testTree = [("test.txt", MemoryFile "line1\nline2\n"),
            ]
 
 test_content = 
-    let f exp fp = TestLabel exp $ TestCase $
+    let f exp fp = TestLabel fp $ TestCase $
                      do x <- newMemoryVFS testTree
                         h <- vOpen x fp ReadMode
                         case h of
@@ -50,7 +50,9 @@ test_content =
         in
         [
          f "line1\nline2\n" "test.txt",
-         f "line1\nline2\n" "/test.txt"
+         f "line1\nline2\n" "/test.txt",
+         f "line5\n" "dir1/file3.txt",
+         f "subdir test" "/dir1/test.txt"
         ]
 
 test_structure =
