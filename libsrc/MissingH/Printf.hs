@@ -36,6 +36,7 @@ module MissingH.Printf(sprintf,
                        PFRun(..),
                        PFCall(..),
                        PFType(..),
+                       doit,
                        wrapper
                        ) where
 
@@ -106,6 +107,9 @@ sprintf (x:xs) y = x : sprintf xs y
 
 wrapper :: String -> [Value] -> Value
 wrapper f v = toValue $ sprintf f v
+
+-- doit format v = (pfrun (wrapper format) v)::String
+doit f = pfrun $ wrapper f
 
 {-
 wrapper :: String -> [PFType] -> String
