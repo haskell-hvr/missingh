@@ -56,16 +56,17 @@ module MissingH.Network.FTP.Client(-- * Establishing\/Removing connections
                                    -- * Directory listing
                                    nlst, dir, 
                                    -- * File downloads
-                                   getlines, getbinary,
+                                   getlines, getbinary, downloadbinary,
                                    -- * File uploads
-                                   putlines, putbinary,
+                                   putlines, putbinary, uploadbinary,
                                    -- * File manipulation
                                    rename, delete, size,
                                    -- * Directory manipulation
                                    cwd, mkdir, rmdir, pwd, 
                                    -- * Low-level advanced commands
                                    FTPConnection(isPassive),
-                                   transfercmd, ntransfercmd
+                                   transfercmd, ntransfercmd,
+                                   retrlines, storlines
                        )
 where
 import MissingH.Network.FTP.Parser
@@ -95,6 +96,7 @@ getresp h = do
 
 logsend m = debugM "MissingH.Network.FTP.Client" ("FTP sent: " ++ m)
 sendcmd h c = do logsend c
+                 hPutStr (writeh h) (c ++ "\r\n")
                  getresp h
 
 {- | Connect to the remote FTP server and read but discard
@@ -167,7 +169,7 @@ login h user pass acct =
 connection object reflecting this) -}
 
 setPassive :: FTPConnection -> Bool -> FTPConnection            
-setPassive f b = f{isPassive = True}
+setPassive f b = f{isPassive = b}
 
 {- | Finds the addres sof the remote. -}
 makepasv :: FTPConnection -> IO SockAddr
@@ -185,7 +187,8 @@ makeport h =
         do addr <- getSocketName (socket_internal h)
            mastersock <- listenTCPAddr (listenaddr addr)
            newaddr <- getSocketName mastersock
-           result <- sendcmd h ("PORT " ++ toPortString newaddr)
+           ps <- toPortString newaddr
+           result <- sendcmd h ("PORT " ++ ps)
            return (mastersock, result)
 
 {- | Establishes a connection to the remote. 
@@ -198,10 +201,13 @@ ntransfercmd h cmd =
                then do
                     addr <- makepasv h
                     s <- connectTCPAddr addr
+                    r <- sendcmd h cmd
+                    forceioresp 100 r
                     return s
                else do 
                     masterresult <- makeport h
-                    forceioresp 100 (snd masterresult)
+                    r <- sendcmd h cmd
+                    forceioresp 100 r
                     acceptres <- accept (fst masterresult)
                     sClose (fst masterresult)
                     return (fst acceptres)
@@ -209,8 +215,6 @@ ntransfercmd h cmd =
            s <- sock
            newh <- socketToHandle s ReadWriteMode
            hSetBuffering newh (BlockBuffering (Just 4096))
-           r <- sendcmd h cmd
-           forceioresp 100 r
            return (newh, Nothing)
 
 {- | Returns the socket part from calling 'ntransfercmd'. -}
@@ -284,9 +288,20 @@ is the filename. -}
 putlines :: FTPConnection -> String -> [String] -> IO FTPResult
 putlines h fn input = storlines h ("STOR " ++ fn) input 
 
-{- | Puts data in the specified file in binary.  Ths first string is the filename. -}
+{- | Puts data in the specified file in binary.  The first string is the filename. -}
 putbinary :: FTPConnection -> String -> String -> IO FTPResult
 putbinary h fn input = storbinary h ("STOR " ++ fn) input 
+
+{- | Uploads a file from disk in binary mode. Note: filename is used for both local and remote. -}
+uploadbinary :: FTPConnection -> String -> IO FTPResult
+uploadbinary h fn = do input <- readFile fn
+                       putbinary h fn input
+
+{- Downloads a file from remote and saves to disk in binary mode.  Note: filename is used for both local and remote. -}
+downloadbinary :: FTPConnection -> String -> IO FTPResult
+downloadbinary h fn = do r <- getbinary h fn
+                         writeFile fn (fst r)
+                         return (snd r)
 
 {- | Retrieves a list of files in the given directory. 
 

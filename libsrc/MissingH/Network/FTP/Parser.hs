@@ -52,7 +52,7 @@ import MissingH.List
 import MissingH.Bits
 import MissingH.Str
 import MissingH.Logging.Logger
-import Network.Socket(SockAddr(..), PortNumber(..), inet_addr)
+import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
 import System.IO(Handle, hGetContents)
 import System.IO.Unsafe
 import Text.Regex
@@ -213,13 +213,13 @@ Example:
 > toPortString (SockAddrInet (PortNum 0x1234) (0xaabbccdd)) ->
 >                              "170,187,204,221,18,52"
 -}
-toPortString :: SockAddr -> String
-toPortString (SockAddrInet (PortNum port) hostaddr) =
-    let wport = fromInteger(toInteger(port))::Word32
-        whost = fromInteger(toInteger(hostaddr))::Word16
-        in
-        (genericJoin "," . getBytes $ whost) ++ "," ++ 
-         (genericJoin "," . getBytes $ wport)
+toPortString :: SockAddr -> IO String
+toPortString (SockAddrInet port hostaddr) =
+    let wport = (fromEnum(port))::Int
+        in do
+           hn <- inet_ntoa hostaddr
+           return ((replace "." "," hn) ++ "," ++
+                   (genericJoin "," . drop 2 . getBytes $ wport))
 toPortString _ = 
     error "toPortString only works on AF_INET addresses"
 
