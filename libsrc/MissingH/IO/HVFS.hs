@@ -118,7 +118,7 @@ class (Show a) => HVFSStat a where
 
     vDeviceID _ = 0
     vFileID _ = 0
-    vFileMode _ = 0o0644
+    vFileMode x = if vIsDirectory x then 0x755 else 0o0644
     vLinkCount _ = 1
     vFileOwner _ = 0
     vFileGroup _ = 0

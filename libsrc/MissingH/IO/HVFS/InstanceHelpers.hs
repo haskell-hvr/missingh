@@ -47,6 +47,7 @@ module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
 where
 import MissingH.IO.HVFS
 import Data.IORef
+import Data.List
 import MissingH.Path
 import MissingH.Path.NameManip
 import Control.Monad.Error
@@ -57,11 +58,13 @@ import MissingH.IO.HVIO
 {- | A simple class that assumes that everything is either a file
 or a directory. -}
 data SimpleStat = SimpleStat {
-                              isFile :: Bool -- ^ True if file, False if directory
+                              isFile :: Bool, -- ^ True if file, False if directory
+                              fileSize :: FileOffset -- ^ Set to 0 if unknown or a directory
                              } deriving (Show, Eq)
 instance HVFSStat SimpleStat where
     vIsRegularFile x = isFile x
     vIsDirectory x = not (isFile x)
+    vFileSize x = fileSize x
 
 ----------------------------------------------------------------------
 -- In-Memory Tree Types
@@ -184,10 +187,12 @@ instance HVFS MemoryVFS where
     vGetFileStatus x fp = 
         do elem <- getMelem x fp
            case elem of
-                     (MemoryFile _) -> return $ HVFSStatEncap $
-                                             SimpleStat {isFile = True}
+                     (MemoryFile y) -> return $ HVFSStatEncap $
+                                             SimpleStat {isFile = True,
+                                                        fileSize = (genericLength y)}
                      (MemoryDirectory _) -> return $ HVFSStatEncap $
-                                             SimpleStat {isFile = False}
+                                             SimpleStat {isFile = False,
+                                                        fileSize = 0}
     vGetDirectoryContents x fp =
         do elem <- getMelem x fp
            case elem of

@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-23 17:21:02 GMT	John Goerzen <jgoerzen@complete.org>	patch-155
+
+    Summary:
+      Added size to the simple stat info
+    Revision:
+      missingh--head--0.7--patch-155
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS.hs
+     libsrc/MissingH/IO/HVFS/InstanceHelpers.hs
+
+
 2004-12-23 17:11:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-154
 
     Summary:
