@@ -17,10 +17,10 @@
 
 SOURCES := $(wildcard libsrc/MissingH/*.hs) \
 	$(wildcard libsrc/MissingH/*/*.hs) \
-	$(wildcard libsrc/MissingH/*/*.lhs) \
-	$(wildcard libsrc/MissingH/*/*/*.hs) \
+	$(wildcard libsrc/MissingH/*/*/*.hs) 
+LHSSOURCES := $(wildcard libsrc/MissingH/*/*.lhs) \
 	$(wildcard libsrc/MissingH/*/*/*.lhs)
-O1 := $(SOURCES:.hs=.o)
+O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
 OBJS := $(O1:.lhs=.o)
 
 all: libmissingH.a
@@ -37,7 +37,6 @@ libmissingH.a: $(OBJS)
 
 %.o: %.lhs
 	ghc -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
-
 
 doc:
 	-rm -rf html

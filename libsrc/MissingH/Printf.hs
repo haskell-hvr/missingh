@@ -29,6 +29,60 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 This module provides various helpful utilities for using a C-style printf().
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+Some code in sub-modules written by Ian Lynagh
+
+Inspiration and ideas from haskell-xml-rpc by Bjorn Bringert
+
+Welcome to the Haskell printf support.  This module is designed to emulate the
+C printf(3) family of functions.  Here are some examples:
+
+
+>> vsprintf "Hello"
+> "Hello"
+>> vsprintf "Hello, %s\n" "John"
+> "Hello, John\n"
+>> vsprintf "%s, your age is %d\n" "John" (10::Integer)
+> "John, your age is 10\n"
+
+Or, using the list-passing method:
+
+>> sprintf "Hello" ([]::[Value])
+> "Hello"
+>> sprintf "Hello, %s\n" [v "John"]
+> "Hello, John\n"
+>> sprintf "%s, your age is %d\n" [v "John", v (10::Integer)]
+> "John, your age is 10\n"
+
+You can also work with I\/O with these:
+
+> let printer = do
+>               printf "Line1\n"
+>               printf "Line2: %s\n" "blah"
+
+This will print @Line1\\nLine2: blah\\n@ to standard output.
+
+As you can see, there are two different ways to access the printf functions:
+via the variable argument count support (the functions beginning with v)
+or via the list argument support.  There is a utility function, 'v', that
+is simply a shortcut for 'toValue'.
+
+These functions are very similar to the C functions, with the following caveats:
+
+* There is no support for the length specifiers (l, etc.) since these make no
+sense in Haskell.  Haskell's type system provides all the info we need.
+
+* If the type system cannot determine the type if an argument (as in the
+numeric literals above), you may have to explicitly cast it to something.
+In practice, this is only a problem in interactive situations like ghci or
+hugs.
+
+* If you are running in an interact situation, or something where the
+compiler cannot deduce the expected return type, you will need to cast it
+to @String@.  For instance, at the ghci prompt, you would have to say
+@(sprintf \"foo\")::String@ to make things work.  If you are using one of the
+I\/O variants, you will have to instead cast it to @IO ()@.
+
 -}
 
 module MissingH.Printf(-- * Variable-Argument Ouptut
@@ -82,6 +136,8 @@ mkflags x =
         in
         flags''
 
+{- | List version of 'vsprintf'. -}
+
 sprintf :: String -> [Value] -> String
 sprintf [] [] = []
 sprintf ('%' : '%' : xs) y = '%' : sprintf xs y
@@ -116,17 +172,28 @@ sprintf ('%' : xs) (y : ys) =
 
 sprintf (x:xs) y = x : sprintf xs y
 
+{- | Given a format string and zero or more arguments, return a string
+that has formatted them appropriately.  This is the variable argument version
+of 'sprintf'. -}
 vsprintf :: (PFRun a) => String -> a
 vsprintf f = pfrun $ sprintf f
 
+{- | Like 'sprintf', but instead of returning a string, directs output
+to the given Handle. -}
 fprintf :: Handle -> String -> [Value] -> IO ()
 fprintf h f v = hPutStr h $ sprintf f v
 
+{- | Like 'fprintf', but directs output to standard out instead of
+taking an explicit Handle. -}
 printf :: String -> [Value] -> IO ()
 printf f v = fprintf stdout f v
 
+{- | Like 'vsprintf', but instead of returning a string, directs output to
+the given Handle. -}
 vfprintf :: IOPFRun a => Handle -> String -> a
 vfprintf h f = iopfrun h $ sprintf f
 
+{- | Like 'vfprintf', but directs output to standard out instead of taking
+an explicit Handle. -}
 vprintf :: IOPFRun a => String -> a
 vprintf f = vfprintf stdout f

@@ -45,8 +45,9 @@ test_vsprintf_strings =
     "abcde" @=? vsprintf "%.5s" "abcdefghij"
     "abcde" @=? vsprintf "%5.5s" "abcdefg"
     " abcde" @=? vsprintf "%6.5s" "abcdefg"
+    "abcde " @=? vsprintf "%-6.5s" "abcdefg"
     
-    
+  -- TODO: test numeric types  
     
 tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf),
                   TestLabel "vsprintf strings" (TestCase test_vsprintf_strings)

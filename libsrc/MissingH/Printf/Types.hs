@@ -1,6 +1,5 @@
-arch-tag: Printf type declarations
+-- arch-tag: Printf type declarations
 
-\begin{code}
 module MissingH.Printf.Types where
 
 import System.IO
@@ -91,5 +90,5 @@ yvar i = 'y':show i
 
 nvar :: ArgNum -> String
 nvar i = 'n':show i
-\end{code}
+
 
