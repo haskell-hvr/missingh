@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 20:12:08 GMT	John Goerzen <jgoerzen@complete.org>	patch-129
+
+    Summary:
+      Moved some stuff out of CP typse that didn't belong there anyway
+    Revision:
+      missingh--head--0.5--patch-129
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser.hs
+     libsrc/MissingH/ConfigParser/Types.hs
+
+
 2004-11-30 20:01:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-128
 
     Summary:

@@ -71,6 +71,47 @@ import System.IO(Handle)
 import Data.Char
 import Control.Monad.Error
 
+----------------------------------------------------------------------
+-- Basic types / default values
+----------------------------------------------------------------------
+
+{- | The default empty 'MissingH.ConfigParser' object.
+
+The content contains only an empty mandatory @DEFAULT@ section.
+
+'optionxform' is set to @map toLower@.
+
+'usedefault' is set to @True@.
+-}
+empty :: ConfigParser
+empty = ConfigParser { content = fromAL [("DEFAULT", [])],
+                       defaulthandler = defdefaulthandler,
+                       optionxform = map toLower,
+                       usedefault = True,
+                       accessfunc = defaccessfunc}
+
+-- internal function: default access function
+defaccessfunc :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+defaccessfunc cp s o = defdefaulthandler cp s (optionxform cp $ o)
+
+-- internal function: default handler
+defdefaulthandler :: ConfigParser -> SectionSpec -> OptionSpec -> CPResult String
+
+defdefaulthandler cp sect opt = 
+    let fm = content cp
+        lookup :: SectionSpec -> OptionSpec -> CPResult String
+        lookup s o = do sect <- maybeToEither (NoSection s, "get") $ lookupFM fm s
+                        maybeToEither (NoOption o, "get") $ lookupFM sect o
+        trydefault :: CPError -> CPResult String
+        trydefault e = if (usedefault cp)
+                       then 
+                            lookup "DEFAULT" opt 
+                                       -- Use original error if it's not in DEFAULT either
+                                       `catchError` (\_ -> throwError e)
+                       else throwError e
+        in 
+        lookup sect opt `catchError` trydefault
+
 
 {- | Combines two 'ConfigParser's into one.
 
