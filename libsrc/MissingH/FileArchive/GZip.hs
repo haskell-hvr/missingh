@@ -19,7 +19,8 @@ The GZip format is described in RFC1952
 -}
 
 module MissingH.FileArchive.GZip (
-                                  decompress
+                                  decompress,
+                                  read_header
                                  )
 where
 
@@ -65,8 +66,10 @@ decompress s =
        let rem = snd x
        return $ inflate_string rem
 -}
+
 decompress s = do x <- read_sections s
                   return $ concatMap snd x
+
 
 -- | Read all sections.  Returns (Header, ThisSection)
 read_sections :: String -> Either GZipError [(Header, String)]

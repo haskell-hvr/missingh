@@ -19,20 +19,32 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module GZiptest(tests) where
 import HUnit
 import MissingH.FileArchive.GZip
+import MissingH.Compression.Inflate
 import System.IO
+import MissingH.Either
+
+mf fn exp conf = TestLabel fn $ TestCase $
+                     do c <- readFile ("testsrc/gzfiles/" ++ fn)
+                        assertEqual "" exp (conf c)
+
+test_inflate = 
+    let f fn exp conv = mf fn exp (conv . snd . forceEither . read_header) in
+        [
+         f "t1.gz" "Test 1" inflate_string
+        ,f "t1.gz" ("Test 1",
+                    "\x19\xf8\x27\x99\x06\x00\x00\x00") inflate_string_remainder
+        ]
+
 
 test_gunzip =
-    let f fn exp = TestLabel fn $ TestCase $ 
-                   do
-                   fd <- openFile ("testsrc/gzfiles/" ++ fn) ReadMode
-                   c <- hGetContents fd
-                   assertEqual "" (Right exp) (decompress c)
+    let f fn exp = mf fn (Right exp) decompress
         in
         [
          f "t1.gz" "Test 1"
         ]
 
-tests = TestList [TestLabel "gunzip" (TestList test_gunzip)
+tests = TestList [TestLabel "inflate" (TestList test_inflate),
+                  TestLabel "gunzip" (TestList test_gunzip)
 
                  ]
 

@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 00:11:36 GMT	John Goerzen <jgoerzen@complete.org>	patch-26
+
+    Summary:
+      Checkpointing more tests
+    Revision:
+      missingh--head--0.7--patch-26
+
+
+    new files:
+     debian/libghc6-missingh-dev.postinst.debhelper
+     debian/libghc6-missingh-dev.prerm.debhelper
+
+    modified files:
+     ChangeLog libsrc/MissingH/FileArchive/GZip.hs
+     testsrc/GZiptest.hs
+
+
 2004-12-03 23:07:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-25
 
     Summary:
