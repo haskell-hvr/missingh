@@ -24,12 +24,12 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Listutil(-- * Tests
                          startswith, endswith,
                          -- * Conversions
-                         split, join
+                         split, join, trunc
                         ) where
-import Data.List(intersperse)
+import Data.List(intersperse, concat, isPrefixOf, isSuffixOf)
 
 {- | Returns true if the given list starts with the specified elements;
-false otherwise.
+false otherwise.  (This is an alias for "Data.List.isPrefixOf".)
 
 Example:
 
@@ -38,14 +38,10 @@ Example:
 -}
 
 startswith :: Eq a => [a] -> [a] -> Bool
-startswith [] _ = True
-startswith _ [] = False
-startswith (x:xs) (l:ls) =
-    if (x == l) then startswith xs ls
-    else False
+startswith = isPrefixOf
 
 {- | Returns true if the given list ends with the specified elements;
-false otherwise.
+false otherwise.  (This is an alias for "Data.List.isSuffixOf".)
 
 Example:
 
@@ -53,7 +49,7 @@ Example:
 
 -}
 endswith :: Eq a => [a] -> [a] -> Bool
-endswith x l = startswith (reverse x) (reverse l)
+endswith = isSuffixOf
 
 {- | Given a delimiter and a list (or string), split into components.
 
@@ -84,5 +80,20 @@ Example:
 
 > join "|" ["foo", "bar", "baz"] -> "foo|bar|baz"
 -}
-join :: a -> [a] -> a
-join delim l = foldl (++) [] (intersperse delim l)
+join :: [a] -> [[a]] -> [a]
+join delim l = concat (intersperse delim l)
+
+{- | Given a length and a list, remove any elements at the end of the list
+that make it longer than the length.  If the list is shorter than the
+length, do nothing.
+
+Example:
+
+> trunc 2 "Hello" -> "He"
+-}
+
+trunc :: Int -> [a] -> [a]
+trunc maxlen list =
+    let removecount = (length list) - maxlen in
+        if (removecount < 1) then list
+        else reverse $ drop removecount $ reverse list

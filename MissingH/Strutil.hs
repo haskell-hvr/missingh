@@ -28,9 +28,11 @@ module MissingH.Strutil(-- * Whitespace Removal
                         -- in "MissingH.Listutil".
                         startswith, endswith,
                         -- * Conversions
-                        split
+                        -- | Note: these functions are aliases for functions
+                        -- in "MissingH.Listutil".
+                        join, split, trunc
                        ) where
-import MissingH.Listutil(startswith, endswith, split)
+import MissingH.Listutil(startswith, endswith, join, split, trunc)
 
 wschars = " \t\r\n"
 
