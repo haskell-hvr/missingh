@@ -61,11 +61,11 @@ import qualified Network
 import System.IO
 import System.IO.Unsafe
 import MissingH.Logging.Logger
-
+import MissingH.Network
+import MissingH.Str
 data FTPConnection = FTPConnection {readh :: IO String,
                                     writeh :: Handle,
                                     isPassive :: Bool}
-                   deriving Eq
 
 {-
 getresp h = do c <- hGetContents h
@@ -76,18 +76,6 @@ getresp h = do
             c <- (readh h)
             debugParseGoodReply c
 
-unexpectedresp m r = "Expected " ++ m ++ ", got " ++ (show r)
-
-isxresp desired (r, _) = r >= desired && r < (desired + 100)
-
-forcexresp desired r = if isxresp desired r
-                       then r
-                       else error ((unexpectedresp (show desired)) r)
-
-forceioresp :: Int -> FTPResult -> IO ()
-forceioresp desired r = if isxresp desired r
-                        then return ()
-                        else fail (unexpectedresp (show desired) r)
 
 logsend m = debugM "MissingH.Network.FTP.Client" ("FTP sent: " ++ m)
 sendcmd h c = do logsend c
@@ -113,10 +101,7 @@ connectTo h p =
     do
     updateGlobalLogger "MissingH.Network.FTP.Parser" (setLevel DEBUG)
     updateGlobalLogger "MissingH.Network.FTP.Client" (setLevel DEBUG)
-    proto <- getProtocolNumber "tcp"
-    he <- getHostByName h
-    s <- socket AF_INET Stream proto
-    connect s (SockAddrInet p (hostAddress he))
+    s <- connectTCP h p
     r <- socketToHandle s ReadMode
     hSetBuffering r LineBuffering
     w <- socketToHandle s WriteMode
@@ -166,10 +151,40 @@ connection object reflecting this) -}
 setPassive :: FTPConnection -> Bool -> FTPConnection            
 setPassive f b = f{isPassive = True}
 
-{- | Establishes a passive connection to the remote. -}
-
-makepasv :: FTPConnection -> 
-makspasv h =
+{- | Finds the addres sof the remote. -}
+makepasv :: FTPConnection -> IO SockAddr
+makepasv h =
     do
-    r <- sendcmd("PASV")
-    
+    r <- sendcmd h "PASV"
+    return (respToSockAddr r)
+
+{- | Establishes a connection to the remote. 
+
+FIXME: need support for rest
+-}
+ntransfercmd :: FTPConnection -> String -> IO (Handle, Maybe Integer)
+ntransfercmd h cmd =
+    let sock = if isPassive h
+               then do
+                    addr <- makepasv h
+                    connectTCPAddr addr
+               else fail "FIXME: No support for non-passive yet"
+        in do
+           s <- sock
+           newh <- socketToHandle s ReadWriteMode
+           r <- sendcmd h cmd
+           forceioresp 100 r
+           return (newh, Nothing)
+
+{- | Returns the socket part from calling 'ntransfercmd'. -}
+transfercmd :: FTPConnection -> String -> IO Handle
+transfercmd h cmd = do x <- ntransfercmd h cmd
+                       return (fst x)
+
+{- | Retrieves lines of data from the remote. -}
+retrlines :: FTPConnection -> String -> IO [String]
+retrlines h cmd = do
+              sendcmd h "TYPE A"
+              newh <- transfercmd h cmd
+              c <- hGetContents newh
+              return $ split "\r\n" c

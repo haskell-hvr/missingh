@@ -31,8 +31,22 @@ This module provides various helpful utilities for dealing with networking
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Network(
+module MissingH.Network(connectTCP, connectTCPAddr
                        )
 where
+import Network.Socket
+import Network.BSD
+import System.IO
 
--- nothing yet
+connectTCP :: HostName -> PortNumber -> IO Socket
+connectTCP host port = do
+                       he <- getHostByName host
+                       connectTCPAddr (SockAddrInet port (hostAddress he))
+
+connectTCPAddr :: SockAddr -> IO Socket
+connectTCPAddr addr = do
+                      proto <- getProtocolNumber "tcp"
+                      s <- socket AF_INET Stream proto
+                      connect s addr
+                      return s
+                      

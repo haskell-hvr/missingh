@@ -38,7 +38,11 @@ module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
                                    toPortString, fromPortString,
                                    debugParseGoodReply,
                                    respToSockAddr,
-                                   FTPResult)
+                                   FTPResult,
+                                  -- * Utilities
+                                  unexpectedresp, isxresp,
+                                  forcexresp,
+                                  forceioresp)
 where
 
 import Text.ParserCombinators.Parsec
@@ -50,6 +54,7 @@ import MissingH.Logging.Logger
 import Network.Socket(SockAddr(..), PortNumber(..))
 import System.IO(Handle, hGetContents)
 import System.IO.Unsafe
+import Text.Regex
 type FTPResult = (Int, [String])
 
 -- import Control.Exception(Exception(PatternMatchFail), throw)
@@ -60,6 +65,20 @@ logit m = debugM "MissingH.Network.FTP.Parser" ("FTP received: " ++ m)
 ----------------------------------------------------------------------
 -- Utilities
 ----------------------------------------------------------------------
+
+unexpectedresp m r = "Expected " ++ m ++ ", got " ++ (show r)
+
+isxresp desired (r, _) = r >= desired && r < (desired + 100)
+
+forcexresp desired r = if isxresp desired r
+                       then r
+                       else error ((unexpectedresp (show desired)) r)
+
+forceioresp :: Int -> FTPResult -> IO ()
+forceioresp desired r = if isxresp desired r
+                        then return ()
+                        else fail (unexpectedresp (show desired) r)
+
 
 crlf :: Parser String
 crlf = string "\r\n" <?> "CRLF"
@@ -206,7 +225,16 @@ fromPortString instr =
         hostbytes = map read (take 4 inbytes)
         portbytes = map read (drop 4 inbytes)
         in
-        SockAddrInet (fromBytes portbytes) (fromBytes hostbytes)
+        SockAddrInet (fromInteger (fromBytes portbytes)) (fromBytes hostbytes)
 
+respToSockAddrRe = mkRegex("([0-9]+,){5}[0-9]+")
 -- | Converts a response code to a socket address
 respToSockAddr :: FTPResult -> SockAddr
+respToSockAddr f =
+    let r = forcexresp 200 f
+        in
+        case matchRegexAll respToSockAddrRe (head (snd r)) of
+             Nothing -> error ("Could not find remote endpoint in " ++ (show r))
+             Just (_, x, _, _) -> fromPortString x
+
+    
