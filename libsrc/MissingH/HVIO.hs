@@ -194,8 +194,19 @@ instance HVIOSeeker Handle where
 ----------------------------------------------------------------------
 -- VIO Support
 ----------------------------------------------------------------------
-data VIOCloseSupport a = VIOCloseSupport {isOpen :: Bool,
-                                          vData :: a}
+type VIOCloseSupport a = (Bool, a)
+
+vioc_isopen :: VIOCloseSupport a -> Bool
+vioc_isopen x = fst x
+
+vioc_get :: VIOCloseSupport a -> a
+vioc_get x = snd x
+
+vioc_close :: VIOCloseSupport a -> VIOCloseSupport a
+vioc_close (_, dat) = (False, dat)
+
+vioc_update :: VIOCloseSupport a -> a -> VIOCloseSupport a
+vioc_update (stat, dat) newval = (stat, newval)
 
 ----------------------------------------------------------------------
 -- Stream Readers/Writers
@@ -205,5 +216,4 @@ data VIOCloseSupport a = VIOCloseSupport {isOpen :: Bool,
 
 This is lazy!
  -}
-data StreamReader = StreamReader (IORef (VIOCloseSupport String))
-
+newtype StreamReader = StreamReader (VIOCloseSupport String)

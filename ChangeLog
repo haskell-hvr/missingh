@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-15 19:11:15 GMT	John Goerzen <jgoerzen@complete.org>	patch-69
+
+    Summary:
+      Checkpointing
+    Revision:
+      missingh--head--0.7--patch-69
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/HVIO.hs
+
+
 2004-12-15 19:05:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-68
 
     Summary:
