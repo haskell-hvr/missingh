@@ -74,7 +74,8 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.AnyDBM.FiniteMapDBM,
     MissingH.AnyDBM.StringDBM
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
-    AllowUndecidableInstances
+    AllowUndecidableInstances, CPP
+-- CPP extension is really only needed in FiniteMap.hs
 Build-Depends: haskell-src, network, unix, parsec
 GHC-Options: -O2
 

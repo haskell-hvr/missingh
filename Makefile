@@ -96,11 +96,11 @@ testsrc/runtests: local-pkg $(SOURCES) $(LHSSOURCES)
 test-ghc6: testsrc/runtests
 	testsrc/runtests 
 
-test-hugs:
-	runhugs -98 +o -P$(PWD):$(PWD)/testsrc: testsrc/runtests.hs
+test-hugs: hugsbuild
+	runhugs -98 +o -P$(PWD)/dist/build:$(PWD)/testsrc: testsrc/runtests.hs
 
 interact-hugs:
-	hugs -98 +o -P$(PWD):
+	hugs -98 +o -P$(PWD)/dist/build:
 
 interact-ghci: all
 	ghci -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts
