@@ -58,3 +58,21 @@ lstrip s = case s of
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
+-- | Returns true if the given list starts with the specified elements;
+-- false otherwise.
+--
+-- Example: startswith "He" "Hello" -> True
+
+startswith :: Eq a => [a] -> [a] -> Bool
+startswith [] _ = True
+startswith _ [] = False
+startswith (x:xs) (l:ls) =
+    if (x == l) then startswith xs ls
+    else False
+
+-- | Returns true if the given list ends with the specified elements;
+-- false otherwise.
+--
+-- Example: endswith "lo" "Hello" -> True
+endswith :: Eq a => [a] -> [a] -> Bool
+endswith x l = startswith (reverse x) (reverse l)
