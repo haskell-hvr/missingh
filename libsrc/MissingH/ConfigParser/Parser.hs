@@ -38,7 +38,6 @@ module MissingH.ConfigParser.Parser
        --empty_line, sectheader_chars, sectheader, oname_chars, value_chars,
        --extension_line, optionkey, optionvalue, optionpair
 
-       CPTok(..),
        parse_string, parse_file, parse_handle, ParseOutput
 ) where
 
@@ -48,13 +47,6 @@ import MissingH.Str
 import System.IO(Handle, hGetContents)
 
 type ParseOutput = [(String, [(String, String)])]
-
-data CPTok = EOFTOK
-           | NEWSECTION String
-           | NEWSECTION_EOF String
-           | EXTENSIONLINE String
-           | NEWOPTION (String, String)
-             deriving (Eq, Show, Ord)
 
 comment_chars = oneOf "#;"
 eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"
@@ -78,28 +70,24 @@ sectheader = do ignorestuff
                 return sname
 oname_chars = noneOf ":=\r\n"
 value_chars = noneOf "\r\n"
-extension_line = do
-                 ignorestuff
-                 many1 whitespace_chars
-                 c1 <- noneOf "\r\n#;"
-                 remainder <- many value_chars
-                 return (c1 : remainder)
+extension_line = do ignorestuff
+                    many1 whitespace_chars
+                    c1 <- noneOf "\r\n#;"
+                    remainder <- many value_chars
+                    return (c1 : remainder)
+                 <?> "extension line"
 
-optionkey = many1 oname_chars
-optionvalue = many1 value_chars
-optionpair = do
-             ignorestuff
-             key <- optionkey
-             optionsep
-             value <- optionvalue
-             return (key, value)
+optionkey = many1 oname_chars           <?> "option key"
+optionvalue = many1 value_chars         <?> "option value"
+optionpair = do ignorestuff
+                key <- optionkey
+                optionsep
+                value <- optionvalue
+                return (key, value)
+             <?> "option pair"
 
-newsection = sectheader
-newoption = optionpair
-extension = extension_line
-
-main :: Parser [(String, [(String, String)])]
-main =
+parsemain :: Parser [(String, [(String, String)])]
+parsemain =
     sectionlist
     <|> try (do o <- optionlist
                 s <- sectionlist
@@ -122,22 +110,25 @@ sectionlist =
 
 section = do {sh <- sectionhead; ol <- optionlist; return (sh, ol)}
 
-sectionhead = do {s <- newsection; return $ strip s}
+
+sectionhead = do {s <- sectheader; return $ strip s}
+              <?> "start of section"
 
 optionlist = 
     try (do {c <- coption; ol <- optionlist; return $ c : ol})
     <|> do {c <- coption; return $ [c]}
 
 extensionlist =
-    try (do {x <- extension; l <- extensionlist; return $ x : l})
-    <|> do {x <- extension; return [x]}
+    try (do {x <- extension_line; l <- extensionlist; return $ x : l})
+    <|> do {x <- extension_line; return [x]}
 
 coption =
-    try (do o <- newoption
+    try (do o <- optionpair
             l <- extensionlist
             return (strip (fst o), valmerge ((snd o) : l))
         )
-    <|> do {o <- newoption; return $ (strip (fst o), strip (snd o))}
+    <|> do {o <- optionpair; return $ (strip (fst o), strip (snd o))}
+    <?> "an option"
 
 valmerge :: [String] -> String
 valmerge vallist =
@@ -154,15 +145,15 @@ procparse fp l =
 
 parse_string :: String -> ParseOutput
 parse_string s = 
-    procparse "(string)" $ parse main "(string)" s
+    procparse "(string)" $ parse parsemain "(string)" s
 
 parse_file :: FilePath -> IO ParseOutput
-parse_file f = do r <- parseFromFile main f
+parse_file f = do r <- parseFromFile parsemain f
                   return (procparse f r)
 
 parse_handle :: Handle -> IO ParseOutput
 parse_handle h =
     do s <- hGetContents h
-       let r = parse main (show h) s
+       let r = parse parsemain (show h) s
        return $ procparse "(Handle)" r
 
