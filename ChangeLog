@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 01:47:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-36
+
+    Summary:
+      Added first Listtest
+    Revision:
+      missingh--head--1.0--patch-36
+
+
+    new files:
+     testsrc/Listtest.hs
+
+    modified files:
+     ChangeLog testsrc/Tests.hs
+
+
 2004-10-07 01:26:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-35
 
     Summary:
