@@ -32,19 +32,22 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.MIMETypes (-- * Creating Lookup Objects
-                           newMIMETypes,
+                           defaultMIMETypeData,
+                           readMIMETypes,
+                           hReadMIMETypes,
                            readSystemMIMETypes,
                            -- * Basic Access
                            MIMEResults,
-                           MIMETypeFunctions(..),
-                           -- * Advanced Usage
                            MIMETypeData(..),
-                           makeMIMETypes,
+                           guessType,
+                           guessExtension,
+
                           )
 where
 
 import Data.FiniteMap
 import qualified System.Directory
+import Monad
 import System.IO
 import System.IO.Error
 import MissingH.IO
@@ -81,36 +84,78 @@ type MIMEResults = (Maybe String,       -- The MIME type
                     Maybe String        -- Encoding
                    )
 
-data MIMETypeFunctions = MIMETypeFunctions
-    {
-     {- | Read the given mime.types file.  The first argument is whether or not to add to the strict table. -}
-     readMimeTypes ::  Bool -> FilePath -> IO MIMETypeFunctions,
-     {- | Load a mime.types file from an already-open handle. 
-       The first argument is whether or not to add to the strict table. -}
-     hReadMimeTypes :: Bool -> Handle -> IO MIMETypeFunctions,
-     {- | Guess the type of a file given a filename or URL.  The file
-     is not opened; only the name is considered.
+{- | Read the given mime.types file and add it to an existing object.
+Returns new object. -}
 
-     The first argument says whether or not to use strict mode.  The second
-     gives the filename or URL.-}
-     guessType :: Bool -> String -> MIMEResults,
-     {- | Guess the extension of a file based on its MIME type.
-     The return value includes the leading dot.  The first parameter
-     is whether or not to use strict mode; the second is the MIME type.
-     Returns Nothing if no extension could be found. -}
-     guessExtension :: Bool -> String -> Maybe String,
-     {- | Adds a new type to the data structures, replacing whatever data
-     may exist about it already.  The first parameter denotes whether
-     or not to add to the strict structures.  The second gives the MIME type,
-     and the third gives the extension. -}
-     addType :: Bool -> String -> String -> MIMETypeFunctions,
-     {- | Advanced users: returns the internal 'MIMETypeData'. -}
-     getMIMETypeData :: MIMETypeData,
-     {- | Advanced users: sets the internal 'MIMETypeData',
-     returning a new object with it. -}
-     setMIMETypeData :: MIMETypeData -> MIMETypeFunctions
-    }     
 
+readMIMETypes :: MIMETypeData            -- ^ Data to work with
+              -> Bool                    -- ^ Whether to work on strict data
+              -> FilePath               -- ^ File to read
+              -> IO MIMETypeData           -- ^ New object
+readMIMETypes mtd strict fn = do
+                         h <- openFile fn ReadMode
+                         retval <- hReadMIMETypes mtd strict h
+                         hClose h
+                         return retval
+
+{- | Load a mime.types file from an already-open handle. -}
+hReadMIMETypes :: MIMETypeData          -- ^ Data to work with
+                  -> Bool               -- ^ Whether to work on strict data
+                  -> Handle             -- ^ Handle to read from
+                  -> IO MIMETypeData       -- ^ New object
+hReadMIMETypes mtd strict h = 
+    let parseline :: MIMETypeData -> String -> MIMETypeData
+        parseline obj line =
+            let l1 = words line 
+                procwords [] = []
+                procwords (('#':_) :_) = []
+                procwords (x:xs) = x : procwords xs
+                l2 = procwords l1
+                in
+                if (length l2) >= 2 then
+                   let thetype = head l2
+                       suffixlist = tail l2
+                       in
+                       foldl (\o suff -> addType o strict thetype suff) obj suffixlist
+                else obj
+        in
+        do
+        lines <- hGetLines h
+        return (foldl parseline mtd lines)
+
+{- | Guess the type of a file given a filename or URL.  The file
+   is not opened; only the name is considered. -}
+
+guessType :: MIMETypeData               -- ^ Source data for guessing
+             -> Bool                    -- ^ Whether to limit to strict data
+             -> String                  -- ^ File or URL name to consider
+             -> MIMEResults             -- ^ Result of guessing (see 'MIMEResults' for details on interpreting it)
+-- FIXME
+guessType mtd strict fn = (Nothing, Nothing)
+
+{- | Guess the extension of a file based on its MIME type.
+   The return value includes the leading dot.
+
+   Returns Nothing if no extension could be found. -}
+guessExtension :: MIMETypeData          -- ^ Source data for guessing
+                  -> Bool               -- ^ Whether to limit to strict data
+                  -> String             -- ^ File or URL name to consider
+                  -> Maybe String       -- ^ Result of guessing, or Nothing if no match possible
+-- FIXME
+guessExtension mtd strict fn = Nothing
+
+{- | Adds a new type to the data structures, replacing whatever data
+   may exist about it already. -}
+
+addType :: MIMETypeData                 -- ^ Source data
+           -> Bool                      -- ^ Whether to add to strict data set
+           -> String                    -- ^ MIME type to add
+           -> String                    -- ^ Extension to add
+           -> MIMETypeData              -- ^ Result of addition
+-- FIXME
+addType mtd strict thetype theext = mtd
+
+{- | Default MIME type data to use -}
 defaultMIMETypeData :: MIMETypeData
 defaultMIMETypeData = 
     MIMETypeData {suffixMap = default_suffix_map,
@@ -118,81 +163,35 @@ defaultMIMETypeData =
                   typesMap = default_types_map,
                   commonTypesMap = default_common_types}
 
-{- | Create a new MIME type lookup object.  This is the main entry
-into the library. -}
-newMIMETypes :: MIMETypeFunctions
-newMIMETypes = makeMIMETypes defaultMIMETypeData
-
-{- | Create a new MIME type lookup object based on the given
-'MIMETypeData' object. -}
-makeMIMETypes :: MIMETypeData -> MIMETypeFunctions
-makeMIMETypes mtd = 
-    let self = makeMIMETypes mtd in
-    -- FIXME
-    let hrmt strict h = 
-            let parseline :: MIMETypeFunctions -> String -> MIMETypeFunctions
-                parseline obj line =
-                    let l1 = words line 
-                        procwords [] = []
-                        procwords (('#':_) :_) = []
-                        procwords (x:xs) = x : procwords xs
-                        l2 = procwords l1
-                        in
-                        if (length l2) >= 2 then
-                           let thetype = head l2
-                               suffixlist = tail l2
-                               in
-                               foldl (\o suff -> (addType o) strict thetype suff) obj suffixlist
-                        else self
-                in
-                do
-                lines <- hGetLines h
-                return (foldl parseline self lines)
-
-        in
-        MIMETypeFunctions 
-        {
-         readMimeTypes = (\strict fn -> (do
-                                         h <- openFile fn ReadMode
-                                         retval <- hrmt strict h
-                                         hClose h
-                                         return retval
-                                        )
-                         ),
-         hReadMimeTypes = hrmt,
-         -- FIXME
-         guessType = \strict thefile -> (Nothing, Nothing),
-         -- FIXME
-         guessExtension = \strict thetype -> Nothing,
-         -- FIXME
-         addType = \strict thetype theext -> makeMIMETypes mtd,
-         getMIMETypeData = mtd,
-         setMIMETypeData = \newmtd -> makeMIMETypes newmtd
-        }
-
-
 {- | Read the system's default mime.types files, and add the data contained
 therein to the passed object, then return the new one. -}
-readSystemMIMETypes :: MIMETypeFunctions -> IO MIMETypeFunctions
-readSystemMIMETypes mtf =
-    let tryread :: IO MIMETypeFunctions -> String -> IO MIMETypeFunctions
-        tryread inputio filename = 
+readSystemMIMETypes :: MIMETypeData -> IO MIMETypeData
+readSystemMIMETypes mtd =
+    let tryread :: MIMETypeData -> String -> IO MIMETypeData
+        tryread inputobj filename = 
             do
-            inputobj <- inputio
             fn <- try (openFile filename ReadMode)
             case fn of
                     Left _ -> return inputobj
                     Right h -> do
-                               x <- (hReadMimeTypes inputobj) True h
+                               x <- hReadMIMETypes inputobj True h
                                hClose h
                                return x
         in
         do
-        foldl tryread (return mtf) defaultfilelocations
+        foldM tryread mtd defaultfilelocations
 
-{- | Advanced users: create a new MIME type lookup object based on a
-'MIMETypeData' object.
--}
+----------------------------------------------------------------------
+-- Internal utilities
+----------------------------------------------------------------------
+
+getStrict :: MIMETypeData -> Bool -> FiniteMap String String
+getStrict mtd True = typesMap mtd
+getStrict mtd False = plusFM (commonTypesMap mtd) (typesMap mtd)
+
+setStrict :: MIMETypeData -> Bool -> (FiniteMap String String -> FiniteMap String String) -> MIMETypeData
+setStrict mtd True func = mtd{typesMap = func (typesMap mtd)}
+setStrict mtd False func = mtd{commonTypesMap = func (commonTypesMap mtd)}
 
 ----------------------------------------------------------------------
 -- Default data structures

@@ -66,6 +66,17 @@ test_genericJoin =
         f "|" ["foo", "bar", "baz"] "\"foo\"|\"bar\"|\"baz\""
         f ", " [5] "5"
 
+test_flipAL =
+    let f inp exp = exp @=? flipAL inp in
+        do
+        f ([]::[(Int,Int)]) ([]::[(Int,[Int])])
+        f [("a", "b")] [("b", ["a"])]
+        f [("a", "b"),
+           ("c", "b"),
+           ("d", "e"),
+           ("b", "b")] [("b", ["a", "c", "d"]),
+                        ("e", ["d"])]
+
 test_trunc =
     let f len inp exp = exp @=? trunc len inp in
         do

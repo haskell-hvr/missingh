@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 03:32:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-88
+
+    Summary:
+      Added flipAL
+    Revision:
+      missingh--head--1.0--patch-88
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/List.hs libsrc/MissingH/MIMETypes.hs
+     testsrc/Listtest.hs
+
+
 2004-10-20 21:24:05 GMT	John Goerzen <jgoerzen@complete.org>	patch-87
 
     Summary:
