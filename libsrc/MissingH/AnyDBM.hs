@@ -36,7 +36,7 @@ or on-disk items.
 module MissingH.AnyDBM (-- * The AnyDBM class
                         AnyDBM(..),
                         -- * AnyDBM utilities
-                        keysA, valuesA, mapA,
+                        mapA,
                         strFromA, strToA
                        )
 where
@@ -48,9 +48,20 @@ import MissingH.List(strFromAL, strToAL)
 
 {- | The main class for items implementing this interface.
 
-People implementing this class should provide methods for everything
-except 'insertListA' and 'forceLookupA'.  Classes that have no on-disk
-representation need not implement 'closeA' and 'flushA'. -}
+People implementing this class should provide methods for:
+
+* 'closeA' (unless you have no persistent storage)
+
+* 'flushA' (unless you have no persistent storage)
+
+* 'insertA'
+
+* 'deleteA'
+
+* 'lookupA'
+
+* either 'toListA' or 'keysA'
+-}
 class AnyDBM a where
     {- | Close the object, writing out any unsaved data to disk if necessary.
 
@@ -77,6 +88,9 @@ class AnyDBM a where
          if the key does not exist. -}
     deleteA :: a -> String -> IO ()
 
+    {- | True if the given key is present. -}
+    hasKeyA :: a -> String -> IO Bool
+
     {- | Find the data referenced by the given key. -}
     lookupA :: a -> String -> IO (Maybe String)
 
@@ -92,6 +106,25 @@ class AnyDBM a where
     {- | Return a representation of the content of the map as a list. -}
     toListA :: a -> IO [(String, String)]
 
+    {- | Returns a list of keys in the 'AnyDBM' object. -}
+    keysA :: a -> IO [String]
+
+    {- | Returns a list of values in the 'AnyDBM' object. -}
+    valuesA :: a -> IO [String]
+
+    valuesA h = do l <- toListA h
+                   return $ map snd l
+
+    keysA h = do l <- toListA h
+                 return $ map fst l
+
+
+    toListA h = 
+        let conv k = do v <- forceLookupA h k
+                        return (k, v)
+            in do k <- keysA h
+                  mapM conv k
+
     forceLookupA h key = 
         do x <- lookupA h key
            case x of 
@@ -102,33 +135,15 @@ class AnyDBM a where
     insertListA h ((key, val):xs) = do insertA h key val
                                        insertListA h xs
 
+    hasKeyA h k = do l <- lookupA h k
+                     case l of
+                            Nothing -> return False
+                            Just _ -> return True
+
     closeA h = flushA h
 
     flushA h = return ()
                   
-{- | Returns a list of keys in the 'AnyDBM' object.
-
-The implementation is:
-
->keysA h = do l <- toListA h
->             return $ map fst l
-
- -}
-keysA :: AnyDBM a => a -> IO [String]
-keysA h = do l <- toListA h
-             return $ map fst l
-
-{- | Returns a list of values in the 'AnyDBM' object. 
-
-The implementation is:
-
->valuesA h = do l <- toListA h
->               return $ map snd l
--}
-valuesA :: AnyDBM a => a -> IO [String]
-valuesA h = do l <- toListA h
-               return $ map snd l
-
 {- | Similar to MapM, but for 'AnyDBM' objects. -}
 mapA :: AnyDBM a => a -> ((String, String) -> IO b) -> IO [b]
 mapA h func = do l <- toListA h

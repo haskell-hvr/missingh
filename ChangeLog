@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-02 22:26:33 GMT	John Goerzen <jgoerzen@complete.org>	patch-193
+
+    Summary:
+      Improved AnyDBM so it only requires one of keysA or toListA
+    Revision:
+      missingh--head--0.7--patch-193
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/AnyDBM.hs
+
+
 2005-02-02 18:19:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-192
 
     Summary:
