@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-05 16:47:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-211
+
+    Summary:
+      New wholeMap, fixedWidth functions
+    Revision:
+      missingh--head--0.7--patch-211
+
+
+    modified files:
+     ChangeLog MissingH/List.hs debian/changelog
+     testsrc/Listtest.hs
+
+
 2005-04-01 20:44:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-210
 
     Summary:

@@ -45,6 +45,8 @@ module MissingH.List(-- * Tests
                      -- * Conversions
                      split, join, replace, genericJoin, takeWhileList,
                      dropWhileList, spanList, breakList,
+                     -- * Advanced Conversions
+                     WholeFunc(..), wholeMap, fixedWidth,
                      -- * Miscellaneous
                      countElem, elemRIndex, alwaysElemRIndex, seqList
                      -- -- * Sub-List Selection
@@ -258,3 +260,76 @@ alwaysElemRIndex item list =
 seqList :: [a] -> [a]
 seqList [] = []
 seqList (x:xs) = seq (seqList xs) (x:xs)
+
+--------------------------------------------------
+-- Advanced Conversions
+--------------------------------------------------
+
+{- | The type used for functions for 'wholeMap'.  See 'wholeMap' for details.
+-}
+newtype WholeFunc a b = WholeFunc ([a] -> (WholeFunc a b, [a], [b]))
+
+{- | This is an enhanced version of the concatMap or map functions in 
+Data.List.
+
+Unlike those functions, this one:
+
+ * Can consume a varying number of elements from the input list during
+   each iteration
+
+ * Can arbitrarily decide when to stop processing data
+
+ * Can return a varying number of elements to insert into the output list
+
+ * Can actually switch processing functions mid-stream
+
+ * Is not even restricted to processing the input list intact
+
+The function used by wholeMap, of type 'WholeFunc', is repeatedly called
+with the input list.  The function returns three things: the function
+to call for the next iteration (if any), what remains of the input list,
+and the list of output elements generated during this iteration.  The return
+value of 'wholeMap' is the concatenation of the output element lists from
+all iterations.
+
+Processing stops when the remaining input list is empty.  An example
+of a 'WholeFunc' is 'fixedWidth'. -}
+wholeMap :: WholeFunc a b -> [a] -> [b]
+wholeMap _ [] = []              -- Empty input, empty output.
+wholeMap (WholeFunc func) inplist =
+    let (nextfunc, nextlist, output) = func inplist
+        in
+        output ++ wholeMap nextfunc nextlist
+
+{- | A parser designed to process fixed-width input fields.  Use it with
+'wholeMap'.
+
+The Int list passed to this function is the list of the field widths desired
+from the input.  The result is a list of those widths, if possible.  If any
+of the input remains after processing this list, it is added on as the final
+element in the result list.  If the input is less than the sum of the requested
+widths, then the result list will be short the appropriate number of elements,
+and its final element may be shorter than requested.
+
+Examples:
+
+>wholeMap (fixedWidth [1, 2, 3]) "1234567890"
+> --> ["1","23","456","7890"]
+>wholeMap (fixedWidth (repeat 2)) "123456789"
+> --> ["12","34","56","78","9"]
+>wholeMap (fixedWidth []) "123456789"
+> --> ["123456789"]
+>wholeMap (fixedWidth [5, 3, 6, 1]) "Hello, This is a test."
+> --> ["Hello",", T","his is"," ","a test."]
+-}
+fixedWidth :: [Int] -> WholeFunc a [a]
+fixedWidth len = 
+    WholeFunc (fixedWidthFunc len)
+    where -- Empty input: Empty output, stop
+          fixedWidthFunc _ [] = ((fixedWidth []), [], [])
+          -- Empty length: Stop here.
+          fixedWidthFunc [] x = ((fixedWidth []), [], [x])
+          -- Stuff to process: Do it.
+          fixedWidthFunc (len:lenxs) input =
+              (fixedWidth lenxs, next, [this])
+              where (this, next) = splitAt len input

@@ -144,6 +144,25 @@ test_alwaysElemRIndex =
         ,f 'f' ['f', 'b', 'f', 'f', 'b'] 3
         ]
 
+test_fixedWidth =
+    let f inplen inplist exp = TestLabel ((show inplen) ++ ", " ++
+                                          (show inplist)) $ TestCase $
+                               wholeMap (fixedWidth inplen) inplist @=? exp in
+        [
+         f [] ([]::[Int]) ([]::[[Int]])
+        ,f [1] [5] [[5]]
+        ,f [1] [3, 4, 5, 6] [[3], [4, 5, 6]]
+        ,f [1] ([]::[Int]) ([]::[[Int]])
+        ,f [2] [3] [[3]]
+        ,f [2] [3, 4, 5, 6] [[3, 4], [5, 6]]
+        ,f [2] [3, 4, 5] [[3, 4], [5]]
+        ,f [1, 2, 3] "1234567890"  ["1","23","456","7890"]
+        ,f (repeat 2) "123456789" ["12","34","56","78","9"]
+        ,f [] "123456789" ["123456789"]
+        ,f [5, 3, 6, 1] "Hello, This is a test." 
+               ["Hello",", T","his is"," ","a test."]
+        ]
+
 test_strToAL =
     let f inp exp = TestLabel (show inp) $ TestCase $ do let r = strFromAL inp
                                                          exp @=? r
@@ -170,7 +189,8 @@ tests = TestList [TestLabel "delFromAL" (TestList test_delFromAL),
                   TestLabel "alwaysElemRIndex" (TestList test_alwaysElemRIndex),
                   TestLabel "replace" (TestList test_replace),
                   TestLabel "contains" (TestList test_contains),
-                  TestLabel "strFromAL & strToAL" (TestList test_strToAL)]
+                  TestLabel "strFromAL & strToAL" (TestList test_strToAL),
+                  TestLabel "fixedWidth" (TestList test_fixedWidth)]
 
 
 
