@@ -52,6 +52,10 @@ test_structure =
         ,f "dir1" (\x -> ["file3.txt", "test.txt", "dir2"] `ioeq`
                    vGetDirectoryContents x "/dir1")
         ,f "dir1/dir2" (\x -> [] `ioeq` vGetDirectoryContents x "/dir1/dir2")
+        ,f "relative tests" (\x -> 
+            do vSetCurrentDirectory x "dir1"
+               [] `ioeq` vGetDirectoryContents x "dir2"
+                            )
         ]
                             
 
