@@ -54,10 +54,23 @@ import Data.List
 import System.IO
 import MissingH.Printf.Types
 import MissingH.Printf.Printer(get_conversion_func)
+import Text.Regex
 
 v :: PFType a => a -> Value
 v = toValue
 
+sprintfre = mkRegex "^([#0 +'O-]*)(\\d*)(.\\d*)?([.])"
+
+toflags :: String -> [Flag]
+toflags "" = []
+toflags (x:xs) = (case x of
+                      '#' -> AlternateForm
+                      '0' -> ZeroPadded
+                      '-' -> LeftAdjust
+                      ' ' -> BlankPlus
+                      '+' -> Plus
+                      '\'' -> Thousands
+                      'I' -> AlternativeDigits) : toflags xs
 
 sprintf :: String -> [Value] -> String
 sprintf [] [] = []
@@ -67,10 +80,24 @@ sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
 sprintf ('!' : xs) (y : ys) = 
     show (((fromValue y)::Int) + 1) ++ sprintf xs ys -}
 
+{-
 sprintf ('%' : t : xs) (y:ys) = 
     let cv = get_conversion_func t y [] Nothing Nothing
         in
         cv ++ sprintf xs ys
+-}
+
+sprintf ('%' : xs) (y : ys) =
+    case matchRegexAll sprintfre xs of
+         Nothing -> error $ "Problem in format string at %" ++ xs
+         Just (_, _, remainder, [flagstr, widthstr, precstr, fmt]) ->
+             let width = if widthstr == "" then Nothing else Just (read widthstr)
+                 prec = if precstr == "" then Nothing else Just precstr
+                 flags = toflags flagstr
+                 in
+                 (get_conversion_func (head fmt) y flags width prec) ++ sprintf remainder ys
+         _ -> error $ "Problem matching format string at %" ++ xs
+
 sprintf (x:xs) y = x : sprintf xs y
 
 vsprintf :: (PFRun a) => String -> a
