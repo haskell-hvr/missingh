@@ -24,6 +24,8 @@ import MissingH.IO.HVFS.InstanceHelpers
 import MissingH.AnyDBM
 import MissingH.AnyDBM.StringDBM
 import MissingH.AnyDBM.FiniteMapDBM
+import System.Directory
+import MissingH.IO.HVFS.Utils
 import Data.HashTable
 import Data.List(sort)
 import Control.Exception(finally)
@@ -48,10 +50,14 @@ weirdl = sort $ [("", "empty"),
                  ("v3,v4", ""),
                  ("k\0ey", "\xFF")]
 
+createdir = TestCase $ createDirectory "testtmp"
+removedir = TestCase $ recursiveRemove SystemFS "testtmp"
+
 generic_test initfunc openfunc =
     let f = mf initfunc openfunc in
         [
-         f "empty" $ \h -> do [] @>=? keysA h
+         createdir
+        ,f "empty" $ \h -> do [] @>=? keysA h
                               [] @>=? valuesA h
                               [] @>=? toListA h
                               Nothing @>=? lookupA h "foo"
@@ -72,12 +78,14 @@ generic_test initfunc openfunc =
         ,f "weirdchars" $ \h -> do insertListA h weirdl
                                    weirdl @>=? (toListA h >>= return . sort)
                                    deleteall h
+        ,removedir
         ]
 
 generic_persist_test initfunc openfunc =
     let f = mf initfunc openfunc in
         [
-         f "empty" deleteall 
+         createdir
+        ,f "empty" deleteall 
         ,f "weirdpop" $ \h -> insertListA h weirdl
         ,f "weirdcheck" $ \h -> do weirdl @>=? (toListA h >>= return . sort)
                                    deleteall h
@@ -87,7 +95,8 @@ generic_persist_test initfunc openfunc =
                               insertA h "z" "y"
         ,f "step4" $ \h -> do [("key", "v2"), ("z", "y")] @>=?
                                  (toListA h >>= return . sort)
-        ,f "cleanup" deleteall
+        ,f "cleanupdb" deleteall
+        ,removedir
         ]
 
 test_hashtable = generic_test (return ())
@@ -96,10 +105,10 @@ test_hashtable = generic_test (return ())
 test_finitemap = generic_test (return ())
                   (\_ -> newFiniteMapDBM)
 test_stringdbm = generic_persist_test (return SystemFS)
-                   (\f -> openStringVDBM f "testsrc/tmp/StringDBM" ReadWriteMode)
+                   (\f -> openStringVDBM f "testtmp/StringDBM" ReadWriteMode)
                  ++
                  generic_test (return SystemFS)
-                   (\f -> openStringVDBM f "testsrc/tmp/StringDBM" ReadWriteMode)
+                   (\f -> openStringVDBM f "testtmp/StringDBM" ReadWriteMode)
 
 tests = TestList [TestLabel "HashTable" (TestList test_hashtable),
                   TestLabel "StringDBM" (TestList test_stringdbm),

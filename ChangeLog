@@ -2,6 +2,24 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-03 15:40:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-195
+
+    Summary:
+      Cleaned up temp file handling in AnyDBMTest.hs
+    Revision:
+      missingh--head--0.7--patch-195
+
+
+    removed files:
+     testsrc/tmp/.arch-ids/=id
+
+    modified files:
+     ChangeLog Makefile testsrc/AnyDBMtest.hs
+
+    removed directories:
+     testsrc/tmp testsrc/tmp/.arch-ids
+
+
 2005-02-03 14:43:52 GMT	John Goerzen <jgoerzen@complete.org>	patch-194
 
     Summary:
