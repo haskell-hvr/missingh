@@ -48,14 +48,22 @@ Useful standards:
 
 -}
 
-module MissingH.Network.FTP.Client(easyConnectTo, connectTo,
-                                   loginAnon, login, 
+module MissingH.Network.FTP.Client(-- * Establishing/Removing connections
+                                   easyConnectTo, connectTo,
+                                   loginAnon, login, quit,
+                                   -- * Configuration
                                    setPassive,
-                                   nlst, dir, rename,
-                                   delete, cwd, size, quit,
-                                   mkdir, rmdir, pwd, 
+                                   -- * Directory listing
+                                   nlst, dir, 
+                                   -- * File downloads
+                                   getlines, getbinary,
+                                   -- * File manipulation
+                                   rename, delete, size,
+                                   -- * Directory manipulation
+                                   cwd, mkdir, rmdir, pwd, 
+                                   -- * Low-level advanced commands
                                    FTPConnection(isPassive),
-                                   transfercmd, ntransfercmd,
+                                   transfercmd, ntransfercmd
                        )
 where
 import MissingH.Network.FTP.Parser
@@ -195,7 +203,8 @@ transfercmd :: FTPConnection -> String -> IO Handle
 transfercmd h cmd = do x <- ntransfercmd h cmd
                        return (fst x)
 
-{- | Retrieves lines of data from the remote. -}
+{- | Retrieves lines of data from the remote. The string gives 
+the command to issue. -}
 retrlines :: FTPConnection -> String -> IO ([String], FTPResult)
 retrlines h cmd =
     -- foo returns the empty last item and closes the handle when done
@@ -210,6 +219,29 @@ retrlines h cmd =
               newh <- transfercmd h cmd
               c <- hGetContents newh
               foo newh (split "\r\n" $ c)
+
+{- | Retrieves binary data from the remote. The string gives the command
+to issue. -}
+retrbinary :: FTPConnection -> String -> IO (String, FTPResult)
+retrbinary h cmd =
+    let foo h2 [] = do hClose h2
+                       r <- getresp h
+                       return ([], r)
+        foo h2 (x:xs) = do next <- unsafeInterleaveIO $ foo h2 xs
+                           return $ (x : fst next, snd next)
+        in do
+           sendcmd h "TYPE I"
+           newh <- transfercmd h cmd
+           c <- hGetContents newh
+           foo newh c
+
+{- | Retrieves the specified file in text mode. -}
+getlines :: FTPConnection -> String -> IO ([String], FTPResult)
+getlines h fn = retrlines h ("RETR " ++ fn)
+
+{- | Retrieves the specified file in binary mode. -}
+getbinary :: FTPConnection -> String -> IO (String, FTPResult)
+getbinary h fn = retrbinary h ("RETR " ++ fn)
 
 {- | Retrieves a list of files in the given directory. 
 
