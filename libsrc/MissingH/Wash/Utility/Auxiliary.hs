@@ -1,10 +1,10 @@
-module Auxiliary where
+module MissingH.Wash.Utility.Auxiliary where
 
 import IO
 import System
 import Directory
-import FileNames
-import qualified Shell
+import MissingH.Wash.Utility.FileNames
+import qualified MissingH.Wash.Utility.Shell as Shell
 
 protectedGetEnv :: String -> String -> IO String
 protectedGetEnv var deflt =

@@ -1,5 +1,5 @@
 -- © 2001, 2002 Peter Thiemann
-module MIME where
+module MissingH.Wash.Mail.MIME where
 -- RFC 2045
 -- RFC 2046
 
@@ -7,10 +7,11 @@ import IO
 import Random
 import Char
 
-import qualified Base64
-import qualified QuotedPrintable
-import HeaderField
-import qualified RFC2279				    -- UTF-8
+import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
+import MissingH.Wash.Mail.HeaderField
+import qualified MissingH.Wash.Utility.RFC2279 as RFC2279
+-- UTF-8
 
 
 -- --------------------------------------------------------------------

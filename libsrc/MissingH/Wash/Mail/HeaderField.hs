@@ -1,6 +1,6 @@
-module HeaderField where
+module MissingH.Wash.Mail.HeaderField where
 
-import RFC2047
+import MissingH.Wash.Utility.RFC2047
 
 -- 
 newtype Header = Header (String, String)

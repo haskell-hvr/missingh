@@ -1,6 +1,6 @@
-module Locking (obtainLock, releaseLock) where
+module MissingH.Wash.Utility.Locking (obtainLock, releaseLock) where
 
-import Auxiliary
+import MissingH.Wash.Utility.Auxiliary
 import Directory
 import IO
 import System

@@ -1,9 +1,9 @@
 -- © 2003 Peter Thiemann
-module JavaScript where
+module MissingH.Wash.Utility.JavaScript where
 
 import Char
 
-import Hex
+import MissingH.Wash.Utility.Hex
 
 jsShow :: String -> String
 jsShow xs = '\'' : g xs

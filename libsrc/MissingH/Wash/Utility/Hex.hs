@@ -1,5 +1,5 @@
 -- © 2001, 2003 Peter Thiemann
-module Hex where
+module MissingH.Wash.Utility.Hex where
 
 import Array
 import Char

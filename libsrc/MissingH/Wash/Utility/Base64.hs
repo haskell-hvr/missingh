@@ -1,6 +1,6 @@
 -- © 2002 Peter Thiemann
 -- |Implements RFC 2045 MIME coding.
-module Base64
+module MissingH.Wash.Utility.Base64
        (encode, encode', decode, decode'
        ,alphabet_list
        )

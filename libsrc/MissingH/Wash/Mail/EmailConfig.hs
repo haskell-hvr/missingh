@@ -1,4 +1,4 @@
-module EmailConfig where
+module MissingH.Wash.Mail.EmailConfig where
 
 tmpDir, varDir, emailTmpDir, sendmailProgram :: String
 

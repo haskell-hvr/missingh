@@ -1,6 +1,6 @@
 -- © 2002 Peter Thiemann
 -- |Defines functions for shell quotation.
-module Shell where
+module MissingH.Wash.Utility.Shell where
 
 import Char
 

@@ -2,7 +2,7 @@
 -- http://www.ietf.org/rfc/rfc3548.txt
 -- Author: Niklas Deutschmann
 
-module Base32 (encode, decode) where
+module MissingH.Wash.Utility.Base32 (encode, decode) where
 
 import Bits
 import Char

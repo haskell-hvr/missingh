@@ -1,10 +1,10 @@
-module QuotedPrintable 
+module MissingH.Wash.Utility.QuotedPrintable 
        (encode, encode', decode
        -- deprecated: encode_quoted, encode_quoted', decode_quoted
        ) where
 
 import Char
-import Hex
+import MissingH.Wash.Utility.Hex
 
 encode, encode', decode :: String -> String
 encode = encode_quoted

@@ -1,5 +1,5 @@
 -- © 2002 Peter Thiemann
-module SimpleParser where
+module MissingH.Wash.Utility.SimpleParser where
 
 import Char
 

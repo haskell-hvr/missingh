@@ -1,14 +1,14 @@
 -- © 2002 Peter Thiemann
-module ISO8601 where
+module MissingH.Wash.Utility.ISO8601 where
 
 import Char
 import Monad
 import Time
 
-import IOExts
+import System.IO.Unsafe
 
-import IntToString
-import SimpleParser
+import MissingH.Wash.Utility.IntToString
+import MissingH.Wash.Utility.SimpleParser
 
 secondsToString seconds =
   intToString 20 seconds

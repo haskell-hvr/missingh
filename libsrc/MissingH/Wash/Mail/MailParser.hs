@@ -1,4 +1,4 @@
-module MailParser where
+module MissingH.Wash.Mail.MailParser where
 
 -- see RFC 2822
 -- TODO: check against their definition of token
@@ -6,13 +6,14 @@ import Char
 import List
 import Maybe
 -- 
-import Parsec
+import Text.ParserCombinators.Parsec
 -- 
-import qualified Base64
-import qualified QuotedPrintable
-import RFC2047 (p_token)
-import Message
-import HeaderField
+import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
+import qualified MissingH.Wash.Utility.RFC2047 as RFC2047
+import MissingH.Wash.Utility.RFC2047 (p_token)
+import MissingH.Wash.Mail.Message
+import MissingH.Wash.Mail.HeaderField
 
 parseMessageFromFile fname =
   parseFromFile message fname
