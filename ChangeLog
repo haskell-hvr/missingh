@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 20:08:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-82
+
+    Summary:
+      Removed separate lexer
+    Revision:
+      missingh--head--0.5--patch-82
+
+
+    new files:
+     libsrc/MissingH/ConfigParser/Parser.hs
+
+    removed files:
+     libsrc/MissingH/ConfigParser/Lexer.hs
+     libsrc/MissingH/ConfigParser/Parser.hs
+
+    modified files:
+     ChangeLog testsrc/ConfigParser/Parsertest.hs
+
+
 2004-11-18 19:37:22 GMT	John Goerzen <jgoerzen@complete.org>	patch-81
 
     Summary:

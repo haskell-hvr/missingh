@@ -1,4 +1,4 @@
-{- arch-tag: ConfigParser parser support
+{- arch-tag: ConfigParser parser
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -26,124 +26,143 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Parser support for "MissingH.ConfigParser".  This module is not intended to be
+Lexer support for "MissingH.ConfigParser".  This module is not intended to be
 used directly by your programs.
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.ConfigParser.Parser
 (
- parse_string, parse_file, parse_handle, ParseOutput
-       --satisfyG,
-       --main
+       -- -- * Temporary for testing
+       --comment_chars, eol, optionsep, whitespace_chars, comment_line,
+       --empty_line, sectheader_chars, sectheader, oname_chars, value_chars,
+       --extension_line, optionkey, optionvalue, optionpair
+
+       CPTok(..),
+       parse_string, parse_file, parse_handle, ParseOutput
 ) where
+
 import Text.ParserCombinators.Parsec
+import MissingH.Parsec
 import MissingH.Str
-import MissingH.ConfigParser.Lexer
 import System.IO(Handle, hGetContents)
 
 type ParseOutput = [(String, [(String, String)])]
 
+data CPTok = EOFTOK
+           | NEWSECTION String
+           | NEWSECTION_EOF String
+           | EXTENSIONLINE String
+           | NEWOPTION (String, String)
+             deriving (Eq, Show, Ord)
+
+comment_chars = oneOf "#;"
+eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"
+optionsep = oneOf ":=" <?> "Option separator"
+whitespace_chars = oneOf " \t" <?> "Whitespace"
+comment_line = do skipMany whitespace_chars <?> "whitespace in comment"
+                  comment_chars             <?> "start of comment"
+                  (many1 $ noneOf "\r\n")   <?> "content of comment"
+empty_line = many1 whitespace_chars         <?> "empty line"
+
+ignore1 = eol 
+          <|> try (do {comment_line; ignore1})
+          <|> do {empty_line; ignore1}
+ignorestuff = skipMany ignore1
+
+sectheader_chars = noneOf "]\r\n"
+sectheader = do ignorestuff
+                char '['
+                sname <- many1 $ sectheader_chars
+                char ']'
+                return sname
+oname_chars = noneOf ":=\r\n"
+value_chars = noneOf "\r\n"
+extension_line = do
+                 ignorestuff
+                 many1 whitespace_chars
+                 c1 <- noneOf "\r\n#;"
+                 remainder <- many value_chars
+                 return (c1 : remainder)
+
+optionkey = many1 oname_chars
+optionvalue = many1 value_chars
+optionpair = do
+             ignorestuff
+             key <- optionkey
+             optionsep
+             value <- optionvalue
+             return (key, value)
+
+newsection = sectheader
+newoption = optionpair
+extension = extension_line
+
+main :: Parser [(String, [(String, String)])]
+main =
+    sectionlist
+    <|> try (do o <- optionlist
+                s <- sectionlist
+                return $ ("DEFAULT", o) : s
+            )
+    <|> do {o <- optionlist; return $ [("DEFAULT", o)]}
+    <?> "High-level error parsing config file"
+
+sectionlist = 
+    do {eof; return []}
+    <|> try (do
+             s <- sectionhead
+             eof
+             return [(s, [])]
+            )
+    <|> do
+        s <- section
+        sl <- sectionlist
+        return (s : sl)
+
+section = do {sh <- sectionhead; ol <- optionlist; return (sh, ol)}
+
+sectionhead = do {s <- newsection; return $ strip s}
+
+optionlist = 
+    try (do {c <- coption; ol <- optionlist; return $ c : ol})
+    <|> do {c <- coption; return $ [c]}
+
+extensionlist =
+    try (do {x <- extension; l <- extensionlist; return $ x : l})
+    <|> do {x <- extension; return [x]}
+
+coption =
+    try (do o <- newoption
+            l <- extensionlist
+            return (strip (fst o), valmerge ((snd o) : l))
+        )
+    <|> do {o <- newoption; return $ (strip (fst o), strip (snd o))}
+
+valmerge :: [String] -> String
+valmerge vallist =
+    let vl2 = map strip vallist
+        in join "\n" vl2
+
+procparse fp l =
+    case l of
+           Left err -> error (show err)
+           Right reply -> reply
 ----------------------------------------------------------------------
 -- Exported funcs
 ----------------------------------------------------------------------
 
 parse_string :: String -> ParseOutput
 parse_string s = 
-    detokenize "(string)" $ parse loken "(string)" s
+    procparse "(string)" $ parse main "(string)" s
 
 parse_file :: FilePath -> IO ParseOutput
-parse_file f =
-    do o <- parseFromFile loken f
-       return $ detokenize f o
+parse_file f = do r <- parseFromFile main f
+                  return (procparse f r)
 
 parse_handle :: Handle -> IO ParseOutput
 parse_handle h =
     do s <- hGetContents h
-       let o = parse loken (show h) s
-       return $ detokenize (show h) o
+       let r = parse main (show h) s
+       return $ procparse "(Handle)" r
 
-----------------------------------------------------------------------
--- Private funcs
-----------------------------------------------------------------------
-detokenize fp l =
-    let r = case l of
-                   Left err -> error $ "Lexer: " ++ (show err)
-                   Right reply -> reply
-        in
-        case runParser main () fp r of
-                                    Left err -> error $ "Parser: " ++ (show err)
-                                    Right reply -> reply
-
-main :: GenParser CPTok () [(String, [(String, String)])]
-main =
-    do {s <- sectionlist; return s}
-    <|> try (do 
-             o <- optionlist
-             s <- sectionlist
-             return $ ("DEFAULT", o) : s
-            )
-    <|> do {o <- optionlist; return $ [("DEFAULT", o)] }
-    <?> "Error parsing config file tokens"
-        
-satisfyG :: (CPTok -> Bool) -> GenParser CPTok () CPTok
-satisfyG f = tokenPrim (\c -> show [c])
-                       (\pos _ _ -> pos)
-                       (\c -> if f c then Just c else Nothing)
-
-want :: (CPTok -> Maybe a) -> GenParser CPTok () a
-want f = tokenPrim (\c -> show [c])
-                   (\pos _ _ -> pos)
-                   (\c -> f c)
-
-sectionlist :: GenParser CPTok () [(String, [(String, String)])]
-sectionlist = do {satisfyG (==EOFTOK); return []}
-              <|> try (do 
-                       s <- sectionhead
-                       satisfyG (==EOFTOK)
-                       return [(s, [])]
-                      )
-              <|> do
-                  s <- section
-                  sl <- sectionlist
-                  return (s : sl)
-
-section :: GenParser CPTok () (String, [(String, String)])
-section = do {sh <- sectionhead; ol <- optionlist; return (sh, ol)}
-
-sectionhead :: GenParser CPTok () String
-sectionhead = 
-    let wf (NEWSECTION x) = Just x
-        wf _ = Nothing
-        in
-        do {s <- want wf; return $ strip s}
-
-optionlist :: GenParser CPTok () [(String, String)]
-optionlist =
-    try (do {c <- coption; ol <- optionlist; return $ c : ol})
-    <|> do {c <- coption; return $ [c]}
-
-extensionlist :: GenParser CPTok () [String]
-extensionlist =
-    let wf (EXTENSIONLINE x) = Just x
-        wf _ = Nothing
-        in
-        try (do {x <- want wf; l <- extensionlist; return $ x : l})
-        <|> do {x <- want wf; return [x]}
-
-coption :: GenParser CPTok () (String, String)
-coption =
-    let wf (NEWOPTION x) = Just x
-        wf _ = Nothing
-        in
-        try (do 
-             o <- want wf
-             l <- extensionlist
-             return (strip (fst o), valmerge ((snd o) : l ))
-            )
-        <|> do {o <- want wf; return $ (strip (fst o), strip (snd o))}
-
-valmerge :: [String] -> String
-valmerge vallist =
-    let vl2 = map strip vallist
-        in join "\n" vl2
