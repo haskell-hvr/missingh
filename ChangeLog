@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-01 22:18:39 GMT	John Goerzen <jgoerzen@complete.org>	patch-185
+
+    Summary:
+      Added StringDBM
+    Revision:
+      missingh--head--0.7--patch-185
+
+
+    new files:
+     libsrc/MissingH/AnyDBM/.arch-ids/=id
+     libsrc/MissingH/AnyDBM/FiniteMapDBM.hs
+     libsrc/MissingH/AnyDBM/StringDBM.hs
+
+    modified files:
+     ChangeLog MissingH.cabal libsrc/MissingH/AnyDBM.hs
+
+    new directories:
+     libsrc/MissingH/AnyDBM libsrc/MissingH/AnyDBM/.arch-ids
+
+
 2005-02-01 21:30:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-184
 
     Summary:

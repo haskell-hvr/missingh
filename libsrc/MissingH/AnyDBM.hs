@@ -55,6 +55,10 @@ class AnyDBM a where
     {- | Close the object, writing out any unsaved data to disk if necessary.
 
          If you implement this, make sure your implementation calls 'flushA'.
+
+         Note: if you have an object opened for writing, you MUST
+         call closeA on it when you are done.  Implementations are not
+         required to preserve your data otherwise.
        -}
     closeA :: a -> IO ()
 
