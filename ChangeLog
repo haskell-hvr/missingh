@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-19 02:13:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-95
+
+    Summary:
+      Added allg
+    Revision:
+      missingh--head--0.5--patch-95
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Parsec.hs
+
+
 2004-11-19 01:40:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-94
 
     Summary:

@@ -35,7 +35,7 @@ module MissingH.Parsec(-- * Generalized Utilities
                        -- ones you might see in the Char parser.
                        GeneralizedToken, GeneralizedTokenParser,
                        togtok, tokeng, satisfyg, oneOfg, noneOfg,
-                       specificg,
+                       specificg, allg,
                        -- * Other Utilities
                        notMatching)
 where
@@ -67,6 +67,10 @@ satisfyg test = tokeng (\t -> if test t then Just t else Nothing)
 {- | Matches one item in a list and returns it. -}
 oneOfg :: (Eq a) => [a] -> GeneralizedTokenParser a st a
 oneOfg i = satisfyg (\x -> elem x i)
+
+{- | Matches all items and returns them -}
+allg :: GeneralizedTokenParser a st [a]
+allg = many $ satisfyg (\_ -> True)
 
 {- | Matches one item not in a list and returns it. -}
 noneOfg :: (Eq a) => [a] -> GeneralizedTokenParser a st a
