@@ -16,20 +16,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Strutil(strip, lstrip, rstrip) where
+module MissingH.Strutil(strip, lstrip, rstrip) where
+
+wschars = " \t\r\n"
 
 -- | This module provides various helpful utilities for dealing with strings.
 -- John Goerzen <jgoerzen@complete.org>
 
 -- * Whitespace removal
 
--- | Removes any whitespace characters that are present at the start or end of a string. Does not alter the internal contents of a string. If no whitespace characters are present at the start or end of a string, returns the original string unmodified. Safe to use on any string. 
---
--- | Note that this may differ from some other similar functions from other authors in that: 
---
--- 1. If multiple whitespace characters are present all in a row, they are all removed; 
---
--- 2. If no whitespace characters are present, nothing is done.
+-- | Removes any whitespace characters that are present at the start
+--or end of a string. Does not alter the internal contents of a
+--string. If no whitespace characters are present at the start or end
+--of a string, returns the original string unmodified. Safe to use on
+--any string.
+
+-- Note that this may differ from some other similar
+--functions from other authors in that:
+
+-- 1. If multiple whitespace
+--characters are present all in a row, they are all removed;
+
+-- 2. If no
+--whitespace characters are present, nothing is done.
 
 strip :: String -> String
 strip = lstrip . rstrip
@@ -43,3 +52,4 @@ lstrip s = case s of
 
 -- | Same as strip, but applies only to the right side of the string.
 rstrip s = reverse . lstrip . reverse
+
