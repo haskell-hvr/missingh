@@ -21,7 +21,9 @@ The GZip format is described in RFC1952
 module MissingH.FileArchive.GZip (
                                   decompress,
                                   read_header,
-                                  Header(..)
+                                  Header(..),
+                                  read_section,
+                                  read_sections
                                  )
 where
 
@@ -57,6 +59,13 @@ data Header = Header {
                       os :: Int
                      } deriving (Eq, Show)
 
+data Footer = Footer {
+                      size :: Word32,
+                      crc32 :: Word32,
+                      crc32valid :: Bool}
+
+type Section = (Header, String, Footer)
+
 split1 :: String -> (Char, String)
 split1 s = (head s, tail s)
 
@@ -72,23 +81,24 @@ decompress s =
 -}
 
 decompress s = do x <- read_sections s
-                  return $ concatMap snd x
+                  return $ concatMap (\(_, x, _) -> x) x
 
 
--- | Read all sections.  Returns (Header, ThisSection)
-read_sections :: String -> Either GZipError [(Header, String)]
+-- | Read all sections.  
+read_sections :: String -> Either GZipError [Section]
 read_sections [] = Right []
-read_sections s = do x <- read_section s
-                     case x of
-                            (head, this, remain) -> do 
-                                                    next <- read_sections remain
-                                                    return $ (head, this) : next
+read_sections s =
+    do x <- read_section s
+       case x of
+           (sect, remain) ->
+               do next <- read_sections remain
+                  return $ sect : next
 
 parseword :: String -> Word32
 parseword s = fromBytes $ map (fromIntegral . ord) $ reverse s
 
--- | Read one section, returning (Header, ThisSection, Remainder)
-read_section :: String -> Either GZipError (Header, String, String)
+-- | Read one section, returning (ThisSection, Remainder)
+read_section :: String -> Either GZipError (Section, String)
 read_section s =
         do x <- read_header s
            let headerrem = snd x
@@ -96,14 +106,11 @@ read_section s =
            let (crc32str, rem) = splitAt 4 remainder
            let (sizestr, rem2) = splitAt 4 rem
            let filecrc32 = parseword crc32str
-           
-           if filecrc32 == crc32 
-              then return $ (fst x, decompressed, rem2)
-              else throwError $ "CRC MISMATCH; calculated: " ++
-                                (show crc32)
-                                ++ ", recorded: " ++ (show filecrc32)
-           
-    
+           let filesize = parseword sizestr
+           return ((fst x, decompressed,
+                   Footer {size = filesize, crc32 = filecrc32,
+                           crc32valid = filecrc32 == crc32})
+                   ,rem2)
 
 -- | Read the file's compressed data, returning
 -- (Decompressed, Calculated CRC32, Remainder)

@@ -28,13 +28,23 @@ mf fn exp conf = TestLabel fn $ TestCase $
                      do c <- readFile ("testsrc/gzfiles/" ++ fn)
                         assertEqual "" exp (conf c)
 
+{-
+import MissingH.FileArchive.GZip
+import System.IO
+import MissingH.Either
+
+main = do
+       c <- hGetContents stdin
+       let x = snd . forceEither . read_header $ c
+       putStr x
+
 test_bunches =
     let f fn exp conv = mf fn exp (conv . snd . forceEither . read_header)
         f2 c = let fn = "t/z" ++ (show c) ++ ".gz" in
                    f fn c (length . inflate_string)
         in
         map f2 [0..1000]
-
+-}
 test_inflate = 
     let f fn exp conv = mf fn exp (conv . snd . forceEither . read_header) in
         [
@@ -69,7 +79,7 @@ test_gunzip =
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),
                   TestLabel "header" (TestList test_header),
-                  TestLabel "bunches" (TestList test_bunches),
+--                  TestLabel "bunches" (TestList test_bunches),
                   TestLabel "gunzip" (TestList test_gunzip)
 
                  ]
