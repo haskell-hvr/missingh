@@ -61,7 +61,8 @@ class (Show a) => HVIOGeneric a where
     vIsClosed :: a -> IO Bool
     -- | Raise an error if the file is not open.
     vTestOpen :: a -> IO ()
-    -- | Whether or not we're at EOF
+    -- | Whether or not we're at EOF.  This may raise on exception
+    -- on some items, most notably write-only Handles such as stdout.
     vIsEOF :: a -> IO Bool
     -- | Detailed show output.
     vShow :: a -> IO String
@@ -113,25 +114,29 @@ class (HVIOGeneric a) => HVIOReader a where
     vReady :: a -> IO Bool
 
     vGetLine h = 
-        let loop accum = do e <- vIsEOF h
-                            if e then return accum
-                               else do c <- vGetChar h
-                                       case c of
-                                           '\n' -> return accum
-                                           x -> accum `seq` loop (accum ++ [x])
+        let loop accum = 
+                let func = do c <- vGetChar h
+                              case c of
+                                     '\n' -> return accum
+                                     x -> accum `seq` loop (accum ++ [x])
+                    handler e = if isEOFError e then return accum
+                                else ioError e
+                    in catch func handler
             in
-            do vTestEOF h
-               loop ""
+            do vGetChar h >>= \x -> loop [x]
 
     vGetContents h =
-        let loop = do e <- vIsEOF h
-                      if e then return []
-                         else do c <- vGetChar h
-                                 next <- loop
-                                 c `seq` return (c : next)
+        let loop = 
+                let func = do c <- vGetChar h
+                              next <- loop
+                              c `seq` return (c : next)
+                    handler e = if isEOFError e then return []
+                                else ioError e
+                    in catch func handler
             in
-            do vTestEOF h
-               loop
+            do firstchar <- vGetChar h
+               rest <- loop
+               return (firstchar : rest)
            
     vReady h = do vTestEOF h
                   return True
