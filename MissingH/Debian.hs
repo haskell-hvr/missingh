@@ -62,7 +62,7 @@ data DebVersion = DebVersion String
                 deriving (Eq)
 instance Ord DebVersion where
     compare v1 v2 = 
-        {- | This is OK since compareDebVersion should always be the same. -}
+        {- This is OK since compareDebVersion should always be the same. -}
         unsafePerformIO $ compareDebVersion v1 v2
 
 compareDebVersion :: DebVersion -> DebVersion -> IO Ordering

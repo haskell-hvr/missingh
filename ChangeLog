@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-03-14 20:31:41 GMT	John Goerzen <jgoerzen@complete.org>	patch-205
+
+    Summary:
+      added Maybe.hs
+    Revision:
+      missingh--head--0.7--patch-205
+
+
+    new files:
+     MissingH/Maybe.hs
+
+    modified files:
+     ChangeLog MissingH.cabal MissingH/Debian.hs
+
+
 2005-03-14 19:40:09 GMT	John Goerzen <jgoerzen@complete.org>	patch-204
 
     Summary:
