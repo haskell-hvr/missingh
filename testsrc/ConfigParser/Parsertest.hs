@@ -29,6 +29,12 @@ test_basic =
         f "#foo bar" []
         f "#foo bar\n" []
         f "[emptysect]" [("emptysect", [])]
+        f "#foo bar\n[emptysect]\n" [("emptysect", [])]
+        f "# [nonexistant]\n[emptysect]\n" [("emptysect", [])]
+        f "#fo\n[Cemptysect\n#asdfboo\n  \n  # #fnonexistantg"
+          [("Cemptysect", [])]
+        f "[emptysect]\n# [nonexistant]\n" [("emptysect", [])]
+        
         f "foo: bar" [("DEFAULT", [("foo", "bar")])]
 
 tests = TestList [TestLabel "test_basic" (TestCase test_basic)
