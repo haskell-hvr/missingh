@@ -34,26 +34,17 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Printf(sprintf,
                        Value(..),
                        PFRun(..),
-                       PFCall(..),
                        PFType(..),
-                       doit,
+                       sprintf,
                        wrapper
                        ) where
-
--- THIS WORKS:
--- Prelude MissingH.Printf> (pfrun (wrapper "text%!") "asdf" (5::Int))::String
 
 import MissingH.Str
 import Data.List
 
-class PFFun a where
-              toFun :: a -> PFCall -> String
-
 data Value =
            ValueInt Int
            | ValueString String
-
-data PFCall = PFCall [Value]
 
 class PFType a where
     toValue :: a -> Value
@@ -69,16 +60,6 @@ instance PFType String where
     fromValue (ValueString x) = x
     fromValue _ = error "fromValue string"
 
-
-instance PFFun String where
-    toFun x (PFCall []) = x
-    toFun _ _ = error "Too many arguments"
-
-instance (PFType a, PFFun b) => PFFun (a -> b) where
-    toFun f (PFCall (x:xs)) =
-        toFun (f (fromValue x)) (PFCall xs)
-    toFun _ _ = error "Too few arguments"
-
 class PFRun a where
     pfrun :: ([Value] -> Value) -> a
 
@@ -88,43 +69,19 @@ instance PFRun String where
 instance (PFType a, PFRun b) => PFRun (a -> b) where
     pfrun f x = pfrun (\xs -> f (toValue x : xs))
 
-{-
-instance PFFun String where
-    toFun [] (PFCall []) = []
-    toFun ('%' : xs) (PFCall (y:ys)) =
-        y : toFun 
-    toFun (x:xs) y =
-        x : toFun xs y
-    -}
+sprintf_real :: String -> [Value] -> String
 
-{- Sample attempt here -}
-sprintf :: String -> [Value] -> String
-
-sprintf [] [] = []
-sprintf ('%' : xs) (y : ys) = (fromValue y) ++ sprintf xs ys
-sprintf ('!' : xs) (y : ys) = show (((fromValue y)::Int) + 1) ++ sprintf xs ys
-sprintf (x:xs) y = x : sprintf xs y
+sprintf_real [] [] = []
+sprintf_real ('%' : xs) (y : ys) = (fromValue y) ++ sprintf_real xs ys
+sprintf_real ('!' : xs) (y : ys) = 
+    show (((fromValue y)::Int) + 1) ++ sprintf_real xs ys
+sprintf_real (x:xs) y = x : sprintf_real xs y
 
 wrapper :: String -> [Value] -> Value
-wrapper f v = toValue $ sprintf f v
+wrapper f v = toValue $ sprintf_real f v
 
--- doit format v = (pfrun (wrapper format) v)::String
-doit :: PFRun a => String -> a
-doit f = pfrun $ wrapper f
+sprintf :: PFRun a => String -> a
+sprintf f = pfrun $ wrapper f
 
-{-
-wrapper :: String -> [PFType] -> String
-wrapper x v = sprintf x (map toValue v)
--}
-{- To try next: define a third pffun instance that itself works off the format string -}
-----------------------------------------------------
-{-
-printf :: String -> PFFun
-printf "" = toFun ""
-printf ('%' : xs) = toFun (\x -> x ++ printf xs)
-printf x = 
-    case split "%" x of
-         [y] -> toFun y
-         [y : z] -> toFun (\a -> y ++ a ++ printf (join "%" z))
+--printf :: PFRun a => String -> a -> IO ()
 
-               -}
