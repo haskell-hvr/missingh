@@ -235,11 +235,6 @@ data FTPConnection = FTPConnection {readh :: IO String,
                                     socket_internal :: Socket,
                                     isPassive :: Bool}
 
-{-
-getresp h = do c <- hGetContents h
-               return (parseGoodReply c)
--}
-
 getresp h = do
             c <- (readh h)
             debugParseGoodReply c
@@ -286,17 +281,9 @@ connectFTP h p =
     let h = FTPConnection {readh = readchars newh, 
                            socket_internal = s,
                            writeh = newh, isPassive = True}
-    --hIsReadable h >>= print
-    --hIsWritable h >>= print
-    -- hSetBuffering h LineBuffering
     resp <- getresp h
     forceioresp 200 resp
-    --foo <- return (forcexresp 200 resp)
-    --print foo
-    -- hPutStr h "foo"
-    -- resp `seq` return (h, resp)
     return (h, resp)
-    --return (h, r)
 
 {- | Log in anonymously. -}
 loginAnon :: FTPConnection -> IO FTPResult
