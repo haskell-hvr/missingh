@@ -20,6 +20,7 @@ module Network.FTP.Parsertest(tests) where
 import HUnit
 import MissingH.Network.FTP.Parser
 import Testutil
+import Network.Socket
 
 test_parseReply =
     let f inp exp = exp @=? parseReply inp in
@@ -30,6 +31,21 @@ test_parseReply =
         f "230-Test\r\nLine2\r\n 230 Line3\r\n230 Done\r\n"
           (230, ["Test", "Line2", " 230 Line3", "Done"])
 
-tests = TestList [TestLabel "parseReply" (TestCase test_parseReply)
+test_toPortString =
+    let f inp exp = exp @=? toPortString inp in
+        do
+        f (SockAddrInet (PortNum 0x1234) 0xaabbccdd) "170,187,204,221,18,52"
+
+test_fromPortString =
+    let f inp exp = exp @=? case fromPortString inp of
+                                 SockAddrInet (PortNum x) y -> (x, y)
+                                 _ -> (0, 0)
+        in
+        do
+        f "170,187,204,221,18,52" (0x1234, 0xaabbccdd)
+
+tests = TestList [TestLabel "parseReply" (TestCase test_parseReply),
+                  TestLabel "toPortString" (TestCase test_toPortString),
+                  TestLabel "fromPortString" (TestCase test_fromPortString)
 
                  ]

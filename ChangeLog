@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-22 20:53:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-102
+
+    Summary:
+      Added tests for FTP host stuff
+    Revision:
+      missingh--head--1.0--patch-102
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Parser.hs
+     testsrc/Network/FTP/Parsertest.hs
+
+
 2004-10-22 20:29:43 GMT	John Goerzen <jgoerzen@complete.org>	patch-101
 
     Summary:

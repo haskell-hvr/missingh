@@ -34,12 +34,15 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Network.FTP.Parser(parseReply, parseGoodReply)
+module MissingH.Network.FTP.Parser(parseReply, parseGoodReply,
+                                  toPortString, fromPortString)
 where
 
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
 import MissingH.List
+import MissingH.Bits
+import Network.Socket(SockAddr(..), PortNumber(..))
 -- import Control.Exception(Exception(PatternMatchFail), throw)
 
 ----------------------------------------------------------------------
@@ -124,6 +127,11 @@ multiReply = try (do
                   end <- expectedReplyLine (fst start)
                   return (fst start, snd start : (component ++ [snd end]))
                  )
+
+----------------------------------------------------------------------
+-- The real code
+----------------------------------------------------------------------
+
 -- | Parse a FTP reply.  Returns a (result code, text) pair.
 
 parseReply :: String -> (Int, [String])
@@ -144,3 +152,25 @@ parseGoodReply input =
         then error ((show (fst reply)) ++ ": " ++ (join "\n" (snd reply)))
         else reply
 
+{- | Converts a socket address to a string suitable for a PORT command.
+
+Example:
+
+> toPortString (SockAddrInet (PortNum 0x1234) (0xaabbccdd)) ->
+                              "170,187,204,221,18,52"
+-}
+toPortString :: SockAddr -> String
+toPortString (SockAddrInet (PortNum port) hostaddr) =
+    (genericJoin "," (getBytes hostaddr)) ++ "," ++ 
+       (genericJoin "," (getBytes port))
+toPortString _ = 
+    error "toPortString only works on AF_INET addresses"
+
+-- | Converts a port string to a socket address.  This is the inverse calculation of 'toPortString'.
+fromPortString :: String -> SockAddr
+fromPortString instr =
+    let inbytes = split "," instr
+        hostbytes = map read (take 4 inbytes)
+        portbytes = map read (drop 4 inbytes)
+        in
+        SockAddrInet (PortNum (fromBytes portbytes)) (fromBytes hostbytes)
