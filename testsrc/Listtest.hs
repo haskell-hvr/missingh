@@ -78,7 +78,7 @@ test_flipAL =
                         ("e", ["d"])]
 
 test_trunc =
-    let f len inp exp = exp @=? trunc len inp in
+    let f len inp exp = exp @=? take len inp in
         do
         f 2 "Hello" "He"
         f 1 "Hello" "H"

@@ -40,7 +40,7 @@ module MissingH.List(-- * Tests
                      for association lists. -}
                      addToAL, delFromAL, flipAL,
                      -- * Conversions
-                     split, join, genericJoin, trunc,
+                     split, join, genericJoin,
                      -- * Miscellaneous
                      countElem, elemRIndex, alwaysElemRIndex
                      -- -- * Sub-List Selection
@@ -136,18 +136,6 @@ contains sub searchlist =
         case sub == testlist of
                              True -> True
                              False -> contains sub (tail searchlist)
-
-{- | Given a length and a list, remove any elements at the end of the list
-that make it longer than the length.  If the list is shorter than the
-length, do nothing.
-
-> trunc 2 "Hello" -> "He"
-
-This is the same as Data.List.take.
--}
-
-trunc :: Int -> [a] -> [a]
-trunc = take
 
 {- | Adds the specified (key, value) pair to the given list, removing any
 existing pair with the same key already present. -}
