@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-23 18:03:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-162
+
+    Summary:
+      Checkpointing lsl
+    Revision:
+      missingh--head--0.7--patch-162
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS/Utils.hs
+
+
 2004-12-23 18:02:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-161
 
     Summary:
