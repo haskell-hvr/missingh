@@ -34,6 +34,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.IO.HVFS.Combinators(
                                     -- * Restrictions
+                                    HVFSChroot, newHVFSChroot
                                    )
 where
 
@@ -57,6 +58,19 @@ import MissingH.Path.NameManip
 of that filesystem. -}
 data HVFS a => HVFSChroot a = HVFSChroot String a
                             deriving (Eq, Show)
+
+{- | Create a new 'HVFSChroot' object. -}
+newHVFSChroot :: HVFS a => a            -- ^ The object to pass requests on to
+              -> FilePath               -- ^ The path of the directory to make root
+              -> IO (HVFSChroot a)      -- ^ The resulting new object
+newHVFSChroot fh fp =
+    do full <- getFullPath fh fp
+       isdir <- vDoesDirectoryExist fh full
+       if isdir
+          then return (HVFSChroot full fh)
+          else vRaiseError fh doesNotExistErrorType
+                 ("Attempt to instantiate HVFSChroot over non-directory " ++ full)
+                 (Just full)
 
 {- | Get the embedded object -}
 dch (HVFSChroot _ a) = a

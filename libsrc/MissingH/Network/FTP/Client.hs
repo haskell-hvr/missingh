@@ -26,7 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : experimental
    Portability: systems with networking
 
-This module provides a client-side interface to the File Transfer Protocol.
+This module provides a client-side interface to the File Transfer Protocol
+as defined by RFC959 and RFC1123.
 
 Written by John Goerzen, jgoerzen\@complete.org
 
