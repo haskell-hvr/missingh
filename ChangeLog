@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-18 16:53:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-72
+
+    Summary:
+      Added parser running tool
+    Revision:
+      missingh--head--0.5--patch-72
+
+
+    new files:
+     libsrc/MissingH/ConfigParser/RunParser.hs
+
+    modified files:
+     ChangeLog
+
+
 2004-11-18 16:40:26 GMT	John Goerzen <jgoerzen@complete.org>	patch-71
 
     Summary:
