@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-03 20:48:08 GMT	John Goerzen <jgoerzen@complete.org>	patch-15
+
+    Summary:
+      Import Inflate
+    Revision:
+      missingh--head--0.7--patch-15
+
+
+    new files:
+     libsrc/MissingH/Compression/Inflate.hs
+
+    modified files:
+     ChangeLog Setup.description
+
+
 2004-12-03 20:41:57 GMT	John Goerzen <jgoerzen@complete.org>	patch-14
 
     Summary:
