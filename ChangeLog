@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 20:16:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-61
+
+    Summary:
+      Backed out custom mail parser; documented one in wash instead
+    Revision:
+      missingh--head--0.7--patch-61
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Email/Parser.hs
+     libsrc/MissingH/Wash/Mail/MailParser.hs
+     libsrc/MissingH/Wash/Mail/Message.hs
+
+
 2004-12-09 17:29:25 GMT	John Goerzen <jgoerzen@complete.org>	patch-60
 
     Summary:

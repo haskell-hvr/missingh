@@ -15,12 +15,15 @@ import MissingH.Wash.Utility.RFC2047 (p_token)
 import MissingH.Wash.Mail.Message
 import MissingH.Wash.Mail.HeaderField
 
+parseMessageFromFile :: FilePath -> IO (Either ParseError RawMessage)
 parseMessageFromFile fname =
   parseFromFile message fname
 
+parseMessageFromString :: String -> Either ParseError RawMessage
 parseMessageFromString str =
   parse message "MailParser" str
 
+parseDateTimeFromString :: String -> Either ParseError DateTime2822
 parseDateTimeFromString str =
   parse parseDateTime "DateTimeParser" (' ':str)
 

@@ -21,14 +21,18 @@ data Message =
 	}
     deriving Show
 
+isSinglePart :: Message -> Bool
 isSinglePart (Singlepart {}) = True
 isSinglePart _ = False
 
+isMultiPart :: Message -> Bool
 isMultiPart (Multipart {}) = True
 isMultiPart _ = False
 
+showHeader :: Header -> String
 showHeader (Header (n, v)) = n ++ ": " ++ v
 
+showParameters :: [(String, String)] -> String -> String
 showParameters c_parameters =
     foldr (\(n,v) f -> showString " ;" .
     		       showString n .

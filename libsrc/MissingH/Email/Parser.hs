@@ -43,32 +43,7 @@ import Text.ParserCombinators.Parsec
 import Control.Monad.Error
 import Text.ParserCombinators.Parsec.Error
 import Text.ParserCombinators.Parsec.Pos(newPos)
-
-instance Error ParseError where
-    noMsg = strMsg ""
-    strMsg s = newErrorMessage (Message s) (newPos "" 0 0)
-
-getHeaders :: CharParser a [(String, String)]
-getHeaders =  many $ optional_field
-
-parseMsg :: CharParser a ([(String, String)], String)
-parseMsg = do f <- getHeaders
-              crlf
-              b <- body
-              return (f, b)
-
-{- | Parse a string as an e-mail, returning a
-'MissingH.Wash.Mail.Message.Message' object. 
-
-ParseError is defined in Text.ParserCombinators.Parsec.Error.
--}
-
-mailParser :: String -> Either ParseError MissingH.Wash.Mail.Message.Message
-mailParser s = do 
-               p <- parse parseMsg ""  s
-               let raw = RawMessage {rawHeaders = map Header (fst p),
-                                     rawLines = lines (snd p)}
-               return $ digestMessage raw
+import MissingH.Str
 
 {- | Given a 'MissingH.Wash.Mail.Message.Message' object, \"flatten\"
 it into a simple, non-hierarchical list of its component single parts.
