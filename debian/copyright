@@ -1,12 +1,18 @@
 This package was debianized by John Goerzen <jgoerzen@complete.org> on
 Tue,  5 Oct 2004 16:17:09 -0500.
 
-It was downloaded from <fill in ftp site>
+It was downloaded from gopher://quux.org/1/devel/missingh or
+http://quux.org/devel/missingh
 
 Copyright:
 
-Upstream Author(s): <put author(s) name and email here>
+Upstream Author(s): John Goerzen <jgoerzen@complete.org>
 
 License:
 
-<Must follow here>
+Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+
+This program is licensed under the GNU General Public License.
+Debian GNU/Linux users can find the GNU GPL at
+/usr/share/common-licenses/GPL.
+
