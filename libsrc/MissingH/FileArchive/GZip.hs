@@ -30,6 +30,7 @@ import Data.Bits
 import Control.Monad.Error
 import Data.Char
 import Data.Word
+import MissingH.Bits
 
 type GZipError = String
 
@@ -58,10 +59,42 @@ split1 s = (head s, tail s)
 -}
 
 decompress :: String -> Either GZipError String
+{-
 decompress s = 
     do x <- read_header s
        let rem = snd x
        return $ inflate_string rem
+-}
+decompress s = do x <- read_sections s
+                  return $ concatMap snd x
+
+-- | Read all sections.  Returns (Header, ThisSection)
+read_sections :: String -> Either GZipError [(Header, String)]
+read_sections [] = Right []
+read_sections s = do x <- read_section s
+                     case x of
+                            (head, this, remain) -> do 
+                                                    next <- read_sections remain
+                                                    return $ (head, this) : next
+
+-- | Read one section, returning (Header, ThisSection, Remainder)
+read_section :: String -> Either GZipError (Header, String, String)
+read_section s =
+        do x <- read_header s
+           let headerrem = snd x
+           let (decompressed, crc32, remainder) = read_data headerrem
+           let (crc32str, rem) = splitAt 4 remainder
+           let (sizestr, rem2) = splitAt 4 rem
+           let filecrc32 = fromBytes $
+                           map (fromIntegral . ord) crc32str
+           
+           if filecrc32 == crc32 
+              then return $ (fst x, decompressed, rem2)
+              else throwError $ "CRC MISMATCH; calculated: " ++
+                                (show crc32)
+                                ++ ", recorded: " ++ (show filecrc32)
+           
+    
 
 -- | Read the file's compressed data, returning
 -- (Decompressed, CRC32, Remainder)
