@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-15 20:34:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-75
+
+    Summary:
+      Mroe EOF corrections
+    Revision:
+      missingh--head--0.7--patch-75
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/HVIO.hs
+
+
 2004-12-15 20:29:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-74
 
     Summary:

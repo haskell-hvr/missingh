@@ -63,6 +63,7 @@ class (Show a) => HVIOGeneric a where
     vTestOpen :: a -> IO ()
     -- | Whether or not we're at EOF.  This may raise on exception
     -- on some items, most notably write-only Handles such as stdout.
+    -- vIsEOF implementations must implicitly call vTestOpen.
     vIsEOF :: a -> IO Bool
     -- | Detailed show output.
     vShow :: a -> IO String
@@ -74,7 +75,8 @@ class (Show a) => HVIOGeneric a where
     -- May be Nothing.
     vGetFP :: a -> IO (Maybe FilePath)
     -- | Throw an isEOFError if we're at EOF; returns nothing otherwise.
-    -- vTestEOF will implicitly call vTestOpen.
+    -- If an implementation overrides the default, make sure that it
+    -- calls vTestOpen at some point.
     vTestEOF :: a -> IO ()
 
     vShow x = return (show x)
@@ -88,8 +90,7 @@ class (Show a) => HVIOGeneric a where
                   fp <- vGetFP h
                   ioError (vMkIOError h et "" fp)
 
-    vTestEOF h = do vTestOpen h
-                    e <- vIsEOF h
+    vTestEOF h = do e <- vIsEOF h
                     if e then vThrow h eofErrorType
                        else return ()
 
@@ -283,7 +284,8 @@ instance Show PipeReader where
 instance HVIOGeneric PipeReader where
     vClose = vioc_close . prv
     vIsOpen = vioc_isopen . prv
-    vIsEOF h = do mv <- vioc_get (prv h)
+    vIsEOF h = do vTestOpen h
+                  mv <- vioc_get (prv h)
                   dat <- readMVar mv
                   return (dat == PipeEOF)
 
