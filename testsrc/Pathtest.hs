@@ -1,4 +1,4 @@
-{- arch-tag: Tests main file
+{- arch-tag: Path tests main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -16,20 +16,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Tests(tests) where
+module Pathtest(tests) where
 import HUnit
-import qualified Listtest
-import qualified FiniteMaptest
-import qualified Pathtest
-import qualified Strtest
-import qualified IOtest
+import MissingH.Path
 
-test1 = TestCase ("x" @=? "x")
+test_splitext =
+    let f inp exp = exp @=? splitext inp in
+        do
+        f "" ("", "")
+        f "/usr/local" ("/usr/local", "")
+        f "../foo.txt" ("../foo", ".txt")
+        f "../bar.txt.gz" ("../bar.txt", ".gz")
+        f "foo.txt/bar" ("foo.txt/bar", "")
+        f "foo.txt/bar.bz" ("foo.txt/bar", ".bz")
 
-tests = TestList [TestLabel "test1" test1,
-                 TestLabel "List" Listtest.tests,
-                 TestLabel "Str" Strtest.tests,
-                 TestLabel "FiniteMap" FiniteMaptest.tests,
-                 TestLabel "Path" Pathtest.tests]
-
-
+tests = TestList [TestLabel "splitext" (TestCase test_splitext)
+                 ]

@@ -42,11 +42,12 @@ module MissingH.List(-- * Tests
                      -- * Conversions
                      split, join, genericJoin, trunc,
                      -- * Miscellaneous
-                     countElem
+                     countElem, elemRIndex, alwaysElemRIndex
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
-import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices)
+import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
+                elemIndex, elemIndices)
 import IO
 import System.IO.Unsafe
 
@@ -178,3 +179,18 @@ flipAL oldl =
 given list. -}
 countElem :: Eq a => a -> [a] -> Int
 countElem i l = length (elemIndices i l)
+
+{- | Returns the rightmost index of the given element in the
+given list. -}
+elemRIndex :: Eq a => a -> [a] -> Maybe Int
+elemRIndex item l =
+    case reverse $ elemIndices item l of
+                                   [] -> Nothing
+                                   (x:_) -> Just x
+{- | Like elemRIndex, but returns -1 if there is nothing
+found. -}
+alwaysElemRIndex :: Eq a => a -> [a] -> Int
+alwaysElemRIndex item list =
+    case elemRIndex item list of
+                              Nothing -> -1
+                              Just x -> x

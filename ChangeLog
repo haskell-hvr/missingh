@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-21 14:06:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-91
+
+    Summary:
+      Added Path.hs and various utilities
+    Revision:
+      missingh--head--1.0--patch-91
+
+
+    new files:
+     libsrc/MissingH/Path.hs testsrc/Pathtest.hs
+
+    modified files:
+     ChangeLog Setup.description libsrc/MissingH/List.hs
+     testsrc/Listtest.hs testsrc/Tests.hs
+
+
 2004-10-21 11:30:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-90
 
     Summary:

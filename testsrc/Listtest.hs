@@ -105,6 +105,25 @@ test_contains =
         f "t10" "a" "Hello" False
         f "t11" "e" "Hello" True
 
+test_elemRIndex =
+    let f item inp exp = exp @=? elemRIndex item inp in
+        do
+        f "foo" [] Nothing
+        f "foo" ["bar", "baz"] Nothing
+        f "foo" ["foo"] (Just 0)
+        f "foo" ["foo", "bar"] (Just 0)
+        f "foo" ["bar", "foo"] (Just 1)
+        f "foo" ["foo", "bar", "foo", "bar", "foo"] (Just 4)
+        f 'f' ['f', 'b', 'f', 'f', 'b'] (Just 3)
+        f 'f' ['b', 'b', 'f'] (Just 2)
+
+test_alwaysElemRIndex =
+    let f item inp exp = exp @=? alwaysElemRIndex item inp in
+        do
+        f "foo" [] (-1)
+        f 'f' ['b', 'q'] (-1)
+        f 'f' ['f', 'b', 'f', 'f', 'b'] 3
+
 tests = TestList [TestLabel "delFromAL" (TestCase test_delFromAL),
                   TestLabel "addToAL" (TestCase test_addToAL),
                   TestLabel "split" (TestCase test_split),
@@ -112,6 +131,8 @@ tests = TestList [TestLabel "delFromAL" (TestCase test_delFromAL),
                   TestLabel "genericJoin" (TestCase test_genericJoin),
                   TestLabel "trunc" (TestCase test_trunc),
                   TestLabel "flipAL" (TestCase test_flipAL),
+                  TestLabel "elemRIndex" (TestCase test_elemRIndex),
+                  TestLabel "alwaysElemRIndex" (TestCase test_alwaysElemRIndex),
                   TestLabel "contains" (TestCase test_contains)]
 
 
