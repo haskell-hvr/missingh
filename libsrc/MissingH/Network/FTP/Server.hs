@@ -97,6 +97,14 @@ instance Eq Command where
 instance Ord Command where
     compare x y = compare (fst x) (fst y)
 
+trapIOError :: FTPServer -> IO a -> (a -> IO Bool) -> IO Bool
+trapIOError h testAction remainingAction =
+    do result <- try testAction
+       case result of
+         Left err -> do sendReply h 550 (show err)
+                        return True
+         Right result -> remainingAction result
+
 forceLogin :: CommandHandler -> CommandHandler
 forceLogin func h@(FTPServer _ _ stateref) sa args =
     do state <- readIORef stateref
@@ -128,7 +136,7 @@ commandLoop h@(FTPServer fh _ _) sa =
                                     return True
                      Right (cmd, args) -> 
                          case lookup cmd commands of
-                            Nothing -> do sendReply h 500 $
+                            Nothing -> do sendReply h 502 $
                                            "Unrecognized command " ++ cmd
                                           return True
                             Just hdlr -> (fst hdlr) h sa args
@@ -189,10 +197,11 @@ help_cwd =
 
 cmd_cwd :: CommandHandler
 cmd_cwd h@(FTPServer _ fs _) _ args =
-    do vSetCurrentDirectory fs args
-       newdir <- vGetCurrentDirectory fs
-       sendReply h 250 $ "New directory now " ++ newdir
-       return True
+    do trapIOError h (vSetCurrentDirectory fs args)
+         $ \_ -> do
+                 newdir <- vGetCurrentDirectory fs
+                 sendReply h 250 $ "New directory now " ++ newdir
+                 return True
 
 help_help =
     ("Display help on available commands",
