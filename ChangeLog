@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-08 13:17:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-52
+
+    Summary:
+      Fixed Makefile
+    Revision:
+      missingh--head--1.0--patch-52
+
+    Keywords: 
+    
+
+    new files:
+     libsrc/MissingH/Logging/Logger.hs
+
+    modified files:
+     ChangeLog Makefile
+
+
 2004-10-08 03:33:39 GMT	John Goerzen <jgoerzen@complete.org>	patch-51
 
     Summary:

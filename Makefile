@@ -30,7 +30,7 @@ libmissingH.a: $(OBJS)
 	ar q libmissingH.a $(OBJS)
 
 %.o: %.hs
-	ghc -ilibsrc -c -o $@ $<
+	ghc -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
 
 doc:
 	-rm -rf html
