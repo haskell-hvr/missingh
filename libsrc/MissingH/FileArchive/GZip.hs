@@ -36,7 +36,7 @@ module MissingH.FileArchive.GZip (
                                   -- * GZip Files
                                   -- $gzipfiles
                                   -- * Types
-                                  Header(..), Section, GZipError, Footer(..),
+                                  Header(..), Section, GZipError(..), Footer(..),
                                   -- * Whole-File Processing
                                   decompress,
                                   read_sections,
@@ -55,7 +55,15 @@ import Data.Char
 import Data.Word
 import MissingH.Bits
 
-type GZipError = String
+data GZipError = CRCError               -- ^ CRC-32 check failed
+               | NotGZIPFile            -- ^ Couldn't find a GZip header
+               | UnknownMethod          -- ^ Compressed with something other than method 8 (deflate)
+               | UnknownError String    -- ^ Other problem arose
+               deriving (Eq, Show)
+
+instance Error GZipError where
+    noMsg = UnknownError ""
+    strMsg = UnknownError
 
 -- | First two bytes of file
 magic = "\x1f\x8b"
@@ -96,27 +104,27 @@ split1 s = (head s, tail s)
 
 {- | Read a GZip file, decompressing all sections that are found.
 
-Returns a decompresed data stream and a Bool indicating whether or not
-all CRC32 values were successfully verified.
+Returns a decompresed data stream and Nothing, or an unreliable string
+and Just (error).  If you get anything other than Nothing, the String
+returned should be discarded.
 -}
-decompress :: String -> Either GZipError (String, Bool)
+decompress :: String -> (String, Maybe GZipError)
 {-
 decompress s = 
     do x <- read_header s
        let rem = snd x
        return $ inflate_string rem
 -}
-
 decompress s = 
     let procs :: [Section] -> (String, Bool)
         procs [] = ([], True)
         procs ((_, content, foot):xs) = 
             let (nexth, nextb) = procs xs in
                 (content ++ nexth, (crc32valid foot) && nextb)
---                (content ++ nexth, (&&) nextb $! (crc32valid foot))
-        in
-        do x <- read_sections s
-           return $ procs x
+        in case read_sections s of
+           Left x -> ("", Just x)
+           Right x -> let (decomp, iscrcok) = procs x
+                          in (decomp, if iscrcok then Nothing else Just CRCError)
 
 {-
 decompress s = do x <- read_sections s
@@ -176,11 +184,11 @@ read_header s =
     let ok = Right "ok" in
     do let (mag, rem) = splitAt 2 s
        if mag /= magic
-          then throwError "Not a GZip file"
+          then throwError NotGZIPFile
           else ok
        let (method, rem2) = split1 rem
        if (ord(method) /= 8)
-          then throwError "Unknown compression method"
+          then throwError UnknownMethod
           else ok
        let (flag_S, rem3) = split1 rem2
        let flag = ord flag_S

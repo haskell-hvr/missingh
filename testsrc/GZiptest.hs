@@ -72,15 +72,15 @@ test_header =
         ]
 
 test_gunzip =
-    let f fn exp = mf fn (Right exp) decompress
+    let f fn exp = mf fn exp decompress
         in
         [
-         f "t1.gz" ("Test 1", True)
-        ,f "t1bad.gz" ("Test 1", False)
-        ,f "t2.gz" ("Test 1Test 2", True)
+         f "t1.gz" ("Test 1", Nothing)
+        ,f "t1bad.gz" ("Test 1", Just CRCError)
+        ,f "t2.gz" ("Test 1Test 2", Nothing)
         ,mf "zeros.gz" True (\x -> case decompress x of
-                                Right (y, _) -> y == replicate 10485760 '\0'
-                                _ -> False)
+                             (y, _) -> y == replicate 10485760 '\0'
+                            )
         ]
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),
