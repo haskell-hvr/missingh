@@ -36,7 +36,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Network.FTP.Server(
                                   )
 where
-import MissingH.Network.FTP.Parser
+import MissingH.Network.FTP.ParserServer
 import Network.BSD
 import Network.Socket
 import qualified Network

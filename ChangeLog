@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-21 16:24:37 GMT	John Goerzen <jgoerzen@complete.org>	patch-125
+
+    Summary:
+      Compilation fixes
+    Revision:
+      missingh--head--0.7--patch-125
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/ParserServer.hs
+     libsrc/MissingH/Network/FTP/Server.hs
+
+
 2004-12-21 16:17:59 GMT	John Goerzen <jgoerzen@complete.org>	patch-124
 
     Summary:
