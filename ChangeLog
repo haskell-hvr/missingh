@@ -2,6 +2,30 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-07 02:44:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-41
+
+    Summary:
+      Switched to dh_haskell and added hugs building
+    Revision:
+      missingh--head--1.0--patch-41
+
+
+    removed files:
+     debian/.arch-ids/libghc6-missingh-dev.dirs.id
+     debian/.arch-ids/libghc6-missingh-dev.postinst.tmpl.id
+     debian/.arch-ids/libghc6-missingh-dev.prerm.tmpl.id
+     debian/.arch-ids/missingh-dev.install.id
+     debian/.arch-ids/missingh1.install.id
+     debian/libghc6-missingh-dev.dirs
+     debian/libghc6-missingh-dev.postinst.tmpl
+     debian/libghc6-missingh-dev.prerm.tmpl
+     debian/missingh-dev.install debian/missingh1.install
+
+    modified files:
+     ChangeLog Setup.description debian/changelog debian/control
+     debian/rules
+
+
 2004-10-07 02:36:06 GMT	John Goerzen <jgoerzen@complete.org>	patch-40
 
     Summary:

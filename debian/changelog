@@ -1,3 +1,18 @@
+missingh (0.2.0) unstable; urgency=low
+
+  * Renamed to more standard names: MissingH.IO, MissingH.List,
+    MissingH.Str.
+  
+  * Moved binary functions into new module MissingH.IO.Binary.
+  
+  * Added unit tests and test cases for List and Str.
+  
+  * Moved Debian code to use dh_haskell.
+
+  * Build Hugs package for Debian.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed,  6 Oct 2004 21:36:47 -0500
+
 missingh (0.1.0) unstable; urgency=low
 
   * Initial Release.  Closes: #275070.

@@ -9,16 +9,6 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-GHCVERSION=6.2.1
-GHCPATH=/usr/lib/ghc-$(GHCVERSION)/bin
-PATH:=$(GHCPATH):$(PATH)
-
-export PATH
-LIBPATH=/usr/lib/haskell-packages/ghc6
-LIBNAME=MissingH
-PACKAGE=libghc6-missingh-dev
-VERSION:=$(shell dpkg-parsechangelog | grep Version | awk '{ print $$2 }')
-
 CFLAGS = -Wall -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -54,9 +44,6 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	./setup build
-	make doc
-
 	touch build-stamp
 
 clean:
@@ -65,8 +52,8 @@ clean:
 	rm -f build-stamp configure-stamp
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) clean
-	rm -f .*config* debian/$(PACKAGE).postinst debian/$(PACKAGE).prerm
+	-./setup clean
+	-rm -rf setup Setup.hi Setup.ho Setup.o .*config* dist html
 
 	dh_clean 
 
@@ -77,14 +64,7 @@ install: build
 	dh_installdirs -a 
 
 	# Add here commands to install the package into debian/tmp
-	./setup install --install-prefix=$(CURDIR)/debian/$(PACKAGE)$(LIBPATH)
-	cp .installed-pkg-config $(CURDIR)/debian/$(PACKAGE)$(LIBPATH)/lib/$(LIBNAME)-$(VERSION)/installed-pkg-config
-	sed s/\@\@VERSION\@\@/$(VERSION)/g < \
-		debian/$(PACKAGE).postinst.tmpl > \
-		debian/$(PACKAGE).postinst
-	sed s/\@\@VERSION\@\@/$(VERSION)/g < \
-		debian/$(PACKAGE).prerm.tmpl > \
-		debian/$(PACKAGE).prerm
+	dh_haskell -a
 
 builddocs: builddocs-stamp
 builddocs-stamp:
@@ -97,6 +77,8 @@ installdocs: builddocs
 	dh_testroot
 	dh_clean -k
 	dh_installdirs -i
+
+	dh_haskell -i
 
 # Build architecture-independent files here.
 binary-indep: builddocs installdocs
