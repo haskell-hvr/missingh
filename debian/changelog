@@ -1,3 +1,10 @@
+missingh (0.5.2) unstable; urgency=low
+
+  * New module: sendmail
+  * New popen functions in MissingH.Cmd.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 26 Oct 2004 16:38:01 -0500
+
 missingh (0.5.1) unstable; urgency=low
 
   * Added libghc6-hunit-dev to build-depends.  Closes: #278138.
