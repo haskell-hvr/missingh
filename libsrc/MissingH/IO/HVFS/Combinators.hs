@@ -34,6 +34,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 module MissingH.IO.HVFS.Combinators(
                                     -- * Restrictions
+                                    HVFSReadOnly,
                                     HVFSChroot, newHVFSChroot
                                    )
 where
@@ -49,6 +50,49 @@ import System.Time
 import System.Directory
 import MissingH.Path
 import MissingH.Path.NameManip
+
+----------------------------------------------------------------------
+-- Providing read-only access
+----------------------------------------------------------------------
+
+{- | Restrict access to the underlying filesystem to be strictly
+read-only.  Any write-type operations will cause an error.
+
+No constructor is required; just say @HVFSReadOnly fs@ to make a
+new read-only wrapper around the 'HVFS' instance @fs@.
+-}
+data HVFS a => HVFSReadOnly a = HVFSReadOnly a
+                              deriving (Eq, Show)
+withro :: HVFS a => (a -> b) -> HVFSReadOnly a -> b
+withro f (HVFSReadOnly x) = f x
+
+roerror h = 
+    let err x = vRaiseError x permissionErrorType "Read-only virtual filesystem"
+                  Nothing
+        in withro err h
+
+instance HVFS a => HVFS (HVFSReadOnly a) where
+    vGetCurrentDirectory = withro vGetCurrentDirectory
+    vSetCurrentDirectory = withro vSetCurrentDirectory
+    vGetDirectoryContents = withro vGetDirectoryContents
+    vDoesFileExist = withro vDoesFileExist
+    vDoesDirectoryExist = withro vDoesDirectoryExist
+    vCreateDirectory h _ = roerror h
+    vRemoveDirectory h _ = roerror h
+    vRenameDirectory h _ _ = roerror h
+    vRenameFile h _ _ = roerror h
+    vGetFileStatus = withro vGetFileStatus
+    vGetSymbolicLinkStatus = withro vGetSymbolicLinkStatus
+    vGetModificationTime = withro vGetModificationTime
+    vRaiseError = withro vRaiseError
+    vCreateSymbolicLink h _ _ = roerror h
+    vReadSymbolicLink = withro vReadSymbolicLink
+    vCreateLink h _ _ = roerror h
+
+instance HVFSOpenable a => HVFSOpenable (HVFSReadOnly a) where
+    vOpen fh fp mode = 
+        case mode of ReadMode -> withro (\h -> vOpen h fp mode) fh
+                     _ -> roerror fh
 
 ----------------------------------------------------------------------
 -- Restricting to a subdirectory

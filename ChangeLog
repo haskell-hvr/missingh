@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-23 17:33:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-156
+
+    Summary:
+      Added HVFSReadOnly
+    Revision:
+      missingh--head--0.7--patch-156
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS/Combinators.hs
+
+
 2004-12-23 17:21:02 GMT	John Goerzen <jgoerzen@complete.org>	patch-155
 
     Summary:
