@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-03 20:27:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-196
+
+    Summary:
+      checkpointing
+    Revision:
+      missingh--head--0.7--patch-196
+
+
+    modified files:
+     ChangeLog Makefile testsrc/AnyDBMtest.hs
+
+
 2005-02-03 15:40:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-195
 
     Summary:

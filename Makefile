@@ -23,20 +23,24 @@ LHSSOURCES := $(wildcard libsrc/MissingH/*/*.lhs) \
 O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
 OBJS := $(O1:.lhs=.o)
 
-all: libmissingH.a
+.PHONY: all
+all: setup
+	./setup configure
+	./setup build
 
 setup: Setup.lhs MissingH.cabal
 	ghc -package Cabal Setup.lhs -o setup
 
-libmissingH.a: $(OBJS)
-	-rm -f libmissingH.a
-	ar q libmissingH.a $(OBJS)
+#libmissingH.a: $(OBJS)
+#	-rm -f libmissingH.a
+#	ar q libmissingH.a $(OBJS)
 
-%.o: %.hs
-	ghc -O2 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
-
-%.o: %.lhs
-	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
+#%.o: %.hs
+#	ghc -O2 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
+#
+#%.o: %.lhs
+#	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
+#
 
 .PHONY: doc
 doc:
@@ -44,17 +48,33 @@ doc:
 	mkdir html
 	haddock $(HADDOCKARGS) --package=MissingH \
 	   --dump-interface=html/MissingH.haddock \
-	   -t 'MissingH API Manual' -h -o html $(SOURCES)
+	   -t 'MissingH API Manual' -h -o html $(SOURCES) $(LHSSOURCES)
 
 clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
-		`find . -name "*~"` *.a setup dist testsrc/runtests
+		`find . -name "*~"` *.a setup dist testsrc/runtests \
+		local-pkg
 	-rm -rf testtmp/*
 	-cd doc && $(MAKE) clean
 
-testsrc/runtests: all $(shell find testsrc -name "*.hs")
-	ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
+.PHONY: local-pkg
+local-pkg: all
+        echo "[" > local-pkg
+        cat .installed-pkg-config >> local-pkg
+        echo "]" >> local-pkg
+
+testsrc/runtests: local-pkg $(SOURCES) $(LHSSOURCES)
+        ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build \
+           -package-conf local-pkg \
+           -hidir dist/build -idist/build -itestsrc \
+	   -fallow-overlapping-instances -fglasgow-exts \
+	   -fallow-undecidable-instances \
+                -package HUnit -package MissingH --make testsrc/runtests.hs
+
+
+#testsrc/runtests: all $(shell find testsrc -name "*.hs")
+#	ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
 
 test-ghc6: testsrc/runtests
 	testsrc/runtests 
