@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 17:29:47 GMT	John Goerzen <jgoerzen@complete.org>	patch-101
+
+    Summary:
+      Completed MemoryBuffer tests
+    Revision:
+      missingh--head--0.7--patch-101
+
+
+    modified files:
+     ChangeLog testsrc/HVIOtest.hs
+
+
 2004-12-20 17:26:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-100
 
     Summary:
