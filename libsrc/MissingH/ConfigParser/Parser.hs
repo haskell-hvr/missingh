@@ -114,25 +114,15 @@ sectionlist =
 
 section = do {sh <- sectionhead; ol <- optionlist; return (sh, ol)}
 
-
 sectionhead = do {s <- sectheader; return $ strip s}
               <?> "start of section"
 
-optionlist = 
-    try (do {c <- coption; ol <- optionlist; return $ c : ol})
-    <|> do {c <- coption; return $ [c]}
+optionlist = many1 (try coption)
 
-extensionlist =
-    try (do {x <- extension_line; l <- extensionlist; return $ x : l})
-    <|> do {x <- extension_line; return [x]}
-
-coption =
-    try (do o <- optionpair
-            l <- extensionlist
-            return (strip (fst o), valmerge ((snd o) : l))
-        )
-    <|> do {o <- optionpair; return $ (strip (fst o), strip (snd o))}
-    <?> "an option"
+coption = do o <- optionpair
+             l <- many (try extension_line)
+             return (strip (fst o), valmerge ((snd o) : l))
+          <?> "an option"
 
 valmerge :: [String] -> String
 valmerge vallist =
