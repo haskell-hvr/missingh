@@ -187,7 +187,9 @@ The hardcore stuff!
 -}
 inflate :: [Int] -> (Output, [Bit])
 inflate is = extract_InfM $ do set_bits $ concatMap int_to_bits is
-                               inflate_blocks False
+                               x <- inflate_blocks False
+                               align_8_bits
+                               return x
 
 -- Bool is true if we have seen the "last" block
 inflate_blocks :: Bool -> InfM Output

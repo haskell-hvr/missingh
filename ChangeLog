@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-04 00:15:51 GMT	John Goerzen <jgoerzen@complete.org>	patch-27
+
+    Summary:
+      Fixed inflate returning too much stuff as the remainder
+    Revision:
+      missingh--head--0.7--patch-27
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Compression/Inflate.hs
+
+
 2004-12-04 00:11:36 GMT	John Goerzen <jgoerzen@complete.org>	patch-26
 
     Summary:
