@@ -30,6 +30,24 @@ Haskell Virtual FS -- generic support for real or virtual filesystem in Haskell
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
+The idea of this module is to provide virtualization of filesystem calls.
+In addition to the \"real\" system filesystem, you can also provide access
+to other, virtual, filesystems using the same set of calls.  Examples of
+such virtual filesystems might include a remote FTP server, WebDAV server,
+a local Hashtable, a ConfigParser object, or any other data structure
+you can represent as a tree of named nodes containing strings.
+
+Each 'HVFS' function takes a 'HVFS' \"handle\" ('HVFS' instance) as its
+first parameter.  If you wish to operate on the standard system filesystem,
+you can just use 'SystemFS'.
+
+The "MissingH.HVFS.IO.InstanceHelpers" module contains some code to help
+you make your own HVFS instances.
+
+The 'HVFSOpenable' class works together with the "MissingH.IO.HVIO" module
+to provide a complete virtual filesystem and I\/O model that allows you
+to open up virtual filesystem files and act upon them in a manner similar
+to standard Handles.
 -}
 
 module MissingH.IO.HVFS(-- * Implementation Classes \/ Types

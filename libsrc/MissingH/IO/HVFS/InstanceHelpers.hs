@@ -55,7 +55,8 @@ import System.IO.Error
 import System.IO
 import MissingH.IO.HVIO
 
-{- | A simple class that assumes that everything is either a file
+{- | A simple "MissingH.IO.HVFS.HVFSStat" 
+class that assumes that everything is either a file
 or a directory. -}
 data SimpleStat = SimpleStat {
                               isFile :: Bool, -- ^ True if file, False if directory
@@ -70,10 +71,18 @@ instance HVFSStat SimpleStat where
 -- In-Memory Tree Types
 ----------------------------------------------------------------------
 
+{- | The basic node of a 'MemoryVFS'.  The String corresponds to the filename,
+and the entry to the contents. -}
 type MemoryNode = (String, MemoryEntry)
+
+{- | The content of a file or directory in a 'MemoryVFS'. -}
 data MemoryEntry = MemoryDirectory [MemoryNode]
                  | MemoryFile String
                    deriving (Eq, Show)
+
+{- | An in-memory read\/write filesystem.  Think of it as a dynamically
+resizable ramdisk written in Haskell. -}
+
 data MemoryVFS = MemoryVFS 
                { content :: IORef [MemoryNode],
                  cwd :: IORef FilePath

@@ -31,6 +31,9 @@ This module provides various helpful utilities for dealing with I\/O.
 There are more functions in "MissingH.IO.Binary".
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+If you're not familiar with the "MissingH.IO.HVIO.HVIO" types, don't worry;
+you can just use a regular Handle anywhere you see them.
 -}
 
 module MissingH.IO(-- * Entire File\/Handle Utilities
@@ -95,10 +98,10 @@ In other words:
 
 > interact = hInteract stdin stdout
 -}
-hInteract :: Handle -> Handle -> (String -> String) -> IO ()
+hInteract :: (HVIO a, HVIO b) => a -> b -> (String -> String) -> IO ()
 hInteract finput foutput func = do
-                                content <- hGetContents finput
-                                hPutStr foutput (func content)
+                                content <- vGetContents finput
+                                vPutStr foutput (func content)
 
 {- | Line-based interaction.  This is similar to wrapping your
 interact functions with 'lines' and 'unlines'.  This equality holds:
@@ -150,8 +153,9 @@ hCopy hin hout = do
 Takes a function to provide progress updates to the user.
 -}
 
-hCopyProgress :: Integral a => Handle        -- ^ Input handle
-                 -> Handle              -- ^ Output handle
+hCopyProgress :: (HVIO b, HVIO c, Integral a) => 
+                    b        -- ^ Input handle
+                 -> c              -- ^ Output handle
                  -> (Maybe a -> Integer -> Bool -> IO ()) -- ^ Progress function -- the bool is always False unless this is the final call
                  -> Int                 -- Block size
                  -> Maybe a             -- Estimated file size (passed to func)
@@ -165,12 +169,12 @@ hCopyProgress hin hout func bsize estsize =
                 newcount = count + (genericLength block)
                 in
                 do
-                hPutStr hout block
+                vPutStr hout block
                 func estsize count False
                 copyFunc remainder newcount
         in
         do
-        c <- hGetContents hin
+        c <- vGetContents hin
         bytes <- copyFunc c 0
         func estsize bytes True
         return bytes
@@ -181,7 +185,7 @@ Like 'hBlockCopy', this implementation is nice:
 > hLineCopy hin hout = hLineInteract hin hout id
 -}
 
-hLineCopy :: Handle -> Handle -> IO()
+hLineCopy :: (HVIO a, HVIO b) => a -> b -> IO()
 hLineCopy hin hout = hLineInteract hin hout id
 
 {- | Copies from 'stdin' to 'stdout' using lines.  An alias for 'hLineCopy'

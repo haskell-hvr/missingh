@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-24 01:37:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-165
+
+    Summary:
+      Documenting
+    Revision:
+      missingh--head--0.7--patch-165
+
+
+    modified files:
+     ChangeLog Setup.description libsrc/MissingH/IO.hs
+     libsrc/MissingH/IO/HVFS.hs
+     libsrc/MissingH/IO/HVFS/InstanceHelpers.hs
+
+
 2004-12-24 00:02:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-164
 
     Summary:
