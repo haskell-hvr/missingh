@@ -2,6 +2,23 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-26 16:37:51 GMT	John Goerzen <jgoerzen@complete.org>	patch-175
+
+    Summary:
+      Chcekpointing
+    Revision:
+      missingh--head--0.7--patch-175
+
+
+    modified files:
+     ChangeLog Makefile MissingH.cabal README debian/changelog
+     debian/control libsrc/MissingH/Time.hs testsrc/Timetest.hs
+
+    renamed files:
+     Setup.description
+       ==> MissingH.cabal
+
+
 2005-01-21 01:34:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-174
 
     Summary:

@@ -5,7 +5,7 @@ License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2004 John Goerzen
-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
+Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Logging, MissingH.Logging.Handler,
     MissingH.Logging.Handler.Simple, MissingH.Logging.Handler.Syslog,
     MissingH.Logging.Logger, 

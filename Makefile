@@ -25,7 +25,7 @@ OBJS := $(O1:.lhs=.o)
 
 all: libmissingH.a
 
-setup: Setup.lhs Setup.description
+setup: Setup.lhs MissingH.cabal
 	ghc -package Cabal Setup.lhs -o setup
 
 libmissingH.a: $(OBJS)

@@ -26,53 +26,62 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-This module provides various helpful utilities for dealing with times and
+This module provides various Haskell utilities for dealing with times and
 dates.
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Time(
-                     calendarTimeUTCToEpoch,
-                     calendarTimeToEpoch,
-                     timeDiffToSecs
+                     timelocal,
+                     timegm,
+                     timeDiffToSecs,
+                     epoch
                     )
 where
 import System.Time
 
-{- | January 1, 1970 represented as a CalendarTime. -}
+{- | January 1, 1970, midnight, UTC, represented as a CalendarTime. -}
 epoch :: CalendarTime
 epoch = CalendarTime { ctYear = 1970, ctMonth = January,
                        ctDay = 1, ctHour = 0, ctMin = 0, ctSec = 0,
                        ctPicosec = 0, ctWDay = Thursday, ctYDay = 0,
-                       ctTZName = "", ctTZ = 0, ctIsDST = False}
+                       ctTZName = "UTC", ctTZ = 0, ctIsDST = False}
 
 {- | Converts the specified CalendarTime (see System.Time) to seconds-since-epoch time.
 
-The conversion is naive with respect to timezones.  All timezone and DST information
-in the CalendarTime object is silently ignored.  The epoch is assumed to be
-00:00 on January 1, 1970.
+This conversion does respect the timezone specified on the input object.
+If you want a conversion from UTC, specify ctTZ = 0 and ctIsDST = False.
 
-One convenient side-effect of this zone-agnostic approach is that you will
-get proper results out of this function whether or not you pass it UTC data,
-since effectively it is computing a difference. -}
-
-calendarTimeUTCToEpoch :: CalendarTime -> Integer
-calendarTimeUTCToEpoch ct =
-    timeDiffToSecs (diffClockTimes (toClockTime ct) (toClockTime epoch))
-
-{- | Like 'calendarTimeUTCToEpoch', but works on local times.
-
-Caveat: may be inaccurate right around the change to/from DST.
-
-Ignores same fields as 'calendarTimeUTCToEpoch'.
+When called like that, the behavior is equivolent to the GNU C function
+timegm().  Unlike the C library, Haskell's CalendarTime supports
+timezone information, so if such information is specified, it will impact
+the result.
 -}
 
-calendarTimeToEpoch :: CalendarTime -> IO Integer
-calendarTimeToEpoch ct =
+timegm :: CalendarTime -> Integer
+timegm ct =
+    timeDiffToSecs (diffClockTimes (toClockTime ct) (toClockTime epoch))
+
+{- | Converts the specified CalendarTime (see System.Time) to 
+seconds-since-epoch format.
+
+The input CalendarTime is assumed to be the time as given in your local
+timezone.  All timezone and DST fields in the object are ignored.
+
+This behavior is equivolent to the timelocal() and mktime() functions that
+C programmers are accustomed to.
+
+Please note that the behavior for this function during the hour immediately
+before or after a DST switchover may produce a result with a different hour
+than you expect.
+-}
+
+timelocal :: CalendarTime -> IO Integer
+timelocal ct =
     do guessct <- toCalendarTime guesscl
        let newct = ct {ctTZ = ctTZ guessct}
-       return $ calendarTimeUTCToEpoch newct
+       return $ timegm newct
     where guesscl = toClockTime ct
     
 {- | Converts the given timeDiff to the number of seconds it represents. 

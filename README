@@ -130,6 +130,8 @@ MissingH.Str             * Leading/trailing whitespace removal
 
 MissingH.Threads         * Threaded callbacks
 
+MissingH.Time            * Utilities for working with times and dates
+
 Wash.Mail.*              * Generate or parse e-mail messages
                          * Full support for headers and MIME
 
