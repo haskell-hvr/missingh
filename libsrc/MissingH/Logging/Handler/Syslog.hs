@@ -22,12 +22,15 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Logging.Handler.Syslog(
-                                       Facility(..),
-                                       Option(..),
+                                       -- * Handler Initialization
                                        openlog,
+                                       -- * Advanced handler initialization
                                        openlog_local,
                                        openlog_remote,
-                                       openlog_generic
+                                       openlog_generic,
+                                       -- * Data Types
+                                       Facility(..),
+                                       Option(..)
                                        ) where
 
 import MissingH.Logging
@@ -116,21 +119,43 @@ data SyslogHandler = SyslogHandler {options :: [Option],
                                     address :: SockAddr,
                                     priority :: Priority}
 
-openlog :: String -> [Option] -> Facility -> Priority ->
-           IO SyslogHandler
+{- | Initialize the Syslog system using the system's default interface,
+\/dev\/log.  Will return a new 'MissingH.Logging.Handler.LogHandler'.
+
+-}
+
+openlog :: String                       -- ^ The name of this program -- will be prepended to every log message
+        -> [Option]                     -- ^ A list of 'Option's.  The list [] is perfectly valid.  ['PID'] is probably most common here.
+        -> Facility                     -- ^ The 'Facility' value to pass to the syslog system for every message logged
+        -> Priority                     -- ^ Messages logged below this priority will be ignored.  To include every message, set this to 'DEBUG'.
+        -> IO SyslogHandler             -- ^ Returns the new handler
+
 -- openlog = openlog_remote AF_INET "localhost" 514
 openlog = openlog_local "/dev/log"
 
-openlog_local :: String -> String -> [Option] -> Facility -> Priority ->
-                 IO SyslogHandler
+{- | Initialize the Syslog system using an arbitrary Unix socket (FIFO).
+-}
+
+openlog_local :: String                 -- ^ Path to FIFO
+              -> String                 -- ^ Program name
+              -> [Option]               -- ^ 'Option's
+              -> Facility               -- ^ Facility value
+              -> Priority               -- ^ Priority limit
+              -> IO SyslogHandler
 openlog_local fifopath ident options fac pri =
     do
     s <- socket AF_UNIX Datagram 0
     openlog_generic s (SockAddrUnix "/dev/log") ident options fac pri
 
-openlog_remote :: Family -> HostName -> PortNumber -> String -> 
-                  [Option] -> Facility -> Priority ->
-                  IO SyslogHandler
+{- | Log to a remote server via UDP. -}
+openlog_remote :: Family                -- ^ Usually AF_INET or AF_INET6; see Network.Socket
+               -> HostName              -- ^ Remote hostname.  Some use @localhost@
+               -> PortNumber            -- ^ 514 is the default for syslog
+               -> String                -- ^ Program name
+               -> [Option]              -- ^ 'Option's
+               -> Facility              -- ^ Facility value
+               -> Priority              -- ^ Priority limit
+               -> IO SyslogHandler
 openlog_remote fam hostname port ident options fac pri =
     do
     he <- getHostByName hostname
@@ -138,8 +163,15 @@ openlog_remote fam hostname port ident options fac pri =
     let addr = SockAddrInet port (head (hostAddresses he))
     openlog_generic s addr ident options fac pri
     
-openlog_generic :: Socket -> SockAddr -> String -> [Option] -> Facility ->
-                   Priority -> IO SyslogHandler
+{- | The most powerful initialization mechanism.  Takes an open datagram
+socket. -}
+openlog_generic :: Socket               -- ^ A datagram socket
+                -> SockAddr             -- ^ Address for transmissions
+                -> String               -- ^ Program name
+                -> [Option]             -- ^ 'Option's
+                -> Facility             -- ^ Facility value
+                -> Priority             -- ^ Priority limit
+                -> IO SyslogHandler
 openlog_generic sock addr ident opt fac pri =
     return (SyslogHandler {options = opt,
                             facility = fac,
