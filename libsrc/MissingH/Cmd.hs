@@ -99,7 +99,6 @@ pOpen :: PipeMode -> FilePath -> [String] ->
 pOpen pm fp args func =
     do
     pipepair <- createPipe
-    print pipepair
     fsth <- fdToHandle (fst pipepair)
     sndh <- fdToHandle (snd pipepair)
     case pm of
@@ -113,13 +112,9 @@ pOpen pm fp args func =
                                 callfunc
          WriteToPipe -> do 
                         let callfunc = do
-                                       print 112
                                        --hClose fsth
-                                       print 114
                                        x <- func sndh
-                                       print 116
                                        hClose sndh
-                                       print 118
                                        return x
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
                                callfunc
@@ -138,27 +133,19 @@ pOpen3 pin pout perr fp args func =
                                         dupTo fromfd tofd
                                         return ()
         childstuff = do
-                     putStrLn "child 123"
-                     putStrLn ("child " ++ fp)
                      mayberedir pin stdInput
                      mayberedir pout stdOutput
                      mayberedir perr stdError
-                     putStrLn "child 127"
                      debugM (logbase ++ ".pOpen3")
                             ("Running: " ++ fp ++ " " ++ (show args))
-                     putStrLn "child 130"
                      executeFile fp True args Nothing
-                     putStrLn "child 132"
                      exitFailure
         in
         do 
         pid <- forkProcess childstuff
-        putStrLn "Parent 138"
         retval <- func
         seq retval (return ())
-        putStrLn "Parent 140"
         status <- getProcessStatus True False pid
-        putStrLn "Parent 142"
         case status of
            Nothing -> fail "Got no process status back"
            Just (Exited (ExitSuccess)) -> return retval

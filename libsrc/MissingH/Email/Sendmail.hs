@@ -86,9 +86,9 @@ sendmail_worker args msg =
         in
         do
         pOpen WriteToPipe "/usr/sbin/sendmail" args func
-        {-
+        
         catch (pOpen WriteToPipe "sendmail" args func) 
                   (\_ -> do
                          sn <- findsendmail
-                         pOpen WriteToPipe sn args func) -}
+                         pOpen WriteToPipe sn args func)
 
