@@ -39,7 +39,9 @@ module MissingH.HVIO(-- * Implementation Classes
                      HVIOSeeker(..),
                      -- * Standard Virtual IO features
                      -- | Note: Handle is a member of all classes by default.
-                     StreamReader, newStreamReader
+                     StreamReader, newStreamReader,
+                     MemoryVIO, newMemoryVIO,
+                     PipeReader, PipeWriter, newPipe
                     )
 where
 
