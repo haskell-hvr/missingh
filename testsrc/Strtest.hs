@@ -30,7 +30,29 @@ test_lstrip =
                         ("\n\t fdsa", "fdsa"),
                         ("abc def", "abc def")]
 
-tests = TestList [TestLabel "lstrip" (TestCase test_lstrip)
+test_rstrip =
+    mapassertEqual "rstrip" rstrip
+                   [("", ""),
+                    ("a", "a"),
+                    (" a ", " a"),
+                    ("abas  ", "abas"),
+                    ("fdsa \n\t", "fdsa"),
+                    ("abc def", "abc def")]
+
+test_strip =
+    mapassertEqual "strip" strip
+                   [("", ""),
+                    ("a", "a"),
+                    (" a ", "a"),
+                    ("abas  ", "abas"),
+                    ("  abas", "abas"),
+                    ("asdf\n\t ", "asdf"),
+                    ("\nbas", "bas"),
+                    ("abc def", "abc def")]
+
+tests = TestList [TestLabel "lstrip" (TestCase test_lstrip),
+                  TestCase test_rstrip,
+                  TestCase test_strip
                   ]
 
 
