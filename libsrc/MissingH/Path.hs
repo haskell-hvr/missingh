@@ -33,7 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Path(-- * Name processing
-                     splitExt,
+                     splitExt, absNormPath, secureAbsNormPath,
                      -- * Directory Processing
                      recurseDir, recurseDirStat, recursiveRemove,
                      -- * Temporary Directories
@@ -48,6 +48,7 @@ import System.Posix.Directory (createDirectory)
 import System.Posix.Temp
 import Control.Exception
 import System.IO
+import MissingH.Path.NameManip
 
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
@@ -63,6 +64,37 @@ splitExt path =
         if dotindex <= slashindex
            then (path, "")
            else ((take dotindex path), (drop dotindex path))
+
+{- | Make an absolute, normalized version of a path with all double slashes,
+dot, and dotdot entries removed.
+
+The first parameter is the base for the absolut calculation; in many cases,
+it would correspond to the current working directory.
+
+The second parameter is the pathname to transform.  If it is already absolute,
+the first parameter is ignored.
+
+Nothing may be returned if there's an error; for instance, too many @..@ entries
+for the given path.
+-}
+absNormPath :: String                   -- ^ Absolute path for use with starting directory
+            -> String                   -- ^ The path name to make absolute
+            -> Maybe String                   -- ^ Result
+absNormPath base thepath =
+    let abs = absolute_path_by base thepath
+        in case guess_dotdot (normalise_path abs) of
+                Just "." -> Just "/"
+                x -> x
+
+{- | Like absNormPath, but returns Nothing if the generated result is not
+the passed base path or a subdirectory thereof. -}
+secureAbsNormPath :: String             -- ^ Absolute path for use with starting directory
+                  -> String             -- ^ The path to make absolute
+                  -> Maybe String
+secureAbsNormPath base s = do p <- absNormPath base s
+                              if startswith base p
+                                 then return p
+                                 else fail ""
 
 {- | Obtain a recursive listing of all files\/directories beneath 
 the specified directory.  The traversal is depth-first and the original

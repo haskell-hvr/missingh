@@ -20,6 +20,46 @@ module Pathtest(tests) where
 import HUnit
 import MissingH.Path
 
+test_absNormPath =
+    let f base p exp = TestLabel (show (base, p)) $ TestCase $ exp @=? absNormPath base p
+        f2 = f "/usr/1/2" in
+        [ 
+         f "/" "" (Just "/")
+        ,f "/usr/test" "" (Just "/usr/test")
+        ,f "/usr/test" ".." (Just "/usr")
+        ,f "/usr/1/2" "/foo/bar" (Just "/foo/bar")
+        ,f2 "jack/./.." (Just "/usr/1/2")
+        ,f2 "jack///../foo" (Just "/usr/1/2/foo")
+        ,f2 "../bar" (Just "/usr/1/bar")
+        ,f2 "../" (Just "/usr/1")
+        ,f2 "../.." (Just "/usr")
+        ,f2 "../../" (Just "/usr")
+        ,f2 "../../.." (Just "/")
+        ,f2 "../../../" (Just "/")
+        ,f2 "../../../.." Nothing
+        ]
+
+test_secureAbsNormPath =
+    let f base p exp = TestLabel (show (base, p)) $ TestCase $ exp @=? secureAbsNormPath base p
+        f2 = f "/usr/1/2" in
+        [ 
+         f "/" "" (Just "/")
+        ,f "/usr/test" "" (Just "/usr/test")
+        ,f "/usr/test" ".." Nothing
+        ,f "/usr/1/2" "/foo/bar" Nothing
+        ,f "/usr/1/2" "/usr/1/2" (Just "/usr/1/2")
+        ,f "/usr/1/2" "/usr/1/2/foo/bar" (Just "/usr/1/2/foo/bar")
+        ,f2 "jack/./.." (Just "/usr/1/2")
+        ,f2 "jack///../foo" (Just "/usr/1/2/foo")
+        ,f2 "../bar" Nothing
+        ,f2 "../" Nothing
+        ,f2 "../.." Nothing
+        ,f2 "../../" Nothing
+        ,f2 "../../.." Nothing
+        ,f2 "../../../" Nothing
+        ,f2 "../../../.." Nothing
+        ]
+
 test_splitExt =
     let f inp exp = TestCase $ exp @=? splitExt inp in
         [
@@ -32,4 +72,6 @@ test_splitExt =
         ]
 
 tests = TestList [TestLabel "splitExt" (TestList test_splitExt)
+                 ,TestLabel "absNormPath" (TestList test_absNormPath)
+                 ,TestLabel "secureAbsNormPath" (TestList test_secureAbsNormPath)
                  ]

@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 20:18:45 GMT	John Goerzen <jgoerzen@complete.org>	patch-104
+
+    Summary:
+      added secureAbsNormPath
+    Revision:
+      missingh--head--0.7--patch-104
+
+
+    new files:
+     libsrc/MissingH/Path/.arch-ids/=id
+     libsrc/MissingH/Path/NameManip.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Path.hs testsrc/Pathtest.hs
+
+    new directories:
+     libsrc/MissingH/Path libsrc/MissingH/Path/.arch-ids
+
+
 2004-12-20 19:49:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-103
 
     Summary:
