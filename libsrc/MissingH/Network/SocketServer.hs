@@ -32,6 +32,9 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 Please note: this module is designed to work with TCP, UDP, and Unix domain
 sockets, but only TCP sockets have been tested to date.
+
+This module is presently under-documented.  For an example of usage, please
+see the description of "MissingH.Network.FTP.Server".
 -}
 
 module MissingH.Network.SocketServer(-- * Generic Options and Types

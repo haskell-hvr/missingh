@@ -107,6 +107,8 @@ pipes cannot be used across a fork().  Also unlike Unix pipes, these pipes
 are portable and interact well with Haskell threads.  A new pipe can be created
 with a call to 'newHVIOPipe'.
 
+Together with "MissingH.IO.HVFS", this module is part of a complete
+virtual filesystem solution.
 -}
 
 module MissingH.IO.HVIO(-- * Implementation Classes
@@ -114,7 +116,7 @@ module MissingH.IO.HVIO(-- * Implementation Classes
                      -- * Standard HVIO Implementations
 
                      -- ** Handle
-                     -- | Handle is a member of all four classes.
+                     -- | Handle is a member of 'HVIO'.
 
                      -- ** Stream Reader
                      StreamReader, newStreamReader,

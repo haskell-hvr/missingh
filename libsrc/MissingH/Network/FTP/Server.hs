@@ -37,6 +37,43 @@ as defined by:
 
 Written by John Goerzen, jgoerzen\@complete.org
 
+This is a modular FTP server implementation in pure Haskell.  It is highly
+adaptable to many different tasks, and can serve up not only real files
+and directories, but also virtually any data structure you could represent
+as a filesystem.  It does this by using the
+"MissingH.IO.HVFS" and "MissingH.IO.HVIO" modules.
+
+In addition, basic networking and multitasking configuration is handled
+via "MissingH.Network.SocketServer" and logging via 
+"MissingH.Logging.Logger".
+
+This module is believed to be secure, but it not believed to be robust enough
+for use on a public FTP server.  In particular, it may be vulnerable to denial
+of service attacks due to no timeouts or restrictions on data size, and
+error catching is not yet completely pervasive.  These will be fixed in time.
+Your patches would also be welcomed.
+
+Here is an example server that serves up the entire local filesystem
+in a read-only manner:
+
+>import MissingH.Network.FTP.Server
+>import MissingH.Network.SocketServer
+>import MissingH.Logging.Logger
+>import MissingH.IO.HVFS
+>import MissingH.IO.HVFS.Combinators
+>
+>main = do
+>       updateGlobalLogger "" (setLevel DEBUG)
+>       updateGlobalLogger "MissingH.Network.FTP.Server" (setLevel DEBUG)
+>       let opts = (simpleTCPOptions 12345) {reuse = True}
+>       serveTCPforever opts $
+>            threadedHandler $
+>            loggingHandler "" INFO $
+>            handleHandler $
+>            anonFtpHandler (HVFSReadOnly SystemFS)
+
+Hint: if you wantto serve up only part of a filesystem, see
+'MissingH.IO.HVFS.Combinators.newHVFSChroot'.
 -}
 
 module MissingH.Network.FTP.Server(
