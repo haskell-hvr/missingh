@@ -32,6 +32,13 @@ test_vsprintf =
     "fe" @=? vsprintf "%x" (254::Integer)
     "FE" @=? vsprintf "%X" (254::Integer)
     "10" @=? vsprintf "%o" (8::Integer)
+    "Hello" @=? vsprintf "Hello"
+    "Hello, John\n" @=? vsprintf "Hello, %s\n" "John"
+    "John, your age is 10\n" @=? vsprintf "%s, your age is %d\n" "John" (10::Integer)
+    "Hello" @=? sprintf "Hello" []
+    "Hello, John\n" @=? sprintf "Hello, %s\n" [v "John"]
+    "John, your age is 10\n" @=? sprintf "%s, your age is %d\n" [v "John",
+                                                                 v (10::Integer)]
 
 test_vsprintf_generics =
     do
