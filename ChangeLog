@@ -2,6 +2,28 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-15 15:44:11 GMT	John Goerzen <jgoerzen@complete.org>	patch-66
+
+    Summary:
+      Deferring Gopher development for now
+    Revision:
+      missingh--head--0.7--patch-66
+
+
+    new files:
+     pending/.arch-ids/=id
+
+    modified files:
+     ChangeLog
+
+    renamed files:
+     libsrc/MissingH/Network/Gopher.hs
+       ==> pending/Gopher.hs
+
+    new directories:
+     pending pending/.arch-ids
+
+
 2004-12-14 23:00:15 GMT	John Goerzen <jgoerzen@complete.org>	patch-65
 
     Summary:
