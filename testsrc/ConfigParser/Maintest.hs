@@ -83,7 +83,22 @@ test_defaults =
       -- default bool
       ]
 
+test_nodefault =
+    let cp = (p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes\n[sect4]\ndef: different"){usedefault = False} in
+      [
+       f2 "default item" (Left (NoOption "def", "get")) (get cp "sect1" "def")
+      ,f2 "normal item" (Right "bar") (get cp "sect1" "foo")
+      ,f2 "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
+      ,f2 "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
+      ,f2 "default from bad sect" (Left (NoSection "sect2", "get")) (get cp "sect2" "def")
+      ,f2 "overriding default" (Right "different") (get cp "sect4" "def")
+      -- not in haskell: ,f2 "using default feature"
+      -- default int
+      -- default float
+      -- default bool
+      ]
      
 
 tests = TestList [TestLabel "test_basic" (TestList test_basic),
-                 TestLabel "test_defaults" (TestList test_defaults)]
+                 TestLabel "test_defaults" (TestList test_defaults),
+                 TestLabel "test_nodefault" (TestList test_nodefault)]

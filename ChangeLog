@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-30 20:01:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-128
+
+    Summary:
+      Added tests for no default situation
+    Revision:
+      missingh--head--0.5--patch-128
+
+
+    modified files:
+     ChangeLog testsrc/ConfigParser/Maintest.hs
+
+
 2004-11-30 18:45:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-127
 
     Summary:
