@@ -479,12 +479,16 @@ data storage.  This problem will be fixed eventually.
 -}
 newtype MemoryBuffer = MemoryBuffer (VIOCloseSupport (Int, String))
 
-{- | Create a new 'MemoryBuffer' instance.  The buffer is initially empty;
-you can put things in it by using the normal 'vPutStr' calls, and reset to
-the beginning by using the normal 'vRewind' call. -}
-newMemoryBuffer :: IO MemoryBuffer
-newMemoryBuffer = do ref <- newIORef (True, (0, ""))
-                     return (MemoryBuffer ref)
+{- | Create a new 'MemoryBuffer' instance.  The buffer is initialized
+to the value passed, and the pointer is placed at the beginning of the file.
+
+You can put things in it by using the normal 'vPutStr' calls, and reset to
+the beginning by using the normal 'vRewind' call.
+
+To create an empty buffer, pass the initial value @\"\"@. -}
+newMemoryBuffer :: String -> IO MemoryBuffer
+newMemoryBuffer init = do ref <- newIORef (True, (0, init))
+                          return (MemoryBuffer ref)
 
 vrv (MemoryBuffer x) = x
 
@@ -522,7 +526,7 @@ instance HVIOWriter MemoryBuffer where
     vPutStr h s = do (pos, buf) <- vioc_get (vrv h)
                      let (pre, post) = splitAt pos buf
                      let newbuf = pre ++ s ++ (drop (length buf) post)
-                     vioc_set (vrv h) (pos + (length buf), newbuf)
+                     vioc_set (vrv h) (pos + (length s), newbuf)
     vPutChar h c = vPutStr h [c]
 
 instance HVIOSeeker MemoryBuffer where

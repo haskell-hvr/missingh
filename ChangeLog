@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-20 17:26:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-100
+
+    Summary:
+      Fixed a MemoryBuffer vPutStr bug
+    Revision:
+      missingh--head--0.7--patch-100
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVIO.hs testsrc/HVIOtest.hs
+
+
 2004-12-20 17:14:02 GMT	John Goerzen <jgoerzen@complete.org>	patch-99
 
     Summary:

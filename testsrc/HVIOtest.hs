@@ -28,6 +28,24 @@ ioeq :: (Show a, Eq a) => a -> IO a -> Assertion
 ioeq exp inp = do x <- inp
                   exp @=? x
 
+test_MemoryBuffer =
+    let f inp testfunc = TestLabel inp $ TestCase $ do x <- newMemoryBuffer inp
+                                                       testfunc x
+        in
+        [
+         f "" (\x -> do True `ioeq` vIsOpen x
+                        assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
+                        vPutStrLn x "Line1"
+                        vPutStrLn x "Line2"
+                        vRewind x
+                        "Line1" `ioeq` vGetLine x
+                        "Line2" `ioeq` vGetLine x
+                        assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
+                        vRewind x
+                        "Line1\nLine2\n" `ioeq` vGetContents x
+              )
+        ]
+
 test_StreamReader =
     let f inp testfunc = TestLabel inp $ TestCase $ do x <- newStreamReader inp
                                                        testfunc x
@@ -58,5 +76,6 @@ test_StreamReader =
            )
         ]
 
-tests = TestList [TestLabel "streamReader" (TestList test_StreamReader)
+tests = TestList [TestLabel "streamReader" (TestList test_StreamReader),
+                  TestLabel "MemoryBuffer" (TestList test_MemoryBuffer)
                  ]
