@@ -145,6 +145,6 @@ lsl fs fp =
                                       return (ss, x) 
                             ) c
               linedata <- mapM (showentry fp fs) pairs
-              return $ unlines linedata
+              return $ unlines $ ["total 1"] ++ linedata
                   
             

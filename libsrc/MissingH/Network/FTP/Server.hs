@@ -57,6 +57,7 @@ import MissingH.Printf
 import MissingH.IO.HVIO
 import MissingH.IO.HVFS
 import MissingH.IO.HVFS.InstanceHelpers
+import MissingH.IO.HVFS.Utils
 import Data.Char
 import MissingH.Printf
 import Data.IORef
@@ -168,6 +169,7 @@ commands =
     ,("STAT", (forceLogin cmd_stat,  help_stat))
     ,("SYST", (forceLogin cmd_syst,  help_syst))
     ,("NLST", (forceLogin cmd_nlst,  help_nlst))
+    ,("LIST", (forceLogin cmd_list,  help_list))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -401,7 +403,7 @@ rtransmitString thestr (FTPServer _ _ state) sock =
     let fixlines :: [String] -> [String]
         fixlines x = map (\y -> y ++ "\r") x
         copyit h =
-            hPutStrLn h $ unlines . fixlines . lines $ thestr
+            hPutStr h $ unlines . fixlines . lines $ thestr
         in
         do writeh <- socketToHandle sock WriteMode
            hSetBuffering writeh (BlockBuffering (Just 4096))
@@ -485,6 +487,16 @@ cmd_nlst h@(FTPServer _ fs _) args =
         in
         trapIOError h (vGetDirectoryContents fs fn)
            (\l -> genericTransmitString h (unlines l))
+
+help_list = ("Get an annotated listing of files", "")
+cmd_list :: CommandHandler
+cmd_list h@(FTPServer _ fs _) args =
+    let fn = case args of
+                       "" -> "."
+                       x -> x
+        in
+        trapIOError h (lsl fs fn)
+                    (\l -> genericTransmitString h l)
 
 help_rmd = ("Remove directory", "")
 cmd_rmd :: CommandHandler

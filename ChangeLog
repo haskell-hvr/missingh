@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-24 00:02:16 GMT	John Goerzen <jgoerzen@complete.org>	patch-164
+
+    Summary:
+      FTP server works
+    Revision:
+      missingh--head--0.7--patch-164
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVFS/Utils.hs
+     libsrc/MissingH/Network/FTP/Server.hs
+
+
 2004-12-23 23:49:50 GMT	John Goerzen <jgoerzen@complete.org>	patch-163
 
     Summary:
