@@ -131,14 +131,12 @@ valmerge vallist =
 -- Interpolation
 ----------------------------------------------------------------------
 
-interpval :: (String -> CPResult String) -> Parser String
-interpval lookupfunc = do
+interpval :: Parser String
+interpval  = do
             string "%("
             s <- (many1 $ noneOf ")") <?> "interpolation name"
             string ")s"               <?> "end of interpolation name"
-            return $ case lookupfunc s of
-                       Left x -> fail s
-                       Right x -> x
+            return s
 
 percentval :: Parser String
 percentval = do
@@ -147,16 +145,19 @@ percentval = do
 
 interpother :: Parser String
 interpother = do
-              c <- anyChar
+              c <- noneOf "%"
               return [c]
 
 interptok :: (String -> CPResult String) -> Parser String
-interptok lookupfunc = (try percentval) <|>
-                       (try (interpval lookupfunc))
+interptok lookupfunc = (try percentval)
                        <|> interpother
+                       <|> do s <- interpval
+                              case lookupfunc s of
+                                              Left _ -> fail s
+                                              Right x -> return x
+
 
 interpmain :: (String -> CPResult String) -> Parser String
 interpmain lookupfunc =
-    do r <- many $ interptok lookupfunc
-       eof
+    do r <- manyTill (interptok lookupfunc) eof
        return $ concat r

@@ -167,7 +167,7 @@ interpolatingAccess maxdepth cp s o =
                      "interpolatingAccess")
            else do
                 x <- simpleAccess cp s o
-                case parse (interpmain lookupfunc) "(string)" s of
+                case parse (interpmain lookupfunc) "(string)" x of
                      Left x -> throwError $ 
                                (InterpolationError ("Unresolvable interpolation reference to \"" ++ error2str x ++ "\""),
                                 "interpolatingAccess")

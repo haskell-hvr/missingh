@@ -134,10 +134,27 @@ test_ex_errormonad =
                         options cp "sect1"
        )
     ]
-     
+
+test_interp = 
+    let interpdoc = "[DEFAULT]\narch = i386\n\n[builder]\n" ++
+                    "filename = test_%(arch)s.c\n" ++
+                    "dir = /usr/src/%(filename)s\n" ++
+                    "percent = 5%%\n" ++
+                    "bad = /usr/src/%(nonexistent)s"
+        cp = (forceEither $ (readstring emptyCP interpdoc)){ accessfunc = interpolatingAccess 5}
+        in
+        [
+         f2 "basic" (Right "i386") (get cp "DEFAULT" "arch")
+        ,f2 "filename" (Right "test_i386.c") (get cp "builder" "filename")
+        ,f2 "dir" (Right "/usr/src/test_i386.c") (get cp "builder" "dir")
+        ,f2 "percents" (Right "5%") (get cp "builder" "percent")
+        ,f2 "error" (Left (InterpolationError "Unresolvable interpolation reference to \"nonexistent\"", "interpolatingAccess")) (get cp "builder" "bad")
+        ]
+
 
 tests = TestList [TestLabel "test_basic" (TestList test_basic),
                  TestLabel "test_defaults" (TestList test_defaults),
                  TestLabel "test_nodefault" (TestList test_nodefault),
                  TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad),
-                 TestLabel "test_ex_errormonad" (TestList test_ex_errormonad)]
+                 TestLabel "test_ex_errormonad" (TestList test_ex_errormonad),
+                 TestLabel "test_interp" (TestList test_interp)]
