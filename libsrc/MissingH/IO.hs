@@ -157,5 +157,4 @@ copyFileLinesToFile infn outfn = do
                                  hClose hin
                                  hClose hout
                                  return ()
-                                 
 
