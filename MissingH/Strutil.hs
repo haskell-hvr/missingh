@@ -18,12 +18,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- | This module provides various helpful utilities for dealing with strings.
 
-Written by John Goerzen, jgoerzen@complete.org
+Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Strutil(
-                        -- * Whitespace Removal
-                        strip, lstrip, rstrip) where
+module MissingH.Strutil(-- * Whitespace Removal
+                        strip, lstrip, rstrip,
+                        -- * Tests
+                        startswith, endswith
+                       ) where
+import MissingH.Listutil(startswith, endswith)
 
 wschars = " \t\r\n"
 
@@ -58,21 +61,3 @@ lstrip s = case s of
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
--- | Returns true if the given list starts with the specified elements;
--- false otherwise.
---
--- Example: startswith "He" "Hello" -> True
-
-startswith :: Eq a => [a] -> [a] -> Bool
-startswith [] _ = True
-startswith _ [] = False
-startswith (x:xs) (l:ls) =
-    if (x == l) then startswith xs ls
-    else False
-
--- | Returns true if the given list ends with the specified elements;
--- false otherwise.
---
--- Example: endswith "lo" "Hello" -> True
-endswith :: Eq a => [a] -> [a] -> Bool
-endswith x l = startswith (reverse x) (reverse l)
