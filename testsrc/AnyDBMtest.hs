@@ -23,6 +23,7 @@ import MissingH.IO.HVFS
 import MissingH.IO.HVFS.InstanceHelpers
 import MissingH.AnyDBM
 import MissingH.AnyDBM.StringDBM
+import MissingH.AnyDBM.FiniteMapDBM
 import Data.HashTable
 import Data.List(sort)
 import Control.Exception(finally)
@@ -73,13 +74,36 @@ generic_test initfunc openfunc =
                                    deleteall h
         ]
 
+generic_persist_test initfunc openfunc =
+    let f = mf initfunc openfunc in
+        [
+         f "empty" deleteall 
+        ,f "weirdpop" $ \h -> insertListA h weirdl
+        ,f "weirdcheck" $ \h -> do weirdl @>=? (toListA h >>= return . sort)
+                                   deleteall h
+                                   insertA h "key" "value"
+        ,f "step3" $ \h -> do [("key", "value")] @>=? (toListA h >>= return . sort)
+                              insertA h "key" "v2"
+                              insertA h "z" "y"
+        ,f "step4" $ \h -> do [("key", "v2"), ("z", "y")] @>=?
+                                 (toListA h >>= return . sort)
+        ,f "cleanup" deleteall
+        ]
+
 test_hashtable = generic_test (return ())
                   (\_ -> ((new (==) hashString)::IO (HashTable String String)))
-test_stringdbm = generic_test (return SystemFS)
+
+test_finitemap = generic_test (return ())
+                  (\_ -> newFiniteMapDBM)
+test_stringdbm = generic_persist_test (return SystemFS)
+                   (\f -> openStringVDBM f "testsrc/tmp/StringDBM" ReadWriteMode)
+                 ++
+                 generic_test (return SystemFS)
                    (\f -> openStringVDBM f "testsrc/tmp/StringDBM" ReadWriteMode)
 
 tests = TestList [TestLabel "HashTable" (TestList test_hashtable),
-                  TestLabel "StringDBM" (TestList test_stringdbm)
+                  TestLabel "StringDBM" (TestList test_stringdbm),
+                  TestLabel "FiniteMap" (TestList test_finitemap)
                  ]
 
 

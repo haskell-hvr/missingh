@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-02 17:18:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-191
+
+    Summary:
+      Finished tests for AnyDBM
+    Revision:
+      missingh--head--0.7--patch-191
+
+
+    modified files:
+     ChangeLog testsrc/AnyDBMtest.hs
+
+
 2005-02-02 17:05:24 GMT	John Goerzen <jgoerzen@complete.org>	patch-190
 
     Summary:
