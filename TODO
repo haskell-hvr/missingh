@@ -5,5 +5,7 @@ Printf:
  document copyright status better
  make tests for all the examples
  show some functions in the examples
-
+ make %H work -- probably just need a showValue function
+                 just make showValue :: Value -> String
+                 should be an easy "case" statement
 
