@@ -78,6 +78,11 @@ MissingH.ConfigParser    * Configuration file parser
                          * Interpolation supported
                          * Compatible with Python and OCaml ConfigParsers
 
+MissingH.Debian          * Compare two Debian version numbers
+
+MissingH.Debian.         * Parse debian/control files or output from
+ ControlParser             various Debian commands that use the same format
+
 MissingH.Either          * Utilities for the Either type/Error monad
 
 MissingH.Email.Parser    * Parse a flat string into component parts
@@ -115,6 +120,8 @@ MissingH.Logging.        * Logging to local or remote syslog
 
 MissingH.Logging.Logger  * Primary user interface to logging
                          * Documentation for the logging system
+
+MissingH.Maybe           * forceMaybe utility function
 
 MissingH.MIMETypes       * Determine the MIME type of a file
                          * Guess an extension based on MIME type

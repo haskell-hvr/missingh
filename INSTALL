@@ -1,14 +1,36 @@
+=========================
 INSTALLATION INSTRUCTIONS
+=========================
 
-First, install the Cabal distribution for your favorite compiler.
-Get it from http://www.haskell.org/cabal.  Debian users can
-apt-get install libghc6-cabal-dev.  Then run "make setup" (you may
-need to edit the Makefile if you don't use GHC or if your GHC is at an
-unusual location).
+PREREQUISITES
+-------------
 
-Then:
+You must satisfy one or more of these major categories:
+
+1. GHC 6.4 or above (including cpphs)
+
+2. GHC 6.2.x (including cpphs) plus Cabal 0.5 or above
+
+3. Hugs 2005xx or above, plus cpphs
+
+4. Hugs 2003xx partially supported, plus cpphs
+
+If you don't already have cpphs, get it from
+http://www.cs.york.ac.uk/fp/cpphs/.
+
+If you need Cabal, get it from http://www.haskell.org/cabal.
+
+Debian users can install the packages cpphs and libghc6-cabal-dev.
+
+Now, for GHC:
 
  ./setup configure
+ ./setup build
+ ./setup install
+
+Or, for Hugs:
+
+ ./setup configure --hugs
  ./setup build
  ./setup install
  

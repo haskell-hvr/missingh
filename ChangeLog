@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-05 18:30:29 GMT	John Goerzen <jgoerzen@complete.org>	patch-217
+
+    Summary:
+      Clean up docs for 0.10.0
+    Revision:
+      missingh--head--0.7--patch-217
+
+
+    new files:
+     announcements/0.10.0.txt
+
+    modified files:
+     ChangeLog INSTALL README debian/changelog
+
+
 2005-04-05 18:15:23 GMT	John Goerzen <jgoerzen@complete.org>	patch-216
 
     Summary:

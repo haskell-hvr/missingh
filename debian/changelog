@@ -1,7 +1,8 @@
 missingh (0.9.2) unstable; urgency=low
 
   * Compatibility with new Hugs and GHC releases.
-  * New modules: MissingH.Debian, MissingH.Debian.ControlParser
+  * New modules: MissingH.Debian, MissingH.Debian.ControlParser,
+    MissingH.Str.CSV, MissingH.Maybe
   * New MissingH.List functions: wholeMap, fixedWidth
   * New function: MissingH.Time.epochToClockTime
   * Updated HVFS utilities to use epochToClockTime for compatibility
