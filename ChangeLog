@@ -2,6 +2,25 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-20 21:09:14 GMT	John Goerzen <jgoerzen@complete.org>	patch-85
+
+    Summary:
+      Initial mime types support
+    Revision:
+      missingh--head--1.0--patch-85
+
+
+    new files:
+     libsrc/MissingH/MIMETypes.hs
+     libsrc/MissingH/Network/.arch-ids/=id
+
+    modified files:
+     ChangeLog
+
+    new directories:
+     libsrc/MissingH/Network libsrc/MissingH/Network/.arch-ids
+
+
 2004-10-20 16:19:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-84
 
     Summary:
