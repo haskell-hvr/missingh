@@ -33,10 +33,10 @@ libmissingH.a: $(OBJS)
 	ar q libmissingH.a $(OBJS)
 
 %.o: %.hs
-	ghc -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
+	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
 
 %.o: %.lhs
-	ghc -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
+	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
 
 doc:
 	-rm -rf html
@@ -51,19 +51,19 @@ clean:
 		`find . -name "*~"` *.a setup dist testsrc/runtests
 
 testsrc/runtests: all $(shell find testsrc -name "*.hs")
-	ghc6 -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
+	ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
 
 test-ghc6: testsrc/runtests
 	testsrc/runtests
 
 test-hugs:
-	runhugs -98 -P:$(PWD)/libsrc:$(PWD)/testsrc testsrc/runtests.hs
+	runhugs -98 +o -P:$(PWD)/libsrc:$(PWD)/testsrc testsrc/runtests.hs
 
 interact-hugs:
-	hugs -98 -P:$(PWD)/libsrc
+	hugs -98 +o -P:$(PWD)/libsrc
 
 interact-ghci: all
-	ghci -ilibsrc
+	ghci -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc
 
 interact: interact-hugs
 

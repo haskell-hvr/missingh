@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 05:08:21 GMT	John Goerzen <jgoerzen@complete.org>	patch-52
+
+    Summary:
+      Added more generic stuff with printf and numbers
+    Revision:
+      missingh--head--0.5--patch-52
+
+
+    modified files:
+     ChangeLog Makefile libsrc/MissingH/Printf/Types.hs
+
+
 2004-11-15 04:47:25 GMT	John Goerzen <jgoerzen@complete.org>	patch-51
 
     Summary:

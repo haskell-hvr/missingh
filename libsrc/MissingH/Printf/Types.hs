@@ -3,24 +3,36 @@
 module MissingH.Printf.Types where
 
 import System.IO
+import Data.Ratio
 
 data Wrapped a = Wrapped a
 
 data Value =
-           ValueInteger Integer
+           ValueRational Rational
            | ValueString String
            | ValueChar Char
-           | ValueDouble Double
              deriving (Eq, Show)
 
 class PFType a where
     toValue :: a -> Value
     fromValue :: Value -> a
 
+instance Real a => PFType a where
+    toValue = toValue . toRational
+    fromValue = error "fromValue to generic Real not supported"--fromRational . fromValue
+
 instance PFType Integer where
-    toValue = ValueInteger
-    fromValue (ValueInteger x) = x
+    toValue = ValueRational . toRational
+    fromValue (ValueRational x) = 
+        if denominator x == 1
+           then toInteger $ numerator x
+           else error ("Can't make an int from non-integral rational " ++ show x)
     fromValue _ = error "fromValue integer"
+
+instance PFType Double where
+    toValue = ValueRational . toRational
+    fromValue (ValueRational x) = fromRational x
+    fromValue _ = error "fromValue Double"
 
 instance PFType String where
     toValue = ValueString
@@ -32,11 +44,12 @@ instance PFType Char where
     fromValue (ValueChar x) = x
     fromValue _ = error "fromValue char"
 
+{-
 instance PFType Double where
     toValue = ValueDouble
     fromValue (ValueDouble x) = x
     fromValue _ = error "fromValue Double"
-
+-}
 {-
 instance PFType Value where
     toValue = id
