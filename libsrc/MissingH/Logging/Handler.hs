@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 For some handlers, check out "MissingH.Logging.Handler.Simple" and
 "MissingH.Logging.Handler.Syslog".
 
+Please see "MissingH.Logging.Logger" for extensive documentation on the
+logging system.
+
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 

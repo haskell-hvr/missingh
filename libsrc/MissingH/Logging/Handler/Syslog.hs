@@ -16,9 +16,23 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- | Syslog handler
+{- | Syslog handler for the Haskell Logging Framework
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+This module implements an interface to the Syslog service commonly
+found in Unix\/Linux systems.  This interface is primarily of interest to
+developers of servers, as Syslog does not typically display messages in
+an interactive fashion.
+
+This module is written in pure Haskell and is capable of logging to a local
+or remote machine using the Syslog protocol.
+
+You can create a new Syslog 'LogHandler' by calling 'openlog'.
+
+More information on the Haskell Logging Framework can be found at
+"MissingH.Logging.Logger".  This module can also be used outside
+of the rest of that framework for those interested in that.
 -}
 
 module MissingH.Logging.Handler.Syslog(

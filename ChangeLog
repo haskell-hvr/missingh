@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-08 22:02:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-63
+
+    Summary:
+      More docs
+    Revision:
+      missingh--head--1.0--patch-63
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging/Handler.hs
+     libsrc/MissingH/Logging/Handler/Syslog.hs
+
+
 2004-10-08 21:57:38 GMT	John Goerzen <jgoerzen@complete.org>	patch-62
 
     Summary:
