@@ -33,7 +33,7 @@ libmissingH.a: $(OBJS)
 	ar q libmissingH.a $(OBJS)
 
 %.o: %.hs
-	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
+	ghc -O -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
 
 %.o: %.lhs
 	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`

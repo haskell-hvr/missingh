@@ -33,11 +33,16 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 The GZip format is described in RFC1952.
 -}
 module MissingH.FileArchive.GZip (
-                                  decompress,
-                                  read_header,
+                                  -- * GZip Files
+                                  -- $gzipfiles
+                                  -- * Types
                                   Header(..), Section, GZipError, Footer(..),
-                                  read_section,
-                                  read_sections
+                                  -- * Whole-File Processing
+                                  decompress,
+                                  read_sections,
+                                  -- * Section Processing
+                                  read_header,
+                                  read_section
                                  )
 where
 
@@ -62,30 +67,38 @@ fFEXTRA = 4::Int
 fFNAME = 8::Int
 fFCOMMENT = 16::Int
 
+{- | The data structure representing the GZip header.  This occurs
+at the beginning of each 'Section' on disk. -}
 data Header = Header {
-                      method :: Int,
+                      method :: Int,    -- ^ Compression method.  Only 8 is defined at present.
                       flags :: Int,
                       extra :: Maybe String,
                       filename :: Maybe String,
                       comment :: Maybe String,
-                      mtime :: Word32,
-                      xfl :: Int,
-                      os :: Int
+                      mtime :: Word32,  -- ^ Modification time of the original file
+                      xfl :: Int,       -- ^ Extra flags
+                      os :: Int         -- ^ Creating operating system
                      } deriving (Eq, Show)
 
+{- | Stored on-disk at the end of each section. -}
 data Footer = Footer {
-                      size :: Word32,
-                      crc32 :: Word32,
-                      crc32valid :: Bool}
+                      size :: Word32,   -- ^ The size of the original, decompressed data
+                      crc32 :: Word32,  -- ^ The stored GZip CRC-32 of the original, decompressed data
+                      crc32valid :: Bool -- ^ Whether or not the stored CRC-32 matches the calculated CRC-32 of the data
+                     }
 
+{- | A section represents a compressed component in a GZip file.
+Every GZip file has at least one. -}
 type Section = (Header, String, Footer)
 
 split1 :: String -> (Char, String)
 split1 s = (head s, tail s)
 
-{- | Read a GZip file.
--}
+{- | Read a GZip file, decompressing all sections that are found.
 
+Returns a decompresed data stream and a Bool indicating whether or not
+all CRC32 values were successfully verified.
+-}
 decompress :: String -> Either GZipError (String, Bool)
 {-
 decompress s = 
@@ -215,3 +228,37 @@ read_header s =
                       mtime = mtime,
                       xfl = xfl,
                       os = os}, rem8)
+
+----------------------------------------------------------------------
+-- Documentation
+----------------------------------------------------------------------
+
+{- $gzipfiles
+
+GZip files contain one or more 'Section's.  Each 'Section', on disk, begins
+with a GZip 'Header', then stores the compressed data itself, and finally
+stores a GZip 'Footer'.
+
+The 'Header' identifies the file as a GZip file, records the original
+modification date and time, and, in some cases, also records the original
+filename and comments.
+
+The 'Footer' contains a GZip CRC32 checksum over the decompressed data as
+well as a 32-bit length of the decompressed data.  The module
+'MissingH.Checksum.CRC32.GZip' is used to validate stored CRC32 values.
+
+The vast majority of GZip files contain only one 'Section'.  Standard tools
+that work with GZip files create single-section files by default.
+
+Multi-section files can be created by simply concatenating two existing
+GZip files together.  The standard gunzip and zcat tools will simply
+concatenate the decompressed data when reading these files back.  The
+'decompress' function in this module will do the same.
+
+When reading data from this module, please use caution regarding how you access
+it.  For instance, if you are wanting to write the decompressed stream
+to disk and validate its CRC32 value, you could use the 'decompress'
+function.  However, you should process the entire stream before you check
+the value of the Bool it returns.  Otherwise, you will force Haskell to buffer
+the entire file in memory just so it can check the CRC32.
+-}

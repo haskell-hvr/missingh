@@ -53,8 +53,9 @@ test_inflate =
         ,f "t1.gz" ("Test 1",
                     "\x19\xf8\x27\x99\x06\x00\x00\x00") inflate_string_remainder
         ,f "empty.gz" "" inflate_string
-        ,f "zeros.gz" 10485760 (length . inflate_string)
-        --,f "zeros.gz" (replicate (10 * 1048576) '\0') inflate_string
+        --,f "zeros.gz" 10485760 (length . inflate_string)
+        -- BAD BAD ,f "zeros.gz" (replicate (10 * 1048576) '\0') inflate_string
+        ,f "zeros.gz" True (\x -> (replicate 10485760 '\0') == inflate_string x)
         ]
 
 test_header =
