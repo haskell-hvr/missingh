@@ -26,7 +26,13 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.Logging.Logger(-- * Basic Types
                                Logger,
-                               componentsOfName
+                               -- * Finding Loggers
+                               getLogger, getRootLogger,
+                               -- * Logging Messages
+                               logM,
+                               -- * Modifying Loggers
+                               addHandler, getLevel, setLevel,
+                               updateGlobalLogger
 
                                ) where
 import MissingH.Str
@@ -48,6 +54,7 @@ data HandlerT = forall a. LogHandler a => HandlerT a
 data Logger = Logger { level :: Priority,
                        handlers :: [HandlerT],
                        name :: String}
+
 
 type LogTree = FiniteMap String Logger
 
@@ -111,22 +118,27 @@ createLoggers (x:xs) =
 getLogger :: String -> IO Logger
 getLogger lname =
     do
+    --putStrLn lname
     lt <- readIORef logTree
+    --putStrLn (show (keysFM lt))
     case lookupFM lt lname of
-         Just x -> return x
+         Just x ->  return x
          Nothing -> do
+                    --print "Missed it."
                     -- Add it.  Then call myself to retrieve it.
                     createLoggers (componentsOfName lname)
+                    --putStrLn "createLoggers done"
                     getLogger lname
+
                             
 -- | Returns the root logger.
 
 getRootLogger :: IO Logger
 getRootLogger = getLogger ""
 
--- | Log a message, assuming the current logger's
-log :: Logger -> Priority -> String -> IO ()
-log l pri msg = handle l (pri, msg)
+-- | Log a message, assuming the current logger's level permits it.
+logM :: Logger -> Priority -> String -> IO ()
+logM l pri msg = handle l (pri, msg)
 
 -- | Handle a log request.
 handle :: Logger -> LogRecord -> IO ()
@@ -138,7 +150,7 @@ handle l (pri, msg) =
             case (name l) of
                 "" -> return ()
                 x -> do 
-                     parent <- (getLogger . head . reverse . componentsOfName) x
+                     parent <- (getLogger . head . drop 1 . reverse . componentsOfName) x
                      handle parent (pri, msg)
        else return ()
 
@@ -153,7 +165,24 @@ callHandler lr ht =
 handlerActions :: [HandlerT] -> LogRecord -> [IO ()]
 handlerActions h lr = map (callHandler lr) h
                          
--- | Add handler to logger.
+-- | Add handler to 'Logger'.  Returns a new 'Logger'.
 addHandler :: LogHandler a => Logger -> a -> Logger
 addHandler l h = l{handlers = (HandlerT h) : (handlers l)}
 
+-- | Returns the "level" of the logger.  Items beneath this
+-- level will be ignored.
+
+getLevel :: Logger -> Priority
+getLevel l = level l
+
+-- | Sets the "level" of the 'Logger'.  Returns a new
+-- 'Logger' object with the new level.
+
+setLevel :: Logger -> Priority -> Logger
+setLevel l p = l{level = p}
+
+-- | Updates the global record for the given logger to take into
+-- account any changes you may have made.
+
+updateGlobalLogger :: Logger -> IO ()
+updateGlobalLogger l = modifyIORef logTree (\a -> addToFM a (name l) l)
