@@ -164,6 +164,7 @@ commands =
     ,("PASV", (forceLogin cmd_pasv,  help_pasv))
     ,("PORT", (forceLogin cmd_port,  help_port))
     ,("RETR", (forceLogin cmd_retr,  help_retr))
+    ,("STOR", (forceLogin cmd_stor,  help_stor))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -353,6 +354,44 @@ cmd_rnfr h@(FTPServer _ _ state) args =
        else do writeIORef (rename state) (Just args)
                sendReply h 350 "Noted rename from name; please send RNTO."
                return True
+
+help_stor = ("Upload a file", "")
+cmd_stor :: CommandHandler
+cmd_stor h@(FTPServer _ fs state) args =
+    let datamap :: [String] -> [String]
+        datamap instr =
+            let linemap :: String -> String
+                linemap x = if endswith "\r" x
+                              then take ((length x) - 1) x
+                              else x
+                in map linemap instr
+        runit fhencap _ sock =
+            case fhencap of
+              HVFSOpenEncap fh ->
+                  do readh <- socketToHandle sock ReadMode
+                     mode <- readIORef (datatype state)
+                     case mode of
+                      ASCII -> finally (hLineInteract readh fh datamap)
+                                       (hClose readh)
+                      Binary -> finally (do vSetBuffering fh (BlockBuffering (Just 4096))
+                                            hCopy readh fh
+                                        ) (hClose readh)
+        in
+        if length args < 1
+           then do sendReply h 501 "Filename required"
+                   return True
+           else trapIOError h (vOpen fs args WriteMode) 
+                  (\fhencap ->
+                    trapIOError h (do sendReply h 150 "File OK; about to open data channel"
+                                      runDataChan h (runit fhencap)
+                                  )
+                                  (\_ ->
+                                   do case fhencap of
+                                        HVFSOpenEncap fh -> vClose fh
+                                      sendReply h 226 "Closing data connection; transfer complete."
+                                      return True
+                                   )
+                   )
 
 help_retr = ("Retrieve a file", "")
 cmd_retr :: CommandHandler
