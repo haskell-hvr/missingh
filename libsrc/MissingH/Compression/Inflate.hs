@@ -29,6 +29,7 @@ Copyright (C) 2004 Ian Lynagh
 -}
 
 module MissingH.Compression.Inflate (inflate_string,
+                                     inflate_string_remainder,
                                      inflate, Output, Bit,
                                     bits_to_word32) where
 
@@ -42,8 +43,22 @@ import Data.Bits
 import Data.Word
 
 inflate_string :: String -> String
-inflate_string s = 
-    map (Data.Char.chr . fromIntegral) $ fst $ inflate $ map Data.Char.ord s
+inflate_string = fst . inflate_string_remainder
+--    map (Data.Char.chr . fromIntegral) $ fst $ inflate $ map Data.Char.ord s
+
+-- | Returns (Data, Remainder)
+inflate_string_remainder :: String -> (String, String)
+inflate_string_remainder s =
+    let res = inflate $ map Data.Char.ord s
+        convw32l l = map (Data.Char.chr . fromIntegral) l
+        output = convw32l $ fst res
+        b2w32 [] = []
+        b2w32 b = let (this, next) = splitAt 8 b
+                      in
+                      bits_to_word32 this : b2w32 next
+        remainder = convw32l $ b2w32 $ snd res
+        in
+        (output, remainder)
 
 {-
 \section{Types}

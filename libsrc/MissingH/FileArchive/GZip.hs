@@ -62,6 +62,10 @@ decompress s =
        let rem = snd x
        return $ inflate_string rem
 
+{- | Obtain the components of the file.
+-}
+
+
 {- | Read the GZip header.  Return (Header, Remainder).
 -}
 read_header :: String -> Either GZipError (Header, String)
