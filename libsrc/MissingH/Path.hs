@@ -35,13 +35,19 @@ Written by John Goerzen, jgoerzen\@complete.org
 module MissingH.Path(-- * Name processing
                      splitExt,
                      -- * Directory Processing
-                     recurseDir, recurseDirStat
+                     recurseDir, recurseDirStat, recursiveRemove,
+                     -- * Temporary Directories
+                     mktmpdir, brackettmpdir
                     )
 where
 import Data.List
 import MissingH.List
-import System.Directory
+import System.Directory hiding (createDirectory)
 import System.Posix.Files
+import System.Posix.Directory (createDirectory)
+import System.Posix.Temp
+import Control.Exception
+import System.IO
 
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
@@ -99,3 +105,27 @@ recursiveRemove fn =
                worker xs
         in
         recurseDirStat fn >>= worker
+
+{- | Creates a temporary directory for your use.
+
+The passed string should be a template suitable for mkstemp; that is, end with
+@\"XXXXXX\"@.
+
+The name of the directory created will be returned.
+-}
+mktmpdir :: String -> IO String
+mktmpdir x =
+    do y <- mkstemp x
+       let (dirname, h) = y
+       hClose h
+       removeFile dirname
+       createDirectory dirname 0o700
+       return dirname
+
+{- | Creates a temporary directory for your use via 'mktmpdir',
+runs the specified action (passing in the directory name), then
+removes the directory and all its contents when the action completes (or raises
+an exception. -}
+brackettmpdir :: String -> (String -> IO a) -> IO a
+brackettmpdir x action = do tmpdir <- mktmpdir x
+                            finally (action tmpdir) (recursiveRemove tmpdir)

@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-09 17:21:17 GMT	John Goerzen <jgoerzen@complete.org>	patch-58
+
+    Summary:
+      Added temporary dir support to Path.hs
+    Revision:
+      missingh--head--0.7--patch-58
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Path.hs
+
+
 2004-12-09 17:09:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-57
 
     Summary:
