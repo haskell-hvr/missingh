@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-21 20:53:36 GMT	John Goerzen <jgoerzen@complete.org>	patch-134
+
+    Summary:
+      Expanded notion of state
+    Revision:
+      missingh--head--0.7--patch-134
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Server.hs
+
+
 2004-12-21 20:42:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-133
 
     Summary:

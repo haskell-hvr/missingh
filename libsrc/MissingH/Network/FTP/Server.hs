@@ -53,10 +53,13 @@ import MissingH.Printf
 import Data.IORef
 import Data.List
 
-data FTPState = NoAuth 
+data AuthState = NoAuth 
               | User String
               | Authenticated String
-data FTPServer = forall a. HVFS a => FTPServer Handle a (IORef FTPState)
+data FTPState = FTPState
+              { auth :: IORef AuthState }
+
+data FTPServer = forall a. HVFS a => FTPServer Handle a FTPState
 
 s_crlf = "\r\n"
 logname = "MissingH.Network.FTP.Server"
@@ -85,7 +88,7 @@ anonFtpHandler f h sa =
         in
         traplogging logname NOTICE "" $
           do r <- newIORef (NoAuth)
-             let s = serv r
+             let s = serv (FTPState {auth = r})
              sendReply s 220 "Welcome to MissingH.Network.FTP.Server."
              commandLoop s sa
 
@@ -106,8 +109,8 @@ trapIOError h testAction remainingAction =
          Right result -> remainingAction result
 
 forceLogin :: CommandHandler -> CommandHandler
-forceLogin func h@(FTPServer _ _ stateref) sa args =
-    do state <- readIORef stateref
+forceLogin func h@(FTPServer _ _ state) sa args =
+    do state <- readIORef (auth state)
        case state of 
           Authenticated _ -> func h sa args
           x -> do sendReply h 530 "Command not possible in non-authenticated state."
@@ -115,11 +118,12 @@ forceLogin func h@(FTPServer _ _ stateref) sa args =
 
 commands :: [Command]
 commands =
-    [("HELP", (cmd_help, help_help))
-    ,("QUIT", (cmd_quit, help_quit))
-    ,("USER", (cmd_user, help_user))
-    ,("PASS", (cmd_pass, help_pass))
-    ,("CWD", (forceLogin cmd_cwd, help_cwd))
+    [("HELP", (cmd_help,             help_help))
+    ,("QUIT", (cmd_quit,             help_quit))
+    ,("USER", (cmd_user,             help_user))
+    ,("PASS", (cmd_pass,             help_pass))
+    ,("CWD",  (forceLogin cmd_cwd,   help_cwd))
+    ,("CDUP", (forceLogin cmd_cdup,  help_cdup))
     ]
 
 commandLoop :: FTPServer -> SockAddr -> IO ()
@@ -162,27 +166,27 @@ help_user =
      ])
 
 cmd_user :: CommandHandler
-cmd_user h@(FTPServer _ _ stateref) _ passedargs =
+cmd_user h@(FTPServer _ _ state) _ passedargs =
     let args = strip passedargs
         in
         case args of
            "anonymous" -> do sendReply h 331 "User name accepted; send password."
-                             writeIORef stateref (User args)
+                             writeIORef (auth state) (User args)
                              return True
            _ -> do sendReply h 530 "Unrecognized user name; please try \"anonymous\""
-                   writeIORef stateref NoAuth
+                   writeIORef (auth state) NoAuth
                    return True
 
 help_pass =
     ("Provide a password",
      "PASS password will provide the password for authentication.")
 cmd_pass :: CommandHandler
-cmd_pass h@(FTPServer _ _ stateref) _ passedargs =
-    do curstate <- readIORef stateref
+cmd_pass h@(FTPServer _ _ state) _ passedargs =
+    do curstate <- readIORef (auth state)
        case curstate of
          User "anonymous" -> 
              do sendReply h 230 "Anonymous login successful."
-                writeIORef stateref (Authenticated "anonymous")
+                writeIORef (auth state) (Authenticated "anonymous")
                 infoM logname "Anonymous authentication successful"
                 return True
          _ -> do sendReply h 530 "Out of sequence PASS command"
@@ -202,6 +206,10 @@ cmd_cwd h@(FTPServer _ fs _) _ args =
                  newdir <- vGetCurrentDirectory fs
                  sendReply h 250 $ "New directory now " ++ newdir
                  return True
+
+help_cdup = 
+    ("Change to parent directory", "Same as CWD ..")
+cmd_cdup h sa _ = cmd_cwd h sa ".."
 
 help_help =
     ("Display help on available commands",
