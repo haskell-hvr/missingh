@@ -72,7 +72,7 @@ split1 s = (head s, tail s)
 {- | Read a GZip file.
 -}
 
-decompress :: String -> Either GZipError String
+decompress :: String -> Either GZipError (String, Bool)
 {-
 decompress s = 
     do x <- read_header s
@@ -80,9 +80,20 @@ decompress s =
        return $ inflate_string rem
 -}
 
+decompress s = 
+    let procs :: [Section] -> (String, Bool)
+        procs [] = ([], True)
+        procs ((_, content, foot):xs) = 
+            let (nexth, nextb) = procs xs in
+                (content ++ nexth, (crc32valid foot) && nextb)
+        in
+        do x <- read_sections s
+           return $ procs x
+
+{-
 decompress s = do x <- read_sections s
                   return $ concatMap (\(_, x, _) -> x) x
-
+-}
 
 -- | Read all sections.  
 read_sections :: String -> Either GZipError [Section]

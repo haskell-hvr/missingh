@@ -74,7 +74,7 @@ test_gunzip =
     let f fn exp = mf fn (Right exp) decompress
         in
         [
-         f "t1.gz" "Test 1"
+         f "t1.gz" ("Test 1", True)
         ]
 
 tests = TestList [TestLabel "inflate" (TestList test_inflate),
