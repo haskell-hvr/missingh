@@ -118,11 +118,7 @@ readfile cp fp = do n <- parse_file fp
                                 return $ readutil cp y
 -}
 readfile cp fp = do n <- parse_file fp
-                    return $ retdata cp n
-
-retdata :: ConfigParser -> CPResult ParseOutput -> CPResult ConfigParser
-retdata cp x = do d <- x
-                  return $ readutil cp d
+                    return $ n >>= (return . (readutil cp))
 
 {- | Like 'readfile', but uses an already-open handle.  You should
 use 'readfile' instead of this if possible, since it will be able to

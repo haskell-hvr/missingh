@@ -41,7 +41,9 @@ as the Left value if the Maybe is Nothing.
 
 This function can be interpreted as:
 
-@matbeToEither :: e -> Maybe a -> Either e a
+@maybeToEither :: e -> Maybe a -> Either e a@
+
+Its definition is given as it is so that it can be used in the Error and related monads.
 
 -}
 maybeToEither :: MonadError e m =>
