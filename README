@@ -149,6 +149,8 @@ MissingH.Str             * Leading/trailing whitespace removal
                          * Beginning/ending tests
                          * Joining, splitting, and truncation
 
+MissingH.Str.CSV         * Parsing of comma-separated value (CSV) files
+
 MissingH.Threads         * Threaded callbacks
 
 MissingH.Time            * Utilities for working with times and dates
