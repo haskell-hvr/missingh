@@ -91,7 +91,7 @@ class HVFSStat b => HVFS a b where
     vGetFileStatus :: a -> FilePath -> IO b
     vGetSymbolicLinkStatus :: a -> FilePath -> IO b
     vGetModificationTime :: a -> FilePath -> IO ClockTime
-    vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO b
+    vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO c
 
     vGetModificationTime fs fp = 
         do s <- (vGetFileStatus fs fp)::IO b
