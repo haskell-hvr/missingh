@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-10-25 15:25:36 GMT	John Goerzen <jgoerzen@complete.org>	patch-4
+
+    Summary:
+      Applied local changes to Hsemail (import lines)
+    Revision:
+      missingh--head--0.5--patch-4
+
+
+    modified files:
+     COPYRIGHT ChangeLog libsrc/MissingH/Hsemail/Rfc2234.hs
+     libsrc/MissingH/Hsemail/Rfc2821.hs
+     libsrc/MissingH/Hsemail/Rfc2822.hs
+
+
 2004-10-25 15:20:46 GMT	John Goerzen <jgoerzen@complete.org>	patch-3
 
     Summary:

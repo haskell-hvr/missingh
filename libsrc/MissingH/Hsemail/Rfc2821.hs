@@ -14,7 +14,7 @@
    document.
 -}
 
-module Rfc2821
+module MissingH.Hsemail.Rfc2821
   ( -- * Data Types for SMTP Commands
     SmtpCmd(..), Mailbox(..), nullPath, postmaster
 
@@ -47,7 +47,7 @@ import Control.Monad.State
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Error
 import Data.List ( intersperse )
-import Rfc2234
+import MissingH.Hsemail.Rfc2234
 
 ----- Smtp Parsers ---------------------------------------------------
 
