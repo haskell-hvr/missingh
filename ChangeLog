@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-19 14:37:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-97
+
+    Summary:
+      Fixed Makefile to ignore installed version of library on hugs
+    Revision:
+      missingh--head--0.5--patch-97
+
+
+    modified files:
+     ChangeLog Makefile libsrc/MissingH/Parsec.hs
+
+
 2004-11-19 02:19:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-96
 
     Summary:

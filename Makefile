@@ -57,10 +57,10 @@ test-ghc6: testsrc/runtests
 	testsrc/runtests
 
 test-hugs:
-	runhugs -98 +o -P:$(PWD)/libsrc:$(PWD)/testsrc testsrc/runtests.hs
+	runhugs -98 +o -P$(PWD)/libsrc:$(PWD)/testsrc: testsrc/runtests.hs
 
 interact-hugs:
-	hugs -98 +o -P:$(PWD)/libsrc
+	hugs -98 +o -P$(PWD)/libsrc:
 
 interact-ghci: all
 	ghci -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc

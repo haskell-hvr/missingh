@@ -37,8 +37,8 @@ module MissingH.Parsec(-- * Generalized Utilities
                        togtok, tokeng, satisfyg, oneOfg, noneOfg,
                        specificg, allg,
                        -- * Other Utilities
-                       notMatching)
-where
+                       notMatching
+                      ) where
 
 import Text.ParserCombinators.Parsec
 
