@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-27 18:44:49 GMT	John Goerzen <jgoerzen@complete.org>	patch-179
+
+    Summary:
+      build-dep on newer haskell-devscripts
+    Revision:
+      missingh--head--0.7--patch-179
+
+
+    modified files:
+     ChangeLog debian/control
+
+
 2005-01-27 17:10:36 GMT	John Goerzen <jgoerzen@complete.org>	patch-178
 
     Summary:
