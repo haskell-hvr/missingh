@@ -374,7 +374,8 @@ cmd_retr h@(FTPServer _ fs state) args =
            then do sendReply h 501 "Filename required"
                    return True
            else trapIOError h (vOpen fs args ReadMode) (\fhencap ->
-                             trapIOError h (runDataChan h (runit fhencap)) $
+                             trapIOError h (do sendReply h 150 "File OK; about to open data channel"
+                                               (runDataChan h (runit fhencap))) $
                                                    (\_ ->
                        do case fhencap of
                              HVFSOpenEncap fh -> vClose fh
@@ -382,6 +383,7 @@ cmd_retr h@(FTPServer _ fs state) args =
                           return True
                                                                 )
                                                   )
+
        
 
 help_rnto = ("Specify TO name for a file name", "")
