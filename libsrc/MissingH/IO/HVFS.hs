@@ -53,11 +53,19 @@ data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
 
 {- | Evaluating types of files and information about them.
 
-This corresponds to the System.Posix.Types.FileStatus type.
+This corresponds to the System.Posix.Types.FileStatus type, and indeed,
+that is one instance of this class.
+
+Inplementators must, at minimum, implement 'vIsDirectory' and
+'vIsRegularFile'.
+
+Default implementations of everything else are provided, returning
+reasonable values.
 -}
 class HVFSStat a where
     vDeviceID :: a -> DeviceID
     vFileID :: a -> FileID
+    {- | Refers to file permissions, NOT the st_mode field from stat(2) -}
     vFileMode :: a -> FileMode
     vLinkCount :: a -> LinkCount
     vFileOwner :: a -> UserID
@@ -74,6 +82,23 @@ class HVFSStat a where
     vIsDirectory :: a -> Bool
     vIsSymbolicLink :: a -> Bool
     vIsSocket :: a -> Bool
+
+    vDeviceID _ = 0
+    vFileID _ = 0
+    vFileMode _ = 0o0644
+    vLinkCount _ = 1
+    vFileOwner _ = 0
+    vFileGroup _ = 0
+    vSpecialDeviceID _ = 0
+    vFileSize _ = 0
+    vAccessTime _ = 0
+    vModificationTime _ = 0
+    vStatusChangeTime _ = 0
+    vIsBlockDevice _ = False
+    vIsCharacterDevice _ = False
+    vIsNamedPipe _ = False
+    vIsSymbolicLink _ = False
+    vIsSocket _ = False
 
 {- | The main HVFS class.
 
@@ -115,6 +140,9 @@ class HVFS a where
     vGetModificationTime :: a -> FilePath -> IO ClockTime
     {- | Raise an error relating to actions on this class. -}
     vRaiseError :: a -> IOErrorType -> String -> Maybe FilePath -> IO c
+    vCreateSymbolicLink :: a -> FilePath -> FilePath -> IO ()
+    vReadSymbolicLink :: a -> FilePath -> IO FilePath
+    vCreateLink :: a -> FilePath -> FilePath -> IO ()
 
     vGetModificationTime fs fp = 
         do s <- vGetFileStatus fs fp
@@ -141,6 +169,9 @@ class HVFS a where
     vRemoveDirectory fs _ = eh fs "vRemoveDirectory"
     vRemoveFile fs _ = eh fs "vRemoveFile"
     vRenameFile fs _ _ = eh fs "vRenameFile"
+    vCreateSymbolicLink fs _ _ = eh fs "vCreateSymbolicLink"
+    vReadSymbolicLink fs _ = eh fs "vReadSymbolicLink"
+    vCreateLink fs _ _ = eh fs "vCreateLink"
     vGetSymbolicLinkStatus = vGetFileStatus
 
 -- | Error handler helper
@@ -191,6 +222,9 @@ instance HVFS SystemFS where
     vGetFileStatus _ fp = getFileStatus fp >>= return . HVFSStatEncap
     vGetSymbolicLinkStatus _ fp = getSymbolicLinkStatus fp >>= return . HVFSStatEncap
     vGetModificationTime _ = getModificationTime
+    vCreateSymbolicLink _ = createSymbolicLink
+    vReadSymbolicLink _ = readSymbolicLink
+    vCreateLink _ = createLink
 
 instance HVFSOpenable SystemFS Handle where
     vOpen _ fp iomode = openFile fp iomode
