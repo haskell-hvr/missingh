@@ -55,38 +55,39 @@ data CPTok = IGNOREDATA
 comment_chars = oneOf "#;"
 eol = string "\n" <|> string "\r\n" <|> string "\r" <?> "End of line"
 eoleof = eof <|> do {eol; return ()}
-optionsep = oneOf ":=" <?> "Option separator"
-whitespace_chars = oneOf " \t" <?> "Whitespace"
-comment_line = do skipMany whitespace_chars <?> "whitespace in comment"
+optionsep = oneOf ":=" <?> "option separator"
+whitespace_chars = oneOf " \t" <?> "whitespace"
+comment_line = do skipMany whitespace_chars
                   comment_chars             <?> "start of comment"
                   (many $ noneOf "\r\n")   <?> "content of comment"
                   eoleof
 eolstuff = (try comment_line) <|> (try empty_line)
-empty_line = do many whitespace_chars         <?> "empty line"
+empty_line = do many whitespace_chars
                 eoleof
+             <?> "empty line"
 sectheader_chars = noneOf "]\r\n"
 sectheader = do char '['
                 sname <- many1 $ sectheader_chars
                 char ']'
                 eolstuff
                 return sname
+             <?> "start of section"
 oname_chars = noneOf ":=\r\n"
 value_chars = noneOf "\r\n"
-extension_line = do
-                 many1 whitespace_chars
-                 c1 <- noneOf "\r\n#;"
-                 remainder <- many value_chars
-                 eolstuff
-                 return (c1 : remainder)
+extension_line = do many1 whitespace_chars
+                    c1 <- noneOf "\r\n#;"
+                    remainder <- many value_chars
+                    eolstuff
+                    return (c1 : remainder)
 
 optionkey = many1 oname_chars
 optionvalue = many1 value_chars
-optionpair = do
-             key <- optionkey
-             optionsep
-             value <- optionvalue
-             eolstuff
-             return (key, value)
+optionpair = do key <- optionkey
+                optionsep
+                value <- optionvalue
+                eolstuff
+                return (key, value)
+             <?> "key/value option"
 
 iloken :: Parser (GeneralizedToken CPTok)
 iloken =
@@ -98,7 +99,7 @@ iloken =
     <|> (do {sname <- sectheader; togtok $ NEWSECTION sname})
     <|> try (do {extension <- extension_line; togtok $ EXTENSIONLINE extension})
     <|> try (do {pair <- optionpair; togtok $ NEWOPTION pair})
-    <?> "Invalid syntax in configuration file"
+--    <?> "Invalid syntax in configuration file"
         
 loken :: Parser [GeneralizedToken CPTok]
 loken = do x <- manyTill iloken eof

@@ -57,9 +57,10 @@ test_basic =
 
 test_asserts =
         do
+        {-
         assertRaises "e test1" (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
                       ([] @=? parse_string "#foo\nthis is bad data")
-        
+        -}
         assertRaises "e test2" (ErrorCall "Lexer: \"(string)\" (line 2, column 9):\nunexpected \"\\n\"\nexpecting Option separator")
                      ([] @=? parse_string "[sect1]\n#iiiiii \n  extensionline\n#foo")
 
@@ -72,6 +73,6 @@ test_extensionlines =
                       ("quux", "asdf")])]
 
 tests = TestList [TestLabel "test_basic" (TestList test_basic),
---                  TestLabel "test_asserts" (TestCase test_asserts)
+                  TestLabel "test_asserts" (TestCase test_asserts),
                   TestLabel "test_extensionlines" (TestCase test_extensionlines)
                  ]

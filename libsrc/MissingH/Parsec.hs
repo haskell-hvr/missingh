@@ -54,26 +54,26 @@ togtok tok = do
 {- | Retrieve the next token from a 'GeneralizedToken' stream.
    The given function should return the value to use, or Nothing
    to cause an error. -}
-tokeng :: (a -> Maybe b) -> GeneralizedTokenParser a st b
+tokeng :: (Show a) => (a -> Maybe b) -> GeneralizedTokenParser a st b
 tokeng test =
-    token (show . fst) (fst) (test . snd)
+    token (show . snd) (fst) (test . snd)
 
 {- | A shortcut to 'tokeng'; the test here is just a function that returns
 a Bool.  If the result is true; return that value -- otherwise, an error.
 -}
-satisfyg :: (a -> Bool) -> GeneralizedTokenParser a st a
+satisfyg :: (Show a) => (a -> Bool) -> GeneralizedTokenParser a st a
 satisfyg test = tokeng (\t -> if test t then Just t else Nothing)
 
 {- | Matches one item in a list and returns it. -}
-oneOfg :: (Eq a) => [a] -> GeneralizedTokenParser a st a
+oneOfg :: (Eq a, Show a) => [a] -> GeneralizedTokenParser a st a
 oneOfg i = satisfyg (\x -> elem x i)
 
 {- | Matches all items and returns them -}
-allg :: GeneralizedTokenParser a st [a]
+allg :: (Show a) => GeneralizedTokenParser a st [a]
 allg = many $ satisfyg (\_ -> True)
 
 {- | Matches one item not in a list and returns it. -}
-noneOfg :: (Eq a) => [a] -> GeneralizedTokenParser a st a
+noneOfg :: (Eq a, Show a) => [a] -> GeneralizedTokenParser a st a
 noneOfg l = satisfyg (\x -> not (elem x l))
 
 {- | Matches one specific token and returns it. -}
