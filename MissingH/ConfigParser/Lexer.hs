@@ -81,7 +81,7 @@ extension_line = do many1 whitespace_chars
                     return (c1 : remainder)
 
 optionkey = many1 oname_chars
-optionvalue = many1 value_chars
+optionvalue = many value_chars
 optionpair = do key <- optionkey
                 optionsep
                 value <- optionvalue

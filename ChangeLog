@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-14 22:37:01 GMT	John Goerzen <jgoerzen@complete.org>	patch-203
+
+    Summary:
+      ConfigParser: accept empty values
+    Revision:
+      missingh--head--0.7--patch-203
+
+
+    modified files:
+     ChangeLog MissingH/ConfigParser/Lexer.hs debian/changelog
+
+
 2005-02-03 21:59:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-202
 
     Summary:
