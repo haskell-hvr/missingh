@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-17 20:51:46 GMT	John Goerzen <jgoerzen@complete.org>	patch-82
+
+    Summary:
+      Moved HVIO to pending
+    Revision:
+      missingh--head--0.7--patch-82
+
+
+    modified files:
+     ChangeLog
+
+    renamed files:
+     libsrc/MissingH/IO/HVIO.hs
+       ==> pending/HVIO.hs
+
+
 2004-12-16 16:28:18 GMT	John Goerzen <jgoerzen@complete.org>	patch-81
 
     Summary:
