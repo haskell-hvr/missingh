@@ -35,17 +35,24 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 module MissingH.ConfigParser.Types (
                                     CPOptions, CPData, 
                                     ConfigParser(..), empty,
-                                    fromAL
+                                    fromAL, SectionSpec,
+                                    OptionSpec,
                                    ) where
 import Data.FiniteMap
 import Data.Char
 import MissingH.ConfigParser.Parser
 
+{- | Names of sections -}
+type SectionSpec = String
+
+{- | Names of options -}
+type OptionSpec = String
+
 {- | Storage of options. -}
-type CPOptions = FiniteMap String String
+type CPOptions = FiniteMap OptionSpec String
 
 {- | The main data storage type (storage of sections). -}
-type CPData = FiniteMap String CPOptions
+type CPData = FiniteMap SectionSpec CPOptions
 
 {- | This is the main record that is used by 'MissingH.ConfigParser'.
 -}
@@ -53,7 +60,7 @@ data ConfigParser = ConfigParser
     { -- | The data itself
       content :: CPData,
       -- | How to transform an option into a standard representation
-      optionxform :: (String -> String),
+      optionxform :: (OptionSpec -> OptionSpec),
       --defaulthandler :: (ConfigParser -> String -> String),
       -- | Whether or not to seek out a default action when no match
       -- is found.

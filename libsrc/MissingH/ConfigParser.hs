@@ -32,6 +32,8 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.ConfigParser
     (
+     -- * Types
+     SectionSpec, OptionSpec, ConfigParser(..),
      -- * Initialization
      -- $initialization
      empty,
@@ -41,13 +43,15 @@ module MissingH.ConfigParser
      readfile, readhandle, readstring,
 
      -- * Meta-queries
-     sections,
+     sections, has_section,
+     options, has_option,
 
      -- * Miscellaneous anipulation
      merge
 ) where
 import MissingH.ConfigParser.Types
 import MissingH.ConfigParser.Parser
+import MissingH.FiniteMap
 import Data.FiniteMap
 import Data.List
 import System.IO(Handle)
@@ -115,8 +119,34 @@ readstring cp s = readutil cp $ parse_string s
 
 {- | Returns a list of sections in your configuration file.  Never includes
 the always-present section @DEFAULT@. -}
-sections :: ConfigParser -> [String]
+sections :: ConfigParser -> [SectionSpec]
 sections = filter (/= "DEFAULT") . keysFM . content
+
+{- | Indicates whether the given section exists.
+
+No special @DEFAULT@ processing is done. -}
+has_section :: ConfigParser -> SectionSpec -> Bool
+has_section cp x = elemFM x (content cp)
+
+{- | Returns a list of the names of all the options present in the
+given section.
+
+Could raise an exception if the given section does not exist. -}
+options :: ConfigParser -> SectionSpec -> [OptionSpec]
+options cp x = keysFM (forceLookupFM "ConfigParser.options" (content cp) x)
+
+{- | Indicates whether the given option is present.  Returns True
+only if the given section is present AND the given option is present
+in that section.  No special @DEFAULT@ processing is done.  No
+exception could be raised.
+-}
+has_option :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
+has_option cp s o = 
+    let c = content cp in
+    has_section cp s &&
+                elemFM (optionxform cp $ o)
+                       (forceLookupFM "ConfigParser.has_option" c s) 
+                           
 
 ----------------------------------------------------------------------
 -- Docs

@@ -34,7 +34,7 @@ In addition to the functions exported, this module also makes a FiniteMap
 showable.
 -}
 
-module MissingH.FiniteMap (flipFM, flippedLookupFM)
+module MissingH.FiniteMap (flipFM, flippedLookupFM, forceLookupFM)
 where
 
 import Data.FiniteMap
@@ -59,3 +59,12 @@ flippedLookupFM fm v =
 {- | Makes a FiniteMap showable. -}
 instance (Show a, Show b) => Show (FiniteMap a b) where
     show fm = show (fmToList fm)
+
+{- | Performs a lookup, and raises an exception (with an error message
+prepended with the given string) if the key could not be found.
+-}
+forceLookupFM :: (Show key, Ord key) => String -> FiniteMap key elt -> key -> elt
+forceLookupFM msg fm k =
+    case lookupFM fm k of
+         Just x -> x
+         Nothing -> error $ msg ++ ": could not find key " ++ (show k)
