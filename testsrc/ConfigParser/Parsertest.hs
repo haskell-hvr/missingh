@@ -40,13 +40,13 @@ test_basic =
           [("Cemptysect", [])]
         ,f "comments4" "[emptysect]\n# [nonexistant]\n" [("emptysect", [])]
         ,f "simple section" "[sect1]\nfoo: bar\n" [("sect1", [("foo", "bar")])]
-{-
-        f "comments5" "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\n o3: v3"
+        ,f "comments5" "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\no3: v3"
+          [("sect1", [("o1", "v1"), ("o2", "v2"), ("o3", "v3")])]
+        ,f "comments5eol" "\n#foo\n[sect1]\n\n#iiii \no1: v1\no2:  v2\no3: v3\n"
           [("sect1", [("o1", "v1"), ("o2", "v2"), ("o3", "v3")])]
 
-        f "default1" "v1: o1\n[sect1]\nv2: o2" [("DEFAULT", [("v1", "o1")]),
+        ,f "default1" "v1: o1\n[sect1]\nv2: o2" [("DEFAULT", [("v1", "o1")]),
                                      ("sect1", [("v2", "o2")])]
--}
         ,f "simple default" "foo: bar" [("DEFAULT", [("foo", "bar")])]
 {-
         assertRaises "e test1" (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")

@@ -82,8 +82,7 @@ sectheader = do ignorestuff
              <?> "section header"
 oname_chars = noneOf ":=\r\n"
 value_chars = noneOf "\r\n"
-extension_line = do ignorestuff <?> "POINT3"
-                    many1 whitespace_chars
+extension_line = do many1 whitespace_chars
                     c1 <- noneOf "\r\n#;"
                     remainder <- many value_chars
                     eoleof
