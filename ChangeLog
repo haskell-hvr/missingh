@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-16 15:58:55 GMT	John Goerzen <jgoerzen@complete.org>	patch-79
+
+    Summary:
+      Documented and renamed HVIO
+    Revision:
+      missingh--head--0.7--patch-79
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/IO/HVIO.hs
+
+    renamed files:
+     libsrc/MissingH/HVIO.hs
+       ==> libsrc/MissingH/IO/HVIO.hs
+
+
 2004-12-15 22:59:35 GMT	John Goerzen <jgoerzen@complete.org>	patch-78
 
     Summary:

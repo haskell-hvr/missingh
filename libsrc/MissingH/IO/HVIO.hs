@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.HVIO
+   Module     : MissingH.IO.HVIO
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -26,13 +26,93 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Haskell Virtual I\/O system main file
+Haskell Virtual I\/O -- a system to increase the flexibility of input and
+output in Haskell
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
+HVIO provides the following general features:
+
+ * The ability to use a single set of functions on various different
+   types of objects, including standard Handles, in-memory buffers,
+   compressed files, network data streams, etc.
+
+ * The ability to transparently add filters to the I\/O process.
+   These filters could include things such as character set conversions,
+   compression or decompression of a data stream, and more.
+
+ * The ability to define new objects that have the properties
+   of I\/O objects and can be used interchangably with them.
+
+ * Specification compatibility with, and complete support for,
+   existing I\/O on Handles.
+
+ * Provide easier unit testing capabilities for I\/O actions
+
+HVIO defines several basic type classes that you can use.  You will mostly
+be interested in 'HVIOReader', 'HVIOWriter', and 'HVIOSeeker'.  Objects that
+support reading will be an instance of 'HVIOReader'; those that suport writing,
+'HVIOWriter'; and those that support seeking (random access), 'HVIOSeeker'.
+Some, such as Handle, will be an instance of all of these.
+
+It's trivial to adapt old code to work with HVIO.  For instance, consider
+this example of old and new code:
+
+>printMsg :: Handle -> String -> IO ()
+>printMsg h msg = hPutStr h ("msg: " ++ msg)
+
+And now, the new way:
+
+>printMsg :: HVIOWriter h => h -> String -> IO ()
+>printMsg h msg = vPutStr h ("msg: " ++ msg)
+
+There are several points to note about this conversion:
+
+ * The new method can still accept a Handle in exactly the same way as
+   the old method.  Changing your functions to use HVIO will require no
+   changes from functions that call them with Handles.
+
+ * Most \"h\" functions have equivolent \"v\" functions that operate
+   on HVIO classes instead of the more specific Handle.  The \"v\" functions
+   behave identically to the \"h\" functions whenever possible.
+
+ * There is no equivolent of \"openFile\" in any HVIO class.  You must
+   create your Handle (or other HVIO object) using normal means.
+   This is because the creation is so different that it cannot be standardized.
+
+In addition to Handle, there are several pre-defined classes for your use.
+'StreamReader' is a particularly interesting one.  At creation time, you pass
+it a String.  Its contents are read lazily whenever a read call is made.  It
+can be used, therefore, to implement filters (simply initialize it with the
+result from, say, a map over hGetContents from another HVIO object), codecs,
+and simple I\/O testing.  Because it is lazy, it need not hold the entire
+string in memory.  You can create a 'StreamReader' with a call to
+'newStreamReader'.
+
+'MemoryBuffer' is a similar class, but with a different purpose.  It provides
+a full interface like Handle (it implements 'HVIOReader', 'HVIOWriter',
+and 'HVIOSeeker').  However, it maintains an in-memory buffer with the 
+contents of the file, rather than an actual on-disk file.  You can access
+the entire contents of this buffer at any time.  This can be quite useful
+for testing I\/O code, or for cases where existing APIs use I\/O, but you
+prefer a String representation.  You can create a 'MemoryBuffer' with a call
+to 'newMemoryBuffer'.
+
+Finally, there are pipes.  These pipes are analogous to the Unix
+pipes that are available from System.Posix, but don't require Unix and work
+only in Haskell.  When you create a pipe, you actually get two HVIO objects:
+a 'PipeReader' and a 'PipeWriter'.  You must use the 'PipeWriter' in one
+thread and the 'PipeReader' in another thread.  Data that's written to the
+'PipeWriter' will then be available for reading with the 'PipeReader'.  The
+pipes are implemented completely with existing Haskell threading primitives,
+and require no special operating system support.  Unlike Unix pipes, these
+pipes cannot be used across a fork().  Also unlike Unix pipes, these pipes
+are portable and interact well with Haskell threads.  A new pipe can be created
+with a call to 'newHVIOPipe'.
+
 -}
 
-module MissingH.HVIO(-- * Implementation Classes
+module MissingH.IO.HVIO(-- * Implementation Classes
                      HVIOGeneric(..), 
                      HVIOReader(..),
                      HVIOWriter(..),
@@ -40,8 +120,8 @@ module MissingH.HVIO(-- * Implementation Classes
                      -- * Standard Virtual IO features
                      -- | Note: Handle is a member of all classes by default.
                      StreamReader, newStreamReader,
-                     MemoryVIO, newMemoryVIO,
-                     PipeReader, PipeWriter, newPipe
+                     MemoryBuffer, newMemoryBuffer,
+                     PipeReader, PipeWriter, newHVIOPipe
                     )
 where
 
@@ -272,30 +352,30 @@ instance HVIOReader StreamReader where
 {- | Simulate true I\/O on a buffer.
 
 -}
-newtype MemoryVIO = MemoryVIO (VIOCloseSupport (Int, String))
+newtype MemoryBuffer = MemoryBuffer (VIOCloseSupport (Int, String))
 
-newMemoryVIO :: IO MemoryVIO
-newMemoryVIO = do ref <- newIORef (True, (0, ""))
-                  return (MemoryVIO ref)
+newMemoryBuffer :: IO MemoryBuffer
+newMemoryBuffer = do ref <- newIORef (True, (0, ""))
+                     return (MemoryBuffer ref)
 
-vrv (MemoryVIO x) = x
+vrv (MemoryBuffer x) = x
 
 -- | Grab the entire contents of the buffer as a string.
-getMemoryVIOBuffer :: MemoryVIO -> IO String
-getMemoryVIOBuffer h = do c <- vioc_get (vrv h)
-                          return (snd c)
+getMemoryBuffer :: MemoryBuffer -> IO String
+getMemoryBuffer h = do c <- vioc_get (vrv h)
+                       return (snd c)
 
-instance Show MemoryVIO where
-    show _ = "<MemoryVIO>"
+instance Show MemoryBuffer where
+    show _ = "<MemoryBuffer>"
 
-instance HVIOGeneric MemoryVIO where
+instance HVIOGeneric MemoryBuffer where
     vClose = vioc_close . vrv
     vIsEOF h = do vTestOpen h
                   c <- vioc_get (vrv h)
                   return ((length (snd c)) == (fst c))
     vIsOpen = vioc_isopen . vrv
 
-instance HVIOReader MemoryVIO where
+instance HVIOReader MemoryBuffer where
     vGetChar h = do vTestEOF h
                     c <- vioc_get (vrv h)
                     let retval = (snd c) !! (fst c)
@@ -308,14 +388,14 @@ instance HVIOReader MemoryVIO where
                         vClose h
                         return retval
 
-instance HVIOWriter MemoryVIO where
+instance HVIOWriter MemoryBuffer where
     vPutStr h s = do (pos, buf) <- vioc_get (vrv h)
                      let (pre, post) = splitAt pos buf
                      let newbuf = pre ++ s ++ (drop (length buf) post)
                      vioc_set (vrv h) (pos + (length buf), newbuf)
     vPutChar h c = vPutStr h [c]
 
-instance HVIOSeeker MemoryVIO where
+instance HVIOSeeker MemoryBuffer where
     vTell h = do v <- vioc_get (vrv h)
                  return . fromIntegral $ (fst v)
     vSeek h seekmode seekposp = 
@@ -334,12 +414,12 @@ instance HVIOSeeker MemoryVIO where
 -- Pipes
 ----------------------------------------------------------------------
 
-newPipe :: IO (PipeReader, PipeWriter)
-newPipe = do mv <- newEmptyMVar
-             readerref <- newIORef (True, mv)
-             let reader = PipeReader readerref
-             writerref <- newIORef (True, reader)
-             return (reader, PipeWriter writerref)
+newHVIOPipe :: IO (PipeReader, PipeWriter)
+newHVIOPipe = do mv <- newEmptyMVar
+                 readerref <- newIORef (True, mv)
+                 let reader = PipeReader readerref
+                 writerref <- newIORef (True, reader)
+                 return (reader, PipeWriter writerref)
 
 data PipeBit = PipeBit Char 
              | PipeEOF
