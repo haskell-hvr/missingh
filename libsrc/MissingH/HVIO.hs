@@ -36,9 +36,10 @@ module MissingH.HVIO(-- * Implementation Classes
                      HVIOGeneric(..), 
                      HVIOReader(..),
                      HVIOWriter(..),
-                     HVIOSeeker(..)
+                     HVIOSeeker(..),
                      -- * Standard Virtual IO features
                      -- | Note: Handle is a member of all classes by default.
+                     StreamReader
                     )
 where
 
@@ -98,13 +99,15 @@ class (Show a) => HVIOGeneric a where
                         else return ()
 
 {- | Readers.  Implementators must provide at least 'vGetChar'.
+An implementation of 'vGetContents' is also highly suggested, since
+the default cannot implement quick closing.
 -}
 class (HVIOGeneric a) => HVIOReader a where
     -- | Read one character
     vGetChar :: a -> IO Char
     -- | Read one line
     vGetLine :: a -> IO String
-    -- | Get the remaining contents
+    -- | Get the remaining contents.  
     vGetContents :: a -> IO String
     -- | Indicate whether at least one item is ready for reading.
     vReady :: a -> IO Bool
@@ -203,10 +206,10 @@ vioc_get :: VIOCloseSupport a -> IO a
 vioc_get x = readIORef x >>= return . snd
 
 vioc_close :: VIOCloseSupport a -> IO ()
-vioc_close x = modifyIORef x (\ (_, dat) -> (False, dat))
+vioc_close x = modifyIORef x (\ _ -> (False, undefined))
 
-vioc_update :: VIOCloseSupport a -> a -> IO ()
-vioc_update x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
+vioc_set :: VIOCloseSupport a -> a -> IO ()
+vioc_set x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
 
 ----------------------------------------------------------------------
 -- Stream Readers/Writers
@@ -217,3 +220,29 @@ vioc_update x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
 This is lazy!
  -}
 newtype StreamReader = StreamReader (VIOCloseSupport String)
+
+srv (StreamReader x) = x
+instance Show StreamReader where
+    show _ = "<StreamReader>"
+
+instance HVIOGeneric StreamReader where
+    vClose = vioc_close . srv
+    vIsEOF h = do vTestOpen h
+                  d <- vioc_get (srv h)
+                  return $ case d of
+                                  [] -> True
+                                  _ -> False
+    vIsOpen = vioc_isopen . srv
+
+instance HVIOReader StreamReader where
+    vGetChar h = do vTestEOF h
+                    c <- vioc_get (srv h)
+                    let retval = head c
+                    vioc_set (srv h) (tail c)
+                    return retval
+    
+    vGetContents h = do vTestEOF h
+                        c <- vioc_get (srv h)
+                        vClose h
+                        return c
+
