@@ -7,7 +7,7 @@ import MissingH.IO.HVFS
 main = do
        updateGlobalLogger "" (setLevel DEBUG)
        updateGlobalLogger "MissingH.Network.FTP.Server" (setLevel DEBUG)
-       let opts = (simpleInetOptions 12345) {reuse = True}
+       let opts = (simpleTCPOptions 12345) {reuse = True}
        serveTCPforever opts $
             threadedHandler $ 
             loggingHandler "" INFO $

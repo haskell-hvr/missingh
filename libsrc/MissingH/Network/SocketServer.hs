@@ -37,7 +37,7 @@ sockets, but only TCP sockets have been tested to date.
 module MissingH.Network.SocketServer(-- * Generic Options and Types
                                      InetServerOptions(..),
                                      simpleTCPOptions,
-                                     SocketServer,
+                                     SocketServer(..),
                                      HandlerT,
                                      -- * TCP server convenient setup
                                      serveTCPforever,
@@ -91,8 +91,8 @@ simpleTCPOptions p = InetServerOptions {listenQueueSize = 5,
                                         protoStr = "tcp"
                                        }
 
-data SocketServer = SocketServer {options :: InetServerOptions,
-                                  sock :: Socket}
+data SocketServer = SocketServer {optionsSS :: InetServerOptions,
+                                  sockSS :: Socket}
                   deriving (Eq, Show)
 
 {- | Takes some options and sets up the 'SocketServer'.  I will bind
@@ -107,13 +107,13 @@ setupSocketServer opts =
        bindSocket s (SockAddrInet (fromIntegral (portNumber opts)) 
                      (interface opts))
        listen s (listenQueueSize opts)
-       return $ SocketServer {options = opts, sock = s}
+       return $ SocketServer {optionsSS = opts, sockSS = s}
        
 {- | Handle one incoming request from the given 'SocketServer'. -}
 handleOne :: SocketServer -> HandlerT -> IO ()
 handleOne ss func =
-    let opts = (options ss)
-        in    do a <- accept (sock ss)
+    let opts = (optionsSS ss)
+        in    do a <- accept (sockSS ss)
                  localaddr <- getSocketName (fst a)
                  func (fst a) (snd a) localaddr
     
