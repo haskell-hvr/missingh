@@ -47,6 +47,7 @@ import Data.FiniteMap
 import qualified System.Directory
 import System.IO
 import System.IO.Error
+import MissingH.IO
 
 ----------------------------------------------------------------------
 -- Basic type decl
@@ -126,8 +127,25 @@ newMIMETypes = makeMIMETypes defaultMIMETypeData
 'MIMETypeData' object. -}
 makeMIMETypes :: MIMETypeData -> MIMETypeFunctions
 makeMIMETypes mtd = 
+    let self = makeMIMETypes mtd in
     -- FIXME
-    let hrmt strict h =  return (makeMIMETypes mtd)
+    let hrmt strict h = 
+            let parseline :: MIMETypeFunctions -> String -> MIMETypeFunctions
+                parseline obj line =
+                    let l1 = words line 
+                        procwords [] = []
+                        procwords (('#':_) :_) = []
+                        procwords (x:xs) = x : procwords xs
+                        l2 = procwords l1
+                        thetype = head l2
+                        suffixlist = tail l2
+                        in
+                        foldl (\o suff -> (addType o) strict thetype suff) obj suffixlist
+                in
+                do
+                lines <- hGetLines h
+                return (foldl parseline self lines)
+
         in
         MIMETypeFunctions 
         {
