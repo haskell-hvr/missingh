@@ -2,6 +2,22 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--1.0
 #
 
+2004-10-08 13:44:22 GMT	John Goerzen <jgoerzen@complete.org>	patch-53
+
+    Summary:
+      Updated with some IORef stuff
+    Revision:
+      missingh--head--1.0--patch-53
+
+
+    new files:
+     libsrc/MissingH/Logging/Default.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/Logging.hs
+     libsrc/MissingH/Logging/Handler.hs
+
+
 2004-10-08 13:17:53 GMT	John Goerzen <jgoerzen@complete.org>	patch-52
 
     Summary:

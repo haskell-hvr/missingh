@@ -55,3 +55,5 @@ class LogHandler a where
                    -- any open files, etc.
                    close :: a -> IO ()
 
+
+

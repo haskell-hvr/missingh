@@ -26,6 +26,7 @@ This module defines basic types used for logging.
 
 module MissingH.Logging(Priority(..),
                         LogRecord)
+
     where
 
 {- | Priorities are used to define how important a log messgae is.
