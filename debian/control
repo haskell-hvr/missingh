@@ -1,19 +1,41 @@
 Source: missingh
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0)
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.2.1), ghc6 (<< 6.2.2)
+Build-Depends-Indep: debhelper (>= 4.0.0), haddock
 Standards-Version: 3.6.1
 
-Package: missingh-dev
+Package: libghc6-missingh-dev
 Section: libdev
 Architecture: any
-Depends: missinghBROKEN (= ${Source-Version})
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: ghc6 (>= 6.2.1), ghc6 (<< 6.2.2)
+Suggests: missingh-doc
+Description: Library of utility functions for Haskell, GHC6 package 
+ MissingH is a library of all sorts of utility functions for
+ Haskell programmers.  It is written in pure Haskell and thus should
+ be extremely portable and easy to use.  It also has no prerequisites
+ save those that are commonly included with Haskell compilers.
+ .
+ MissingH is based on my MissingLib library for OCaml and contains some
+ of the same features.  However, some features are left behind because
+ they are already in Haskell or not needed here -- and others are added
+ due to things Haskell is missing, or things that Haskell makes
+ possible.
 
-Package: missinghBROKEN
-Section: libs
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: missingh-doc
+Section: doc
+Architecture: all
+Description: Documentation for Haskell utility library
+ MissingH is a library of all sorts of utility functions for
+ Haskell programmers.  It is written in pure Haskell and thus should
+ be extremely portable and easy to use.  It also has no prerequisites
+ save those that are commonly included with Haskell compilers.
+ .
+ MissingH is based on my MissingLib library for OCaml and contains some
+ of the same features.  However, some features are left behind because
+ they are already in Haskell or not needed here -- and others are added
+ due to things Haskell is missing, or things that Haskell makes
+ possible.
+ .
+ This package provides the API documentation for MissingH.
+

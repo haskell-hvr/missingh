@@ -19,6 +19,8 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
+        ghc-pkg -r MissingH
+        rm /usr/lib/haskell-packages/ghc6/lib/MissingH-0.1.0/HSMissingH*.o
 #       install-info --quiet --remove /usr/info/missingh.info.gz
         ;;
     failed-upgrade)
