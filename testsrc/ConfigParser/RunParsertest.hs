@@ -24,7 +24,7 @@ import Testutil
 test_basic =
     let f inp exp = exp @=? parse_string inp in
         do
-        --f "" []
+        f "" []
         f "foo: bar" [("DEFAULT", [("foo", "bar")])]
 
 tests = TestList [TestLabel "test_basic" (TestCase test_basic)
