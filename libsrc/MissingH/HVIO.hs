@@ -44,13 +44,22 @@ where
 
 import System.IO
 import System.IO.Error
+import Control.Concurrent.MVar
+import Data.IORef
 
 {- | The HVIOGeneric class.
 
-Implementators must provide 'vClose' and 'vIsEOF'. -}
+Implementators must provide 'vClose', 'vIsEOF', and either
+'vIsOpen' or 'vIsClosed'. -}
 class (Show a) => HVIOGeneric a where
     -- | Close a file
     vClose :: a -> IO ()
+    -- | Test if a file is open
+    vIsOpen :: a -> IO Bool
+    -- | Test if a file is closed
+    vIsClosed :: a -> IO Bool
+    -- | Raise an error if the file is not open.
+    vTestOpen :: a -> IO ()
     -- | Whether or not we're at EOF
     vIsEOF :: a -> IO Bool
     -- | Detailed show output.
@@ -63,6 +72,7 @@ class (Show a) => HVIOGeneric a where
     -- May be Nothing.
     vGetFP :: a -> IO (Maybe FilePath)
     -- | Throw an isEOFError if we're at EOF; returns nothing otherwise.
+    -- vTestEOF will implicitly call vTestOpen.
     vTestEOF :: a -> IO ()
 
     vShow x = return (show x)
@@ -76,9 +86,16 @@ class (Show a) => HVIOGeneric a where
                   fp <- vGetFP h
                   ioError (vMkIOError h et "" fp)
 
-    vTestEOF h = do e <- vIsEOF h
+    vTestEOF h = do vTestOpen h
+                    e <- vIsEOF h
                     if e then vThrow h eofErrorType
                        else return ()
+
+    vIsOpen h = vIsClosed h >>= return . not
+    vIsClosed h = vIsOpen h >>= return . not
+    vTestOpen h = do e <- vIsClosed h
+                     if e then vThrow h illegalOperationErrorType
+                        else return ()
 
 {- | Readers.  Implementators must provide at least 'vGetChar'.
 -}
@@ -121,13 +138,10 @@ class (HVIOGeneric a) => HVIOReader a where
 class (HVIOGeneric a) => HVIOWriter a where
     -- | Write one character
     vPutChar :: a -> Char -> IO ()
-
     -- | Write a string
     vPutStr :: a -> String -> IO ()
-
     -- | Write a string with newline character after it
     vPutStrLn :: a -> String -> IO ()
-
     -- | Write a string representation of the argument, plus a newline.
     vPrint :: Show b => a -> b -> IO ()
 
@@ -176,3 +190,20 @@ instance HVIOWriter Handle where
 instance HVIOSeeker Handle where
     vSeek = hSeek
     vTell = hTell
+
+----------------------------------------------------------------------
+-- VIO Support
+----------------------------------------------------------------------
+data VIOCloseSupport a = VIOCloseSupport {isOpen :: Bool,
+                                          vData :: a}
+
+----------------------------------------------------------------------
+-- Stream Readers/Writers
+----------------------------------------------------------------------
+
+{- | Simulate I\/O based on a string buffer.
+
+This is lazy!
+ -}
+data StreamReader = StreamReader (IORef (VIOCloseSupport String))
+
