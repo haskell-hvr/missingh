@@ -51,7 +51,7 @@ data Header = Header {
                       extra :: Maybe String,
                       filename :: Maybe String,
                       comment :: Maybe String
-                     }
+                     } deriving (Eq, Show)
 
 split1 :: String -> (Char, String)
 split1 s = (head s, tail s)
@@ -134,23 +134,29 @@ read_header s =
        -- skip modtime (4), extraflag (1), and os (1)
        let rem4 = drop 6 rem3
        
-       rem5 <- if (flag .&. fFEXTRA /= 0)
-                  -- Skip past the extra field if we have it.
-                  then do let (xlen_S, rem4a) = split1 rem4
-                          let (xlen2_S, rem4a) = split1 rem4
-                          let xlen = (ord xlen_S) + 256 * (ord xlen2_S)
-                          return $ drop xlen rem4a
-                  else return rem4
+       let (extra, rem5) = 
+               if (flag .&. fFEXTRA /= 0)
+               -- Skip past the extra field if we have it.
+                  then let (xlen_S, rem4a) = split1 rem4
+                           (xlen2_S, rem4b) = split1 rem4
+                           xlen = (ord xlen_S) + 256 * (ord xlen2_S)
+                           (ex, rrem) = splitAt xlen rem4b
+                           in (Just ex, rrem)
+                  else (Nothing, rem4)
        
-       rem6 <- if (flag .&. fFNAME /= 0)
-                  -- Skip past the null-terminated filename
-                  then return $ tail $ dropWhile (/= '\x00') rem5
-                  else return rem5
+       let (filename, rem6) = 
+               if (flag .&. fFNAME /= 0)
+               -- Skip past the null-terminated filename
+                  then let fn = takeWhile (/= '\x00') rem5
+                                in (Just fn, drop ((length fn) + 1) rem5)
+                  else (Nothing, rem5)
 
-       rem7 <- if (flag .&. fFCOMMENT /= 0)
+       let (comment, rem7) =
+               if (flag .&. fFCOMMENT /= 0)
                   -- Skip past the null-terminated comment
-                  then return $ tail $ dropWhile (/= '\x00') rem6
-                  else return rem6
+                  then let cm = takeWhile (/= '\x00') rem6
+                           in (Just cm, drop ((length cm) + 1) rem6)
+                  else (Nothing, rem6)
        
        rem8 <- if (flag .&. fFHCRC /= 0)
                   -- Skip past the header CRC
@@ -159,6 +165,6 @@ read_header s =
                   
        return (Header {method = ord method,
                       flags = flag,
-                      extra = Nothing,
-                      filename = Nothing,
-                      comment = Nothing}, rem8)
+                      extra = extra,
+                      filename = filename,
+                      comment = comment}, rem8)
