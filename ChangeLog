@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-03 21:00:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-199
+
+    Summary:
+      checkpointing doc fixes
+    Revision:
+      missingh--head--0.7--patch-199
+
+
+    modified files:
+     ChangeLog Makefile debian/docs doc/Makefile doc/Pesco.pdf
+
+
 2005-02-03 20:42:30 GMT	John Goerzen <jgoerzen@complete.org>	patch-198
 
     Summary:

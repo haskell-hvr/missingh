@@ -22,6 +22,8 @@ LHSSOURCES := $(wildcard MissingH/*/*.lhs) \
 	$(wildcard MissingH/*/*/*.lhs)
 O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
 OBJS := $(O1:.lhs=.o)
+LHSCONVSOURCES := $(patsubst %.lhs,doctmp/%.hs,$(LHSSOURCES))
+UNLIT ?= $(shell ghc --print-libdir)/unlit
 
 .PHONY: all
 all: setup
@@ -30,6 +32,13 @@ all: setup
 
 setup: Setup.lhs MissingH.cabal
 	ghc -package Cabal Setup.lhs -o setup
+
+doctmp/%.hs: %.lhs doctmp
+	mkdir -p `dirname $@`
+	$(UNLIT) $< $@
+
+doctmp:
+	mkdir doctmp
 
 #libmissingH.a: $(OBJS)
 #	-rm -f libmissingH.a
@@ -43,18 +52,18 @@ setup: Setup.lhs MissingH.cabal
 #
 
 .PHONY: doc
-doc:
+doc: $(LHSCONVSOURCES)
 	-rm -rf html
 	mkdir html
 	haddock $(HADDOCKARGS) --package=MissingH \
 	   --dump-interface=html/MissingH.haddock \
-	   -t 'MissingH API Manual' -h -o html $(SOURCES) $(LHSSOURCES)
+	   -t 'MissingH API Manual' -h -o html $(SOURCES) $(LHSCONVSOURCES)
 
 clean:
 	-./setup clean
 	-rm -rf html `find . -name "*.o"` `find . -name "*.hi"` \
 		`find . -name "*~"` *.a setup dist testsrc/runtests \
-		local-pkg
+		local-pkg doctmp
 	-rm -rf testtmp/*
 	-cd doc && $(MAKE) clean
 
