@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-23 02:53:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-152
+
+    Summary:
+      Checkpointing nlst
+    Revision:
+      missingh--head--0.7--patch-152
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Network/FTP/Server.hs
+
+
 2004-12-23 01:52:48 GMT	John Goerzen <jgoerzen@complete.org>	patch-151
 
     Summary:

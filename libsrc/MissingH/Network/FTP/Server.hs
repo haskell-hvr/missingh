@@ -167,6 +167,7 @@ commands =
     ,("STOR", (forceLogin cmd_stor,  help_stor))
     ,("STAT", (forceLogin cmd_stat,  help_stat))
     ,("SYST", (forceLogin cmd_syst,  help_syst))
+    ,("NLST", (forceLogin cmd_nlst,  help_nlst))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -395,37 +396,57 @@ cmd_stor h@(FTPServer _ fs state) args =
                                    )
                    )
 
+rtransmitString :: String -> FTPServer  -> Socket -> IO ()
+rtransmitString thestr (FTPServer _ _ state) sock =
+    let fixlines :: [String] -> [String]
+        fixlines x = map (\y -> y ++ "\r") x
+        copyit h =
+            hPutStrLn h $ unlines . fixlines . lines $ thestr
+        in
+        do writeh <- socketToHandle sock WriteMode
+           hSetBuffering writeh (BlockBuffering (Just 4096))
+           mode <- readIORef (datatype state)
+           case mode of
+              ASCII -> finally (copyit writeh)
+                               (hClose writeh)
+              Binary -> finally (hPutStr writeh thestr)
+                                (hClose writeh)
+
+rtransmitH :: HVFSOpenEncap -> FTPServer -> Socket -> IO ()
+rtransmitH fhencap h sock =
+    case fhencap of
+       HVFSOpenEncap fh ->
+        finally (do c <- vGetContents fh
+                    rtransmitString c h sock
+                ) (vClose fh)
+
+genericTransmit :: FTPServer -> a -> (a -> FTPServer -> Socket -> IO ()) -> IO Bool
+genericTransmit h dat func =
+    trapIOError h 
+      (do sendReply h 150 "I'm going to open the data channel now."
+          runDataChan h (func dat)
+      ) (\_ ->
+               do sendReply h 226 "Closing data connection; transfer complete."
+                  return True
+        )
+
+genericTransmitHandle :: FTPServer -> HVFSOpenEncap -> IO Bool
+genericTransmitHandle h dat =
+    genericTransmit h dat rtransmitH
+
+genericTransmitString :: FTPServer -> String -> IO Bool
+genericTransmitString h dat =
+    genericTransmit h dat rtransmitString
+
+
 help_retr = ("Retrieve a file", "")
 cmd_retr :: CommandHandler
 cmd_retr h@(FTPServer _ fs state) args =
-    let runit fhencap _ sock =
-            case fhencap of
-              HVFSOpenEncap fh -> 
-                do writeh <- socketToHandle sock WriteMode
-                   mode <- readIORef (datatype state)
-                   case mode of
-                    ASCII -> finally (hLineInteract fh writeh 
-                                        (\x -> map (\y -> y ++ "\r") x))
-                                     (hClose writeh)
-                    Binary -> finally (do vSetBuffering fh (BlockBuffering (Just 4096))
-                                          hCopy fh writeh
-                                      ) (hClose writeh)
-        in
         if length args < 1
            then do sendReply h 501 "Filename required"
                    return True
-           else trapIOError h (vOpen fs args ReadMode) (\fhencap ->
-                             trapIOError h (do sendReply h 150 "File OK; about to open data channel"
-                                               (runDataChan h (runit fhencap))) $
-                                                   (\_ ->
-                       do case fhencap of
-                             HVFSOpenEncap fh -> vClose fh
-                          sendReply h 226 "Closing data connection; transfer complete."
-                          return True
-                                                                )
-                                                  )
-
-       
+           else trapIOError h (vOpen fs args ReadMode) 
+                    (\fhencap -> genericTransmitHandle h fhencap)
 
 help_rnto = ("Specify TO name for a file name", "")
 cmd_rnto :: CommandHandler
@@ -454,6 +475,16 @@ cmd_dele h@(FTPServer _ fs _) args =
        else trapIOError h (vRemoveFile fs args) $
               \_ -> do sendReply h 250 $ "File " ++ args ++ " deleted."
                        return True
+
+help_nlst = ("Get plain listing of files", "")
+cmd_nlst :: CommandHandler
+cmd_nlst h@(FTPServer _ fs _) args =
+    let fn = case args of
+                       "" -> "."
+                       x -> x
+        in
+        trapIOError h (vGetDirectoryContents fs fn)
+           (\l -> genericTransmitString h (unlines l))
 
 help_rmd = ("Remove directory", "")
 cmd_rmd :: CommandHandler
