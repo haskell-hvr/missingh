@@ -420,8 +420,10 @@ instance Get_C String where
 instance Get_C Bool where
     get = getbool
 
-instance Read t => Get_C t where
-    get cp s o = get cp s o >>= return . read
+instance (Num t, Read t) => Get_C t where
+    get = genericget
+
+genericget cp s o = get cp s o >>= return . read
 
 getbool ::  MonadError CPError m =>
             ConfigParser -> SectionSpec -> OptionSpec -> m Bool

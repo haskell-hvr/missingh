@@ -2,6 +2,21 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2004-12-14 23:00:15 GMT	John Goerzen <jgoerzen@complete.org>	patch-65
+
+    Summary:
+      preliminary gopher work
+    Revision:
+      missingh--head--0.7--patch-65
+
+
+    new files:
+     libsrc/MissingH/Network/Gopher.hs
+
+    modified files:
+     ChangeLog libsrc/MissingH/ConfigParser.hs
+
+
 2004-12-10 22:47:12 GMT	John Goerzen <jgoerzen@complete.org>	patch-64
 
     Summary:
