@@ -64,6 +64,8 @@ item is always present in the returned list.
 
 If the passed value is not a directory, the return value
 be only that value.
+
+The \".\" and \"..\" entries are removed from the data returned.
 -}
 recurseDir :: FilePath -> IO [FilePath]
 recurseDir x = recurseDirStat x >>= return . map fst
@@ -75,7 +77,7 @@ yourself later.
 
 recurseDirStat :: FilePath -> IO [(FilePath, FileStatus)]
 recurseDirStat fn =
-    do fs <- getFileStatus fn
+    do fs <- getSymbolicLinkStatus fn
        if isDirectory fs then do
                               dirc <- getDirectoryContents fn
                               let contents = map ((++) (fn ++ "/")) $ 
@@ -84,7 +86,16 @@ recurseDirStat fn =
                               return $ (concat subdirs) ++ [(fn, fs)]
           else return [(fn, fs)]
 
-
-                              
-                              
-          
+{- | Removes a file or a directory.  If a directory, also removes all its
+child files/directories.
+-}
+recursiveRemove :: FilePath -> IO ()
+recursiveRemove fn =
+    let worker [] = return ()
+        worker ((fn, fs):xs) =
+            do if isDirectory fs then
+                  removeDirectory fn
+                  else removeFile fn
+               worker xs
+        in
+        recurseDirStat fn >>= worker
