@@ -50,14 +50,15 @@ test_basic =
         ,f "default1" "v1: o1\n[sect1]\nv2: o2" [("DEFAULT", [("v1", "o1")]),
                                      ("sect1", [("v2", "o2")])]
         ,f "simple default" "foo: bar" [("DEFAULT", [("foo", "bar")])]
-{-
-        assertRaises "e test1" (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
-                      (f "" "#foo\nthis is bad data" [])
+               ]
 
+test_asserts =
+        do
+        assertRaises "e test1" (ErrorCall "Lexer: \"(string)\" (line 1, column 5):\nunexpected \"\\n\"\nexpecting Option separator")
+                      ([] @=? parse_string "#foo\nthis is bad data")
+        
         assertRaises "e test2" (ErrorCall "Lexer: \"(string)\" (line 2, column 9):\nunexpected \"\\n\"\nexpecting Option separator")
-                     (f "" "[sect1]\n#iiiiii \n  extensionline\n#foo" [])
--}
-        ]
+                     ([] @=? parse_string "[sect1]\n#iiiiii \n  extensionline\n#foo")
 
 test_extensionlines =
     let f inp exp = exp @=? parse_string inp in
@@ -67,6 +68,7 @@ test_extensionlines =
                       ("baz", "l1\nl2\nl3"),
                       ("quux", "asdf")])]
 
-tests = TestList [TestLabel "test_basic" (TestList test_basic)
---                  TestLabel "test_extensionlines" (TestCase test_extensionlines)
+tests = TestList [TestLabel "test_basic" (TestList test_basic),
+--                  TestLabel "test_asserts" (TestCase test_asserts)
+                  TestLabel "test_extensionlines" (TestCase test_extensionlines)
                  ]
