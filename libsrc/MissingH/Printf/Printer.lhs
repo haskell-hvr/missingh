@@ -8,7 +8,7 @@ import Maybe (fromMaybe)
 import Numeric (showEFloat, showFFloat)
 import Char (toLower, toUpper)
 import MissingH.Printf.Types
-import Data.List(genericLength, genericReplicate)
+import Data.List(genericLength, genericReplicate, genericTake)
 
 {-
 xn where n is an integer refers to an argument to the function
@@ -48,7 +48,7 @@ get_conversion_func c = fromMaybe (error (c:": CF unknown")) $ lookup c cfs
 print_signed_int :: ConversionFunc
 print_signed_int argv flags mw mp = res
     where arg = (fromValue argv)::Integer
-          preci = read (fromMaybe "1" mp)
+          preci = fromMaybe 1 mp
           width = fromMaybe 0 mw
           disp | Thousands `elem` flags = thousandify . show
                | otherwise              =               show
@@ -71,7 +71,7 @@ print_signed_int argv flags mw mp = res
 print_unsigned_int :: Char -> ConversionFunc
 print_unsigned_int base argv flags mw mp = res
     where arg = (fromValue argv)::Integer
-          preci = read (fromMaybe "1"  mp)
+          preci = fromMaybe 1  mp
           width = fromMaybe 0 mw
           w = if ZeroPadded `elem` flags then (preci) `max` width
                                          else  preci
@@ -101,7 +101,7 @@ print_unsigned_int base argv flags mw mp = res
 print_exponent_double :: Char -> ConversionFunc
 print_exponent_double e argv flags mw mp = res
     where arg = (fromValue argv)::Double
-          preci = read (fromMaybe "6" mp)
+          preci = fromMaybe 6 mp
           width = fromMaybe 0 mw
           plus_sign = if Plus `elem` flags
                       then "+"
@@ -110,7 +110,7 @@ print_exponent_double e argv flags mw mp = res
                       else ""
           keep_dot = AlternateForm `elem` flags
           res =    let to_show = (fromRational $ toRational arg) :: Double
-                       shown = showEFloat (Just (preci)) (abs to_show) ""
+                       shown = showEFloat (Just (fromInteger preci)) (abs to_show) ""
                        sign = if to_show < 0 then "-" else plus_sign
                        fix_prec0 = if (preci) == 0
                                    then case break (== '.') shown of
@@ -134,7 +134,7 @@ print_exponent_double e argv flags mw mp = res
 print_fixed_double :: Char -> ConversionFunc
 print_fixed_double f argv flags mw mp = res
     where arg = (fromValue argv)::Double
-          preci = read (fromMaybe "6"  mp)
+          preci = fromMaybe 6  mp
           width = fromMaybe 0  mw
           plus_sign = if Plus `elem` flags
                       then "+"
@@ -145,7 +145,7 @@ print_fixed_double f argv flags mw mp = res
           fix_case | f == 'f'  = map toLower
                    | otherwise = map toUpper
           res =    let to_show = (fromRational $ toRational arg) :: Double
-                       shown = showFFloat (Just (preci)) (abs to_show) ""
+                       shown = showFFloat (Just (fromInteger preci)) (abs to_show) ""
                        shown' = if add_dot && (preci) == 0 then shown ++ "."
                                                           else shown
                        sign = if to_show < 0 then "-" else plus_sign
@@ -162,7 +162,7 @@ print_char arg _ _ _ = [(fromValue arg)::Char]
 print_string :: ConversionFunc
 print_string argv _ _ mp
     = case mp of
-          Just preci -> if (read preci) < 0 then arg else take (read preci) arg
+          Just preci -> if preci < 0 then arg else genericTake preci arg
           Nothing -> arg
       where arg = fromValue argv
 

@@ -103,7 +103,11 @@ sprintf ('%' : xs) (y : ys) =
          --Just (_, _, r, x) -> "<" ++ show x ++ ">" ++ sprintf r ys
          Just (_, _, remainder, [flagstr, widthstr, precstr, [fmt]]) ->
              let width = if widthstr == "" then Nothing else Just ((read widthstr)::Width)
-                 prec = if precstr == "" then Nothing else Just precstr
+                 prec = if precstr == "" 
+                        then Nothing 
+                        else Just (if length precstr >= 1
+                                   then abs $ read (drop 1 precstr)
+                                   else 0)
                  flags = mkflags flagstr
                  in
                  --(show width) ++ sprintf remainder ys

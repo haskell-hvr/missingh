@@ -2,6 +2,20 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.5
 #
 
+2004-11-15 03:22:42 GMT	John Goerzen <jgoerzen@complete.org>	patch-48
+
+    Summary:
+      Fixed precision handling
+    Revision:
+      missingh--head--0.5--patch-48
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Printf.hs
+     libsrc/MissingH/Printf/Printer.lhs
+     libsrc/MissingH/Printf/Types.lhs
+
+
 2004-11-15 03:18:46 GMT	John Goerzen <jgoerzen@complete.org>	patch-47
 
     Summary:

@@ -73,7 +73,7 @@ data Format = Literal String
 type ArgNum = Integer
 type Arg = Value
 type Width = Integer
-type Precision = String
+type Precision = Integer
 data Flag = AlternateForm       -- "#"
           | ZeroPadded          -- "0"
           | LeftAdjust          -- "-"
