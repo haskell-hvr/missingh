@@ -28,7 +28,7 @@ libmissingH.a: $(OBJS)
 	ghc -c -o $@ $<
 
 doc:
-	-rm -f html
+	-rm -rf html
 	mkdir html
 	haddock -h -o html $(SOURCES)
 

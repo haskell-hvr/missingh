@@ -16,40 +16,45 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module MissingH.Strutil(strip, lstrip, rstrip) where
+{- | This module provides various helpful utilities for dealing with strings.
+
+Written by John Goerzen, jgoerzen@complete.org
+-}
+
+module MissingH.Strutil(
+                        -- * Whitespace Removal
+                        strip, lstrip, rstrip) where
 
 wschars = " \t\r\n"
 
--- | This module provides various helpful utilities for dealing with strings.
--- John Goerzen <jgoerzen@complete.org>
+{- | Removes any whitespace characters that are present at the start
+or end of a string. Does not alter the internal contents of a
+string. If no whitespace characters are present at the start or end
+of a string, returns the original string unmodified. Safe to use on
+any string.
 
--- * Whitespace removal
+Note that this may differ from some other similar
+functions from other authors in that:
 
--- | Removes any whitespace characters that are present at the start
---or end of a string. Does not alter the internal contents of a
---string. If no whitespace characters are present at the start or end
---of a string, returns the original string unmodified. Safe to use on
---any string.
+1. If multiple whitespace
+characters are present all in a row, they are all removed;
 
--- Note that this may differ from some other similar
---functions from other authors in that:
-
--- 1. If multiple whitespace
---characters are present all in a row, they are all removed;
-
--- 2. If no
---whitespace characters are present, nothing is done.
+2. If no
+whitespace characters are present, nothing is done.
+-}
 
 strip :: String -> String
 strip = lstrip . rstrip
 
--- | Same as strip, but applies only to the left side of the string.
+-- | Same as 'strip', but applies only to the left side of the string.
+lstrip :: String -> String
 lstrip s = case s of
                   [] -> []
                   (x:xs) -> if elem x wschars
                             then lstrip xs
                             else s
 
--- | Same as strip, but applies only to the right side of the string.
+-- | Same as 'strip', but applies only to the right side of the string.
+rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
 
