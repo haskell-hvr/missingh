@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-02-01 21:24:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-183
+
+    Summary:
+      Updated Debian files
+    Revision:
+      missingh--head--0.7--patch-183
+
+
+    modified files:
+     COPYRIGHT ChangeLog MissingH.cabal debian/changelog
+     debian/copyright libsrc/MissingH/List.hs testsrc/Listtest.hs
+
+
 2005-02-01 21:22:19 GMT	John Goerzen <jgoerzen@complete.org>	patch-182
 
     Summary:

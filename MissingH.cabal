@@ -1,10 +1,10 @@
 -- arch-tag: MissingH main description file
 Name: MissingH
-Version: 0.8.0
+Version: 0.9.0
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
-Copyright: Copyright (c) 2004 John Goerzen
+Copyright: Copyright (c) 2004-2005 John Goerzen
 Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Logging, MissingH.Logging.Handler,
     MissingH.Logging.Handler.Simple, MissingH.Logging.Handler.Syslog,

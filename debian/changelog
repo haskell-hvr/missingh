@@ -1,3 +1,13 @@
+missingh (0.9.0) unstable; urgency=low
+
+  * New module: MissingH.AnyDBM.  Integrated support for HashTable and
+    FiniteMap.
+  * New support for converting arbitrary association lists and
+    finite maps two/from string.
+  * New module: MissingH.AnyDBM.StringDBM that uses this new support.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue,  1 Feb 2005 15:22:37 -0600
+
 missingh (0.8.1) unstable; urgency=low
 
   * Updated to Cabal 0.4.
