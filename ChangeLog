@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-01-21 01:34:27 GMT	John Goerzen <jgoerzen@complete.org>	patch-173
+
+    Summary:
+      Updated
+    Revision:
+      missingh--head--0.7--patch-173
+
+
+    modified files:
+     ChangeLog libsrc/MissingH/Time.hs testsrc/Timetest.hs
+
+
 2005-01-21 01:15:10 GMT	John Goerzen <jgoerzen@complete.org>	patch-172
 
     Summary:

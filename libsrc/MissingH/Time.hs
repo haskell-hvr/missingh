@@ -34,6 +34,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.Time(
                      calendarTimeUTCToEpoch,
+                     calendarTimeToEpoch,
                      timeDiffToSecs
                     )
 where
@@ -59,6 +60,20 @@ since effectively it is computing a difference. -}
 calendarTimeUTCToEpoch :: CalendarTime -> Integer
 calendarTimeUTCToEpoch ct =
     timeDiffToSecs (diffClockTimes (toClockTime ct) (toClockTime epoch))
+
+{- | Like 'calendarTimeUTCToEpoch', but works on local times.
+
+Caveat: may be inaccurate right around the change to/from DST.
+
+Ignores same fields as 'calendarTimeUTCToEpoch'.
+-}
+
+calendarTimeToEpoch :: CalendarTime -> IO Integer
+calendarTimeToEpoch ct =
+    do guessct <- toCalendarTime guesscl
+       let newct = ct {ctTZ = ctTZ guessct}
+       return $ calendarTimeUTCToEpoch newct
+    where guesscl = toClockTime ct
     
 {- | Converts the given timeDiff to the number of seconds it represents. 
 
