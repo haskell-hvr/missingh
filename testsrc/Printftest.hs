@@ -38,6 +38,15 @@ test_vsprintf_strings =
     ".     ." @=? vsprintf ".%5s." ""
     "     " @=? vsprintf "%5s" ""
     "     " @=? vsprintf "%-5s" ""
+    "    x" @=? vsprintf "%5s" "x"
+    "x    " @=? vsprintf "%-5s" "x"
+    "abcde" @=? vsprintf "%.5s" "abcde"
+    "abcde" @=? vsprintf "%.5s" "abcdef"
+    "abcde" @=? vsprintf "%.5s" "abcdefghij"
+    "abcde" @=? vsprintf "%5.5s" "abcdefg"
+    " abcde" @=? vsprintf "%6.5s" "abcdefg"
+    
+    
     
 tests = TestList [TestLabel "vsprintf" (TestCase test_vsprintf),
                   TestLabel "vsprintf strings" (TestCase test_vsprintf_strings)
