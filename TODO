@@ -3,3 +3,4 @@ arch-tag: TODO file
 Printf:
  make %H work 
 
+tests for new Parsec stuff
