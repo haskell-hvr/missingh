@@ -29,10 +29,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 This module provides various helpful utilities for dealing with networking
 
 Written by John Goerzen, jgoerzen\@complete.org
+
 -}
 
 module MissingH.Network(niceSocketsDo, connectTCP, connectTCPAddr,
-                        listenTCPAddr
+                        listenTCPAddr, showSockAddr
                        )
 where
 import Network
@@ -79,3 +80,9 @@ listenTCPAddr addr queuelen = do
                      bindSocket s addr
                      listen s queuelen
                      return s
+
+showSockAddr :: SockAddr -> IO String
+showSockAddr (SockAddrUnix x) = return $ "UNIX socket at " ++ x
+showSockAddr (SockAddrInet port host) =
+    do h <- inet_ntoa host
+       return $ "Host " ++ h ++ ", port " ++ (show port)
