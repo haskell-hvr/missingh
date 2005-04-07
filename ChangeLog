@@ -2,6 +2,26 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-06 19:50:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-223
+
+    Summary:
+      Added ParseDate.hs
+    Revision:
+      missingh--head--0.7--patch-223
+
+
+    new files:
+     MissingH/Time/.arch-ids/=id
+     MissingH/Time/.arch-ids/ParseDate.hs.id
+     MissingH/Time/ParseDate.hs
+
+    modified files:
+     ChangeLog
+
+    new directories:
+     MissingH/Time MissingH/Time/.arch-ids
+
+
 2005-04-05 18:54:40 GMT	John Goerzen <jgoerzen@complete.org>	patch-222
 
     Summary:
