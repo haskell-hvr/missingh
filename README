@@ -162,6 +162,9 @@ MissingH.Threads         * Threaded callbacks
 
 MissingH.Time            * Utilities for working with times and dates
 
+MissingH.Time.           * Parsing of dates, similar to strptime() in C
+ ParseDate
+
 Wash.Mail.*              * Generate or parse e-mail messages
                          * Full support for headers and MIME
 

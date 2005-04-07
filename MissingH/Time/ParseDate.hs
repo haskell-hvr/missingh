@@ -1,12 +1,14 @@
 {- |
-   Module      :  MissingH.Time.ParseDate
-   Copyright   :  (c) by Björn Bringert
-   License     :  GPL2
+   Module      : MissingH.Time.ParseDate
+   Copyright   : (c) by Björn Bringert
+   License     : GPL2
 
-   Maintainer  :  simons@cryp.to
-   Stability   :  provisional
+   Maintainer  : Björn Bringert
+   Stability   : provisional
+   Portability : portable
 
-Utility for parsing dates -}
+Utility for parsing dates.
+-}
 module MissingH.Time.ParseDate (parseCalendarTime) where
 
 import Control.Monad

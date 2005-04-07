@@ -2,6 +2,19 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-06 20:11:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-225
+
+    Summary:
+      Added ParseDate to meta-files
+    Revision:
+      missingh--head--0.7--patch-225
+
+
+    modified files:
+     COPYRIGHT ChangeLog MissingH.cabal MissingH/Time/ParseDate.hs
+     README
+
+
 2005-04-06 19:53:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-224
 
     Summary:
