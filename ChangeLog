@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-06 20:15:57 GMT	John Goerzen <jgoerzen@complete.org>	patch-226
+
+    Summary:
+      Ready for 0.10.1
+    Revision:
+      missingh--head--0.7--patch-226
+
+
+    modified files:
+     ChangeLog MissingH.cabal debian/changelog
+
+
 2005-04-06 20:11:32 GMT	John Goerzen <jgoerzen@complete.org>	patch-225
 
     Summary:

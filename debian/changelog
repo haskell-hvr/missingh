@@ -1,3 +1,9 @@
+missingh (0.10.1) unstable; urgency=low
+
+  * Imported Bjorn Bringert's ParseDate.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed,  6 Apr 2005 07:14:33 -0500
+
 missingh (0.10.0) unstable; urgency=low
 
   * Compatibility with new Hugs and GHC releases.
