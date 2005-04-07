@@ -1,4 +1,13 @@
-module ParseDate (parseCalendarTime) where
+{- |
+   Module      :  MissingH.Time.ParseDate
+   Copyright   :  (c) by Björn Bringert
+   License     :  GPL2
+
+   Maintainer  :  simons@cryp.to
+   Stability   :  provisional
+
+Utility for parsing dates -}
+module MissingH.Time.ParseDate (parseCalendarTime) where
 
 import Control.Monad
 import Data.Char (isSpace)

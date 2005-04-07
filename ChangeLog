@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-06 19:53:13 GMT	John Goerzen <jgoerzen@complete.org>	patch-224
+
+    Summary:
+      Added haddock header to ParseDate
+    Revision:
+      missingh--head--0.7--patch-224
+
+
+    modified files:
+     ChangeLog MissingH/Time/ParseDate.hs
+
+
 2005-04-06 19:50:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-223
 
     Summary:
