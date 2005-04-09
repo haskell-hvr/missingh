@@ -136,7 +136,9 @@ split delim str =
 {- | Given a list and a replacement list, replaces each occurance of the search
 list with the replacement list in the operation list.
 
-Example: replace "," "." "127,0,0,1" -> "127.0.0.1"
+Example:
+
+>replace "," "." "127,0,0,1" -> "127.0.0.1"
 -}
 
 replace :: Eq a => [a] -> [a] -> [a] -> [a]
