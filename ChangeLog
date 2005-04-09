@@ -2,6 +2,18 @@
 # arch-tag: automatic-ChangeLog--jgoerzen@complete.org--projects/missingh--head--0.7
 #
 
+2005-04-08 19:13:44 GMT	John Goerzen <jgoerzen@complete.org>	patch-227
+
+    Summary:
+      checkpointing
+    Revision:
+      missingh--head--0.7--patch-227
+
+
+    modified files:
+     ChangeLog
+
+
 2005-04-06 20:15:57 GMT	John Goerzen <jgoerzen@complete.org>	patch-226
 
     Summary:
