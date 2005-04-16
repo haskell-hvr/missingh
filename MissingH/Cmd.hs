@@ -1,5 +1,6 @@
-{- arch-tag: Command utilities main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+-- arch-tag: Command utilities main file
+{-
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,6 +39,10 @@ where
 
 -- FIXME - largely obsoleted by 6.4 - convert to wrappers.
 
+#ifdef __HUGS__
+ERROR -- This module is not compatible with Hugs.
+#endif
+
 import System.Exit
 import System.Cmd
 import MissingH.Logging.Logger
@@ -45,6 +50,7 @@ import System.Posix.IO
 import System.Posix.Process
 import System.Posix.Types
 import System.IO
+
 import qualified System.Posix.Signals
 
 data PipeMode = ReadFromPipe | WriteToPipe
@@ -130,7 +136,7 @@ pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
        -> FilePath                      -- ^ Command to run
        -> [String]                      -- ^ Command args
        -> (ProcessID -> IO a)           -- ^ Action to run in parent
-       -> IO ()                         -- ^ Action to run in child before execing (if you don't need something, set this to @return ()@)
+       -> IO ()                         -- ^ Action to run in child before execing (if you don't need something, set this to @return ()@) -- IGNORED IN HUGS
        -> IO a
 pOpen3 pin pout perr fp args func childfunc = 
     let mayberedir Nothing _ = return ()
