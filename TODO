@@ -1,5 +1,7 @@
 arch-tag: TODO file
 
+Cmd: pOpenBoth -- read and write, use forkIO for one of them
+
 Printf:
  make %H work 
 

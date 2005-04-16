@@ -101,7 +101,7 @@ pOpen :: PipeMode -> FilePath -> [String] ->
 pOpen pm fp args func =
         do
         pipepair <- createPipe
-        debugM (logbase ++ ".pOpen3")
+        debugM (logbase ++ ".pOpen")
                ("Running: " ++ fp ++ " " ++ (show args))
         case pm of
          ReadFromPipe -> do
