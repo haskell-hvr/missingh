@@ -30,6 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  Command invocation utilities.
 
 Written by John Goerzen, jgoerzen\@complete.org
+
+Please note: Most of this module is not compatible with Hugs.
 -}
 
 module MissingH.Cmd(-- * High-Level Tools
@@ -46,8 +48,6 @@ module MissingH.Cmd(-- * High-Level Tools
 where
 
 -- FIXME - largely obsoleted by 6.4 - convert to wrappers.
-
--- Note: This module is not compatible with Hugs.
 
 import System.Exit
 import System.Cmd
@@ -106,24 +106,30 @@ pipeLinesFrom fp args =
     do (pid, c) <- pipeFrom fp args
        return $ (pid, lines c)
 
+logRunning func fp args = debugM (logbase ++ "." ++ func) (showCmd fp args)
+warnFail funcname fp args msg =
+    let m = showCmd fp args ++ ": " ++ msg
+        in do warningM (logbase ++ "." ++ funcname) m
+              fail m
+
 {- | Read data from a pipe.  Returns a lazy string and a ProcessID.
 
 ONLY AFTER the string has been read completely, You must call either
-'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the ProcessID.
+'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the 'PipeHandle'.
 Zombies will result otherwise.
 -}
 pipeFrom :: FilePath -> [String] -> IO (PipeHandle, String)
 pipeFrom fp args =
     do pipepair <- createPipe
-       debugM (logbase ++ ".pipeFrom")
-              ("Running: " ++ fp ++ " " ++ (show args))
+       logRunning "pipeFrom" fp args
        let childstuff = do dupTo (snd pipepair) stdOutput
                            executeFile fp True args Nothing
        p <- try (forkProcess childstuff)
        -- parent
        pid <- case p of
-                     Right x -> return x
-                     Left e -> fail $ "Error in fork: " ++ show e
+                  Right x -> return x
+                  Left e -> warnFail "pipeFrom" fp args $ 
+                            "Error in fork: " ++ show e
        closeFd (snd pipepair)
        h <- fdToHandle (fst pipepair)
        c <- hGetContents h
@@ -138,15 +144,15 @@ Zombies will result otherwise.
 pipeTo :: FilePath -> [String] -> String -> IO PipeHandle
 pipeTo fp args message =
     do pipepair <- createPipe
-       debugM (logbase ++ ".pipeto")
-              ("Running: " ++ fp ++ " " ++ show args)
+       logRunning "pipeTo" fp args
        let childstuff = do dupTo (fst pipepair) stdInput
                            executeFile fp True args Nothing
        p <- try (forkProcess childstuff)
        -- parent
        pid <- case p of
-                     Right x -> return x
-                     Left e -> fail $ "Error in fork: " ++ show e
+                   Right x -> return x
+                   Left e -> warnFail "pipeTo" fp args $ 
+                             "Error in fork: " ++ show e
        closeFd (fst pipepair)
        h <- fdToHandle (snd pipepair)
        finally (hPutStr h message)
@@ -158,20 +164,20 @@ to send data to the piped program, and simultaneously returns its output
 stream.
 
 The same caveat about checking the return status applies here as with 'pipeFrom'. -}
-pipeBoth :: FilePath -> [String] -> String -> IO (ProcessID, String)
+pipeBoth :: FilePath -> [String] -> String -> IO (PipeHandle, String)
 pipeBoth fp args message =
     do frompair <- createPipe
        topair <- createPipe
-       debugM (logbase ++ ".pipeBoth")
-              ("Running: " ++ fp ++ " " ++ show args)
+       logRunning "pipeBoth" fp args
        let childstuff = do dupTo (snd frompair) stdOutput
                            dupTo (fst topair) stdInput
                            executeFile fp True args Nothing
        p <- try (forkProcess childstuff)
        -- parent
        pid <- case p of
-                     Right x -> return x
-                     Left e -> fail $ "Error in fork: " ++ show e
+                   Right x -> return x
+                   Left e -> warnFail "pipeBoth" fp args $
+                             "Error in fork: " ++ show e
        closeFd (snd frompair)
        closeFd (fst topair)
        fromh <- fdToHandle (fst frompair)
@@ -188,24 +194,17 @@ Otherwise, raises an exception with an appropriate error message.
 This call will block waiting for the given pid to terminate. -}
 forceSuccess :: PipeHandle -> IO ()
 forceSuccess (PipeHandle pid fp args funcname) =
-    let errormsg = case errormsg_m of
-                                 Just x -> ": " ++ x
-                                 Nothing -> ""
-        warnfail msg = 
-            let m = msg ++ " from " ++ showCmd fp args
-                  in do warnM (logbase ++ "." ++ funcname) m
-                        fail m
+    let warnfail = warnFail funcname
         in do status <- getProcessStatus True False pid
               case status of
-                Nothing -> warnfail $ "Got no process status"
+                Nothing -> warnfail fp args $ "Got no process status"
                 Just (Exited (ExitSuccess)) -> return ()
                 Just (Exited (ExitFailure fc)) -> 
-                    warnfail $ "Exit failure code " ++ (show fc)
+                    cmdfailed funcname fp args fc
                 Just (Terminated sig) -> 
-                    warnfail $ "Terminated by signal " ++ show sig
+                    warnfail fp args $ "Terminated by signal " ++ show sig
                 Just (Stopped sig) -> 
-                    warnfail $ "Stopped by signal " ++ show sig 
-
+                    warnfail fp args $ "Stopped by signal " ++ show sig 
 
 safeSystem :: FilePath -> [String] -> IO ()
 safeSystem command args = 
@@ -297,7 +296,7 @@ pOpen3 pin pout perr fp args func childfunc =
                 Left e -> fail ("Error in fork: " ++ (show e))
         retval <- func $! pid
         let rv = seq retval retval
-        forceSuccess (seq retval pid) $ Just $ fp ++ " " ++ show args
+        forceSuccess (PipeHandle (seq retval pid) fp args "pOpen3")
         return rv
 
 showCmd :: FilePath -> [String] -> String
