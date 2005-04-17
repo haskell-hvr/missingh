@@ -32,7 +32,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Written by John Goerzen, jgoerzen\@complete.org
 
 Please note: Most of this module is not compatible with Hugs.
+
+Command lines executed will be logged using "MissingH.Logging.Logger" at the
+DEBUG level.  Failure messages will be logged at the WARNING level in addition
+to being raised as an exception.  Both are logged under
+\"MissingH.Cmd.funcname\" -- for instance,
+\"MissingH.Cmd.safeSystem\".  If you wish to suppress these messages
+globally, you can simply run:
+
+> updateGlobalLogger "MissingH.Cmd.safeSystem"
+>                     (setLevel CRITICAL)
+
+See also: 'MissingH.Logging.Logger.updateGlobalLogger',
+"MissingH.Logging.Logger".
+
 -}
+
 
 module MissingH.Cmd(-- * High-Level Tools
                     PipeHandle(..),
@@ -64,25 +79,6 @@ import qualified System.Posix.Signals
 data PipeMode = ReadFromPipe | WriteToPipe
 
 logbase = "MissingH.Cmd"
-
-{- | Invokes the specified command in a subprocess, waiting for the result.
-If the command terminated successfully, return normally.  Otherwise,
-raises a userError with the problem.
-
-Command lines executed will be logged using "MissingH.Logging.Logger" at the
-DEBUG level.  Failure messages will be logged at the WARNING level in addition
-to being raised as an exception.  Both are logged under
-\"MissingH.Cmd.funcname\" -- for instance,
-\"MissingH.Cmd.safeSystem\".  If you wish to suppress these messages
-globally, you can simply run:
-
-> updateGlobalLogger "MissingH.Cmd.safeSystem"
->                     (setLevel CRITICAL)
-
-See also: 'MissingH.Logging.Logger.updateGlobalLogger',
-"MissingH.Logging.Logger".
-
--}
 
 {- | Return value from 'pipeFrom', 'pipeLinesFrom', 'pipeTo', or
 'pipeBoth'.  Contains both a ProcessID and the original command that was
@@ -156,7 +152,7 @@ pipeTo fp args message =
        closeFd (fst pipepair)
        h <- fdToHandle (snd pipepair)
        finally (hPutStr h message)
-               (hClose h)
+               (hClose h >> closeFd (snd pipepair))
        return (PipeHandle pid fp args "pipeTo")
 
 {- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
@@ -183,7 +179,7 @@ pipeBoth fp args message =
        fromh <- fdToHandle (fst frompair)
        toh <- fdToHandle (snd topair)
        forkIO $ finally (hPutStr toh message)
-                        (hClose toh)
+                        (hClose toh >> closeFd (snd topair))
        c <- hGetContents fromh
        return (PipeHandle pid fp args "pipeBoth", c)
 
@@ -206,6 +202,10 @@ forceSuccess (PipeHandle pid fp args funcname) =
                 Just (Stopped sig) -> 
                     warnfail fp args $ "Stopped by signal " ++ show sig 
 
+{- | Invokes the specified command in a subprocess, waiting for the result.
+If the command terminated successfully, return normally.  Otherwise,
+raises a userError with the problem.
+-}
 safeSystem :: FilePath -> [String] -> IO ()
 safeSystem command args = 
     do
