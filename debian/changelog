@@ -1,3 +1,9 @@
+missingh (0.10.4) unstable; urgency=low
+
+  * Reworking and bugfixing of the new pipe functions in MissingH.Cmd.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sun, 17 Apr 2005 10:09:24 -0500
+
 missingh (0.10.3) unstable; urgency=low
 
   * Added new pipe functions to MissingH.Cmd.
