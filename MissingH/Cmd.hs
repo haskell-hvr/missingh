@@ -32,9 +32,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Cmd(PipeMode(..),
+module MissingH.Cmd(-- * High-Level Tools
                     safeSystem,
-                   pOpen, pOpen3)
+                    forceSuccess,
+                    pipeFrom,
+                    -- * Low-Level Tools
+                    PipeMode(..),
+                    pOpen, pOpen3)
 where
 
 -- FIXME - largely obsoleted by 6.4 - convert to wrappers.
@@ -73,6 +77,53 @@ See also: 'MissingH.Logging.Logger.updateGlobalLogger',
 "MissingH.Logging.Logger".
 
 -}
+
+{- | Read data from a pipe.  Returns a lazy string and a ProcessID.
+
+ONLY AFTER the string has been read completely, you must call either
+'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the ProcessID.
+Zombies will result otherwise.
+-}
+pipeFrom :: FilePath -> [String] -> IO (ProcessID, String)
+pipeFrom fp args =
+    do pipepair <- createPipe
+       debugM (logbase ++ ".pipeFrom")
+              ("Running: " ++ fp ++ " " ++ (show args))
+       let childstuff = do dupTo (snd pipepair) stdOutput
+                           executeFile fp True args Nothing
+       p <- try (forkProcess childstuff)
+       -- parent
+       pid <- case p of
+                     Right x -> return x
+                     Left e -> fail $ "Error in fork: " ++ show e
+       closeFd (snd pipepair)
+       h <- fdToHandle (fst pipepair)
+       c <- hGetContents h
+       return (pid, c)
+
+{- | Uses 'System.Posix.Process.getProcessStatus' to obtain the exit status
+of the given process ID.  If the process terminated normally, does nothing.
+Otherwise, raises an exception with an appropriate error message.  If error
+text is given, it is appended to the error message in the exception.
+
+This call will block waiting for the given pid to terminate. -}
+forceSuccess :: ProcessID -> Maybe String -> IO ()
+forceSuccess pid errormsg_m =
+    let errormsg = case errormsg_m of
+                                 Just x -> ": " ++ x
+                                 Nothing -> ""
+        in do status <- getProcessStatus True False pid
+              case status of
+                Nothing -> fail $ "Got no process status" ++ errormsg
+                Just (Exited (ExitSuccess)) -> return ()
+                Just (Exited (ExitFailure fc)) -> fail $ "Exit failure code " ++ 
+                                                  (show fc) ++ errormsg
+                Just (Terminated sig) -> fail $ "Terminated by signal " ++ show sig ++
+                                         errormsg
+                Just (Stopped sig) -> fail $ "Stopped by signal " ++ show sig ++
+                                      errormsg
+
+
 
 safeSystem :: FilePath -> [String] -> IO ()
 safeSystem command args = 
@@ -164,10 +215,6 @@ pOpen3 pin pout perr fp args func childfunc =
                 Left e -> fail ("Error in fork: " ++ (show e))
         retval <- func $! pid
         let rv = seq retval retval
-        status <- getProcessStatus True False $! (seq retval pid)
-        case status of
-           Nothing -> fail "Got no process status back"
-           Just (Exited (ExitSuccess)) -> return rv
-           Just (Exited (ExitFailure fc)) -> cmdfailed "pOpen3" fp args fc
-           Just (Terminated sig) -> fail ("Command terminated by signal" ++ show sig)
-           Just (Stopped sig) -> fail ("Command stopped by signal" ++ show sig)
+        forceSuccess (seq retval pid) $ Just $ fp ++ " " ++ show args
+        return rv
+
