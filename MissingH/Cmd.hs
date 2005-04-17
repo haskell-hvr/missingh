@@ -39,9 +39,7 @@ where
 
 -- FIXME - largely obsoleted by 6.4 - convert to wrappers.
 
-#ifdef __HUGS__
-ERROR -- This module is not compatible with Hugs.
-#endif
+-- Note: This module is not compatible with Hugs.
 
 import System.Exit
 import System.Cmd
