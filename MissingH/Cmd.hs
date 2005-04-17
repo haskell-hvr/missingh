@@ -119,6 +119,7 @@ pipeFrom fp args =
     do pipepair <- createPipe
        logRunning "pipeFrom" fp args
        let childstuff = do dupTo (snd pipepair) stdOutput
+                           closeFd (fst pipepair)
                            executeFile fp True args Nothing
        p <- try (forkProcess childstuff)
        -- parent
@@ -142,6 +143,7 @@ pipeTo fp args message =
     do pipepair <- createPipe
        logRunning "pipeTo" fp args
        let childstuff = do dupTo (fst pipepair) stdInput
+                           closeFd (snd pipepair)
                            executeFile fp True args Nothing
        p <- try (forkProcess childstuff)
        -- parent
@@ -152,7 +154,7 @@ pipeTo fp args message =
        closeFd (fst pipepair)
        h <- fdToHandle (snd pipepair)
        finally (hPutStr h message)
-               (hClose h >> closeFd (snd pipepair))
+               (hClose h)
        return (PipeHandle pid fp args "pipeTo")
 
 {- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
@@ -166,7 +168,9 @@ pipeBoth fp args message =
        topair <- createPipe
        logRunning "pipeBoth" fp args
        let childstuff = do dupTo (snd frompair) stdOutput
+                           closeFd (fst frompair)
                            dupTo (fst topair) stdInput
+                           closeFd (snd topair)
                            executeFile fp True args Nothing
        p <- try (forkProcess childstuff)
        -- parent
@@ -179,7 +183,7 @@ pipeBoth fp args message =
        fromh <- fdToHandle (fst frompair)
        toh <- fdToHandle (snd topair)
        forkIO $ finally (hPutStr toh message)
-                        (hClose toh >> closeFd (snd topair))
+                        (hClose toh)
        c <- hGetContents fromh
        return (PipeHandle pid fp args "pipeBoth", c)
 
