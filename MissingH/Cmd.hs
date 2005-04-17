@@ -33,6 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.Cmd(-- * High-Level Tools
+                    PipeHandle(..),
                     safeSystem,
                     forceSuccess,
                     pipeFrom,
@@ -83,9 +84,24 @@ See also: 'MissingH.Logging.Logger.updateGlobalLogger',
 
 -}
 
+{- | Return value from 'pipeFrom', 'pipeLinesFrom', 'pipeTo', or
+'pipeBoth'.  Contains both a ProcessID and the original command that was
+executed.  If you prefer not to use 'forceSuccess' on the result of one
+of these pipe calls, you can use (processID ph), assuming ph is your 'PipeHandle',
+as a parameter to 'System.Posix.Process.getProcessStatus'. -}
+data PipeHandle = 
+    PipeHandle { processID :: ProcessID,
+                 phCommand :: FilePath,
+                 phArgs :: [String],
+                 phCreator :: String -- ^ Function that created it
+               }
+    deriving (Eq, Show)
+
 {- | Like 'pipeFrom', but returns data in lines instead of just a String.
-Shortcut for calling lines on the result from 'pipeFrom'. -}
-pipeLinesFrom :: FilePath -> [String] -> IO (ProcessID, [String])
+Shortcut for calling lines on the result from 'pipeFrom'.
+
+Note: this function logs as pipeFrom. -}
+pipeLinesFrom :: FilePath -> [String] -> IO (PipeHandle, [String])
 pipeLinesFrom fp args =
     do (pid, c) <- pipeFrom fp args
        return $ (pid, lines c)
@@ -96,7 +112,7 @@ ONLY AFTER the string has been read completely, You must call either
 'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the ProcessID.
 Zombies will result otherwise.
 -}
-pipeFrom :: FilePath -> [String] -> IO (ProcessID, String)
+pipeFrom :: FilePath -> [String] -> IO (PipeHandle, String)
 pipeFrom fp args =
     do pipepair <- createPipe
        debugM (logbase ++ ".pipeFrom")
@@ -111,7 +127,7 @@ pipeFrom fp args =
        closeFd (snd pipepair)
        h <- fdToHandle (fst pipepair)
        c <- hGetContents h
-       return (pid, c)
+       return (PipeHandle pid fp args "pipeFrom", c)
 
 {- | Write data to a pipe.  Returns a ProcessID.
 
@@ -119,7 +135,7 @@ You must call either
 'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the ProcessID.
 Zombies will result otherwise.
 -}
-pipeTo :: FilePath -> [String] -> String -> IO ProcessID
+pipeTo :: FilePath -> [String] -> String -> IO PipeHandle
 pipeTo fp args message =
     do pipepair <- createPipe
        debugM (logbase ++ ".pipeto")
@@ -135,7 +151,7 @@ pipeTo fp args message =
        h <- fdToHandle (snd pipepair)
        finally (hPutStr h message)
                (hClose h)
-       return pid
+       return (PipeHandle pid fp args "pipeTo")
 
 {- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
 to send data to the piped program, and simultaneously returns its output
@@ -163,30 +179,32 @@ pipeBoth fp args message =
        forkIO $ finally (hPutStr toh message)
                         (hClose toh)
        c <- hGetContents fromh
-       return (pid, c)
+       return (PipeHandle pid fp args "pipeBoth", c)
 
 {- | Uses 'System.Posix.Process.getProcessStatus' to obtain the exit status
 of the given process ID.  If the process terminated normally, does nothing.
-Otherwise, raises an exception with an appropriate error message.  If error
-text is given, it is appended to the error message in the exception.
+Otherwise, raises an exception with an appropriate error message.
 
 This call will block waiting for the given pid to terminate. -}
-forceSuccess :: ProcessID -> Maybe String -> IO ()
-forceSuccess pid errormsg_m =
+forceSuccess :: PipeHandle -> IO ()
+forceSuccess (PipeHandle pid fp args funcname) =
     let errormsg = case errormsg_m of
                                  Just x -> ": " ++ x
                                  Nothing -> ""
+        warnfail msg = 
+            let m = msg ++ " from " ++ showCmd fp args
+                  in do warnM (logbase ++ "." ++ funcname) m
+                        fail m
         in do status <- getProcessStatus True False pid
               case status of
-                Nothing -> fail $ "Got no process status" ++ errormsg
+                Nothing -> warnfail $ "Got no process status"
                 Just (Exited (ExitSuccess)) -> return ()
-                Just (Exited (ExitFailure fc)) -> fail $ "Exit failure code " ++ 
-                                                  (show fc) ++ errormsg
-                Just (Terminated sig) -> fail $ "Terminated by signal " ++ show sig ++
-                                         errormsg
-                Just (Stopped sig) -> fail $ "Stopped by signal " ++ show sig ++
-                                      errormsg
-
+                Just (Exited (ExitFailure fc)) -> 
+                    warnfail $ "Exit failure code " ++ (show fc)
+                Just (Terminated sig) -> 
+                    warnfail $ "Terminated by signal " ++ show sig
+                Just (Stopped sig) -> 
+                    warnfail $ "Stopped by signal " ++ show sig 
 
 
 safeSystem :: FilePath -> [String] -> IO ()
@@ -282,3 +300,6 @@ pOpen3 pin pout perr fp args func childfunc =
         forceSuccess (seq retval pid) $ Just $ fp ++ " " ++ show args
         return rv
 
+showCmd :: FilePath -> [String] -> String
+showCmd fp args =
+    fp ++ " " ++ show args
