@@ -36,6 +36,9 @@ module MissingH.Cmd(-- * High-Level Tools
                     safeSystem,
                     forceSuccess,
                     pipeFrom,
+                    pipeLinesFrom,
+                    pipeTo,
+                    pipeBoth,
                     -- * Low-Level Tools
                     PipeMode(..),
                     pOpen, pOpen3)
@@ -52,6 +55,8 @@ import System.Posix.IO
 import System.Posix.Process
 import System.Posix.Types
 import System.IO
+import Control.Concurrent(forkIO)
+import Control.Exception(finally)
 
 import qualified System.Posix.Signals
 
@@ -78,9 +83,16 @@ See also: 'MissingH.Logging.Logger.updateGlobalLogger',
 
 -}
 
+{- | Like 'pipeFrom', but returns data in lines instead of just a String.
+Shortcut for calling lines on the result from 'pipeFrom'. -}
+pipeLinesFrom :: FilePath -> [String] -> IO (ProcessID, [String])
+pipeLinesFrom fp args =
+    do (pid, c) <- pipeFrom fp args
+       return $ (pid, lines c)
+
 {- | Read data from a pipe.  Returns a lazy string and a ProcessID.
 
-ONLY AFTER the string has been read completely, you must call either
+ONLY AFTER the string has been read completely, You must call either
 'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the ProcessID.
 Zombies will result otherwise.
 -}
@@ -99,6 +111,58 @@ pipeFrom fp args =
        closeFd (snd pipepair)
        h <- fdToHandle (fst pipepair)
        c <- hGetContents h
+       return (pid, c)
+
+{- | Write data to a pipe.  Returns a ProcessID.
+
+You must call either
+'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the ProcessID.
+Zombies will result otherwise.
+-}
+pipeTo :: FilePath -> [String] -> String -> IO ProcessID
+pipeTo fp args message =
+    do pipepair <- createPipe
+       debugM (logbase ++ ".pipeto")
+              ("Running: " ++ fp ++ " " ++ show args)
+       let childstuff = do dupTo (fst pipepair) stdInput
+                           executeFile fp True args Nothing
+       p <- try (forkProcess childstuff)
+       -- parent
+       pid <- case p of
+                     Right x -> return x
+                     Left e -> fail $ "Error in fork: " ++ show e
+       closeFd (fst pipepair)
+       h <- fdToHandle (snd pipepair)
+       finally (hPutStr h message)
+               (hClose h)
+       return pid
+
+{- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
+to send data to the piped program, and simultaneously returns its output
+stream.
+
+The same caveat about checking the return status applies here as with 'pipeFrom'. -}
+pipeBoth :: FilePath -> [String] -> String -> IO (ProcessID, String)
+pipeBoth fp args message =
+    do frompair <- createPipe
+       topair <- createPipe
+       debugM (logbase ++ ".pipeBoth")
+              ("Running: " ++ fp ++ " " ++ show args)
+       let childstuff = do dupTo (snd frompair) stdOutput
+                           dupTo (fst topair) stdInput
+                           executeFile fp True args Nothing
+       p <- try (forkProcess childstuff)
+       -- parent
+       pid <- case p of
+                     Right x -> return x
+                     Left e -> fail $ "Error in fork: " ++ show e
+       closeFd (snd frompair)
+       closeFd (fst topair)
+       fromh <- fdToHandle (fst frompair)
+       toh <- fdToHandle (snd topair)
+       forkIO $ finally (hPutStr toh message)
+                        (hClose toh)
+       c <- hGetContents fromh
        return (pid, c)
 
 {- | Uses 'System.Posix.Process.getProcessStatus' to obtain the exit status
