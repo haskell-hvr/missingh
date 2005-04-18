@@ -72,7 +72,8 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Wash.Utility.Unique,
   MissingH.AnyDBM,
     MissingH.AnyDBM.FiniteMapDBM,
-    MissingH.AnyDBM.StringDBM
+    MissingH.AnyDBM.StringDBM,
+  MissingH.GetOpt
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances, CPP
 -- CPP extension is really only needed in FiniteMap.hs
