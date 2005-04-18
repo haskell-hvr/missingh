@@ -38,7 +38,8 @@ module MissingH.List(-- * Tests
                      association list functions in "Data.List" and
                      provide an interface similar to "Data.FiniteMap"
                      for association lists. -}
-                     addToAL, delFromAL, flipAL,
+                     addToAL, delFromAL, flipAL, keysAL, valuesAL,
+                     hasKeyAL,
                      -- ** Association List Conversions
                      strFromAL,
                      strToAL,
@@ -194,6 +195,30 @@ addToAL l key value = (key, value) : delFromAL l key
 matches the given one. -}
 delFromAL :: Eq key => [(key, a)] -> key -> [(key, a)]
 delFromAL l key = filter (\a -> (fst a) /= key) l
+
+{- | Returns the keys that comprise the (key, value) pairs of the given AL.
+
+Same as:
+
+>map fst
+-}
+keysAL :: [(key, a)] -> [key]
+keysAL = map fst
+
+{- | Returns the values the comprise the (key, value) pairs of the given
+AL.
+
+Same as:
+
+>map snd
+-}
+valuesAL :: [(a, value)] -> [value]
+valuesAL = map snd
+
+{- | Indicates whether or not the given key is in the AL. -}
+hasKeyAL :: Eq a => a -> [(a, b)] -> Bool
+hasKeyAL key list =
+    elem key (keysAL list)
 
 {- | Flips an association list.  Converts (key1, val), (key2, val) pairs
 to (val, [key1, key2]). -}
