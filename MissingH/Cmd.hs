@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable to platforms with POSIX process/signal tools
 
- Command invocation utilities.
+Command invocation utilities.
 
 Written by John Goerzen, jgoerzen\@complete.org
 
@@ -46,6 +46,28 @@ globally, you can simply run:
 See also: 'MissingH.Logging.Logger.updateGlobalLogger',
 "MissingH.Logging.Logger".
 
+It is possible to set up pipelines with these utilities.  Example:
+
+> (pid1, x1) <- pipeFrom "ls" ["/etc"]
+> (pid2, x2) <- pipeBoth "grep" ["x"] x1
+> putStr x2
+> ... the grep output is displayed ...
+> forceSuccess pid2
+> forceSuccess pid1
+
+Remember, when you use the functions that return a String, you must not call
+'forceSuccess' until after all data from the String has been consumed.  Failure
+to wait will cause your program to appear to hang.
+
+Here is an example of the wrong way to do it:
+
+> (pid, x) <- pipeFrom "ls" ["/etc"]
+> forceSuccess pid         -- Hangs; the called program hasn't terminated yet
+> processTheData x
+
+You must instead process the data before calling 'forceSuccess'.
+
+When using the hPipe family of functions, this is probably more obvious.
 -}
 
 
