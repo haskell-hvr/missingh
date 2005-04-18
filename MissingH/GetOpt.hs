@@ -31,12 +31,21 @@ Written by John Goerzen, jgoerzen\@complete.org
 Utilities for command-line parsing, including wrappers around
 the standard System.Console.GetOpt module.
 -}
-module MissingH.GetOpt (
+module MissingH.GetOpt (parseCmdLine,
+                        validateCmdLine
                        )
 where
 import System.Console.GetOpt
 import System.Environment
 
+{- | Simple command line parser -- a basic wrapper around the system's
+default getOpt.  See the System.Console.GetOpt manual for a description of the
+first two parameters.
+
+The third parameter is a usage information header.
+
+The return value consists of the list of parsed flags and a list of
+non-option arguments. -}
 parseCmdLine :: ArgOrder a -> [OptDescr a] -> String -> IO ([a], [String])
 parseCmdLine order options header = 
     do argv <- getArgs
@@ -44,3 +53,21 @@ parseCmdLine order options header =
          (o, n, []) -> return (o, n)
          (_, _, errors) -> ioError (userError (concat errors ++ 
                                                usageInfo header options))
+
+{- | Similar to 'parseCmdLine', but takes an additional function that validates
+the post-parse command-line arguments.  This is useful, for example, in
+situations where there are two arguments that are mutually-exclusive and only
+one may legitimately be given at a time.
+
+The return value of the function indicates whether or not it detected an
+error condition.  If it returns Nothing, there is no error.  If it returns
+Just String, there was an error, described by the String.
+-}
+validateCmdLine :: ArgOrder a -> [OptDescr a] -> String ->
+                   (([a],[String]) -> Maybe String) -> IO ([a], [String])
+validateCmdLine order options header func =
+    do res <- parseCmdLine order options header
+       case func res of
+         Nothing -> return res
+         Just error -> ioError (userError (concat [error] ++
+                                           usageInfo header options))
