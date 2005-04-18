@@ -32,7 +32,10 @@ Utilities for command-line parsing, including wrappers around
 the standard System.Console.GetOpt module.
 -}
 module MissingH.GetOpt (parseCmdLine,
-                        validateCmdLine
+                        validateCmdLine,
+                        StdOption,
+                        stdRequired,
+                        stdOptional
                        )
 where
 import System.Console.GetOpt
@@ -71,3 +74,21 @@ validateCmdLine order options header func =
          Nothing -> return res
          Just error -> ioError (userError (concat [error] ++
                                            usageInfo header options))
+
+{- | A type to standardize some common uses of GetOpt.
+
+The first component of the tuple is the long name of the option.
+
+The second component is empty if there is no arg, or has the arg otherwise. -}
+type StdOption = (String, String)
+
+{- | Handle a required argument. -}
+stdRequired :: String           -- ^ Name of arg
+            -> String -> StdOption
+stdRequired name value = (name, value)
+
+{- | Handle an optional argument. -}
+stdOptional :: String           -- ^ Name of arg
+               -> Maybe String -> StdOption
+stdOptional name Nothing = (name, "")
+stdOptional name (Just x) = (name, x)
