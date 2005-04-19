@@ -1,3 +1,9 @@
+missingh (0.10.7) unstable; urgency=low
+
+  * Fixed MissingH.Debian.ControlParser to ignore PGP sigs.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 18 Apr 2005 20:39:58 -0500
+
 missingh (0.10.6) unstable; urgency=low
 
   * New module: MissingH.GetOpt.
