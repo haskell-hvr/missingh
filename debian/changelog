@@ -1,3 +1,10 @@
+missingh (0.10.6) unstable; urgency=low
+
+  * New module: MissingH.GetOpt.
+  * New AL utilities in MissingH.List.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 18 Apr 2005 14:01:52 -0500
+
 missingh (0.10.5) unstable; urgency=low
 
   * Yet more features in MissingH.Cmd.  This time, added hPipe*.
