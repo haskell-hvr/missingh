@@ -54,7 +54,7 @@ entry = do key <- many1 (noneOf ":\r\n")
            return (key, unlines ([val] ++ exts))
 
 {- | Main parser for the control file -}
-control :: CharParser [(String, String)]
+control :: CharParser a [(String, String)]
 control = do many header
              retval <- many entry
              return retval
@@ -70,8 +70,12 @@ headerHash = do string "Hash: "
                 return ()
 header = (try headerPGP) <|> (try blankLine) <|> (try headerHash)
 
-{- | Dependency parser. -}
-depPart :: CharParser (String, Maybe (String, String, [String]))
+{- | Dependency parser. 
+
+Returns (package name, Maybe version, arch list
+
+version is (operator, operand) -}
+depPart :: CharParser a (String, (Maybe (String, String)), [String])
 depPart = do packagename <- many1 (noneOf " (")
              many (char ' ')
              version <- (do char '('
