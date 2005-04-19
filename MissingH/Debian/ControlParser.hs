@@ -55,14 +55,14 @@ entry = do key <- many1 (noneOf ":\r\n")
 
 {- | Main parser for the control file -}
 control :: CharParser [(String, String)]
-control = do many0 header
+control = do many header
              retval <- many entry
              return retval
 
 headerPGP = do string "-----BEGIN PGP"
                manyTill (noneOf "\r\n") eol
                return ()
-blankLine = do many0 (oneOf " \t")
+blankLine = do many (oneOf " \t")
                eol
                return ()
 headerHash = do string "Hash: "
