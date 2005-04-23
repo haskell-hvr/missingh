@@ -1,3 +1,9 @@
+missingh (0.10.7.sarge.2) unstable; urgency=high
+
+  * Fixed build-depends-indep from 0.10.7.sarge.1.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 22 Apr 2005 21:37:42 -0500
+
 missingh (0.10.7.sarge.1) unstable; urgency=high
 
   * Back out hugs code so we can get it into sarge and fix a FTBFS in sarge.
