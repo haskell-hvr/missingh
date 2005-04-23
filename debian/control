@@ -26,7 +26,7 @@ Description: Library of utility functions for Haskell, GHC6 package
 Package: libhugs-missingh
 Section: devel
 Architecture: all
-Depends: hugs98 (>= 98.200311), hugs98 (<< 98.200503)
+Depends: ${haskell:Depends}
 Suggests: missingh-doc
 Description: Library of utility functions for Haskell, Hugs package 
  MissingH is a library of all sorts of utility functions for
