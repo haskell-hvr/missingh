@@ -1,3 +1,12 @@
+missingh (0.10.7.sarge.1) unstable; urgency=high
+
+  * Back out hugs code so we can get it into sarge and fix a FTBFS in sarge.
+    Closes: #305901.
+  * After this propogates to sarge, I will upload 0.10.8 to sid that will
+    restore the updates to work with the hugs in sid.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 22 Apr 2005 15:41:48 -0500
+
 missingh (0.10.7) unstable; urgency=low
 
   * Fixed MissingH.Debian.ControlParser to ignore PGP sigs.
