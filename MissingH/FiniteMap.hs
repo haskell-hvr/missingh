@@ -1,6 +1,5 @@
--- arch-tag: FiniteMap utilities main file
-{-# LANGUAGE CPP #-}
-{- Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+{- arch-tag: FiniteMap utilities main file
+Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.FiniteMap
-   Copyright  : Copyright (C) 2004-2005 John Goerzen
+   Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen, 
@@ -32,8 +31,7 @@ This module provides various helpful utilities for dealing with FiniteMaps.
 Written by John Goerzen, jgoerzen\@complete.org
 
 In addition to the functions exported, this module also makes a FiniteMap
-showable on GHC prior to 6.4.  (GHC 6.4 and current Hugs versions have it
-showable already).
+showable.
 -}
 
 module MissingH.FiniteMap (-- * Basic Utilities
@@ -88,13 +86,9 @@ flippedLookupFM fm v =
                                 Nothing -> []
                                 Just x -> x
 
-#if __GLASGOW_HASKELL__ >= 630 || __HUGS__
-{- FiniteMap is already showable on this platform -}
-#else
 {- | Makes a FiniteMap showable. -}
 instance (Show a, Show b) => Show (FiniteMap a b) where
     show fm = show (fmToList fm)
-#endif
 
 {- | Performs a lookup, and raises an exception (with an error message
 prepended with the given string) if the key could not be found.
