@@ -83,7 +83,7 @@ installdocs: builddocs
 	dh_installdirs -i
 
 	dh_haskell -i
-	#make test-hugs
+	make test-hugs
 
 # Build architecture-independent files here.
 binary-indep: builddocs installdocs
