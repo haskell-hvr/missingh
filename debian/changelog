@@ -1,3 +1,10 @@
+missingh (0.10.8) unstable; urgency=low
+
+  * Added more error-checking to ParseDate.
+  * Returned Hugs code to normal sid version.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed, 27 Apr 2005 07:25:54 -0500
+
 missingh (0.10.7.sarge.2) unstable; urgency=high
 
   * Fixed build-depends-indep from 0.10.7.sarge.1.
