@@ -167,7 +167,9 @@ pCalendarTime l fmt = doFmt fmt
     decode 'B' = (parseEnum $ map fst $ months l) >>= setMonth
     decode 'c' = doFmt (dateTimeFmt l)
     decode 'C' = read2 >>= \c -> updateYear (\y -> c * 100 + y `rem` 100)
-    decode 'd' = read2 >>= setDay
+    decode 'd' = read2 >>= \day -> if day > 31 || day < 1
+                                       then fail $ "Invalid day " ++ (show day)
+                                       else setDay day
     decode 'D' = doFmt "%m/%d/%y"
     decode 'e' = read2 >>= setDay
     decode 'h' = decode 'b'
@@ -176,7 +178,9 @@ pCalendarTime l fmt = doFmt fmt
     decode 'j' = read3 >>= setYDay
     decode 'k' = read2 >>= setHour
     decode 'l' = read2 >>= setHour12
-    decode 'm' = read2 >>= \mon -> setMonth (toEnum (mon-1))
+    decode 'm' = read2 >>= \mon -> if (mon-1) > fromEnum (maxBound :: Month)
+                                      then fail $ "Invalid month " ++ (show mon)
+                                      else setMonth (toEnum (mon-1))
     decode 'M' = read2 >>= setMin
     -- FIXME: strptime(3) accepts "arbitrary whitespace" for %n
     decode 'n' = char '\n' >> return ()
