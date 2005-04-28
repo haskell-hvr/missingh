@@ -13,7 +13,7 @@
    <http://www.faqs.org/rfcs/rfc2821.html>.
 -}
 
-module Text.ParserCombinators.Parsec.Rfc2821 where
+module MissingH.Hsemail.Rfc2821 where
 
 import Control.Exception ( assert )
 #if __GLASGOW_HASKELL__ >= 630 || __HUGS__
@@ -27,7 +27,7 @@ import Text.ParserCombinators.Parsec.Error
 import Data.List ( intersperse )
 import Data.Char ( toLower )
 import Data.Typeable
-import Text.ParserCombinators.Parsec.Rfc2234
+import MissingH.Hsemail.Rfc2234
 
 ----------------------------------------------------------------------
 -- * ESMTP State Machine

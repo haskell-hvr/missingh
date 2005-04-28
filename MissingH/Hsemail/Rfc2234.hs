@@ -14,7 +14,7 @@
    here to avoid conflicts with Parsec's 'char' function.
  -}
 
-module Text.ParserCombinators.Parsec.Rfc2234 where
+module MissingH.Hsemail.Rfc2234 where
 
 import Text.ParserCombinators.Parsec
 import Data.Char ( toUpper, chr, ord )

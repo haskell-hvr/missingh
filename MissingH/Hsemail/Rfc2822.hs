@@ -17,13 +17,13 @@
    example -- are genuinely useful.
 -}
 
-module Text.ParserCombinators.Parsec.Rfc2822 where
+module MissingH.Hsemail.Rfc2822 where
 
 import Text.ParserCombinators.Parsec
 import Data.Char ( ord )
 import Data.List ( intersperse )
 import System.Time
-import Text.ParserCombinators.Parsec.Rfc2234
+import MissingH.Hsemail.Rfc2234
         hiding ( quoted_pair, quoted_string )
 
 -- * Useful parser combinators
