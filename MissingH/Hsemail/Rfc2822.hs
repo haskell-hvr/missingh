@@ -1,6 +1,6 @@
 {- |
-   Module      :  Rfc2822
-   Copyright   :  (c) 2004-10-08 by Peter Simons
+   Module      :  Text.ParserCombinators.Parsec.Rfc2822
+   Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
    Maintainer  :  simons@cryp.to
@@ -17,13 +17,14 @@
    example -- are genuinely useful.
 -}
 
-module MissingH.Hsemail.Rfc2822 where
+module Text.ParserCombinators.Parsec.Rfc2822 where
 
 import Text.ParserCombinators.Parsec
 import Data.Char ( ord )
 import Data.List ( intersperse )
 import System.Time
-import MissingH.Hsemail.Rfc2234 hiding ( quoted_pair, quoted_string )
+import Text.ParserCombinators.Parsec.Rfc2234
+        hiding ( quoted_pair, quoted_string )
 
 -- * Useful parser combinators
 
@@ -940,7 +941,7 @@ obs_text        = do r1 <- many lf
                      return (r1 ++ r2 ++ concat r3)
 
 -- |Match and return the obsolete \"char\" syntax, which - unlike
--- 'chara' - did not allow \"carriage return\" and \"linefeed\".
+-- 'character' - did not allow \"carriage return\" and \"linefeed\".
 
 obs_char        :: CharParser a Char
 obs_char        = satisfy (\c -> ord c `elem` ([0..9] ++ [11,12] ++ [14..127]))
@@ -1202,7 +1203,7 @@ obs_fields      = many (    try (do { r <- obs_from; return (From r) })
                         <|> try (do { r <- obs_resent_cc; return (ResentCc r) })
                         <|> try (do { r <- obs_resent_bcc; return (ResentBcc r) })
                         <|> try (do { r <- obs_resent_mid; return (ResentMessageID r) })
-                        <|> try (do { r <- obs_resent_rply; return (ResentReplyTo r) })
+                        <|> try (do { r <- obs_resent_reply; return (ResentReplyTo r) })
                         <|> try (do { r <- obs_received; return (ObsReceived r) })
                          -- catch all
                         <|> (do { (name,cont) <- obs_optional; return (OptionalField name cont) })
@@ -1369,11 +1370,11 @@ obs_resent_bcc  = obs_header "Bcc" (    try address_list
 obs_resent_mid  :: CharParser a String
 obs_resent_mid  = obs_header "Resent-Message-ID" msg_id
 
--- |Parse a 'resent_reply_to' header line but allow for the obsolete
--- folding syntax.
+-- |Parse a @Resent-Reply-To@ header line but allow for the
+-- obsolete folding syntax.
 
-obs_resent_rply :: CharParser a [String]
-obs_resent_rply = obs_header "Reply-To" address_list
+obs_resent_reply :: CharParser a [String]
+obs_resent_reply = obs_header "Resent-Reply-To" address_list
 
 
 -- ** Obsolete trace fields (section 4.5.7)

@@ -1,42 +1,28 @@
 {- |
-   Module      :  RFC2234
-   Copyright   :  (c) 2004-10-08 by Peter Simons
+   Module      :  Text.ParserCombinators.Parsec.Rfc2234
+   Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
    Maintainer  :  simons@cryp.to
    Stability   :  provisional
    Portability :  portable
 
-   This module provides parsers for the grammar defined in RFC2234,
-   \"Augmented BNF for Syntax Specifications: ABNF\",
-   <http://www.faqs.org/rfcs/rfc2234.html>.
+   This module provides parsers for the grammar defined in
+   RFC2234, \"Augmented BNF for Syntax Specifications:
+   ABNF\", <http://www.faqs.org/rfcs/rfc2234.html>. The
+   terminal called @char@ in the RFC is called 'character'
+   here to avoid conflicts with Parsec's 'char' function.
+ -}
 
-   /Please note/:
-
-   * The terminal called @char@ in the RFC is called 'chara' here to
-     avoid conflict with the function of the same name from Parsec.
--}
-
-module MissingH.Hsemail.Rfc2234
-    ( -- * Parser Combinators
-      caseChar, caseString, manyN, manyNtoM
-
-      -- * Primitive Parsers
-    , alpha, bit, chara, cr, lf, crlf, ctl
-    , dquote, hexdig, htab, lwsp, octet
-    , sp, vchar, wsp, digit
-
-      -- * Useful additions
-    , quoted_pair, quoted_string
-    )
-    where
+module Text.ParserCombinators.Parsec.Rfc2234 where
 
 import Text.ParserCombinators.Parsec
 import Data.Char ( toUpper, chr, ord )
 import Control.Monad ( liftM2 )
 
-
------ Parser Combinators ---------------------------------------------
+----------------------------------------------------------------------
+-- * Parser Combinators
+----------------------------------------------------------------------
 
 -- |Case-insensitive variant of Parsec's 'char' function.
 
@@ -65,8 +51,18 @@ manyNtoM n m p
     | n == 0     = do foldr (<|>) (return []) (map (\x -> try $ count x p) (reverse [1..m]))
     | otherwise  = liftM2 (++) (count n p) (manyNtoM 0 (m-n) p)
 
+-- |Helper function to generate 'Parser'-based instances for
+-- the 'Read' class.
 
------ Primitive Parsers ----------------------------------------------
+parsec2read :: Parser a -> String -> [(a, String)]
+parsec2read f x  = either (error . show) id (parse f' "" x)
+  where
+  f' = do { a <- f; res <- getInput; return [(a,res)] }
+
+
+----------------------------------------------------------------------
+-- * Primitive Parsers
+----------------------------------------------------------------------
 
 -- |Match any character of the alphabet.
 
@@ -81,8 +77,8 @@ bit              = oneOf "01"   <?> "bit ('0' or '1')"
 
 -- |Match any 7-bit US-ASCII character except for NUL (ASCII value 0, that is).
 
-chara           :: CharParser st Char
-chara            = satisfy (\c -> (c >= chr 1) && (c <= chr 127))
+character       :: CharParser st Char
+character        = satisfy (\c -> (c >= chr 1) && (c <= chr 127))
                    <?> "7-bit character excluding NUL"
 
 -- |Match the carriage return character @\\r@.
@@ -160,6 +156,9 @@ vchar            = satisfy (\c -> (c >= chr 33) && (c <= chr 126))
 
 wsp             :: CharParser st Char
 wsp              = sp <|> htab    <?> "white-space"
+
+
+-- ** Useful additions
 
 -- |Match a \"quoted pair\". Any characters (excluding CR and
 -- LF) may be quoted.

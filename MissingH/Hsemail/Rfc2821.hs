@@ -1,62 +1,144 @@
 {-# OPTIONS -fglasgow-exts #-}
 {- |
-   Module      :  Rfc2821
-   Copyright   :  (c) 2004-11-01 by Peter Simons
+   Module      :  Text.ParserCombinators.Parsec.Rfc2821
+   Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
    Maintainer  :  simons@cryp.to
    Stability   :  provisional
-   Portability :  portable
+   Portability :  Haskell 2-pre
 
-   This module exports (1) parsers for the grammars
+   This module exports parser combinators for the grammar
    described in RFC2821, \"Simple Mail Transfer Protocol\",
-   <http://www.faqs.org/rfcs/rfc2821.html>; and (2) an SMTP
-   server state-machine as, well, suggested in the same
-   document.
+   <http://www.faqs.org/rfcs/rfc2821.html>.
 -}
 
-module MissingH.Hsemail.Rfc2821
-  ( -- * Data Types for SMTP Commands
-    SmtpCmd(..), Mailbox(..), nullPath, postmaster
-
-    -- * Data Types for SMTP Replies
-  , SmtpReply(..), SmtpCode(..), SuccessCode(..)
-  , Category(..), reply
-
-    -- * Command Parsers
-  , SmtpParser, smtpCmd, smtpData, rset, quit
-  , ehlo, mail, rcpt, send, soml, saml, vrfy
-  , expn, help, noop, turn, helo
-
-    -- * Argument Parsers
-  , from_path, to_path, path, mailbox, local_part
-  , domain, a_d_l, at_domain, address_literal
-  , ipv4_literal, ipv4addr, subdomain, dot_string
-  , atom, snum, number, word
-
-    -- * SMTP Server State Machine
-  , SmtpdFSM, SessionState(..), Event(..)
-  , smtpdFSM, handleSmtpCmd
-
-    -- * Utility Functions
-  , fixCRLF
-  )
-  where
+module Text.ParserCombinators.Parsec.Rfc2821 where
 
 import Control.Exception ( assert )
+#if __GLASGOW_HASKELL__ >= 630 || __HUGS__
+{- State is defined in Parsec on this platform and including
+Control.Monad.Date gives an error because it becomes ambiguous -}
+#else
 import Control.Monad.State
+#endif
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Error
 import Data.List ( intersperse )
 import Data.Char ( toLower )
 import Data.Typeable
-import MissingH.Hsemail.Rfc2234
+import Text.ParserCombinators.Parsec.Rfc2234
 
------ Smtp Parsers ---------------------------------------------------
+----------------------------------------------------------------------
+-- * ESMTP State Machine
+----------------------------------------------------------------------
 
--- |A parsed SMTP command. You can use 'show' and 'read' to
--- parse and display this data type, but you'll get nicer
--- error messages if you use the 'smtpCmd' parser directly.
+data SessionState
+  = Unknown
+  | HaveHelo
+  | HaveMailFrom
+  | HaveRcptTo
+  | HaveData
+  | HaveQuit
+  deriving (Enum, Bounded, Eq, Ord, Show, Typeable)
+
+data Event
+  = Greeting                    -- ^ reserved for the user
+  | SayHelo       String
+  | SayHeloAgain  String
+  | SayEhlo       String
+  | SayEhloAgain  String
+  | SetMailFrom   Mailbox
+  | AddRcptTo     Mailbox
+  | StartData
+  | Deliver                     -- ^ reserved for the user
+  | NeedHeloFirst
+  | NeedMailFromFirst
+  | NeedRcptToFirst
+  | NotImplemened
+        -- ^ 'Turn', 'Send', 'Soml', 'Saml', 'Vrfy', and 'Expn'.
+  | ResetState
+  | SayOK
+        -- ^ Triggered in case of 'Noop' or when 'Rset' is
+        -- used before we even have a state.
+  | SeeksHelp     String
+        -- ^ The parameter may be @[]@.
+  | Shutdown
+  | SyntaxErrorIn String
+  | Unrecognized  String
+  deriving (Eq, Show)
+
+type SmtpdFSM = State SessionState Event
+
+-- |Parse a line of SMTP dialogue and run 'handleSmtpCmd' to
+-- determine the 'Event'. In case of syntax errors,
+-- 'SyntaxErrorIn' or 'Unrecognized' will be returned.
+-- Inputs must be terminated with 'crlf'. See 'fixCRLF'.
+
+smtpdFSM :: String -> SmtpdFSM
+smtpdFSM str = either
+                 (\_ -> return (Unrecognized str))
+                 (handleSmtpCmd)
+                 (parse smtpCmd "" str)
+
+-- |For those who want to parse the 'SmtpCmd' themselves.
+-- Calling this function in 'HaveQuit' or 'HaveData' will
+-- fail an assertion. If 'assert' is disabled, it will
+-- return respectively 'Shutdown' and 'StartData' again.
+
+handleSmtpCmd :: SmtpCmd -> SmtpdFSM
+handleSmtpCmd cmd = get >>= \st -> match st cmd
+  where
+  match :: SessionState -> SmtpCmd -> SmtpdFSM
+  match HaveQuit     _       = assert (False) (event Shutdown)
+  match HaveData     _       = assert (False) (trans (HaveData, StartData))
+  match    _  (WrongArg c _) = event (SyntaxErrorIn c)
+  match    _        Quit     = trans (HaveQuit, Shutdown)
+  match    _        Noop     = event SayOK
+  match    _        Turn     = event NotImplemened
+
+  match    _      (Send _)   = event NotImplemened
+  match    _      (Soml _)   = event NotImplemened
+  match    _      (Saml _)   = event NotImplemened
+  match    _      (Vrfy _)   = event NotImplemened
+  match    _      (Expn _)   = event NotImplemened
+  match    _      (Help x)   = event (SeeksHelp x)
+
+  match Unknown    Rset      = event SayOK
+  match HaveHelo   Rset      = event SayOK
+  match    _       Rset      = trans (HaveHelo, ResetState)
+
+  match Unknown   (Helo x)   = trans (HaveHelo, SayHelo x)
+  match    _      (Helo x)   = trans (HaveHelo, SayHeloAgain x)
+  match Unknown   (Ehlo x)   = trans (HaveHelo, SayEhlo x)
+  match    _      (Ehlo x)   = trans (HaveHelo, SayEhloAgain x)
+
+  match Unknown (MailFrom _) = event NeedHeloFirst
+  match    _    (MailFrom x) = trans (HaveMailFrom, SetMailFrom x)
+
+  match Unknown  (RcptTo _)  = event NeedHeloFirst
+  match HaveHelo (RcptTo _)  = event NeedMailFromFirst
+  match    _     (RcptTo x)  = trans (HaveRcptTo, AddRcptTo x)
+
+  match Unknown       Data   = event NeedHeloFirst
+  match HaveHelo      Data   = event NeedMailFromFirst
+  match HaveMailFrom  Data   = event NeedRcptToFirst
+  match HaveRcptTo    Data   = trans (HaveData, StartData)
+
+  event :: Event -> SmtpdFSM
+  event = return
+
+  trans :: (SessionState, Event) -> SmtpdFSM
+  trans (st,e) = put st >> event e
+
+
+----------------------------------------------------------------------
+-- * Data Types for SMTP Commands
+----------------------------------------------------------------------
+
+-- |The 'smtpCmd' parser will create this data type from a
+-- string. Note that /all/ command parsers expect their
+-- input to be terminated with 'crlf'.
 
 data SmtpCmd
   = Helo String
@@ -102,10 +184,6 @@ instance Show SmtpCmd where
   show (WrongArg str _) =
     "Syntax error in argument of " ++ str ++ "."
 
-instance Read SmtpCmd where
-  readsPrec _ = readWrapper smtpCmd
-  readList    = error "reading [SmtpCmd] is not supported"
-
 -- |The most general e-mail address has the form:
 -- @\<[\@route,...:]user\@domain\>@. This type, too,
 -- supports 'show' and 'read'. Note that a \"shown\" address
@@ -130,7 +208,7 @@ instance Show Mailbox where
                      else "<" ++ route ++ ":" ++ mbox ++ ">"
 
 instance Read Mailbox where
-  readsPrec _ = readWrapper (path <|> mailbox)
+  readsPrec _ = parsec2read (path <|> mailbox)
   readList    = error "reading [Mailbox] is not supported"
 
 -- |@nullPath@ @=@ @'Mailbox' [] \"\" \"\" = \"\<\>\"@
@@ -142,6 +220,11 @@ nullPath = Mailbox [] [] []
 
 postmaster :: Mailbox
 postmaster = Mailbox [] "postmaster" []
+
+
+----------------------------------------------------------------------
+-- * Data Types for SMTP Replies
+----------------------------------------------------------------------
 
 -- |An SMTP reply is a three-digit return code plus some
 -- waste of bandwidth called \"comments\". This is what the
@@ -215,14 +298,44 @@ reply suc c n msg =
       assert (n >= 0 && n <= 9) $
         Reply (Code (toEnum suc) (toEnum c) n) msg
 
+-- |A reply constitutes \"success\" if the status code is
+-- any of 'PreliminarySuccess', 'Success', or
+-- 'IntermediateSuccess'.
+
+isSuccess :: SmtpReply -> Bool
+isSuccess (Reply (Code PreliminarySuccess _ _) _)  = True
+isSuccess (Reply (Code Success _ _) _)             = True
+isSuccess (Reply (Code IntermediateSuccess _ _) _) = True
+isSuccess _                                        = False
+
+-- |A reply constitutes \"failure\" if the status code is
+-- either 'PermanentFailure' or 'TransientFailure'.
+
+isFailure :: SmtpReply -> Bool
+isFailure (Reply (Code PermanentFailure _ _) _) = True
+isFailure (Reply (Code TransientFailure _ _) _) = True
+isFailure _                                     = False
+
+-- |The replies @221@ and @421@ signify 'Shutdown'.
+
+isShutdown :: SmtpReply -> Bool
+isShutdown (Reply (Code Success Connection 1) _)          = True
+isShutdown (Reply (Code TransientFailure Connection 1) _) = True
+isShutdown _                                              = False
+
+----------------------------------------------------------------------
+-- * Command Parsers
+----------------------------------------------------------------------
+
 -- |The SMTP parsers defined here correspond to the commands
 -- specified in RFC2821, so I won't document them
 -- individually.
 
-type SmtpParser st = GenParser Char st SmtpCmd
+type SmtpParser st = CharParser st SmtpCmd
 
 -- |This parser recognizes any of the SMTP commands defined
--- below.
+-- below. Note that /all/ command parsers expect their input
+-- to be terminated with 'crlf'.
 
 smtpCmd :: SmtpParser st
 smtpCmd = choice
@@ -259,6 +372,11 @@ help = try (mkCmd0 "HELP" (Help [])) <|>
 
 noop = try (mkCmd0 "NOOP" Noop) <|>
        mkCmd1 "NOOP" (\_ -> Noop) (option [] word)
+
+
+----------------------------------------------------------------------
+-- * Argument Parsers
+----------------------------------------------------------------------
 
 from_path :: CharParser st Mailbox
 from_path = do
@@ -357,122 +475,17 @@ word :: CharParser st String
 word = (atom <|> (quoted_string >>= return . show))
        <?> "word or quoted-string"
 
--- |Helper function, which can be used to generate Parser-based
--- instances for the 'Read' class.
 
-readWrapper :: GenParser tok () a -> [tok] -> [(a, [tok])]
-readWrapper m x  = either (const []) (id) (parse m' "" x)
-  where
-  m' = do a <- m;
-          res <- getInput
-          return [(a,res)]
+----------------------------------------------------------------------
+-- * Helper Functions
+----------------------------------------------------------------------
 
------ Smtp FSM -------------------------------------------------------
-
-data SessionState
-  = Unknown
-  | HaveHelo
-  | HaveMailFrom
-  | HaveRcptTo
-  | HaveData
-  | HaveQuit
-  deriving (Enum, Bounded, Eq, Ord, Show)
-
-data Event
-  = Greeting                    -- ^ reserved for the user
-  | SayHelo       String
-  | SayHeloAgain  String
-  | SayEhlo       String
-  | SayEhloAgain  String
-  | SetMailFrom   Mailbox
-  | AddRcptTo     Mailbox
-  | StartData
-  | Deliver
-        -- ^ This event is reserved for the user; 'smtpdFSM'
-        -- doesn't trigger @Deliver@.
-  | NeedHeloFirst
-  | NeedMailFromFirst
-  | NeedRcptToFirst
-  | NotImplemened
-        -- ^ 'Turn', 'Send', 'Soml', 'Saml', 'Vrfy', and 'Expn'.
-  | ResetState
-  | SayOK
-        -- ^ In case of 'Noop' or when 'Rset' is used before
-        -- we even have a state.
-  | SeeksHelp     String
-        -- ^ The parameter may be @[]@.
-  | Shutdown
-  | SyntaxErrorIn String
-  | Unrecognized  String
-  deriving (Eq, Show)
-
--- |Run like this: @'runState' (smtpdFSM \"noop\") HaveHelo@.
-
-type SmtpdFSM = State SessionState Event
-
--- |Parse a line of SMTP dialogue and run 'handleSmtpCmd' to
--- determine the 'Event'. In case of syntax errors,
--- 'SyntaxErrorIn' or 'Unrecognized' will be triggered.
--- Inputs must be terminated with 'crlf'. See 'fixCRLF'.
-
-smtpdFSM :: String -> SmtpdFSM
-smtpdFSM str = either
-                 (\_ -> return (Unrecognized str))
-                 (handleSmtpCmd)
-                 (parse smtpCmd "" str)
-
--- |For those who want to parse the 'SmtpCmd' themselves.
--- Calling this function in 'HaveQuit' or 'HaveData' will
--- fail an assertion. If 'assert' is disabled, it will
--- return respectively 'Shutdown' and 'StartData' again.
-
-handleSmtpCmd :: SmtpCmd -> SmtpdFSM
-handleSmtpCmd cmd = get >>= \st -> match st cmd
-  where
-  match :: SessionState -> SmtpCmd -> SmtpdFSM
-  match HaveQuit     _       = assert (False) (event Shutdown)
-  match HaveData     _       = assert (False) (trans (HaveData, StartData))
-  match    _  (WrongArg c _) = event (SyntaxErrorIn c)
-  match    _        Quit     = trans (HaveQuit, Shutdown)
-  match    _        Noop     = event SayOK
-  match    _        Turn     = event NotImplemened
-
-  match    _      (Send _)   = event NotImplemened
-  match    _      (Soml _)   = event NotImplemened
-  match    _      (Saml _)   = event NotImplemened
-  match    _      (Vrfy _)   = event NotImplemened
-  match    _      (Expn _)   = event NotImplemened
-  match    _      (Help x)   = event (SeeksHelp x)
-
-  match Unknown    Rset      = event SayOK
-  match HaveHelo   Rset      = event SayOK
-  match    _       Rset      = trans (HaveHelo, ResetState)
-
-  match Unknown   (Helo x)   = trans (HaveHelo, SayHelo x)
-  match    _      (Helo x)   = trans (HaveHelo, SayHeloAgain x)
-  match Unknown   (Ehlo x)   = trans (HaveHelo, SayEhlo x)
-  match    _      (Ehlo x)   = trans (HaveHelo, SayEhloAgain x)
-
-  match Unknown (MailFrom _) = event NeedHeloFirst
-  match    _    (MailFrom x) = trans (HaveMailFrom, SetMailFrom x)
-
-  match Unknown  (RcptTo _)  = event NeedHeloFirst
-  match HaveHelo (RcptTo _)  = event NeedMailFromFirst
-  match    _     (RcptTo x)  = trans (HaveRcptTo, AddRcptTo x)
-
-  match Unknown       Data   = event NeedHeloFirst
-  match HaveHelo      Data   = event NeedMailFromFirst
-  match HaveMailFrom  Data   = event NeedRcptToFirst
-  match HaveRcptTo    Data   = trans (HaveData, StartData)
-
-
------ Utility --------------------------------------------------------
-
--- |Make the string 'crlf' terminated, no matter what.
+-- |Make the string 'crlf' terminated no matter what.
 -- \'@\\n@\' is expanded, otherwise 'crlf' is appended. Note
 -- that if the string was terminated incorrectly before, it
 -- still is. This function is useful when reading input with
--- 'hGetLine', for example.
+-- 'System.IO.hGetLine' which removes the end-of-line
+-- delimiter.
 
 fixCRLF :: String -> String
 fixCRLF ('\r' :'\n':[]) = fixCRLF []
@@ -480,30 +493,22 @@ fixCRLF (  x  :'\n':[]) = x : fixCRLF []
 fixCRLF (  x  :  xs   ) = x : fixCRLF xs
 fixCRLF      [ ]        = "\r\n"
 
------ Not exported ---------------------------------------------------
-
-event :: Event -> SmtpdFSM
-event = return
-
-trans :: (SessionState, Event) -> SmtpdFSM
-trans (st,e) = put st >> event e
-
--- Construct a parser for a command without arguments.
+-- |Construct a parser for a command without arguments.
 -- Expects 'crlf'!
 
-mkCmd0 :: String -> a -> GenParser Char st a
+mkCmd0 :: String -> a -> CharParser st a
 mkCmd0 str cons = (do
   try (caseString str)
   skipMany wsp >> crlf
   return cons)                          <?> str
 
--- Construct a parser for a command with an argument, which
+-- |Construct a parser for a command with an argument, which
 -- the given parser will handle. The result of the argument
 -- parser will be applied to the type constructor before it
 -- is returned. Expects 'crlf'!
 
-mkCmd1 :: String -> (a -> SmtpCmd) -> GenParser Char st a
-       -> GenParser Char st SmtpCmd
+mkCmd1 :: String -> (a -> SmtpCmd) -> CharParser st a
+       -> CharParser st SmtpCmd
 mkCmd1 str cons p = do
   try (caseString str)
   wsp
@@ -520,8 +525,8 @@ mkCmd1 str cons p = do
 -- \"@p.p@\", or \"@p.p.p@\", and so on. Used in 'domain'
 -- and 'dot_string', for example.
 
-tokenList :: GenParser Char st String -> Char
-          -> GenParser Char st String
+tokenList :: CharParser st String -> Char
+          -> CharParser st String
 tokenList p c = do
   xs <- sepBy1 p (char c)
   return (concat (intersperse [c] xs))
