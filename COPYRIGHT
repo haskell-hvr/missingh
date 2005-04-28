@@ -37,12 +37,12 @@ completely independently of the rest of the library, you may treat them
 under the licenses shown below.
 
 ----------------------------------------------------
-The MissingH.Hsemail modules come from hsemail 2004-11-01 from 
+The MissingH.Hsemail modules come from hsemail 2005-02-04 from 
 http://cryp.to/hsemail/.
 
 Copyright/License:
 
-  Copyright (c) 2004 Peter Simons <simons@cryp.to>. All rights reserved. This
+  Copyright (c) 2005 Peter Simons <simons@cryp.to>. All rights reserved. This
   software is released under the terms of the GNU General Public License.
 
 I (John Goerzen) have made these modifications:
@@ -52,6 +52,8 @@ I (John Goerzen) have made these modifications:
 
  * Some files from the source distribution are not relevant to MissingH
    and were removed.
+
+ * One GHC 6.4 compatibility issue was fixed.
 
 ----------------------------------------------------
 The MissingH.Threads.Child and MissingH.IO.BlockIO modules from from
