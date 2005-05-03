@@ -1,3 +1,10 @@
+missingh (0.10.9) unstable; urgency=low
+
+  * GHC 6.4 compatibility: imported new Hsemail, 2005-04-29, from Peter
+    Simons.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon,  2 May 2005 06:07:41 -0500
+
 missingh (0.10.8) unstable; urgency=low
 
   * Added more error-checking to ParseDate.
