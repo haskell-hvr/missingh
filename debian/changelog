@@ -2,7 +2,7 @@ missingh (0.10.10) unstable; urgency=low
 
   * The "this time it really compiles with GHC 6.4 and I mean it" release.
 
- -- John Goerzen <jgoerzen@excelhustler.com>  Mon,  2 May 2005 07:23:03 -0500
+ -- John Goerzen <jgoerzen@complete.org>  Mon,  2 May 2005 07:23:03 -0500
 
 missingh (0.10.9) unstable; urgency=low
 
