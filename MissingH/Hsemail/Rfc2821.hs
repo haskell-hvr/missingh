@@ -1,7 +1,7 @@
 {-# OPTIONS -fglasgow-exts #-}
 {- |
    Module      :  Text.ParserCombinators.Parsec.Rfc2821
-   Copyright   :  (c) 2005-02-10 by Peter Simons
+   Copyright   :  (c) 2005-04-29 by Peter Simons
    License     :  GPL2
 
    Maintainer  :  simons@cryp.to
@@ -16,12 +16,7 @@
 module MissingH.Hsemail.Rfc2821 where
 
 import Control.Exception ( assert )
-#if __GLASGOW_HASKELL__ >= 630 || __HUGS__
-{- State is defined in Parsec on this platform and including
-Control.Monad.Date gives an error because it becomes ambiguous -}
-#else
 import Control.Monad.State
-#endif
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Error
 import Data.List ( intersperse )
@@ -68,7 +63,7 @@ data Event
   | Unrecognized  String
   deriving (Eq, Show)
 
-type SmtpdFSM = State SessionState Event
+type SmtpdFSM = Control.Monad.State.State SessionState Event
 
 -- |Parse a line of SMTP dialogue and run 'handleSmtpCmd' to
 -- determine the 'Event'. In case of syntax errors,
