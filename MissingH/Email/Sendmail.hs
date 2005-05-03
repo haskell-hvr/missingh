@@ -37,6 +37,7 @@ where
 import MissingH.Cmd
 import System.Directory
 import System.IO
+import System.IO.Error
 
 sendmails = ["/usr/sbin/sendmail",
              "/usr/local/sbin/sendmail",
