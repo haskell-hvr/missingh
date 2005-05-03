@@ -88,7 +88,7 @@ flippedLookupFM fm v =
                                 Nothing -> []
                                 Just x -> x
 
-#if __GLASGOW_HASKELL__ >= 630 || __HUGS__
+#if __GLASGOW_HASKELL__ >= 603 || __HUGS__
 {- FiniteMap is already showable on this platform -}
 #else
 {- | Makes a FiniteMap showable. -}
