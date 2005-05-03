@@ -86,6 +86,7 @@ import Network.BSD
 import Network.Socket
 import qualified Network
 import System.IO
+import System.IO.Error
 import MissingH.Logging.Logger
 import MissingH.Network
 import MissingH.Network.SocketServer
