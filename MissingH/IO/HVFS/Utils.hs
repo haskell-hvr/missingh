@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-{- 
+{- |
    Module     : MissingH.IO.HVFS.Utils
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
