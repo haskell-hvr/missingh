@@ -156,7 +156,7 @@ The code was obtained from
 http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
 
 ----------------------------------------------------
-MissingH.Date.ParseDate is from 
+MissingH.Time.ParseDate is from 
 http://www.dtek.chalmers.se/~d00bring/projects.html
 
 Copyright (c) Björn Bringert
