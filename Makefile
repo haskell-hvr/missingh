@@ -45,17 +45,6 @@ doctmp/%.hs: %.lhs doctmp
 doctmp:
 	mkdir doctmp
 
-#libmissingH.a: $(OBJS)
-#	-rm -f libmissingH.a
-#	ar q libmissingH.a $(OBJS)
-
-#%.o: %.hs
-#	ghc -O2 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.hs$$,, -e s,/,.,g`
-#
-#%.o: %.lhs
-#	ghc -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -ilibsrc --make `echo $< | sed -e s,libsrc/,, -e s,.lhs$$,, -e s,/,.,g`
-#
-
 .PHONY: doc
 doc: $(LHSCONVSOURCES) hugsbuild
 	-rm -rf html
@@ -81,20 +70,10 @@ local-pkg: all
 	cat .installed-pkg-config >> local-pkg
 	echo "]" >> local-pkg
 
-testsrc/runtests: local-pkg $(SOURCES) $(LHSSOURCES)
-	ghc6 -O2 -o testsrc/runtests -Ldist/build -odir dist/build \
-           -package-conf local-pkg \
-           -hidir dist/build -idist/build -itestsrc \
-	   -fallow-overlapping-instances -fglasgow-exts \
-	   -fallow-undecidable-instances \
-                -package HUnit -package MissingH --make testsrc/runtests.hs
+dist/build/testsrc/runtests: all
 
-
-#testsrc/runtests: all $(shell find testsrc -name "*.hs")
-#	ghc6 -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -package HUnit --make -o testsrc/runtests -itestsrc -ilibsrc testsrc/runtests.hs
-
-test-ghc6: testsrc/runtests
-	testsrc/runtests 
+test-ghc6: dist/build/testsrc/runtests
+	dist/build/testsrc/runtests
 
 test-hugs: hugsbuild
 	runhugs -98 +o -P$(PWD)/dist/build:$(PWD)/testsrc: testsrc/runtests.hs
