@@ -80,3 +80,6 @@ Extensions: ExistentialQuantification, AllowOverlappingInstances,
 Build-Depends: haskell-src, network, unix, parsec
 GHC-Options: -O2
 
+Executable: runtests
+Main-Is: runtests.hs
+HS-Source-Dir: testsrc
