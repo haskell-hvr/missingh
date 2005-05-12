@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 module Testutil(assertRaises, mapassertEqual) where
-import HUnit
+import Test.HUnit
 import qualified Control.Exception
 
 assertRaises :: Show a => String -> Control.Exception.Exception -> IO a -> IO ()

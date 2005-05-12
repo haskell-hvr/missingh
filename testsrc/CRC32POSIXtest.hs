@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 module CRC32POSIXtest(tests) where
-import HUnit
+import Test.HUnit
 import MissingH.Checksum.CRC32.Posix
 
 test_crc32 =

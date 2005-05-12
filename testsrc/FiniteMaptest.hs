@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 module FiniteMaptest(tests) where
-import HUnit
+import Test.HUnit
 import MissingH.FiniteMap
 import Data.FiniteMap
 
