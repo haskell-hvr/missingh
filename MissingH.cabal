@@ -77,7 +77,7 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances, CPP
 -- CPP extension is really only needed in FiniteMap.hs and Rfc2821.hs
-Build-Depends: haskell-src, network, unix, parsec, mtl, base, haskell98
+Build-Depends: haskell-src, network, unix, parsec, base, haskell98
 GHC-Options: -O2
 
 Executable: runtests
