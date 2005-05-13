@@ -81,6 +81,7 @@ Build-Depends: haskell-src, network, unix, parsec, base, haskell98
 GHC-Options: -O2
 
 Executable: runtests
+Buildable: False
 Main-Is: runtests.hs
 HS-Source-Dir: testsrc
 Extensions: ExistentialQuantification, AllowOverlappingInstances,

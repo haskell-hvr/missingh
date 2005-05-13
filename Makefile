@@ -25,6 +25,7 @@ OBJS := $(O1:.lhs=.o)
 LHSCONVSOURCES := $(patsubst %.lhs,doctmp/%.hs,$(LHSSOURCES))
 HUGSCONVSOURCES := $(patsubst %.hs,dist/build/%.hs,$(SOURCES))
 UNLIT ?= $(shell ghc --print-libdir)/unlit
+GHCPARMS := -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts
 
 .PHONY: all hugsbuild
 all: setup			# GHC build
@@ -70,10 +71,11 @@ local-pkg: all
 	cat .installed-pkg-config >> local-pkg
 	echo "]" >> local-pkg
 
-dist/build/testsrc/runtests: all
+testsrc/runtests: all $(wildcard testsrc/*.hs) $(wildcard testsrc/*/*.hs) $(wildcard testsrc/*/*/*.hs)
+	cd testsrc && ghc --make -package HUnit $(GHCPARMS) -o runtests -L../dist/build -i../dist/build ../dist/build/libHS*.a runtests.hs
 
-test-ghc6: dist/build/testsrc/runtests
-	dist/build/testsrc/runtests
+test-ghc6: testsrc/runtests
+	testsrc/runtests
 
 test-hugs: hugsbuild
 	runhugs -98 +o -P$(PWD)/dist/build:$(PWD)/testsrc: testsrc/runtests.hs
@@ -82,7 +84,7 @@ interact-hugs:
 	hugs -98 +o -P$(PWD)/dist/build:
 
 interact-ghci: all
-	ghci -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts
+	ghci $(GHCPARMS)
 
 interact: interact-hugs
 
