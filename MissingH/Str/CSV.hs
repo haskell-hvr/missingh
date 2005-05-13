@@ -31,8 +31,9 @@ Haskell Parsec parsers for comma-separated value (CSV) files.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Str.CSV(csvFile) where
+module MissingH.Str.CSV(csvFile, genCsvFile) where
 import Text.ParserCombinators.Parsec
+import Data.List
 
 eol = (try $ string "\n\r") <|> (try $ string "\r\n") <|> string "\n" <|>
       string "\r" <?> "End of line"
@@ -88,3 +89,19 @@ For more details, see the Parsec information.
 
 csvFile :: CharParser st [[String]]
 csvFile = endBy line eol
+
+{- | Generate CSV data for a file.  The resulting string can be
+written out to disk directly. -}
+genCsvFile :: [[String]] -> String
+genCsvFile inp =
+    unlines . map csvline $ inp
+    where csvline :: [String] -> String
+          csvline l = concat . intersperse "," . map csvcells $ l
+          csvcells :: String -> String
+          csvcells "" = ""
+          csvcells c = '"' : convcell c ++ "\""
+          convcell :: String -> String
+          convcell c = concatMap convchar c
+          convchar '"' = "\"\""
+          convchar x = [x]
+                          
