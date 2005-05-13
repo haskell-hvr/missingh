@@ -20,12 +20,13 @@ SOURCES := $(wildcard MissingH/*.hs) \
 	$(wildcard MissingH/*/*/*.hs) 
 LHSSOURCES := $(wildcard MissingH/*/*.lhs) \
 	$(wildcard MissingH/*/*/*.lhs)
+TESTSOURCES := $(shell find testsrc -name "*.hs")
 O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
 OBJS := $(O1:.lhs=.o)
 LHSCONVSOURCES := $(patsubst %.lhs,doctmp/%.hs,$(LHSSOURCES))
 HUGSCONVSOURCES := $(patsubst %.hs,dist/build/%.hs,$(SOURCES))
 UNLIT ?= $(shell ghc --print-libdir)/unlit
-GHCPARMS := -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts
+GHCPARMS := -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -cpp
 
 .PHONY: all hugsbuild
 all: setup			# GHC build
@@ -72,7 +73,7 @@ local-pkg: all
 	echo "]" >> local-pkg
 
 testsrc/runtests: all $(wildcard testsrc/*.hs) $(wildcard testsrc/*/*.hs) $(wildcard testsrc/*/*/*.hs)
-	cd testsrc && ghc --make -package HUnit $(GHCPARMS) -o runtests -L../dist/build -i../dist/build ../dist/build/libHS*.a runtests.hs
+	cd testsrc && ghc --make -package HUnit $(GHCPARMS) -o runtests  -i../dist/build:.. runtests.hs
 
 test-ghc6: testsrc/runtests
 	testsrc/runtests
