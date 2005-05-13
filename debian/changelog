@@ -1,3 +1,11 @@
+missingh (0.11.0) unstable; urgency=low
+
+  * First release with full support for GHC 6.4.
+  * Changed name of HUnit imports in unit tests to follow GHC 6.4 conventions.
+  * Fixed unit tests for GHC 6.4 compatibility.
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 12 May 2005 06:47:06 -0500
+
 missingh (0.10.10) unstable; urgency=low
 
   * The "this time it really compiles with GHC 6.4 and I mean it" release.
