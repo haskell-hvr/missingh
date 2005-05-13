@@ -84,7 +84,7 @@ interact-hugs:
 	hugs -98 +o -P$(PWD)/dist/build:
 
 interact-ghci: all
-	ghci $(GHCPARMS)
+	ghci -idist/build -Ldist/build $(GHCPARMS)
 
 interact: interact-hugs
 
