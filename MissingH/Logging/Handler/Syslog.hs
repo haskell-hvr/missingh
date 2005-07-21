@@ -50,7 +50,9 @@ module MissingH.Logging.Handler.Syslog(
                                        -- * Handler Initialization
                                        openlog,
                                        -- * Advanced handler initialization
+#ifndef mingw32_HOST_OS
                                        openlog_local,
+#endif
                                        openlog_remote,
                                        openlog_generic,
                                        -- * Data Types
@@ -146,9 +148,13 @@ data SyslogHandler = SyslogHandler {options :: [Option],
                                     address :: SockAddr,
                                     priority :: Priority}
 
-{- | Initialize the Syslog system using the system's default interface,
+{- | Initialize the Syslog system using the local system's default interface,
 \/dev\/log.  Will return a new 'MissingH.Logging.Handler.LogHandler'.
 
+On Windows, instead of using \/dev\/log, this will attempt to send
+UDP messages to something listening on the syslog port (514) on localhost.
+
+Use 'openlog_remote' if you need more control.
 -}
 
 openlog :: String                       -- ^ The name of this program -- will be prepended to every log message
@@ -157,12 +163,18 @@ openlog :: String                       -- ^ The name of this program -- will be
         -> Priority                     -- ^ Messages logged below this priority will be ignored.  To include every message, set this to 'DEBUG'.
         -> IO SyslogHandler             -- ^ Returns the new handler
 
--- openlog = openlog_remote AF_INET "localhost" 514
+#ifdef mingw32_HOST_OS
+openlog = openlog_remote AF_INET "localhost" 514
+#else
 openlog = openlog_local "/dev/log"
+#endif
 
 {- | Initialize the Syslog system using an arbitrary Unix socket (FIFO).
+
+Not supported under Windows.
 -}
 
+#ifndef mingw32_HOST_OS
 openlog_local :: String                 -- ^ Path to FIFO
               -> String                 -- ^ Program name
               -> [Option]               -- ^ 'Option's
@@ -173,6 +185,7 @@ openlog_local fifopath ident options fac pri =
     do
     s <- socket AF_UNIX Datagram 0
     openlog_generic s (SockAddrUnix "/dev/log") ident options fac pri
+#endif
 
 {- | Log to a remote server via UDP. -}
 openlog_remote :: Family                -- ^ Usually AF_INET or AF_INET6; see Network.Socket
