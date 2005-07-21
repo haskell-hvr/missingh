@@ -30,6 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Provides some types and related items on Windows to be compatible with
 the System.Posix.* libraries
 
+See also "MissingH.IO.StatCompat", which this module re-exports.
+
 Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 
 -}
@@ -39,48 +41,47 @@ where
 
 import System.Posix.Types
 import Data.Bits
+import MissingH.IO.StatCompat
+import MissingH.Time
 
 #ifdef mingw32_HOST_OS
 -- these types aren't defined here
-type LinkCount = Int
-type UserID = Int
-type GroupID = Int
 
 nullFileMode :: FileMode
 nullFileMode = 0
 
 ownerReadMode :: FileMode
-ownerReadMode = 00400
+ownerReadMode = 0o00400
 
 ownerWriteMode :: FileMode
-ownerWriteMode = 00200
+ownerWriteMode = 0o00200
 
 ownerExecuteMode :: FileMode
-ownerExecuteMode = 00100
+ownerExecuteMode = 0o00100
 
 groupReadMode :: FileMode
-groupReadMode = 00040
+groupReadMode = 0o00040
 
 groupWriteMode :: FileMode
-groupWriteMode = 00020
+groupWriteMode = 0o00020
 
 groupExecuteMode :: FileMode
-groupExecuteMode = 00010
+groupExecuteMode = 0o00010
 
 otherReadMode :: FileMode
-otherReadMode = 00004
+otherReadMode = 0o00004
 
 otherWriteMode :: FileMode
-otherWriteMode = 00002
+otherWriteMode = 0o00002
 
 otherExecuteMode :: FileMode
-otherExecuteMode = 00001
+otherExecuteMode = 0o00001
 
 setUserIDMode :: FileMode
-setUserIDMode = 0004000
+setUserIDMode = 0o0004000
 
 setGroupIDMode :: FileMode
-setGroupIDMode = 0002000
+setGroupIDMode = 0o0002000
 
 stdFileMode :: FileMode
 stdFileMode = ownerReadMode  .|. ownerWriteMode .|.
@@ -88,19 +89,27 @@ stdFileMode = ownerReadMode  .|. ownerWriteMode .|.
               otherReadMode  .|. otherWriteMode
 
 ownerModes :: FileMode
-ownerModes = 00700
+ownerModes = 0o00700
 
 groupModes :: FileMode
-groupModes = 00070
+groupModes = 0o00070
 
 otherModes :: FileMode
-otherModes = 00007
+otherModes = 0o00007
 
 accessModes :: FileMode
 accessModes = ownerModes .|. groupModes .|. otherModes
 
-intersectFileModes :: FileMode -> FileMode -> FileMode
-intersectFileModes m1 m2 = m1 .&. m2
+----------- stat
+type FileStatus = FileStatusCompat
+getFileStatus :: FilePath -> IO FileStatus
+getFileStatus fp =
+    do isfile <- doesFileExist fp
+       isdir <- doesDirectoryExist
+       perms <- getPermissions fp
+       modct <- getModificationTime fp
+       return $ FileStatusCompat {deviceID = -1,
+                                  fileID = -1,
+                                  fileMode = 
 
 #endif
-

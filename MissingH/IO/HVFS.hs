@@ -258,7 +258,6 @@ class HVFS a => HVFSOpenable a where
            withOpen oe (\fh -> do vPutStr fh s
                                   vClose fh)
 
-#ifndef mingw32_HOST_OS
 instance Show FileStatus where
     show _ = "<FileStatus>"
 
@@ -284,7 +283,6 @@ instance HVFSStat FileStatus where
     vIsDirectory = isDirectory
     vIsSymbolicLink = isSymbolicLink
     vIsSocket = isSocket
-#endif
 
 data SystemFS = SystemFS
               deriving (Eq, Show)
