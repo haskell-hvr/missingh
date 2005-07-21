@@ -77,6 +77,7 @@ Most of this module will be incompatible with Windows.
 module MissingH.Cmd(-- * High-Level Tools
                     PipeHandle(..),
                     safeSystem,
+#ifndef mingw32_HOST_OS
                     forceSuccess,
                     -- ** Piping with lazy strings
                     pipeFrom,
@@ -87,9 +88,13 @@ module MissingH.Cmd(-- * High-Level Tools
                     hPipeFrom,
                     hPipeTo,
                     hPipeBoth,
+#endif
                     -- * Low-Level Tools
                     PipeMode(..),
-                    pOpen, pOpen3)
+#ifndef mingw32_HOST_OS
+                    pOpen, pOpen3
+#endif
+		   )
 where
 
 -- FIXME - largely obsoleted by 6.4 - convert to wrappers.
@@ -126,14 +131,18 @@ data PipeHandle =
                }
     deriving (Eq, Show)
 
+#ifndef mingw32_HOST_OS
 {- | Like 'pipeFrom', but returns data in lines instead of just a String.
 Shortcut for calling lines on the result from 'pipeFrom'.
 
-Note: this function logs as pipeFrom. -}
+Note: this function logs as pipeFrom.
+
+Not available on Windows. -}
 pipeLinesFrom :: FilePath -> [String] -> IO (PipeHandle, [String])
 pipeLinesFrom fp args =
     do (pid, c) <- pipeFrom fp args
        return $ (pid, lines c)
+#endif
 
 logRunning func fp args = debugM (logbase ++ "." ++ func) (showCmd fp args)
 warnFail funcname fp args msg =
@@ -141,12 +150,15 @@ warnFail funcname fp args msg =
         in do warningM (logbase ++ "." ++ funcname) m
               fail m
 
+#ifndef mingw32_HOST_OS
 {- | Read data from a pipe.  Returns a Handle and a 'PipeHandle'.
 
 When done, you must hClose the handle, and then use either 'forceSuccess' or
 getProcessStatus on the 'PipeHandle'.  Zomeibes will result otherwise.
 
 This function logs as pipeFrom.
+
+Not available on Windows.
 -}
 hPipeFrom :: FilePath -> [String] -> IO (PipeHandle, Handle)
 hPipeFrom fp args = 
@@ -164,20 +176,25 @@ hPipeFrom fp args =
        closeFd (snd pipepair)
        h <- fdToHandle (fst pipepair)
        return (PipeHandle pid fp args "pipeFrom", h)
+#endif
 
-
+#ifndef mingw32_HOST_OS
 {- | Read data from a pipe.  Returns a lazy string and a 'PipeHandle'.
 
 ONLY AFTER the string has been read completely, You must call either
 'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the 'PipeHandle'.
 Zombies will result otherwise.
+
+Not available on Windows.
 -}
 pipeFrom :: FilePath -> [String] -> IO (PipeHandle, String)
 pipeFrom fp args =
     do (pid, h) <- hPipeFrom fp args
        c <- hGetContents h
        return (pid, c)
+#endif
 
+#ifndef mingw32_HOST_OS
 {- | Write data to a pipe.  Returns a 'PipeHandle' and a new Handle to write
 to.
 
@@ -185,6 +202,8 @@ When done, you must hClose the handle, and then use either 'forceSuccess' or
 getProcessStatus on the 'PipeHandle'.  Zomeibes will result otherwise.
 
 This function logs as pipeTo.
+
+Not available on Windows.
 -}
 hPipeTo :: FilePath -> [String] -> IO (PipeHandle, Handle)
 hPipeTo fp args =
@@ -202,12 +221,16 @@ hPipeTo fp args =
        closeFd (fst pipepair)
        h <- fdToHandle (snd pipepair)
        return (PipeHandle pid fp args "pipeTo", h)
+#endif
 
+#ifndef mingw32_HOST_OS
 {- | Write data to a pipe.  Returns a ProcessID.
 
 You must call either
 'System.Posix.Process.getProcessStatus' or 'forceSuccess' on the ProcessID.
 Zombies will result otherwise.
+
+Not available on Windows.
 -}
 pipeTo :: FilePath -> [String] -> String -> IO PipeHandle
 pipeTo fp args message =
@@ -215,7 +238,9 @@ pipeTo fp args message =
        finally (hPutStr h message)
                (hClose h)
        return pid
+#endif
 
+#ifndef mingw32_HOST_OS
 {- | Like a combination of 'hPipeTo' and 'hPipeFrom'; returns
 a 3-tuple of ('PipeHandle', Data From Pipe, Data To Pipe).
 
@@ -226,6 +251,8 @@ Hint: you will usually need to ForkIO a thread to handle one of the Handles;
 otherwise, deadlock can result.
 
 This function logs as pipeBoth.
+
+Not available on Windows.
 -}
 hPipeBoth :: FilePath -> [String] -> IO (PipeHandle, Handle, Handle)
 hPipeBoth fp args =
@@ -248,12 +275,16 @@ hPipeBoth fp args =
        fromh <- fdToHandle (fst frompair)
        toh <- fdToHandle (snd topair)
        return (PipeHandle pid fp args "pipeBoth", fromh, toh)
+#endif
 
+#ifndef mingw32_HOST_OS
 {- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
 to send data to the piped program, and simultaneously returns its output
 stream.
 
-The same note about checking the return status applies here as with 'pipeFrom'. -}
+The same note about checking the return status applies here as with 'pipeFrom'.
+
+Not available on Windows. -}
 pipeBoth :: FilePath -> [String] -> String -> IO (PipeHandle, String)
 pipeBoth fp args message =
     do (pid, fromh, toh) <- hPipeBoth fp args
@@ -261,12 +292,16 @@ pipeBoth fp args message =
                         (hClose toh)
        c <- hGetContents fromh
        return (pid, c)
+#endif
 
+#ifndef mingw32_HOST_OS
 {- | Uses 'System.Posix.Process.getProcessStatus' to obtain the exit status
 of the given process ID.  If the process terminated normally, does nothing.
 Otherwise, raises an exception with an appropriate error message.
 
-This call will block waiting for the given pid to terminate. -}
+This call will block waiting for the given pid to terminate. 
+
+Not available on Windows. -}
 forceSuccess :: PipeHandle -> IO ()
 forceSuccess (PipeHandle pid fp args funcname) =
     let warnfail = warnFail funcname
@@ -280,6 +315,7 @@ forceSuccess (PipeHandle pid fp args funcname) =
                     warnfail fp args $ "Terminated by signal " ++ show sig
                 Just (Stopped sig) -> 
                     warnfail fp args $ "Stopped by signal " ++ show sig 
+#endif
 
 {- | Invokes the specified command in a subprocess, waiting for the result.
 If the command terminated successfully, return normally.  Otherwise,
@@ -303,6 +339,7 @@ cmdfailed funcname command args failcode = do
     warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
 
+#ifndef mingw32_HOST_OS
 {- | Open a pipe to the specified command.
 
 Passes the handle on to the specified function.
@@ -310,6 +347,7 @@ Passes the handle on to the specified function.
 The 'PipeMode' specifies what you will be doing.  That is, specifing 'ReadFromPipe' 
 sets up a pipe from stdin, and 'WriteToPipe' sets up a pipe from stdout.
 
+Not available on Windows.
  -}
 pOpen :: PipeMode -> FilePath -> [String] -> 
          (Handle -> IO a) -> IO a
@@ -337,8 +375,12 @@ pOpen pm fp args func =
                                        return $! x
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
                                callfunc (closeFd (snd pipepair))
+#endif
 
-{- | Runs a command, redirecting things to pipes. -}
+#ifndef mingw32_HOST_OS
+{- | Runs a command, redirecting things to pipes. 
+
+Not available on Windows.-}
 pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
        -> Maybe Fd                      -- ^ Get stdout from this fd
        -> Maybe Fd                      -- ^ Get stderr from this fd
@@ -377,6 +419,7 @@ pOpen3 pin pout perr fp args func childfunc =
         let rv = seq retval retval
         forceSuccess (PipeHandle (seq retval pid) fp args "pOpen3")
         return rv
+#endif
 
 showCmd :: FilePath -> [String] -> String
 showCmd fp args =
