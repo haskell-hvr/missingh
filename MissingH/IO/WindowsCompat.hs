@@ -57,7 +57,7 @@ ownerWriteMode :: FileMode
 ownerWriteMode = 00200
 
 ownerExecuteMode :: FileMode
-ownerExecuteMode :: 00100
+ownerExecuteMode = 00100
 
 groupReadMode :: FileMode
 groupReadMode = 00040
@@ -95,7 +95,7 @@ groupModes :: FileMode
 groupModes = 00070
 
 otherModes :: FileMode
-otherModes :: 00007
+otherModes = 00007
 
 accessModes :: FileMode
 accessModes = ownerModes .|. groupModes .|. otherModes
