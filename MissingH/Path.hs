@@ -43,11 +43,13 @@ module MissingH.Path(-- * Name processing
 where
 import Data.List
 import MissingH.List
-import System.Directory hiding (createDirectory)
 #ifndef mingw32_HOST_OS
 import System.Posix.Files
 import System.Posix.Directory (createDirectory)
 import System.Posix.Temp
+import System.Directory hiding (createDirectory)
+#else
+import System.Directory
 #endif
 import Control.Exception
 import System.IO
@@ -105,9 +107,13 @@ secureAbsNormPath base s = do p <- absNormPath base s
 The passed string should be a template suitable for mkstemp; that is, end with
 @\"XXXXXX\"@.
 
+Your string should probably start with the value returned from
+System.Directory.getTemporaryDirectory.
+
 The name of the directory created will be returned.
 -}
 mktmpdir :: String -> IO String
+#ifndef mingw32_HOST_OS
 mktmpdir x =
     do y <- mkstemp x
        let (dirname, h) = y
@@ -115,6 +121,18 @@ mktmpdir x =
        removeFile dirname
        createDirectory dirname 0o700
        return dirname
+#else
+#ifdef __GLASGOW_HASKELL__
+mktmpdir x =
+    do (fp, h) <- openTempFile "" x
+       hClose h
+       removeFile fp
+       createDirectory fp
+       return fp
+#else
+mktmpdir _ = fail "mktmpdir not supported on Windows unless you have GHC"
+#endif
+#endif   
 
 {- | Creates a temporary directory for your use via 'mktmpdir',
 runs the specified action (passing in the directory name), then
