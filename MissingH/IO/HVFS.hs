@@ -69,6 +69,8 @@ import System.IO
 import System.IO.Error
 #ifndef mingw32_HOST_OS
 import System.Posix.Files
+#else
+import MissingH.IO.WindowsCompat
 #endif
 import System.Posix.Types
 import System.Time
@@ -121,13 +123,6 @@ reasonable values.
 
 A default implementation of this is not currently present on Windows.
 -}
-
-#ifdef mingw32_HOST_OS
--- these types aren't defined here
-type LinkCount = Int
-type UserID = Int
-type GroupID = Int
-#endif
 
 class (Show a) => HVFSStat a where
     vDeviceID :: a -> DeviceID

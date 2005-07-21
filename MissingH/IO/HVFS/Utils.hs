@@ -48,6 +48,8 @@ import MissingH.IO.HVFS
 import MissingH.Time
 #ifndef mingw32_HOST_OS
 import System.Posix.Files
+#else
+import MissingH.IO.WindowsCompat
 #endif
 import MissingH.Printf
 import System.Time

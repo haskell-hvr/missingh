@@ -34,7 +34,7 @@ Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.IO.WindowsCompat()
+module MissingH.IO.WindowsCompat
 where
 
 import System.Posix.Types
@@ -45,7 +45,6 @@ import Data.Bits
 type LinkCount = Int
 type UserID = Int
 type GroupID = Int
-#endif
 
 nullFileMode :: FileMode
 nullFileMode = 0
@@ -99,4 +98,9 @@ otherModes = 00007
 
 accessModes :: FileMode
 accessModes = ownerModes .|. groupModes .|. otherModes
+
+intersectFileModes :: FileMode -> FileMode -> FileMode
+intersectFileModes m1 m2 = m1 .&. m2
+
+#endif
 
