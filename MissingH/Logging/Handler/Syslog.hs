@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {- arch-tag: Syslog handler
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
@@ -63,7 +64,9 @@ import Data.Bits
 import Network.Socket
 import Network.BSD
 import List
+#ifndef mingw32_HOST_OS
 import System.Posix.Process(getProcessID)
+#endif
 import IO
 
 code_of_pri :: Priority -> Int
@@ -212,7 +215,11 @@ instance LogHandler SyslogHandler where
             getpid :: IO String
             getpid = if (elem PID (options sh))
                      then do
+#ifndef mingw32_HOST_OS
                           pid <- getProcessID
+#else
+                          let pid = "windows"
+#endif
                           return ("[" ++ show pid ++ "]")
                      else return ""
                      
