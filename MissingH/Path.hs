@@ -132,7 +132,7 @@ mktmpdir x =
 #else
 mktmpdir _ = fail "mktmpdir not supported on Windows unless you have GHC"
 #endif
-#endif   
+#endif
 
 {- | Creates a temporary directory for your use via 'mktmpdir',
 runs the specified action (passing in the directory name), then
