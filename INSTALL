@@ -20,7 +20,12 @@ http://www.cs.york.ac.uk/fp/cpphs/.
 
 If you need Cabal, get it from http://www.haskell.org/cabal.
 
-Debian users can install the packages cpphs and libghc6-cabal-dev.
+Debian users can install the packages cpphs and libghc6-cabal-dev
+(or, if using ghc6 6.4 or above, the ghc6 package includes Cabal).
+
+The first step is to generate your setup file.  To do that, run:
+
+  make setup
 
 Now, for GHC:
 
