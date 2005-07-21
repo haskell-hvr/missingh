@@ -118,15 +118,25 @@ Inplementators must, at minimum, implement 'vIsDirectory' and
 
 Default implementations of everything else are provided, returning
 reasonable values.
+
+A default implementation of this is not currently present on Windows.
 -}
 class (Show a) => HVFSStat a where
     vDeviceID :: a -> DeviceID
     vFileID :: a -> FileID
+
     {- | Refers to file permissions, NOT the st_mode field from stat(2) -}
     vFileMode :: a -> FileMode
+
+#ifndef mingw32_TARGET_OS
+    -- | Not supported on Windows
     vLinkCount :: a -> LinkCount
+    -- | Not supported on Windows
     vFileOwner :: a -> UserID
+    -- | Not supported on Windows
     vFileGroup :: a -> GroupID
+#endif
+
     vSpecialDeviceID :: a -> DeviceID
     vFileSize :: a -> FileOffset
     vAccessTime :: a -> EpochTime
@@ -250,6 +260,7 @@ class HVFS a => HVFSOpenable a where
            withOpen oe (\fh -> do vPutStr fh s
                                   vClose fh)
 
+#ifndef mingw32_HOST_OS
 instance Show FileStatus where
     show _ = "<FileStatus>"
 
@@ -275,6 +286,7 @@ instance HVFSStat FileStatus where
     vIsDirectory = isDirectory
     vIsSymbolicLink = isSymbolicLink
     vIsSocket = isSocket
+#endif
 
 data SystemFS = SystemFS
               deriving (Eq, Show)
