@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {- arch-tag: Sendmail utility
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
@@ -28,9 +29,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 This Haskell module provides an interface to transmitting a mail message.
 
+This is not compatible with Windows at this time.
+
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
+#ifdef mingw32_HOST_OS
+module MissingH.Email.Sendmail
+where
+#else
 module MissingH.Email.Sendmail(sendmail)
 where
 
@@ -101,3 +108,5 @@ sendmail_worker args msg =
                       rv <- pOpen WriteToPipe sn args func
                       return $! rv
                          
+#endif
+
