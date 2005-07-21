@@ -181,5 +181,18 @@ TO THOSE CONCERNED ABOUT THE LAW:
          But you can keep it and do with it whatever you want.
            -- SMH, Creator, Programmer.
 
+----------------------------------------------------
+MissingH.Path.FilePath was written by Isaac Jones.  It was pulled from
+the darcs repository at
+http://www.scannedinavian.org/~lemmih/FilePath/ as of July 21, 2005.
+
+The software is Copyright Isaac Jones 2003-2005.  All rights reserved.
+
+Debian GNU/Linux users may find the 3-clause BSD license at
+/usr/share/common-licenses/BSD.  Alternatively, you may find it at
+3rd-party-licenses/BSD.  Please note that the University of California
+has no claim on this code; simply substitute Isaac Jones for the
+University wherever it may occur in that file.
+
 ------------------------------------------------------------------
 arch-tag: copyright statement
