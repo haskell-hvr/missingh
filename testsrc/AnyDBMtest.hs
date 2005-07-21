@@ -26,6 +26,7 @@ import MissingH.AnyDBM.StringDBM
 import MissingH.AnyDBM.FiniteMapDBM
 import System.Directory
 import MissingH.IO.HVFS.Utils
+import MissingH.Path.FilePath
 import Data.HashTable
 import Data.List(sort)
 import Control.Exception(finally)
@@ -105,15 +106,12 @@ test_hashtable = generic_test (return ())
 test_finitemap = generic_test (return ())
                   (\_ -> newFiniteMapDBM)
 test_stringdbm = generic_persist_test (return SystemFS)
-                   (\f -> openStringVDBM f "testtmp/StringDBM" ReadWriteMode)
+                   (\f -> openStringVDBM f (joinPaths "testtmp" "StringDBM") ReadWriteMode)
                  ++
                  generic_test (return SystemFS)
-                   (\f -> openStringVDBM f "testtmp/StringDBM" ReadWriteMode)
+                   (\f -> openStringVDBM f (joinPaths "testtmp" "StringDBM") ReadWriteMode)
 
 tests = TestList [TestLabel "HashTable" (TestList test_hashtable),
                   TestLabel "StringDBM" (TestList test_stringdbm),
                   TestLabel "FiniteMap" (TestList test_finitemap)
                  ]
-
-
-
