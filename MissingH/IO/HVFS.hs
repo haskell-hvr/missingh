@@ -121,6 +121,14 @@ reasonable values.
 
 A default implementation of this is not currently present on Windows.
 -}
+
+#ifdef mingw32_HOST_OS
+-- these types aren't defined here
+type LinkCount = Int
+type UserID = Int
+type GroupID = Int
+#endif
+
 class (Show a) => HVFSStat a where
     vDeviceID :: a -> DeviceID
     vFileID :: a -> FileID
@@ -128,14 +136,9 @@ class (Show a) => HVFSStat a where
     {- | Refers to file permissions, NOT the st_mode field from stat(2) -}
     vFileMode :: a -> FileMode
 
-#ifndef mingw32_TARGET_OS
-    -- | Not supported on Windows
     vLinkCount :: a -> LinkCount
-    -- | Not supported on Windows
     vFileOwner :: a -> UserID
-    -- | Not supported on Windows
     vFileGroup :: a -> GroupID
-#endif
 
     vSpecialDeviceID :: a -> DeviceID
     vFileSize :: a -> FileOffset
@@ -302,12 +305,28 @@ instance HVFS SystemFS where
     vRenameDirectory _ = renameDirectory
     vRemoveFile _ = removeFile
     vRenameFile _ = renameFile
+#ifndef mingw32_HOST_OS
     vGetFileStatus _ fp = getFileStatus fp >>= return . HVFSStatEncap
+#else
+    vGetFileStatus _ _ = fail "Getting file status not supported on Windows"
+#endif
+#ifndef mingw32_HOST_OS
     vGetSymbolicLinkStatus _ fp = getSymbolicLinkStatus fp >>= return . HVFSStatEncap
+#else
+    -- No symlinks on Windows; just get the file status directly
+    vGetSymbolicLinkStatus = vGetFileStatus
+#endif
+
     vGetModificationTime _ = getModificationTime
+#ifndef mingw32_HOST_OS
     vCreateSymbolicLink _ = createSymbolicLink
     vReadSymbolicLink _ = readSymbolicLink
     vCreateLink _ = createLink
+#else
+    vCreateSymbolicLink _ _ _ = fail "Symbolic link creation not supported by Windows"
+    vReadSymbolicLink _ _ = fail "Symbolic link reading not supported by Widnows"
+    vCreateLink _ _ _ = fail "Hard link creation not supported by Windows"
+#endif
 
 instance HVFSOpenable SystemFS where
     vOpen _ fp iomode = openFile fp iomode >>= return . HVFSOpenEncap
