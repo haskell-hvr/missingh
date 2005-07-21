@@ -55,10 +55,13 @@ Example:
 
 niceSocketsDo :: IO a -> IO a
 niceSocketsDo func = do
+#ifndef mingw32_HOST_OS
+                -- No signals on Windows anyway
                 System.Posix.Signals.installHandler 
                       System.Posix.Signals.sigPIPE
                       System.Posix.Signals.Ignore
                       Nothing
+#endif
                 withSocketsDo func
 
 connectTCP :: HostName -> PortNumber -> IO Socket
@@ -82,7 +85,9 @@ listenTCPAddr addr queuelen = do
                      return s
 
 showSockAddr :: SockAddr -> IO String
+#ifndef mingw32_HOST_OS
 showSockAddr (SockAddrUnix x) = return $ "UNIX socket at " ++ x
+#endif
 showSockAddr (SockAddrInet port host) =
     do h <- inet_ntoa host
        return $ "IPv4 host " ++ h ++ ", port " ++ (show port)
