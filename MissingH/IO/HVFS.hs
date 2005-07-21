@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {- arch-tag: HVFS main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
@@ -66,7 +67,9 @@ import MissingH.IO.HVIO
 import MissingH.Time
 import System.IO
 import System.IO.Error
+#ifndef mingw32_HOST_OS
 import System.Posix.Files
+#endif
 import System.Posix.Types
 import System.Time
 import System.Directory

@@ -1,4 +1,5 @@
 -- arch-tag: Command utilities main file
+{-# LANGUAGE CPP #-}
 {-
 Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
@@ -68,6 +69,8 @@ Here is an example of the wrong way to do it:
 You must instead process the data before calling 'forceSuccess'.
 
 When using the hPipe family of functions, this is probably more obvious.
+
+Most of this module will be incompatible with Windows.
 -}
 
 
@@ -94,8 +97,10 @@ where
 import System.Exit
 import System.Cmd
 import MissingH.Logging.Logger
+#ifndef mingw32_HOST_OS
 import System.Posix.IO
 import System.Posix.Process
+#endif
 import System.Posix.Types
 import System.IO
 import System.IO.Error

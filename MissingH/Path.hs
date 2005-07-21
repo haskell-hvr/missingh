@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {- arch-tag: Path utilities main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
@@ -43,9 +44,11 @@ where
 import Data.List
 import MissingH.List
 import System.Directory hiding (createDirectory)
+#ifndef mingw32_HOST_OS
 import System.Posix.Files
 import System.Posix.Directory (createDirectory)
 import System.Posix.Temp
+#endif
 import Control.Exception
 import System.IO
 import MissingH.Path.NameManip

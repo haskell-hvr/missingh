@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {- arch-tag: HVFS utilities main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
@@ -45,7 +46,9 @@ where
 
 import MissingH.IO.HVFS
 import MissingH.Time
+#ifndef mingw32_HOST_OS
 import System.Posix.Files
+#endif
 import MissingH.Printf
 import System.Time
 import System.Locale
