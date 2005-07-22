@@ -37,7 +37,8 @@ Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 On non-Windows platforms, this module does nothing.
 
 On Windows, it re-exports "MissingH.IO.StatCompat".  It also provides various
-file type information modes that are otherwise in "System.Posix.Types" and
+file type information modes that are otherwise in "System.Posix.Types" or
+"System.Posix.Files".  It also provides
 a rudimentary implemention of getFileStatus that emulates the Posix call
 to stat(2).
 
