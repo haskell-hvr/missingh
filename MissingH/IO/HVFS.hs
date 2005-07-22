@@ -67,11 +67,7 @@ import MissingH.IO.HVIO
 import MissingH.Time
 import System.IO
 import System.IO.Error
-#ifndef mingw32_HOST_OS
-import System.Posix.Files
-#else
-import MissingH.IO.WindowsCompat
-#endif
+import MissingH.IO.PlafCompat
 import System.Posix.Types
 import System.Time
 import System.Directory

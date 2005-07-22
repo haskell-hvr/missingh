@@ -63,6 +63,7 @@ where
 import System.Posix.Types
 import Data.Bits
 import MissingH.IO.StatCompat
+import MissingH.IO.PosixConsts
 import MissingH.Time
 import System.Directory
 

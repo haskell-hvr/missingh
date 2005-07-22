@@ -33,9 +33,10 @@ useful with HVFS and on Windows.  See also "MissingH.IO.WindowsCompat".
 Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IO.StatCompat
+module MissingH.IO.StatCompat 
 where
 import System.Posix.Types
+import MissingH.IO.PosixConsts
 import Data.Bits
 
 #ifdef mingw32_HOST_OS
@@ -45,29 +46,6 @@ type GroupID = Int
 
 #endif
 
-blockSpecialMode :: FileMode
-blockSpecialMode = 0o0060000
-
-characterSpecialMode :: FileMode
-characterSpecialMode = 0o0020000
-
-namedPipeMode :: FileMode
-namedPipeMode = 0o0010000
-
-regularFileMode :: FileMode
-regularFileMode = 0o0100000
-
-directoryMode :: FileMode
-directoryMode = 0o0040000
-
-fileTypeModes :: FileMode
-fileTypeModes = 0o00170000
-
-socketMode :: FileMode
-socketMode = 0o0140000
-
-symbolicLinkMode :: FileMode
-symbolicLinkMode = 0o0120000
 
 data FileStatusCompat = 
     FileStatusCompat {deviceID :: DeviceID,
@@ -83,9 +61,6 @@ data FileStatusCompat =
                       statusChangeTime :: EpochTime
                      }
     
-intersectFileModes :: FileMode -> FileMode -> FileMode
-intersectFileModes m1 m2 = m1 .&. m2
-
 sc_helper comp stat = 
     (fileMode stat `intersectFileModes` fileTypeModes) == comp
                                       
