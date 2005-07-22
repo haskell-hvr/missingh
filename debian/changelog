@@ -1,3 +1,10 @@
+missingh (0.11.3) unstable; urgency=low
+
+  * Now added support for use on Windows.
+  * New modules: StatCompat, WindowsCompat.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 22 Jul 2005 05:27:03 -0500
+
 missingh (0.11.2) unstable; urgency=low
 
   * Back out hide-package option in Makefile.  Closes: #309319.
