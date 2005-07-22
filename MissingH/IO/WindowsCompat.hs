@@ -51,6 +51,9 @@ Common usage might be like this:
 >import System.Posix.Files
 >#endif
 
+Or, to avoid having to use CPP and make things even easier, just import
+"MissingH.IO.PlafCompat", which essentially does the above.
+
 -}
 
 module MissingH.IO.WindowsCompat

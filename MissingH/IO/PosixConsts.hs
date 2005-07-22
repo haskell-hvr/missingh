@@ -32,6 +32,10 @@ by default.
 
 -}
 
+module MissingH.IO.PosixConsts where
+import System.Posix.Types
+import Data.Bits
+
 blockSpecialMode :: FileMode
 blockSpecialMode = 0o0060000
 

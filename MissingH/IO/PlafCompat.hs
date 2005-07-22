@@ -27,8 +27,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Exports appropriate System.Posix.* or "MissingH.IO.WindowsCompat" information,
-plus some additional generic platform data.
+On Unix, exports System.Posix.Types and System.Posix.Files.
+
+On Windows, exports System.Posix.Types and "MissingH.IO.WindowsCompat".
+
+The result should be roughly the same set of defined variables and types.
 
 -}
 
@@ -48,4 +51,13 @@ import MissingH.IO.WindowsCompat
 #else
 import System.Posix.Files
 #endif
-import MissingH.IO.PosixConsts
+
+{- | The name of the null device.  NUL: on Windows, /dev/null everywhere else.
+-}
+
+nullFileName :: String
+#ifdef mingw32_HOST_OS
+nullFileName = "NUL:"
+#else
+nullFileName = "/dev/null"
+#endif
