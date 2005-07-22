@@ -37,9 +37,11 @@ Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.IO.WindowsCompat
+#ifndef mingw32_HOST_OS
+where ()
+#else
+       (module MissingH.IO.StatCompat, module MissingH.IO.WindowsCompat)
 where
-
-#ifdef mingw32_HOST_OS
 
 import System.Posix.Types
 import Data.Bits
@@ -110,7 +112,7 @@ getFileStatus fp =
        isdir <- doesDirectoryExist fp
        perms <- getPermissions fp
        modct <- getModificationTime fp
-       epochtime <- timelocal modct
+       let epochtime = clockTimeToEpoch modct
        return $ FileStatusCompat {deviceID = -1,
                                   fileID = -1,
                                   fileMode = if isfile then regularFileMode
