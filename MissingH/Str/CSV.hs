@@ -104,4 +104,3 @@ genCsvFile inp =
           convcell c = concatMap convchar c
           convchar '"' = "\"\""
           convchar x = [x]
-                          

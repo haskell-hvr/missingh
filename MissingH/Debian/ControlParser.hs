@@ -94,5 +94,3 @@ depPart = do packagename <- many1 (noneOf " (")
                           return (split " " t)
                       ) <|> return []
              return (packagename, version, archs)
-
-             

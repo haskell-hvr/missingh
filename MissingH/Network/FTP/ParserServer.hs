@@ -82,5 +82,3 @@ parseCommand :: Handle -> IO (Either ParseError (String, String))
 parseCommand h =
     do input <- hGetLine h
        return $ parse command "(unknown)" (rstrip input)
-
-       
