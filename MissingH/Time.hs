@@ -37,7 +37,8 @@ module MissingH.Time(
                      timegm,
                      timeDiffToSecs,
                      epoch,
-                     epochToClockTime
+                     epochToClockTime,
+                     clockTimeToEpoch
                     )
 where
 import System.Time
@@ -109,3 +110,10 @@ epochToClockTime x =
           secfrac = floor $ (ratval - (seconds % 1) ) * picosecondfactor
           picosecondfactor = 10 ^ 12
           
+{- | Converts a ClockTime to something represented with an arbitrary Real.
+The result could be treated as a CTime from Foreign.C.Types or EpochTime from
+System.Posix.Types.  The inverse of 'epochToClockTime'.
+
+Fractions of a second are not preserved by this function. -}
+clockTimeToEpoch :: Num a => ClockTime -> a
+clockTimeToEpoch (TOD sec _) = fromInteger sec

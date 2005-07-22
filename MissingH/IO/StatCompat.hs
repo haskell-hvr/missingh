@@ -43,6 +43,8 @@ type LinkCount = Int
 type UserID = Int
 type GroupID = Int
 
+#endif
+
 blockSpecialMode :: FileMode
 blockSpecialMode = 0o0060000
 
@@ -58,15 +60,14 @@ regularFileMode = 0o0100000
 directoryMode :: FileMode
 directoryMode = 0o0040000
 
-symbolicLinkMode :: FileMode
-symbolicLinkMode = 0o0120000
+fileTypeModes :: FileMode
+fileTypeModes = 0o00170000
 
 socketMode :: FileMode
 socketMode = 0o0140000
 
-fileTypeModes :: FileMode
-fileTypeModes = 0o00170000
-#endif
+symbolicLinkMode :: FileMode
+symbolicLinkMode = 0o0120000
 
 data FileStatusCompat = 
     FileStatusCompat {deviceID :: DeviceID,
