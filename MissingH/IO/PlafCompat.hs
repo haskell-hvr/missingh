@@ -52,7 +52,7 @@ import MissingH.IO.WindowsCompat
 import System.Posix.Files
 #endif
 
-{- | The name of the null device.  NUL: on Windows, /dev/null everywhere else.
+{- | The name of the null device.  NUL: on Windows, \/dev\/null everywhere else.
 -}
 
 nullFileName :: String
