@@ -1,6 +1,9 @@
-=========================
+=========================================
 INSTALLATION INSTRUCTIONS
-=========================
+For Linux, Unix, BSD, and POSIX platforms
+=========================================
+
+Please see the file INSTALL-win.txt for Windows platform instructions.
 
 PREREQUISITES
 -------------
@@ -22,6 +25,9 @@ If you need Cabal, get it from http://www.haskell.org/cabal.
 
 Debian users can install the packages cpphs and libghc6-cabal-dev
 (or, if using ghc6 6.4 or above, the ghc6 package includes Cabal).
+
+INSTALLATION
+------------
 
 The first step is to generate your setup file.  To do that, run:
 
@@ -48,6 +54,3 @@ or:
  make test-hugs
 
 (More to come in this file)
-
-# arch-tag: Installation Instructions
-

@@ -1,0 +1,37 @@
+=========================
+INSTALLATION INSTRUCTIONS
+For Microsoft platforms
+=========================
+
+For Unix, Linux, BSD, and other POSIX platforms (including Cygwin),
+see the INSTALL file instead of this one.
+
+PREREQUISITES
+-------------
+
+You need GHC 6.4 or above.
+
+INSTALLATION
+------------
+
+Before doing anything, open up a command prompt and cd into the
+top-level missingh directory.
+
+First, you need to run the script to prepare the package information
+for Windows.  To do that, run:
+
+  winprep
+
+Now, run the script to build the program:
+
+  winbuild
+
+To install, run:
+
+  setup install
+
+To compile and run the unit tests, run:
+
+  wintest
+
+(More to come in this file)
