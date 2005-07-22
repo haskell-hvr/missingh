@@ -34,11 +34,27 @@ See also "MissingH.IO.StatCompat", which this module re-exports.
 
 Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 
+On non-Windows platforms, this module does nothing.
+
+On Windows, it re-exports "MissingH.IO.StatCompat".  It also provides various
+file type information modes that are otherwise in "System.Posix.Types" and
+a rudimentary implemention of getFileStatus that emulates the Posix call
+to stat(2).
+
+Common usage might be like this:
+
+>import System.Posix.Types
+>#ifdef mingw32_HOST_OS
+>import MissingH.IO.WindowsCompat
+>#else
+>import System.Posix.Files
+>#endif
+
 -}
 
 module MissingH.IO.WindowsCompat
 #ifndef mingw32_HOST_OS
-where ()
+where
 #else
        (module MissingH.IO.StatCompat, module MissingH.IO.WindowsCompat)
 where
