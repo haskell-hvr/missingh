@@ -24,7 +24,11 @@ import Testutil
 import Control.Exception
 import System.IO
 
+#ifndef mingw32_HOST_OS
 nullfile = openFile "/dev/null" ReadWriteMode
+#else
+nullfile = openFile "NUL:" ReadWriteMode
+#endif
 testfile = "testsrc/ConfigParser/test.cfg"
 p inp = forceEither $ readstring emptyCP inp
 f msg inp exp conv = TestLabel msg $ TestCase $ assertEqual "" (Right exp) (conv (p inp))
