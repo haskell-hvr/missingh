@@ -46,11 +46,7 @@ where
 
 import MissingH.IO.HVFS
 import MissingH.Time
-#ifndef mingw32_HOST_OS
-import System.Posix.Files
-#else
-import MissingH.IO.WindowsCompat
-#endif
+import MissingH.IO.PlafCompat
 import MissingH.Printf
 import System.Time
 import System.Locale

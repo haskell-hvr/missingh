@@ -60,6 +60,4 @@ socketMode = 0o0140000
 symbolicLinkMode :: FileMode
 symbolicLinkMode = 0o0120000
 
-intersectFileModes :: FileMode -> FileMode -> FileMode
-intersectFileModes m1 m2 = m1 .&. m2
 

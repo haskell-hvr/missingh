@@ -38,6 +38,9 @@ where
 import System.Posix.Types
 import MissingH.IO.PosixConsts
 import Data.Bits
+#ifndef mingw32_HOST_OS
+import System.Posix.Files(intersectFileModes)
+#endif
 
 #ifdef mingw32_HOST_OS
 type LinkCount = Int
@@ -72,4 +75,7 @@ isDirectory = sc_helper directoryMode
 isSymbolicLink = sc_helper symbolicLinkMode
 isSocket = sc_helper socketMode
 
-    
+#ifdef mingw32_HOST_OS
+intersectFileModes :: FileMode -> FileMode -> FileMode
+intersectFileModes m1 m2 = m1 .&. m2
+#endif
