@@ -39,12 +39,14 @@ Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 module MissingH.IO.WindowsCompat
 where
 
+#ifdef mingw32_HOST_OS
+
 import System.Posix.Types
 import Data.Bits
 import MissingH.IO.StatCompat
 import MissingH.Time
+import System.Directory
 
-#ifdef mingw32_HOST_OS
 -- these types aren't defined here
 
 nullFileMode :: FileMode
@@ -105,7 +107,7 @@ type FileStatus = FileStatusCompat
 getFileStatus :: FilePath -> IO FileStatus
 getFileStatus fp =
     do isfile <- doesFileExist fp
-       isdir <- doesDirectoryExist
+       isdir <- doesDirectoryExist fp
        perms <- getPermissions fp
        modct <- getModificationTime fp
        epochtime <- timelocal modct

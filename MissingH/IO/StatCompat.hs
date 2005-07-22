@@ -33,14 +33,12 @@ useful with HVFS and on Windows.  See also "MissingH.IO.WindowsCompat".
 Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IO.StatCompat(
-                              FileStatusCompat
-                             )
+module MissingH.IO.StatCompat
 where
 import System.Posix.Types
+import Data.Bits
 
 #ifdef mingw32_HOST_OS
-type LinkCount = Int
 type LinkCount = Int
 type UserID = Int
 type GroupID = Int
@@ -93,7 +91,7 @@ sc_helper comp stat =
 isBlockDevice = sc_helper blockSpecialMode
 isCharacterDevice = sc_helper characterSpecialMode
 isNamedPipe = sc_helper namedPipeMode
-isRegularFile = sc_helper regularPipeMode
+isRegularFile = sc_helper regularFileMode
 isDirectory = sc_helper directoryMode
 isSymbolicLink = sc_helper symbolicLinkMode
 isSocket = sc_helper socketMode
