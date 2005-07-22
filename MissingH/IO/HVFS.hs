@@ -298,11 +298,7 @@ instance HVFS SystemFS where
     vRenameDirectory _ = renameDirectory
     vRemoveFile _ = removeFile
     vRenameFile _ = renameFile
-#ifndef mingw32_HOST_OS
     vGetFileStatus _ fp = getFileStatus fp >>= return . HVFSStatEncap
-#else
-    vGetFileStatus _ _ = fail "Getting file status not supported on Windows"
-#endif
 #ifndef mingw32_HOST_OS
     vGetSymbolicLinkStatus _ fp = getSymbolicLinkStatus fp >>= return . HVFSStatEncap
 #else
