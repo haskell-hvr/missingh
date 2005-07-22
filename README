@@ -55,121 +55,130 @@ Major Features
 The following modules are are provided at this time, and more are
 likely to follow:
 
-MissingH.AnyDBM          * Generic DBM-like database infrastructure
+MissingH.AnyDBM           * Generic DBM-like database infrastructure
 
-MissingH.AnyDBM.         * Use a FiniteMap in the AnyDBM interface
+MissingH.AnyDBM.          * Use a FiniteMap in the AnyDBM interface
  FiniteMapDBM
 
-MissingH.AnyDBM.         * Simple persistent mapping storage
+MissingH.AnyDBM.          * Simple persistent mapping storage
  StringDBM
 
-MissingH.Bits            * Obtain individual bytes from a bitfield
+MissingH.Bits             * Obtain individual bytes from a bitfield
 
-MissingH.Cmd             * Trap errors during calls to external programs
+MissingH.Cmd              * Trap errors during calls to external programs
 
-MissingH.Checksum.*      * Utilities for calculating checksums over strings
+MissingH.Checksum.*       * Utilities for calculating checksums over strings
 
-MissingH.Compression.*   * Compression/decompression algorithms
+MissingH.Compression.*    * Compression/decompression algorithms
 
-MissingH.Compression.    * The Inflate algorithm from unzip and
-  Inflate                  gunzip
+MissingH.Compression.     * The Inflate algorithm from unzip and
+  Inflate                   gunzip
 
-MissingH.ConfigParser    * Configuration file parser
-                         * Interpolation supported
-                         * Compatible with Python and OCaml ConfigParsers
+MissingH.ConfigParser     * Configuration file parser
+                          * Interpolation supported
+                          * Compatible with Python and OCaml ConfigParsers
 
-MissingH.Debian          * Compare two Debian version numbers
+MissingH.Debian           * Compare two Debian version numbers
 
-MissingH.Debian.         * Parse debian/control files or output from
- ControlParser             various Debian commands that use the same format
+MissingH.Debian.          * Parse debian/control files or output from
+ ControlParser              various Debian commands that use the same format
 
-MissingH.Either          * Utilities for the Either type/Error monad
+MissingH.Either           * Utilities for the Either type/Error monad
 
-MissingH.Email.Parser    * Parse a flat string into component parts
-                         * Walk through the components of a message
+MissingH.Email.Parser     * Parse a flat string into component parts
+                          * Walk through the components of a message
 
-MissingH.Email.Sendmail  * Send a message via a locally-installed Sendmail
-                           program
+MissingH.Email.Sendmail   * Send a message via a locally-installed Sendmail
+                            program
 
-MisssingH.FileArchive.   * Support for analyzing and extracting
-  GZip                     GZip archives
+MisssingH.FileArchive.    * Support for analyzing and extracting
+  GZip                      GZip archives
 
-MissingH.FiniteMap       * Flip a finite map
+MissingH.FiniteMap        * Flip a finite map
 
-MissingH.Hsemail         * E-mail parsers
+MissingH.Hsemail          * E-mail parsers
 
-MissingH.IO              * Copying data between files or handles
-                         * Lazy operations on line input
+MissingH.IO               * Copying data between files or handles
+                          * Lazy operations on line input
 
-MissingH.IO.Binary       * Binary I/O with Haskell strings
-                         * Lazy operations on binary blocks
+MissingH.IO.Binary        * Binary I/O with Haskell strings
+                          * Lazy operations on binary blocks
 
-MissingH.List            * Association list manipulation
-                         * List splitting and delimiter joining
-                         * Truncation
+MissingH.IO.HVFS          * Haskell Virtual File System
+                          * Lets you emulate real filesystems and work
+                            with multiple filesystems
 
-MissingH.Logging         * Base logging types
+MissingH.IO.StatCompat    * Utilities for simulating stat(2) structures
+                            on home-grown filesystems or Windows
 
-MissingH.Logging.Handler * Base handler types
+MissingH.IO.WindowsCompat * Provides POSIX-like functions on Windows
 
-MissingH.Logging.        * Logging to a stream
- Handler.Simple          * Logging to a file
+MissingH.List             * Association list manipulation
+                          * List splitting and delimiter joining
+                          * Truncation
 
-MissingH.Logging.        * Logging to local or remote syslog
- Handler.Syslog          * No C library implementation required
+MissingH.Logging          * Base logging types
 
-MissingH.Logging.Logger  * Primary user interface to logging
-                         * Documentation for the logging system
+MissingH.Logging.Handler  * Base handler types
 
-MissingH.Maybe           * forceMaybe utility function
+MissingH.Logging.         * Logging to a stream
+ Handler.Simple           * Logging to a file
 
-MissingH.MIMETypes       * Determine the MIME type of a file
-                         * Guess an extension based on MIME type
+MissingH.Logging.         * Logging to local or remote syslog
+ Handler.Syslog           * No C library implementation required
 
-MissingH.Network         * Establish TCP connections easily
-                         * Trap SIGPIPE to prevent odd crashes
+MissingH.Logging.Logger   * Primary user interface to logging
+                          * Documentation for the logging system
 
-MissingH.Network.        * Versatile FTP client module
- FTP.Client              * Full support for uploads and downloads
-                         * Passive or standard mode
-                         * Lazy uploads and downloads
-                         * Also provides low-level interface to issue
-                           advanced server commands
+MissingH.Maybe            * forceMaybe utility function
 
-MissingH.Network.        * Parse FTP protocol replies
+MissingH.MIMETypes        * Determine the MIME type of a file
+                          * Guess an extension based on MIME type
+
+MissingH.Network          * Establish TCP connections easily
+                          * Trap SIGPIPE to prevent odd crashes
+
+MissingH.Network.         * Versatile FTP client module
+ FTP.Client               * Full support for uploads and downloads
+                          * Passive or standard mode
+                          * Lazy uploads and downloads
+                          * Also provides low-level interface to issue
+                            advanced server commands
+
+MissingH.Network.         * Parse FTP protocol replies
  FTP.Parser
 
-MissingH.Parsec          * Invert the sense of a parser
+MissingH.Parsec           * Invert the sense of a parser
 
-MissingH.Path            * Split apart filename components
-                         * Recursive directory scanning
-                         * Recursive file/directory removal (rm -r)
+MissingH.Path             * Split apart filename components
+                          * Recursive directory scanning
+                          * Recursive file/directory removal (rm -r)
 
-MissingH.Printf          * Format strings using C-like syntax
-                         * Support for args as a list or as
-                           a variable-length argument
+MissingH.Printf           * Format strings using C-like syntax
+                          * Support for args as a list or as
+                            a variable-length argument
 
-MissingH.Regex.Pesco     * Perl-like regular expression operations and
-                           operators
+MissingH.Regex.Pesco      * Perl-like regular expression operations and
+                            operators
 
-MissingH.Str             * Leading/trailing whitespace removal
-                         * Beginning/ending tests
-                         * Joining, splitting, and truncation
+MissingH.Str              * Leading/trailing whitespace removal
+                          * Beginning/ending tests
+                          * Joining, splitting, and truncation
 
-MissingH.Str.CSV         * Parsing of comma-separated value (CSV) files
+MissingH.Str.CSV          * Parsing of comma-separated value (CSV) files
 
-MissingH.Threads         * Threaded callbacks
+MissingH.Threads          * Threaded callbacks
 
-MissingH.Time            * Utilities for working with times and dates
+MissingH.Time             * Utilities for working with times and dates
 
-MissingH.Time.           * Parsing of dates, similar to strptime() in C
+MissingH.Time.            * Parsing of dates, similar to strptime() in C
  ParseDate
 
-Wash.Mail.*              * Generate or parse e-mail messages
-                         * Full support for headers and MIME
+Wash.Mail.*               * Generate or parse e-mail messages
+                          * Full support for headers and MIME
 
-Wash.Utility.*           * Base64 codec
-                         * Various Internet-related parsers
+Wash.Utility.*            * Base64 codec
+                          * Various Internet-related parsers
 
 The entire library has no prerequisites save the Haskell standard
 library and is designed to install without complexity on a variety of
