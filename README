@@ -182,7 +182,7 @@ trees so that users need not have it installed beforehand.
 Quick Start
 -------------------------
 
-See the file INSTALL.
+See the file INSTALL (Linux/Unix/BSD/Posix) or INSTALL-win.txt (Windows).
 
 -------------------------
 Usage in programs
