@@ -108,8 +108,18 @@ getFileStatus fp =
        isdir <- doesDirectoryExist
        perms <- getPermissions fp
        modct <- getModificationTime fp
+       epochtime <- timelocal modct
        return $ FileStatusCompat {deviceID = -1,
                                   fileID = -1,
-                                  fileMode = 
-
+                                  fileMode = if isfile then regularFileMode
+                                                       else directoryMode,
+                                  linkCount = 1,
+                                  fileOwner = 0,
+                                  fileGroup = 0,
+                                  specialDeviceID = -1,
+                                  fileSize = 0, -- fixme: hFileSize?
+                                  accessTime = fromInteger epochtime,
+                                  modificationTime = fromInteger epochtime,
+                                  statusChangeTime = fromInteger epochtime
+                                 }
 #endif
