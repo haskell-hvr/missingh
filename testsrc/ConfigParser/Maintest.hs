@@ -1,5 +1,5 @@
 {- arch-tag: ConfigParser tests main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -122,6 +122,10 @@ test_instances =
             f2 "number" (Right (1::Int)) (get cp "x" "b")
 	   ]
 
+test_merge =
+    let cp = p "test: foo"
+        in [f2 "merge1" (cp) (merge emptyCP cp)
+           ,f2 "merge2" (cp) (merge cp emptyCP)]
 
 test_remove = 
     let cp = forceEither $ readstring emptyCP "def:ault\n[sect1]\ns1o1: v1\ns1o2:v2\n[sect2]\ns2o1: v1\ns2o2: v2\n[sect3]"
@@ -229,5 +233,6 @@ tests = TestList [TestLabel "test_basic" (TestList test_basic),
                  TestLabel "test_ex_nomonad" (TestCase test_ex_nomonad),
                  TestLabel "test_ex_errormonad" (TestList test_ex_errormonad),
                  TestLabel "test_interp" (TestList test_interp),
-                 TestLabel "test_instances" (TestList test_instances)]
+                 TestLabel "test_instances" (TestList test_instances),
+                 TestLabel "test_merge" (TestList test_merge)]
 
