@@ -1,6 +1,6 @@
 {-# LANGUAGE CPP #-}
 {- arch-tag: Path utilities main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Path
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen, 
@@ -37,8 +37,9 @@ module MissingH.Path(-- * Name processing
                      splitExt, absNormPath, secureAbsNormPath,
                      -- * Directory Processing
                      recurseDir, recurseDirStat, recursiveRemove,
+                     bracketCWD,
                      -- * Temporary Directories
-                     mktmpdir, brackettmpdir
+                     mktmpdir, brackettmpdir, brackettmpdirCWD
                     )
 where
 import Data.List
@@ -142,3 +143,19 @@ brackettmpdir :: String -> (String -> IO a) -> IO a
 brackettmpdir x action = do tmpdir <- mktmpdir x
                             finally (action tmpdir) 
                                     (recursiveRemove SystemFS tmpdir)
+
+{- | Changes the current working directory to the given path,
+executes the given I\/O action, then changes back to the original directory,
+even if the I\/O action raised an exception. -}
+bracketCWD :: FilePath -> IO a -> IO a
+bracketCWD fp action =
+    do oldcwd <- getCurrentDirectory
+       setCurrentDirectory fp
+       finally action (setCurrentDirectory oldcwd)
+
+{- | Runs the given I\/O action with the CWD set to the given tmp dir,
+removing the tmp dir and changing CWD back afterwards, even if there
+was an exception. -}
+brackettmpdirCWD :: String -> (String -> IO a) -> IO a
+brackettmpdirCWD template action =
+    brackettmpdir template (\newdir -> bracketCWD newdir action)
