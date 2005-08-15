@@ -156,6 +156,6 @@ bracketCWD fp action =
 {- | Runs the given I\/O action with the CWD set to the given tmp dir,
 removing the tmp dir and changing CWD back afterwards, even if there
 was an exception. -}
-brackettmpdirCWD :: String -> (String -> IO a) -> IO a
+brackettmpdirCWD :: String -> IO a -> IO a
 brackettmpdirCWD template action =
     brackettmpdir template (\newdir -> bracketCWD newdir action)
