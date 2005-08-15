@@ -71,14 +71,14 @@ yourself later.
 -}
 
 recurseDirStat :: HVFS a => a -> FilePath -> IO [(FilePath, HVFSStatEncap)]
-recurseDirStat h fn = unsafeInterleaveIO $
+recurseDirStat h fn = 
     do fs <- vGetSymbolicLinkStatus h fn
        if withStat fs vIsDirectory 
           then do
                dirc <- vGetDirectoryContents h fn
                let contents = map ((++) (fn ++ "/")) $ 
                               filter (\x -> x /= "." && x /= "..") dirc
-               subdirs <- mapM (recurseDirStat h) contents
+               subdirs <- unsafeInterleaveIO $ mapM (recurseDirStat h) contents
                return $ (concat subdirs) ++ [(fn, fs)]
           else return [(fn, fs)]
 
@@ -89,8 +89,9 @@ recursiveRemove :: HVFS a => a -> FilePath -> IO ()
 recursiveRemove h fn =
     let worker [] = return ()
         worker ((fn, fs):xs) =
-            do if withStat fs vIsDirectory then
-                  vRemoveDirectory h fn
+            do --putStrLn $ "worker " ++ fn
+               if withStat fs vIsDirectory 
+                  then vRemoveDirectory h fn
                   else vRemoveFile h fn
                worker xs
         in
