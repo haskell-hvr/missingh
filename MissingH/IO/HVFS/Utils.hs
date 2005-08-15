@@ -68,6 +68,13 @@ recurseDir fs x = recurseDirStat fs x >>= return . map fst
 {- | Like 'recurseDir', but return the stat() (System.Posix.Files.FileStatus)
 information with them.  This is an optimization if you will be statting files
 yourself later.
+
+The items are returned lazily.
+
+WARNING: do not change your current working directory until you have consumed
+all the items.  Doing so could cause strange effects.
+
+Alternatively, you may wish to pass an absolute path to this function.
 -}
 
 recurseDirStat :: HVFS a => a -> FilePath -> IO [(FilePath, HVFSStatEncap)]
