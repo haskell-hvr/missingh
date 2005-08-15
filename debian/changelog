@@ -1,3 +1,10 @@
+missingh (0.11.4) unstable; urgency=low
+
+  * Added bracketCWD, brackettmpdirCWD to MissingH.Path
+  * Made MissingH.Path.recurseDir* lazy
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 15 Aug 2005 05:52:15 -0500
+
 missingh (0.11.3) unstable; urgency=low
 
   * Now added support for use on Windows.
