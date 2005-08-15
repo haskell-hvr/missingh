@@ -50,9 +50,11 @@ import MissingH.IO.PlafCompat
 import MissingH.Printf
 import System.Time
 import System.Locale
+import System.IO.Unsafe
 
 {- | Obtain a recursive listing of all files\/directories beneath 
-the specified directory.  The traversal is depth-first and the original
+the specified directory.  The traversal is depth-first (FIXME: is this true?)
+and the original
 item is always present in the returned list.
 
 If the passed value is not a directory, the return value
@@ -69,14 +71,15 @@ yourself later.
 -}
 
 recurseDirStat :: HVFS a => a -> FilePath -> IO [(FilePath, HVFSStatEncap)]
-recurseDirStat h fn =
+recurseDirStat h fn = unsafeInterleaveIO $
     do fs <- vGetSymbolicLinkStatus h fn
-       if withStat fs vIsDirectory then do
-                                dirc <- vGetDirectoryContents h fn
-                                let contents = map ((++) (fn ++ "/")) $ 
-                                     filter (\x -> x /= "." && x /= "..") dirc
-                                subdirs <- mapM (recurseDirStat h) contents
-                                return $ (concat subdirs) ++ [(fn, fs)]
+       if withStat fs vIsDirectory 
+          then do
+               dirc <- vGetDirectoryContents h fn
+               let contents = map ((++) (fn ++ "/")) $ 
+                              filter (\x -> x /= "." && x /= "..") dirc
+               subdirs <- mapM (recurseDirStat h) contents
+               return $ (concat subdirs) ++ [(fn, fs)]
           else return [(fn, fs)]
 
 {- | Removes a file or a directory.  If a directory, also removes all its
