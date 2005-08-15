@@ -246,8 +246,9 @@ merge src dest =
         conv = optionxform dest
         convFM :: String -> CPOptions -> CPOptions
         convFM _ = listToFM . map (\x -> (conv (fst x), snd x)) . fmToList
+        mergesects a b = plusFM a b
         in
-	dest { content = plusFM (mapFM convFM (content src)) (content dest) }
+	dest { content = plusFM_C mergesects (mapFM convFM (content src)) (content dest) }
 
 {- | Utility to do a special case merge. -}
 readutil :: ConfigParser -> ParseOutput -> ConfigParser
