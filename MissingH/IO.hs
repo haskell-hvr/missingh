@@ -1,5 +1,5 @@
 {- arch-tag: I/O utilities main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.IO
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen, 
@@ -48,8 +48,10 @@ module MissingH.IO(-- * Entire File\/Handle Utilities
                        hInteract,
                        -- ** Line-based
                        hLineInteract, lineInteract,
-                   -- * Optimizations
-                   optimizeForBatch, optimizeForInteraction
+                       -- ** Misc. Lazy
+                       lazyMapM,
+                       -- * Optimizations
+                       optimizeForBatch, optimizeForInteraction
                         ) where
 
 import System.IO.Unsafe
@@ -225,3 +227,12 @@ optimizeForInteraction :: IO ()
 optimizeForInteraction = do
                          hSetBuffering stdin LineBuffering
                          hSetBuffering stdout LineBuffering
+
+{- | Applies a given function to every item in a list, and returns
+the new list.  Unlike the system\'s mapM, items are evaluated lazily. -}
+lazyMapM :: (a -> IO b) -> [a] -> IO [b]
+lazyMapM _ [] = return []
+lazyMapM conv (x:xs) =
+    do this <- conv x
+       next <- unsafeInterleaveIO $ lazyMapM conv xs
+       return (this:next)
