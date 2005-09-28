@@ -54,8 +54,11 @@ where
 import System.Posix.Process
 import System.Posix.IO
 import System.Directory
+import MissingH.Logging.Logger
 
 #ifndef mingw32_HOST_OS
+
+trap = traplogging "MissingH.Daemon" ERROR "detachDaemon"
 
 {- | Detach the process from a controlling terminal and run it in the
 background, handling it with standard Unix deamon semantics.
@@ -75,16 +78,18 @@ Note that this is not intended for a daemon invoked from inetd(1).
 -}
 
 detachDaemon :: IO ()
-detachDeamon = forkProcess child1 >> exitImmediately ExitSuccess
+detachDeamon = trap $ 
+               do forkProcess child1 
+                  exitImmediately ExitSuccess
 
 child1 :: IO ()
-child1 =
+child1 = trap $
     do createSession
        forkProcess child2
        exitImmediately ExitSuccess
 
 child2 :: IO ()
-child2 =
+child2 = trap $
     do setCurrentDirectory "/"
        mapM_ closeFd [stdInput, stdOutput, stdError]
        nullFd <- openFd "/dev/null" ReadWrite Nothing defaultFileFlags
