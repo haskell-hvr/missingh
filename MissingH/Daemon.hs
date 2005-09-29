@@ -78,7 +78,7 @@ Note that this is not intended for a daemon invoked from inetd(1).
 -}
 
 detachDaemon :: IO ()
-detachDeamon = trap $ 
+detachDaemon = trap $ 
                do forkProcess child1 
                   exitImmediately ExitSuccess
 

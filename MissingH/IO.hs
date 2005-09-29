@@ -26,13 +26,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-This module provides various helpful utilities for dealing with I\/O.
+This module provides various helpful utilities for dealing with I\/O
+in Haskell.
 
 There are more functions in "MissingH.IO.Binary".
 
 Written by John Goerzen, jgoerzen\@complete.org
 
-If you're not familiar with the "MissingH.IO.HVIO.HVIO" types, don't worry;
+If you\'re not familiar with the "MissingH.IO.HVIO.HVIO" types, don\'t worry;
 you can just use a regular Handle anywhere you see them.
 -}
 

@@ -6,6 +6,7 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2004-2005 John Goerzen
 Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
+  MissingH.Daemon,
   MissingH.Logging, MissingH.Logging.Handler,
     MissingH.Logging.Handler.Simple, MissingH.Logging.Handler.Syslog,
     MissingH.Logging.Logger, 
