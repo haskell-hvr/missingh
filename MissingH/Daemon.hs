@@ -50,13 +50,14 @@ module MissingH.Daemon (
 #endif
 		   )
 where
+#ifndef mingw32_HOST_OS
 
 import System.Posix.Process
 import System.Posix.IO
 import System.Directory
 import MissingH.Logging.Logger
+import System.Exit
 
-#ifndef mingw32_HOST_OS
 
 trap = traplogging "MissingH.Daemon" ERROR "detachDaemon"
 
