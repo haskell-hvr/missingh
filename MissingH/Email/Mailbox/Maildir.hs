@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Email.Mailbox
+   Module     : MissingH.Email.Mailbox.Maildir
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -25,39 +25,43 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-General support for e-mail mailboxes
+Support for Maildir-style mailboxes.
+
+Information about the Maildir format can be found at:
+
+ * <http://www.qmail.org/qmail-manual-html/man5/maildir.html>
+ * <http://cr.yp.to/proto/maildir.html>
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Email.Mailbox(Flag(..), Message, Flags,
-                              MailboxReader(..),
-                              MailboxWriter(..))
+module MissingH.Email.Mailbox.Maildir(Maildir(..), readMaildir)
 where
 
-type Message = String
+import MissingH.Email.Mailbox
+import System.Posix.IO(OpenMode(..))
+import System.Directory
+import MissingH.Path
+import MissingH.Maybe
+import Control.Monad
 
-data Flag = 
-           SEEN
-           | ANSWERED
-           | FLAGGED
-           | DELETED
-           | DRAFT
-           | OTHERFLAG String
-           deriving (Eq, Show)
-           
-type Flags = [Flag]
+data Maildir = Maildir 
+    {loc :: FilePath}
+instance Show Maildir
+    where show x = loc x
+                       
 
-class (Show a, Show b) => MailboxReader a b where
-    listMessageIDs :: a -> IO [b]
-    listMessageFlags :: a -> IO [(b, Flags)]
-    getAll :: a -> IO [(b, Flags, Message)]
-    getMessages :: a -> [b] -> IO [(b, Flags, Message)]
-    
-class (MailboxReader a b) => MailboxWriter a b where
-    appendMessage :: a -> Flags -> Message -> IO b
-    deleteMessages :: a -> [b] -> IO ()
-    addFlags :: a -> [b] -> Flags -> IO ()
-    removeFlags :: a -> [b] -> Flags -> IO ()
-    setFlags :: a -> [b] -> Flags -> IO ()
+{- | Open a Maildir mailbox. -}
+-- For reading only, for now.
 
+readMaildir :: FilePath -> IO Maildir
+readMaildir fp =
+    do cwd <- getCurrentDirectory
+       let abspath = forceMaybeMsg "abspath readMaildir" $ absNormPath cwd fp
+       c <- getDirectoryContents fp
+       unless ("cur" `elem` c && "new" `elem` c && "tmp" `elem` c)
+              $ error (fp ++ " is not a valid Maildir.")
+       return (Maildir fp)
+
+
+        

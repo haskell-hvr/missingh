@@ -42,6 +42,7 @@ data Flag =
            | FLAGGED
            | DELETED
            | DRAFT
+           | FORWARDED
            | OTHERFLAG String
            deriving (Eq, Show)
            
@@ -81,7 +82,7 @@ class (Show a, Show b, Eq b) => MailboxReader a b where
            return $ filter (\(id, f, m) -> id `elem` list) messages
     
 class (MailboxReader a b) => MailboxWriter a b where
-    appendMessage :: a -> Flags -> Message -> IO b
+    appendMessages :: a -> [(Flags, Message)] -> IO [b]
     deleteMessages :: a -> [b] -> IO ()
     addFlags :: a -> [b] -> Flags -> IO ()
     removeFlags :: a -> [b] -> Flags -> IO ()
