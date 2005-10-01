@@ -31,11 +31,16 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 module MissingH.Maybe
     (
-     forceMaybe
+     forceMaybe, forceMaybeMsg
 ) where
 
 {- | Pulls a Just value out of a Maybe value.  If the Maybe value is
 Nothing, raises an exception with error. -}
 forceMaybe :: Maybe a -> a
-forceMaybe Nothing = error "forceMaybe: Got Nothing"
-forceMaybe (Just x) = x
+forceMaybe = forceMaybeMsg "forceMaybe: Got Nothing"
+
+{- | Like 'forceMaybe', but lets you customize the error message raised if
+Nothing is supplied. -}
+forceMaybeMsg :: String -> Maybe a -> a
+forceMaybeMsg msg Nothing = error msg
+forceMaybeMsg _ (Just x) = x
