@@ -24,7 +24,7 @@ Portions Copyright (c) 2003 Ian Lynagh and released under the GNU LGPL 2.1.
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen, 
-   Maintainer : jgoerzen@complete.org
+   Maintainer : jgoerzen\@complete.org
    Stability  : provisional
    Portability: portable
 

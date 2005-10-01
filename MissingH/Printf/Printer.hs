@@ -10,7 +10,7 @@ See the COPYRIGHT and 3rd-party-licenses/LGPL-2.1 files for more details
    License    : GNU GPL, version 2 or above OR GNU LGPL 2.1
 
    Maintainer : John Goerzen, 
-   Maintainer : jgoerzen@complete.org
+   Maintainer : jgoerzen\@complete.org
    Stability  : provisional
    Portability: portable
 

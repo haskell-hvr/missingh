@@ -8,7 +8,7 @@
    License    : GNU LGPL, version 2.1 or above
 
    Maintainer : John Goerzen, 
-   Maintainer : jgoerzen@complete.org
+   Maintainer : jgoerzen\@complete.org
    Stability  : provisional
    Portability: portable
 

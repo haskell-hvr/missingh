@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen, 
-   Maintainer : jgoerzen@complete.org
+   Maintainer : jgoerzen\@complete.org
    Stability  : provisional
-   Portability: portable to platforms supporting binary I/O
+   Portability: portable to platforms supporting binary I\/O
 
 This module provides various helpful utilities for dealing with I\/O.
 
