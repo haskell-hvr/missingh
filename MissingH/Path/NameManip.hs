@@ -7,8 +7,7 @@
    Copyright  : Copyright (C) 2004 Volker Wysk
    License    : GNU LGPL, version 2.1 or above
 
-   Maintainer : John Goerzen, 
-   Maintainer : jgoerzen\@complete.org
+   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 

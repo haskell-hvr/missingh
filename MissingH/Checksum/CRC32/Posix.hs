@@ -21,8 +21,7 @@
    Copyright  : Copyright (C) 2002 HardCore SoftWare, Doug Hoyte
    License    : GNU GPL
 
-   Maintainer : John Goerzen, 
-   Maintainer : jgoerzen\@complete.org
+   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 

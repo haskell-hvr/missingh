@@ -9,8 +9,7 @@ See the COPYRIGHT and 3rd-party-licenses/LGPL-2.1 files for more details
    Copyright  : Copyright (C) 2003 Ian Lynagh
    License    : GNU GPL, version 2 or above OR GNU LGPL 2.1
 
-   Maintainer : John Goerzen, 
-   Maintainer : jgoerzen\@complete.org
+   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
