@@ -30,6 +30,7 @@ Support for Maildir-style mailboxes.
 Information about the Maildir format can be found at:
 
  * <http://www.qmail.org/qmail-manual-html/man5/maildir.html>
+
  * <http://cr.yp.to/proto/maildir.html>
 
 Written by John Goerzen, jgoerzen\@complete.org
@@ -44,24 +45,30 @@ import System.Directory
 import MissingH.Path
 import MissingH.Maybe
 import Control.Monad
+import Text.Regex
 
 data Maildir = Maildir 
     {loc :: FilePath}
 instance Show Maildir
     where show x = loc x
-                       
+    
+splitFN fn :: String -> (String, Flags)
+                   
+splitFN fn = 
+    
+    where (base, fstr) = 
+     case span (/= ':') of
+              (h, []) = (h, [])
+              (h, f) = (h, tail f)
 
 {- | Open a Maildir mailbox. -}
 -- For reading only, for now.
 
-readMaildir :: FilePath -> IO Maildir
-readMaildir fp =
+openMaildir :: FilePath -> IO Maildir
+openMaildir fp =
     do cwd <- getCurrentDirectory
        let abspath = forceMaybeMsg "abspath readMaildir" $ absNormPath cwd fp
        c <- getDirectoryContents fp
        unless ("cur" `elem` c && "new" `elem` c && "tmp" `elem` c)
               $ error (fp ++ " is not a valid Maildir.")
        return (Maildir fp)
-
-
-        
