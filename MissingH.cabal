@@ -5,7 +5,7 @@ License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Alpha
 Copyright: Copyright (c) 2004-2005 John Goerzen
-Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
+Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Daemon,
   MissingH.Email.Mailbox,
   MissingH.Logging, MissingH.Logging.Handler,
@@ -16,7 +16,6 @@ Exposed-Modules: MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Hsemail.Rfc2234, MissingH.Hsemail.Rfc2821, 
     MissingH.Hsemail.Rfc2822,
   MissingH.Regex.Pesco,
-  MissingH.Str,
     MissingH.Str.CSV,
   MissingH.Cmd,
   MissingH.FiniteMap, MissingH.Path, MissingH.Path.NameManip,

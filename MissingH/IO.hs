@@ -1,4 +1,4 @@
-{- arch-tag: I/O utilities main file
+{-
 Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -25,18 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-This module provides various helpful utilities for dealing with I\/O
-in Haskell.
-
-There are more functions in "MissingH.IO.Binary".
-
-Written by John Goerzen, jgoerzen\@complete.org
-
-If you\'re not familiar with the "MissingH.IO.HVIO.HVIO" types, don\'t worry;
-you can just use a regular Handle anywhere you see them.
+asdf.
 -}
 
-module MissingH.IO(-- * Entire File\/Handle Utilities
+module MissingH.IO(-- * Entire File Handle Utilities
                        -- ** Opened Handle Data Copying
                        hCopy, hCopyProgress, hLineCopy, lineCopy,
                        -- ** Disk File Data Copying

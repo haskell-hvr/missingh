@@ -30,12 +30,13 @@ General support for e-mail mailboxes
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Email.Mailbox(Flag(..), Flags, Message,
+module MissingH.Email.Mailbox(Flag(..), Message, Flags,
                               MailboxReader(..),
                               MailboxWriter(..))
 where
 
-{- | The flags which may be assigned to a message. -}
+type Message = String
+
 data Flag = 
            SEEN
            | ANSWERED
@@ -45,40 +46,13 @@ data Flag =
            | OTHERFLAG String
            deriving (Eq, Show)
            
-{- | Convenience shortcut -}
 type Flags = [Flag]
 
-{- | A Message is represented as a simple String. -}
-type Message = String
-
-{- | Main class for readable mailboxes. 
-
-The mailbox object /a/ represents zero or more 'Message's.  Each message
-has a unique identifier /b/ in a format specific to each given mailbox.
-This identifier may or may not be persistent.
-
-Functions which return a list are encouraged -- but not guaranteed -- to
-do so lazily.
-
-Implementing classes must provide, at minimum, 'getAll'.
--}
-class (Show a, Show b, Eq b) => MailboxReader a b where
-    {- | Returns a list of all unique identifiers. -}
-    listIDs :: a -> IO [b]
-    {- | Returns a list of all unique identifiers as well as all flags. -}
+class (Show a, Show b) => MailboxReader a b where
+    listMessageIDs :: a -> IO [b]
     listMessageFlags :: a -> IO [(b, Flags)]
-    {- | Returns a list of all messages, including their content,
-       flags, and unique identifiers. -}
     getAll :: a -> IO [(b, Flags, Message)]
-    {- | Returns information about specific messages. -}
     getMessages :: a -> [b] -> IO [(b, Flags, Message)]
-
-    listIDs mb = listMessageFlags mb >>= return . map fst
-    listMessageFlags mb = getAll mb >>= return . 
-                           map (\(i, f, _) -> (i, f))
-    getMessages mb list =
-        do messages <- getAll mb
-           return $ filter (\(id, f, m) -> id `elem` list) messages
     
 class (MailboxReader a b) => MailboxWriter a b where
     appendMessage :: a -> Flags -> Message -> IO b

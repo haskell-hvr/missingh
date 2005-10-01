@@ -25,7 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable to platforms supporting binary I\/O
 
-This module provides various helpful utilities for dealing with I\/O.
+This module provides various helpful utilities for dealing with binary
+input and output.
 
 Important note: /binary functions are not supported in all Haskell
 implementations/.  Do not import or use this module unless you know you
