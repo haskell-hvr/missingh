@@ -31,9 +31,9 @@ General support for e-mail mailboxes
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Email.Mailbox(Flag, Message, Flags,
-                              MailboxReader,
-                              MailboxWriter)
+module MissingH.Email.Mailbox(Flag(..), Message, Flags,
+                              MailboxReader(..),
+                              MailboxWriter(..))
 where
 
 type Message = String
