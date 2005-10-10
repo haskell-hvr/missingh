@@ -36,7 +36,6 @@ module MissingH.IO.StatCompat
 where
 import System.Posix.Types
 import MissingH.IO.PosixConsts
-import Data.Bits
 #ifndef mingw32_HOST_OS
 import System.Posix.Files(intersectFileModes)
 #endif

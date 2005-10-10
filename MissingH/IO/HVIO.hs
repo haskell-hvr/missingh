@@ -263,8 +263,8 @@ class (Show a) => HVIO a where
     -- raised; fewer bytes than requested are returned on EOF.
     vGetBuf :: a -> Ptr b -> Int -> IO Int
 
-    vSetBuffering x _ = return ()
-    vGetBuffering x = return NoBuffering
+    vSetBuffering _ _ = return ()
+    vGetBuffering _ = return NoBuffering
 
     vShow x = return (show x)
 
@@ -491,8 +491,8 @@ To create an empty buffer, pass the initial value @\"\"@. -}
 newMemoryBuffer :: String               -- ^ Initial Contents
                 -> (String -> IO ())    -- ^ close func
                 -> IO MemoryBuffer
-newMemoryBuffer init closefunc = do ref <- newIORef (True, (0, init))
-                                    return (MemoryBuffer closefunc ref)
+newMemoryBuffer initval closefunc = do ref <- newIORef (True, (0, initval))
+                                       return (MemoryBuffer closefunc ref)
 
 {- | Default (no-op) memory buf close function. -}
 mbDefaultCloseFunc :: String -> IO ()
@@ -533,14 +533,14 @@ instance HVIO MemoryBuffer where
                         vioc_set (vrv h) (-1, "")
                         vClose h
                         return retval
-    vIsReadable h = return True
+    vIsReadable _ = return True
 
     vPutStr h s = do (pos, buf) <- vioc_get (vrv h)
                      let (pre, post) = splitAt pos buf
                      let newbuf = pre ++ s ++ (drop (length buf) post)
                      vioc_set (vrv h) (pos + (length s), newbuf)
     vPutChar h c = vPutStr h [c]
-    vIsWritable h = return True
+    vIsWritable _ = return True
     vTell h = do v <- vioc_get (vrv h)
                  return . fromIntegral $ (fst v)
     vSeek h seekmode seekposp = 
@@ -554,7 +554,7 @@ instance HVIO MemoryBuffer where
                                 then replicate (newpos - (length buf)) '\0'
                                 else []
            vioc_set (vrv h) (newpos, buf2)
-    vIsSeekable h = return True
+    vIsSeekable _ = return True
 
 ----------------------------------------------------------------------
 -- Pipes
@@ -639,7 +639,7 @@ pwmv (PipeWriter x) = do mv1 <- vioc_get x
 
 
 instance Show PipeWriter where
-    show x = "<PipeWriter>"
+    show _ = "<PipeWriter>"
 
 instance HVIO PipeWriter where
     vClose h = do o <- vIsOpen h

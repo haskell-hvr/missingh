@@ -105,7 +105,7 @@ notMatching p errormsg =
                       x <- maybeRead
                       case x of
                              Nothing -> return ()
-                             Just x -> unexpected errormsg
+                             Just _ -> unexpected errormsg
         in
         try workerFunc
 

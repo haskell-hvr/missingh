@@ -42,7 +42,6 @@ module MissingH.ConfigParser.Types (
 import Data.FiniteMap
 import Data.Char
 import Control.Monad.Error
-import MissingH.Either
 
 {- | Internal output from parser -}
 type ParseOutput = [(String, [(String, String)])]

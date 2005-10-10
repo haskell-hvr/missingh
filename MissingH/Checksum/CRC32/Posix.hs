@@ -45,9 +45,9 @@ import Data.Bits
 import Data.Word
 
 iter_crc32       :: Word32 -> Char -> Word32
-iter_crc32 sum ch = (sum `shiftL` 8) `xor`
-                    crctab ! fromIntegral ((sum `shiftR` 24) `xor`
-                    (fromIntegral (fromEnum ch)))
+iter_crc32 sumval ch = (sumval `shiftL` 8) `xor`
+                       crctab ! fromIntegral ((sumval `shiftR` 24) `xor`
+                                              (fromIntegral (fromEnum ch)))
 
 
 calc_crc32            :: [Char] -> Word32 -> Word32 -> Word32

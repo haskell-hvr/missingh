@@ -42,7 +42,7 @@ Example:
 -}
 getBytes :: (Integral a, Bounded a, Bits a) => a -> [a]
 getBytes input = 
-    let getByte x 0 = []
+    let getByte _ 0 = []
         getByte x remaining = (x .&. 0xff) : getByte (shiftR x 8) (remaining - 1)
         in
         if (bitSize input `mod` 8) /= 0

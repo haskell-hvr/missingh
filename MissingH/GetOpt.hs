@@ -71,8 +71,8 @@ validateCmdLine order options header func =
     do res <- parseCmdLine order options header
        case func res of
          Nothing -> return res
-         Just error -> ioError (userError (error ++ "\n" ++
-                                           usageInfo header options))
+         Just errormsg -> ioError (userError (errormsg ++ "\n" ++
+                                              usageInfo header options))
 
 {- | A type to standardize some common uses of GetOpt.
 

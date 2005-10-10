@@ -42,7 +42,6 @@ module MissingH.ConfigParser.Lexer
 
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
-import Data.Maybe
 
 data CPTok = IGNOREDATA
            | NEWSECTION String
