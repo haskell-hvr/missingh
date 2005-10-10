@@ -1,6 +1,6 @@
 {-# OPTIONS -fglasgow-exts #-}
 {- |
-   Module      :  System.IO.Driver
+   Module      :  MissingH.IO.BlockIO
    Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
@@ -14,7 +14,7 @@
    But it does it /fast/.
 -}
 
-module System.IO.Driver where
+module MissingH.IO.BlockIO where
 
 import Prelude hiding ( catch, rem )
 import Control.Exception
