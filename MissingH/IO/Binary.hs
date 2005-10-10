@@ -91,22 +91,20 @@ import MissingH.IO.HVIO
 
 {- | Provides support for handling binary blocks with convenient
 types. -}
-class BinaryConvertable a where
-    toBuf :: a -> (Ptr CChar -> IO c) -> IO c
-    fromBuf :: Int -> (Ptr CChar -> IO Int) -> IO a
-    byteSize :: a -> Int
+class (Eq a, Show a) => BinaryConvertable a where
+    toBuf :: [a] -> (Ptr CChar -> IO c) -> IO c
+    fromBuf :: Int -> (Ptr CChar -> IO Int) -> IO [a]
 
-instance BinaryConvertable String where
+instance BinaryConvertable Char where
     toBuf = withCString
     fromBuf len func = 
         do fbuf <- mallocForeignPtrArray (len + 1)
            withForeignPtr fbuf handler
         where handler ptr =
-                  do bytesread <- func
+                  do bytesread <- func ptr
                      peekCStringLen (ptr, bytesread)
-    byteSize = length
 
-instance BinaryConvertable [Word8] where
+instance BinaryConvertable Word8 where
     toBuf hslist func = withArray hslist (\ptr -> func (castPtr ptr))
     fromBuf len func =
         do (fbuf::(ForeignPtr Word8)) <- mallocForeignPtrArray (len + 1)
@@ -114,7 +112,6 @@ instance BinaryConvertable [Word8] where
         where handler ptr =
                   do bytesread <- func (castPtr ptr)
                      peekArray bytesread ptr
-    byteSize = length
 
 
 -- . **************************************************
@@ -130,11 +127,11 @@ the length of the passed String or list..
 
 If it helps, you can thing of this function as being of type
 @Handle -> String -> IO ()@. -}
-hPutBufStr :: (HVIO a, BinaryConvertable b) => a -> b -> IO ()
-hPutBufStr f s = toBuf s (\cs -> vPutBuf f cs (byteSize s))
+hPutBufStr :: (HVIO a, BinaryConvertable b) => a -> [b] -> IO ()
+hPutBufStr f s = toBuf s (\cs -> vPutBuf f cs (length s))
 
 -- | An alias for 'hPutBufStr' 'stdout'
-putBufStr :: (BinaryConvertable b) => b -> IO ()
+putBufStr :: (BinaryConvertable b) => [b] -> IO ()
 putBufStr = hPutBufStr stdout
 
 {- | Acts a wrapper around the standard function 'System.IO.hGetBuf',
@@ -145,29 +142,27 @@ is returned with EOF is reached, and any given read may read fewer
 bytes than the given length.
 
 (Actually, it's a wrapper around "MissingH.IO.HVIO.vGetBuf") -}
-hGetBufStr :: (HVIO a, BinaryConvertable b) => a -> Int -> IO b
-hGetBufStr f count = fromBuf count (
-   fbuf <- mallocForeignPtrArray (count + 1)
-   withForeignPtr fbuf (\buf -> vGetBuf f buf count)
+hGetBufStr :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [b]
+hGetBufStr f count = fromBuf count (\buf -> vGetBuf f buf count)
 
 -- | An alias for 'hGetBufStr' 'stdin'
-getBufStr :: (BinaryConvertable b) => Int -> IO b
+getBufStr :: (BinaryConvertable b) => Int -> IO [b]
 getBufStr = hGetBufStr stdin
 
 {- | Like 'hGetBufStr', but guarantees that it will only return fewer than
 the requested number of bytes when EOF is encountered. -}
-hFullGetBufStr :: (HBIO a, BinaryConvertable b) => a -> Int -> IO b
-hFullGetBufStr f 0 = return ""
+hFullGetBufStr :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [b]
+hFullGetBufStr f 0 = return []
 hFullGetBufStr f count = do
                          thisstr <- hGetBufStr f count
-                         if (byteSize thisstr) == 0
+                         if thisstr == []
                             then return []
                             else do
                                  remainder <- hFullGetBufStr f (count - (length thisstr))
                                  return (thisstr ++ remainder)
 
 -- | An alias for 'hFullGetBufStr' 'stdin'
-fullGetBufStr :: Int -> IO String
+fullGetBufStr :: BinaryConvertable b => Int -> IO [b]
 fullGetBufStr = hFullGetBufStr stdin
 
 {- | Writes the list of blocks to the given file handle -- a wrapper around
