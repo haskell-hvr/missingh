@@ -68,8 +68,28 @@ module MissingH.IO.Binary(-- * Entire File\/Handle Utilities
 import Foreign.Ptr
 import Foreign.ForeignPtr
 import Foreign.C.String
+import Foreign.C.Types
+import Foreign.Marshal.Array
+import Data.Word
 import System.IO.Unsafe
 import System.IO
+
+class BinaryConvertable a where
+    toBuf :: a -> (Ptr CChar -> IO c) -> IO c
+    fromBuf :: Int -> (Ptr CChar -> IO a) -> IO a
+
+instance BinaryConvertable String where
+    toBuf = withCString
+    fromBuf len func = 
+        do fbuf <- mallocForeignPtrArray (len + 1)
+           withForeignPtr fbuf func
+
+instance BinaryConvertable [Word8] where
+    toBuf hslist func = withArray hslist (\ptr -> func (castPtr ptr))
+    fromBuf len func =
+        do (fbuf::(ForeignPtr Word8)) <- mallocForeignPtrArray (len + 1)
+           withForeignPtr fbuf (\ptr -> func (castPtr ptr))
+           
 
 -- . **************************************************
 -- . Binary Files
