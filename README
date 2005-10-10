@@ -81,10 +81,11 @@ MissingH.ConfigParser     * Configuration file parser
 MissingH.Daemon           * Support for detaching from a terminal
 
 MissingH.Debian           * Compare two Debian version numbers
+                            [ does not require Debian to compile ]
 
 MissingH.Debian.          * Parse debian/control files or output from
  ControlParser              various Debian commands that use the same format
-                            [ does not require Debian to run ]
+                            [ does not require Debian to compile run ]
 
 MissingH.Either           * Utilities for the Either type/Error monad
 
@@ -104,8 +105,9 @@ MissingH.Hsemail          * E-mail parsers
 MissingH.IO               * Copying data between files or handles
                           * Lazy operations on line input
 
-MissingH.IO.Binary        * Binary I/O with Haskell strings
+MissingH.IO.Binary        * Binary I/O with Haskell Strings or [Word8]
                           * Lazy operations on binary blocks
+                          * Binary file copy
 
 MissingH.IO.HVFS          * Haskell Virtual File System
                           * Lets you emulate real filesystems and work
