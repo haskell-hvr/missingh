@@ -88,6 +88,7 @@ import Data.Word
 import System.IO.Unsafe
 import System.IO
 import MissingH.IO.HVIO
+import MissingH.IO.HVFS
 
 {- | Provides support for handling binary blocks with convenient
 types. -}
@@ -166,40 +167,46 @@ fullGetBufStr :: BinaryConvertable b => Int -> IO [b]
 fullGetBufStr = hFullGetBufStr stdin
 
 {- | Writes the list of blocks to the given file handle -- a wrapper around
-'hPutBufStr'. -}
-hPutBlocks :: Handle -> [String] -> IO ()
+'hPutBufStr'.
+
+Think of this function as:
+
+>Handle -> [String] -> IO ()
+
+(You can use it that way) -}
+hPutBlocks :: (HVIO a, BinaryConvertable b) => a -> [[b]] -> IO ()
 hPutBlocks _ [] = return ()
 hPutBlocks h (x:xs) = do
                       hPutBufStr h x
                       hPutBlocks h xs
 
 -- | An alias for 'hPutBlocks' 'stdout'
-putBlocks :: [String] -> IO ()
+putBlocks :: (BinaryConvertable b) => [[b]] -> IO ()
 putBlocks = hPutBlocks stdout
 
 {- | Returns a lazily-evaluated list of all blocks in the input file,
 as read by 'hGetBufStr'.  There will be no 0-length block in this list.
 The list simply ends at EOF. -}
-hGetBlocks :: Handle -> Int -> IO [String]
+hGetBlocks :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [[b]]
 hGetBlocks = hGetBlocksUtil hGetBufStr
 
 -- | An alias for 'hGetBlocks' 'stdin'
-getBlocks :: Int -> IO [String]
+getBlocks :: BinaryConvertable b => Int -> IO [[b]]
 getBlocks = hGetBlocks stdin
 
 {- | Same as 'hGetBlocks', but using 'hFullGetBufStr' underneath. -}
-hFullGetBlocks :: Handle -> Int -> IO [String]
+hFullGetBlocks :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [[b]]
 hFullGetBlocks = hGetBlocksUtil hFullGetBufStr
 
 -- | An alias for 'hFullGetBlocks' 'stdin'
-fullGetBlocks :: Int -> IO [String]
+fullGetBlocks :: BinaryConvertable b => Int -> IO [[b]]
 fullGetBlocks = hFullGetBlocks stdin
 
-hGetBlocksUtil :: (Handle -> Int -> IO String) -> Handle -> Int -> IO [String]
+hGetBlocksUtil :: (HVIO a, BinaryConvertable b) => (a -> Int -> IO [b]) -> a -> Int -> IO [[b]]
 hGetBlocksUtil readfunc h count =
     unsafeInterleaveIO (do
                        block <- readfunc h count
-                       if block == ""
+                       if block == []
                           then return []
                           else do
                                remainder <- hGetBlocksUtil readfunc h count
@@ -212,24 +219,28 @@ out.  Take a look at 'hBlockCopy' for an example.  The integer argument
 is the size of input binary blocks.  This function uses 'hGetBlocks'
 internally.
 -}
-hBlockInteract :: Int -> Handle -> Handle -> ([String] -> [String]) -> IO ()
+hBlockInteract :: (HVIO a, HVIO d, BinaryConvertable b, BinaryConvertable c) =>
+                  Int -> a -> d -> ([[b]] -> [[c]]) -> IO ()
 hBlockInteract = hBlockInteractUtil hGetBlocks
 
 -- | An alias for 'hBlockInteract' over 'stdin' and 'stdout'
-blockInteract :: Int -> ([String] -> [String]) -> IO ()
+blockInteract :: (BinaryConvertable b, BinaryConvertable c) => Int -> ([[b]] -> [[c]]) -> IO ()
 blockInteract x = hBlockInteract x stdin stdout
 
 {- | Same as 'hBlockInteract', but uses 'hFullGetBlocks' instead of
 'hGetBlocks' internally. -}
-hFullBlockInteract :: Int -> Handle -> Handle -> ([String] -> [String]) -> IO ()
+hFullBlockInteract :: (HVIO a, HVIO d, BinaryConvertable b, BinaryConvertable c) =>
+                      Int -> a -> d -> ([[b]] -> [[c]]) -> IO ()
 hFullBlockInteract = hBlockInteractUtil hFullGetBlocks
 
 -- | An alias for 'hFullBlockInteract' over 'stdin' and 'stdout'
-fullBlockInteract :: Int -> ([String] -> [String]) -> IO ()
+fullBlockInteract :: (BinaryConvertable b, BinaryConvertable c) => 
+                     Int -> ([[b]] -> [[c]]) -> IO ()
 fullBlockInteract x = hFullBlockInteract x stdin stdout
 
-hBlockInteractUtil :: (Handle -> Int -> IO [String]) -> Int ->
-                      Handle -> Handle -> ([String] -> [String]) -> IO ()
+hBlockInteractUtil :: (HVIO a, HVIO d, BinaryConvertable b, BinaryConvertable c) => 
+                      (a -> Int -> IO [[b]]) -> Int ->
+                      a -> d -> ([[b]] -> [[c]]) -> IO ()
 hBlockInteractUtil blockreader blocksize hin hout func =
     do
     blocks <- blockreader hin blocksize
@@ -244,7 +255,7 @@ blocks of the given size.  This is actually a beautiful implementation:
 to it)
 -}
 
-hBlockCopy :: Int -> Handle -> Handle -> IO ()
+hBlockCopy :: (HVIO a, HVIO b) => Int -> a -> b -> IO ()
 hBlockCopy bs hin hout = hBlockInteract bs hin hout id
 
 {- | Copies from 'stdin' to 'stdout' using binary blocks of the given size.
@@ -273,12 +284,21 @@ copyFileBlocksToFile bs infn outfn = do
 {- | Like the built-in 'readFile', but opens the file in binary instead
 of text mode. -}
 readBinaryFile :: FilePath -> IO String
-readBinaryFile name = openBinaryFile name ReadMode >>= hGetContents
+readBinaryFile = vReadBinaryFile SystemFS
+
+{- | Same as 'readBinaryFile', but works with HVFS objects. -}
+vReadBinaryFile :: HVFS a => a -> FilePath -> IO String
+vReadBinaryFile fs fp =
+    vOpenBinaryFile fs fp ReadMode >>= vGetContents
 
 {- | Like the built-in 'writeFile', but opens the file in binary instead
 of text mode. -}
 writeBinaryFile :: FilePath -> String -> IO ()
-writeBinaryFile name str =
-    do h <- openBinaryFile name WriteMode
-       hPutStr h str
-       hClose h
+writeBinaryFile = vWriteBinaryFile SystemFS
+
+{- | Like 'writeBinaryFile', but works on HVFS objects. -}
+vWriteBinaryFile :: HVFS a => a -> FilePath -> String -> IO ()
+vWriteBinaryFile fs name str =
+    do h <- vOpenBinaryFile fs name WriteMode
+       vPutStr h str
+       vClose h
