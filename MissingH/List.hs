@@ -58,7 +58,7 @@ import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
                 elemIndex, elemIndices)
 import IO
 import System.IO.Unsafe
-import Control.Monad.State
+import Control.Monad.State(State, get, put)
 
 {- | Returns true if the given list starts with the specified elements;
 false otherwise.  (This is an alias for "Data.List.isPrefixOf".)
