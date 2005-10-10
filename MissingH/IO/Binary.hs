@@ -287,9 +287,9 @@ readBinaryFile :: FilePath -> IO String
 readBinaryFile = vReadBinaryFile SystemFS
 
 {- | Same as 'readBinaryFile', but works with HVFS objects. -}
-vReadBinaryFile :: HVFS a => a -> FilePath -> IO String
+vReadBinaryFile :: (HVFSOpenable a) => a -> FilePath -> IO String
 vReadBinaryFile fs fp =
-    vOpenBinaryFile fs fp ReadMode >>= vGetContents
+    vOpenBinaryFile fs fp ReadMode >>= (\(HVFSOpenEncap h) -> vGetContents h)
 
 {- | Like the built-in 'writeFile', but opens the file in binary instead
 of text mode. -}
@@ -297,8 +297,9 @@ writeBinaryFile :: FilePath -> String -> IO ()
 writeBinaryFile = vWriteBinaryFile SystemFS
 
 {- | Like 'writeBinaryFile', but works on HVFS objects. -}
-vWriteBinaryFile :: HVFS a => a -> FilePath -> String -> IO ()
+vWriteBinaryFile :: (HVFSOpenable a) => a -> FilePath -> String -> IO ()
 vWriteBinaryFile fs name str =
     do h <- vOpenBinaryFile fs name WriteMode
-       vPutStr h str
-       vClose h
+       case h of
+              HVFSOpenEncap x -> do vPutStr x str
+                                    vClose x
