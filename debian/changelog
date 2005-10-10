@@ -1,3 +1,22 @@
+missingh (0.12.0) unstable; urgency=low
+
+  * Added simplegrap.hs example
+  * New module: MissingH.Daemon, to support detaching from a
+    controlling terminal
+  * Fixes to make docs work with Haddock 0.7
+  * New function in MissingH.Maybe: forceMaybeMsg
+  * HVIO and HVFS now provide abstractions for binary I/O
+  * MissingH.IO.Binary now uses HVIO/HVFS abstractions instead of being
+    tied to Handles
+  * MissingH.IO.Binary can now work with Strings or [Word8], instead of
+    just Strings.
+  * MissingH.IO.Binary.hBlockCopy optimized to require no conversion
+    of the buffer.
+  * Updated MissingH.IO.BlockIO to upstream version 2005-02-14
+  * Updated MissingH.Threads.Child and Timeout to upstream version 2005-02-14
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 10 Oct 2005 05:50:02 -0500
+
 missingh (0.11.5) unstable; urgency=low
 
   * Added lazyMapM to MissingH.IO
