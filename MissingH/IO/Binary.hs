@@ -100,14 +100,20 @@ instance BinaryConvertable String where
     toBuf = withCString
     fromBuf len func = 
         do fbuf <- mallocForeignPtrArray (len + 1)
-           withForeignPtr fbuf func
+           withForeignPtr fbuf handler
+        where handler ptr =
+                  do bytesread <- func
+                     peekCStringLen (ptr, bytesread)
     byteSize = length
 
 instance BinaryConvertable [Word8] where
     toBuf hslist func = withArray hslist (\ptr -> func (castPtr ptr))
     fromBuf len func =
         do (fbuf::(ForeignPtr Word8)) <- mallocForeignPtrArray (len + 1)
-           withForeignPtr fbuf (\ptr -> func (castPtr ptr))
+           withForeignPtr fbuf handler
+        where handler ptr =
+                  do bytesread <- func (castPtr ptr)
+                     peekArray bytesread ptr
     byteSize = length
 
 
@@ -142,23 +148,20 @@ bytes than the given length.
 hGetBufStr :: (HVIO a, BinaryConvertable b) => a -> Int -> IO b
 hGetBufStr f count = fromBuf count (
    fbuf <- mallocForeignPtrArray (count + 1)
-   withForeignPtr fbuf (\buf -> do
-                        bytesread <- hGetBuf f buf count
-                        haskstring <- peekCStringLen (buf, bytesread)
-                        return haskstring)
+   withForeignPtr fbuf (\buf -> vGetBuf f buf count)
 
 -- | An alias for 'hGetBufStr' 'stdin'
-getBufStr :: Int -> IO String
+getBufStr :: (BinaryConvertable b) => Int -> IO b
 getBufStr = hGetBufStr stdin
 
 {- | Like 'hGetBufStr', but guarantees that it will only return fewer than
 the requested number of bytes when EOF is encountered. -}
-hFullGetBufStr :: Handle -> Int -> IO String
+hFullGetBufStr :: (HBIO a, BinaryConvertable b) => a -> Int -> IO b
 hFullGetBufStr f 0 = return ""
 hFullGetBufStr f count = do
                          thisstr <- hGetBufStr f count
-                         if thisstr == "" -- EOF
-                            then return ""
+                         if (byteSize thisstr) == 0
+                            then return []
                             else do
                                  remainder <- hFullGetBufStr f (count - (length thisstr))
                                  return (thisstr ++ remainder)
