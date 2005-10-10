@@ -93,7 +93,7 @@ import MissingH.IO.HVIO
 types. -}
 class BinaryConvertable a where
     toBuf :: a -> (Ptr CChar -> IO c) -> IO c
-    fromBuf :: Int -> (Ptr CChar -> IO a) -> IO a
+    fromBuf :: Int -> (Ptr CChar -> IO Int) -> IO a
     byteSize :: a -> Int
 
 instance BinaryConvertable String where
@@ -131,14 +131,16 @@ hPutBufStr f s = toBuf s (\cs -> vPutBuf f cs (byteSize s))
 putBufStr :: (BinaryConvertable b) => b -> IO ()
 putBufStr = hPutBufStr stdout
 
-{- | As a wrapper around the standard function 'System.IO.hGetBuf',
-this function returns a standard Haskell string instead of modifying
+{- | Acts a wrapper around the standard function 'System.IO.hGetBuf',
+this function returns a standard Haskell String (or Word8) instead of modifying
 a 'Ptr a' buffer.  The length is the maximum length to read and the
 semantice are the same as with 'hGetBuf'; namely, the empty string
 is returned with EOF is reached, and any given read may read fewer
-bytes than the given length. -}
-hGetBufStr :: Handle -> Int -> IO String
-hGetBufStr f count = do
+bytes than the given length.
+
+(Actually, it's a wrapper around "MissingH.IO.HVIO.vGetBuf") -}
+hGetBufStr :: (HVIO a, BinaryConvertable b) => a -> Int -> IO b
+hGetBufStr f count = fromBuf count (
    fbuf <- mallocForeignPtrArray (count + 1)
    withForeignPtr fbuf (\buf -> do
                         bytesread <- hGetBuf f buf count
