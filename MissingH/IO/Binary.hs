@@ -247,16 +247,28 @@ hBlockInteractUtil blockreader blocksize hin hout func =
     hPutBlocks hout (func blocks)
 
 {- | Copies everything from the input handle to the output handle using binary
-blocks of the given size.  This is actually a beautiful implementation:
+blocks of the given size.  This was once the following 
+beautiful implementation:
 
 > hBlockCopy bs hin hout = hBlockInteract bs hin hout id
 
 ('id' is the built-in Haskell function that just returns whatever is given
 to it)
+
+In more recent versions of MissingH, it uses a more optimized routine that
+avoids ever having to convert the binary buffer at all.
 -}
 
 hBlockCopy :: (HVIO a, HVIO b) => Int -> a -> b -> IO ()
-hBlockCopy bs hin hout = hBlockInteract bs hin hout id
+hBlockCopy bs hin hout = 
+    do (fbuf::ForeignPtr CChar) <- mallocForeignPtrArray (bs + 1)
+       withForeignPtr fbuf handler
+    where handler ptr =
+              do bytesread <- vGetBuf hin ptr bs
+                 if bytesread > 0
+                    then do vPutBuf hout ptr bytesread
+                            handler ptr
+                    else return ()
 
 {- | Copies from 'stdin' to 'stdout' using binary blocks of the given size.
 An alias for 'hBlockCopy' over 'stdin' and 'stdout'
