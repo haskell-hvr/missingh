@@ -87,4 +87,3 @@ class (MailboxReader a b) => MailboxWriter a b where
     addFlags :: a -> [b] -> Flags -> IO ()
     removeFlags :: a -> [b] -> Flags -> IO ()
     setFlags :: a -> [b] -> Flags -> IO ()
-
