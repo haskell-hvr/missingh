@@ -52,7 +52,8 @@ data Maildir = Maildir
 instance Show Maildir
     where show x = loc x
     
-splitFN fn :: String -> (String, Flags)
+{-
+splitFN :: String -> (String, Flags)
                    
 splitFN fn = 
     
@@ -61,6 +62,7 @@ splitFN fn =
               (h, []) = (h, [])
               (h, f) = (h, tail f)
 
+-}
 {- | Open a Maildir mailbox. -}
 -- For reading only, for now.
 
