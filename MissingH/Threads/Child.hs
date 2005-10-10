@@ -1,6 +1,6 @@
 {- |
-   Module      :  Child
-   Copyright   :  (c) 2004-10-14 by Peter Simons
+   Module      :  Control.Concurrent.Child
+   Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
    Maintainer  :  simons@cryp.to
@@ -14,7 +14,7 @@
    yourself. This is what this library does.
 -}
 
-module MissingH.Threads.Child
+module Control.Concurrent.Child
   ( Child(..)   --  = Child ThreadId (MVar a)
   , mkChild     --  :: Monoid a => ThreadId -> MVar a -> IO a -> IO ()
   , spawn       --  :: Monoid a => IO a -> IO (Child a)
@@ -22,9 +22,6 @@ module MissingH.Threads.Child
   , send        --  :: Child a -> Exception -> IO ()
   , kill        --  :: Child a -> IO ()
   , par         --  :: Monoid a => IO a -> IO a -> IO a
-  , Timeout     --  = Int
-  , timeout     --  :: Timeout -> IO a -> IO (Maybe a)
-  , sleep       --  :: Int -> IO ()
   )
   where
 
@@ -109,29 +106,3 @@ par f g = do
              (forkIO (mkChild self sync g))
              (killThread)
              (\_ -> takeMVar sync))
-
--- |Timeouts are given in microseconds (@1\/10^6@ seconds).
--- Negative values generally mean \"wait indefinitely\".
--- Make sure you don't exceed @maxBound :: Int@ when
--- specifying large timeouts!
-
-type Timeout = Int
-
--- |Wrap an 'IO' computation to timeout and return 'Nothing'
--- after @n@ microseconds, otherwise @'Just' a@ is returned.
-
-timeout :: Timeout -> IO a -> IO (Maybe a)
-timeout n f
-  | n < 0     = fmap Just f
-  | n == 0    = return Nothing
-  | otherwise = do                       --     a => [a]
-      r <- par (threadDelay n >> return []) (fmap return f)
-      case r of []    -> return Nothing
-                (a:_) -> return (Just a)
-                        -- We do this so that @a@ doesn't have
-                        -- to be a monoid.
-
--- |@sleep n@ @=@ @threadDelay (abs(n) * 1000000)@
-
-sleep :: Int -> IO ()
-sleep n = threadDelay (abs(n) * 1000000)
