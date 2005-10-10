@@ -1,5 +1,5 @@
 {- |
-   Module      :  Control.Concurrent.Child
+   Module      :  MissingH.Threads.Child
    Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
@@ -14,7 +14,7 @@
    yourself. This is what this library does.
 -}
 
-module Control.Concurrent.Child
+module MissingH.Threads.Child
   ( Child(..)   --  = Child ThreadId (MVar a)
   , mkChild     --  :: Monoid a => ThreadId -> MVar a -> IO a -> IO ()
   , spawn       --  :: Monoid a => IO a -> IO (Child a)

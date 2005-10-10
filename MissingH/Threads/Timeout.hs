@@ -1,5 +1,5 @@
 {- |
-   Module      :  Control.Timeout
+   Module      :  MissingH.Threads.Timeout
    Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
@@ -10,13 +10,13 @@
    Timeout support for 'IO' computations.
 -}
 
-module Control.Timeout
+module MissingH.Threads.Timeout
   ( Timeout     --  = Int
   , timeout     --  :: Timeout -> IO a -> IO (Maybe a)
   )
   where
 
-import Control.Concurrent.Child ( par )
+import MissingH.Threads.Child ( par )
 import Control.Concurrent ( threadDelay )
 
 -- |Timeouts are given in microseconds (@1\/10^6@ seconds).
