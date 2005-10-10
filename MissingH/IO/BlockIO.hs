@@ -24,7 +24,7 @@ import Data.Typeable
 import System.IO
 import System.IO.Error hiding ( catch )
 import Foreign  hiding ( new )
-import Control.Timeout
+import MissingH.Threads.Timeout
 
 -- * Static Buffer I\/O
 
