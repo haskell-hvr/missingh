@@ -28,12 +28,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 This module provides various helpful utilities for dealing with binary
 input and output.
 
+You can use this module to deal with binary blocks of data as either Strings 
+or lists of Word8.  The BinaryConvertable class provides this abstraction.
+
+Wherever you see HVIO, you can transparently substite a regular Handle.
+This module can work with any HVIO object, however.  See
+'MissingH.IO.HVIO' for more details.
+
+Versions of MissingH prior 0.11.6 lacked the BinaryConvertable class
+and worked only with Strings and Handles.
+
 Important note: /binary functions are not supported in all Haskell
 implementations/.  Do not import or use this module unless you know you
 are using an implementation that supports them.  At this time, here
 is the support status:
 
- * GHC 6.2: yes
+ * GHC 6.2 and above: yes
  
  * GHC 6.x, earlier versions: unknown
 
@@ -48,7 +58,10 @@ Non-binary functions may be found in "MissingH.IO".
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IO.Binary(-- * Entire File\/Handle Utilities
+module MissingH.IO.Binary(
+                       -- * Support for different types of blocks
+                       BinaryConvertable(..),
+                       -- * Entire File\/Handle Utilities
                        -- ** Opened Handle Data Copying
                        hBlockCopy, blockCopy,
                        -- ** Disk File Data Copying
@@ -69,27 +82,34 @@ import Foreign.Ptr
 import Foreign.ForeignPtr
 import Foreign.C.String
 import Foreign.C.Types
+import Foreign.Storable
 import Foreign.Marshal.Array
 import Data.Word
 import System.IO.Unsafe
 import System.IO
+import MissingH.IO.HVIO
 
+{- | Provides support for handling binary blocks with convenient
+types. -}
 class BinaryConvertable a where
     toBuf :: a -> (Ptr CChar -> IO c) -> IO c
     fromBuf :: Int -> (Ptr CChar -> IO a) -> IO a
+    byteSize :: a -> Int
 
 instance BinaryConvertable String where
     toBuf = withCString
     fromBuf len func = 
         do fbuf <- mallocForeignPtrArray (len + 1)
            withForeignPtr fbuf func
+    byteSize = length
 
 instance BinaryConvertable [Word8] where
     toBuf hslist func = withArray hslist (\ptr -> func (castPtr ptr))
     fromBuf len func =
         do (fbuf::(ForeignPtr Word8)) <- mallocForeignPtrArray (len + 1)
            withForeignPtr fbuf (\ptr -> func (castPtr ptr))
-           
+    byteSize = length
+
 
 -- . **************************************************
 -- . Binary Files
@@ -100,12 +120,15 @@ instance BinaryConvertable [Word8] where
 this function takes a standard Haskell 'String' instead of the far less
 convenient 'Ptr a'.  The entire contents of the string will be written
 as a binary buffer using 'hPutBuf'.  The length of the output will be
-the length of the string. -}
-hPutBufStr :: Handle -> String -> IO ()
-hPutBufStr f s = withCString s (\cs -> hPutBuf f cs (length s))
+the length of the passed String or list..
+
+If it helps, you can thing of this function as being of type
+@Handle -> String -> IO ()@. -}
+hPutBufStr :: (HVIO a, BinaryConvertable b) => a -> b -> IO ()
+hPutBufStr f s = toBuf s (\cs -> vPutBuf f cs (byteSize s))
 
 -- | An alias for 'hPutBufStr' 'stdout'
-putBufStr :: String -> IO ()
+putBufStr :: (BinaryConvertable b) => b -> IO ()
 putBufStr = hPutBufStr stdout
 
 {- | As a wrapper around the standard function 'System.IO.hGetBuf',
