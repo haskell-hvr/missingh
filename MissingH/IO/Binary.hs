@@ -141,7 +141,8 @@ putBufStr :: (BinaryConvertible b) => [b] -> IO ()
 putBufStr = hPutBufStr stdout
 
 {- | Acts a wrapper around the standard function 'System.IO.hGetBuf',
-this function returns a standard Haskell String (or Word8) instead of modifying
+this function returns a standard Haskell String (or [Word8]) instead of
+modifying
 a 'Ptr a' buffer.  The length is the maximum length to read and the
 semantice are the same as with 'hGetBuf'; namely, the empty string
 is returned with EOF is reached, and any given read may read fewer
