@@ -1,5 +1,5 @@
 {- arch-tag: Bit utilities main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Bits
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -30,9 +30,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Bits(getBytes, fromBytes)
+module MissingH.Bits(getBytes, fromBytes,
+                     c2w8, s2w8, w82c, w82s)
 where
 import Data.Bits
+import Data.Word
 
 {- | Returns a list representing the bytes that comprise a data type.
 
@@ -62,3 +64,19 @@ fromBytes input =
         dofb accum (x:xs) = dofb ((shiftL accum 8) .|. x) xs
         in
         dofb 0 input
+
+{- | Converts a Char to a Word8. -}
+c2w8 :: Char -> Word8
+c2w8 = fromIntegral . fromEnum
+
+{- | Converts a String to a [Word8]. -}
+s2w8 :: String -> [Word8]
+s2w8 = map c2w8
+
+{- | Converts a Word8 to a Char. -}
+w82c :: Word8 -> Char
+w82c = toEnum . fromIntegral
+
+{- | Converts a [Word8] to a String. -}
+w82s :: [Word8] -> String
+w82s = map w82c
