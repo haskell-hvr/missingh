@@ -133,6 +133,9 @@ import System.IO
 import System.IO.Error
 import Control.Concurrent.MVar
 import Data.IORef
+import Foreign.Ptr
+import Foreign.C
+import Foreign.Storable
 
 {- | This is the generic I\/O support class.  All objects that are to be used
 in the HVIO system must provide an instance of 'HVIO'.
@@ -249,6 +252,17 @@ class (Show a) => HVIO a where
     -- | Get buffering; the default action always returns NoBuffering.
     vGetBuffering :: a -> IO BufferMode
 
+    -- | Binary output: write the specified number of octets from the specified
+    -- buffer location.
+    vPutBuf :: a -> Ptr b -> Int -> IO ()
+
+    -- | Binary input: read the specified number of octets from the
+    -- specified buffer location, continuing to read
+    -- until it either consumes that much data or EOF is encountered.
+    -- Returns the number of octets actually read.  EOF errors are never
+    -- raised; fewer bytes than requested are returned on EOF.
+    vGetBuf :: a -> Ptr b -> Int -> IO Int
+
     vSetBuffering x _ = return ()
     vGetBuffering x = return NoBuffering
 
@@ -331,6 +345,23 @@ class (Show a) => HVIO a where
     vGetChar h = vThrow h illegalOperationErrorType
     
 
+    vPutBuf h buf len =
+        do str <- peekCStringLen (castPtr buf, len)
+           vPutStr h str
+
+    vGetBuf h b l = 
+        worker b l 0
+        where worker _ 0 accum = return accum
+              worker buf len accum =
+                  do iseof <- vIsEOF h
+                     if iseof
+                        then return accum
+                        else do c <- vGetChar h
+                                let cc = castCharToCChar c
+                                poke (castPtr buf) cc
+                                let newptr = plusPtr buf 1
+                                worker newptr (len - 1) (accum + 1)
+
 ----------------------------------------------------------------------
 -- Handle instances
 ----------------------------------------------------------------------
@@ -357,6 +388,8 @@ instance HVIO Handle where
     vIsSeekable = hIsSeekable
     vSetBuffering = hSetBuffering
     vGetBuffering = hGetBuffering
+    vGetBuf = hGetBuf
+    vPutBuf = hPutBuf
 
 ----------------------------------------------------------------------
 -- VIO Support

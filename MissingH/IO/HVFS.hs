@@ -243,6 +243,7 @@ class HVFS a => HVFSOpenable a where
     vOpen :: a -> FilePath -> IOMode -> IO HVFSOpenEncap
     vReadFile :: a -> FilePath -> IO String
     vWriteFile :: a -> FilePath -> String -> IO ()
+    vOpenBinaryFile :: a -> FilePath -> IOMode -> IO HVFSOpenEncap
 
     vReadFile h fp = 
         do oe <- vOpen h fp ReadMode
@@ -252,6 +253,9 @@ class HVFS a => HVFSOpenable a where
         do oe <- vOpen h fp WriteMode
            withOpen oe (\fh -> do vPutStr fh s
                                   vClose fh)
+
+    -- | Open a file in binary mode.
+    vOpenBinaryFile = vOpen
 
 instance Show FileStatus where
     show _ = "<FileStatus>"
@@ -314,3 +318,5 @@ instance HVFS SystemFS where
 
 instance HVFSOpenable SystemFS where
     vOpen _ fp iomode = openFile fp iomode >>= return . HVFSOpenEncap
+    vOpenBinaryFile _ fp iomode = openBinaryFile fp iomode >>= return . HVFSOpenEncap
+
