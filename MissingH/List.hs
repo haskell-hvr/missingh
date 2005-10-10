@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.List
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -45,8 +45,10 @@ module MissingH.List(-- * Tests
                      -- * Conversions
                      split, join, replace, genericJoin, takeWhileList,
                      dropWhileList, spanList, breakList,
-                     -- * Advanced Conversions
+                     -- ** Advanced Conversions
                      WholeFunc(..), wholeMap, fixedWidth,
+                     -- * Fixed-Width and State Monad Utilities
+                     grab,
                      -- * Miscellaneous
                      countElem, elemRIndex, alwaysElemRIndex, seqList
                      -- -- * Sub-List Selection
@@ -56,6 +58,7 @@ import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
                 elemIndex, elemIndices)
 import IO
 import System.IO.Unsafe
+import Control.Monad.State
 
 {- | Returns true if the given list starts with the specified elements;
 false otherwise.  (This is an alias for "Data.List.isPrefixOf".)
@@ -359,3 +362,28 @@ fixedWidth len =
           fixedWidthFunc (len:lenxs) input =
               (fixedWidth lenxs, next, [this])
               where (this, next) = splitAt len input
+
+{- | Helps you pick out fixed-width components from a list.
+
+Example:
+
+>conv :: String -> (String,String)
+>conv = runState $
+>        do f3 <- grab 3
+>           n2 <- grab 2
+>           return $ f3 ++ "," ++ n2
+>
+>main = print $ conv "TestIng"
+
+Prints:
+
+>("Tes,tI","ng")
+-}
+
+grab :: Int -> State [a] [a]
+grab count =
+    do g <- get
+       (x, g') <- return $ splitAt count g
+       put g'
+       return x
+
