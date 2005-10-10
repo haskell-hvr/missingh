@@ -1,271 +1,175 @@
+{-# OPTIONS -fglasgow-exts #-}
 {- |
-   Module      :  BlockIO
-   Copyright   :  (c) 2004-11-12 by Peter Simons
+   Module      :  System.IO.Driver
+   Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
    Maintainer  :  simons@cryp.to
    Stability   :  provisional
    Portability :  Haskell 2-pre
 
-   All you need from this module is the 'runLoop' function
-   and the 'Handler' type definition. It's no
-   breath-takingly inventive concept, actually: @runLoop@
-   will read blocks of 'Word8' from a 'Handle' into a static
-   buffer on the heap, and every time new input has arrived,
-   it will call a handler with a 'Ptr' into the buffer, so
-   that the handler can do stuff with the data. Then, the
-   handler returns either: I need more data before I can do
-   anything ('Nothing'), or I have consumed @n@ bytes,
-   please flush them (@'Just' (a,Int)@).
-
-   Basically, 'runLoop' drives the handler with the data
-   read from the input stream until 'hIsEOF' ensues.
-   Everything else has to be done by the handler -- the
-   'BlockIO' monad just does the I\/O. But it does it
-   /fast/.
+   'runLoop' drives a 'BlockHandler' with data read from the
+   input stream until 'hIsEOF' ensues. Everything else has
+   to be done by the callback; runLoop just does the I\/O.
+   But it does it /fast/.
 -}
 
-module MissingH.IO.BlockIO where
+module System.IO.Driver where
 
-import Prelude hiding ( rem )
-import System.IO
-import System.IO.Error
-import Foreign  hiding ( new )
+import Prelude hiding ( catch, rem )
+import Control.Exception
 import Control.Monad.State
-import Control.Exception   ( assert, bracket )
-import MissingH.Threads.Child               ( Timeout, timeout )
+import Data.List
+import Data.Typeable
+import System.IO
+import System.IO.Error hiding ( catch )
+import Foreign  hiding ( new )
+import Control.Timeout
 
--- * I\/O Buffer
+-- * Static Buffer I\/O
 
--- |Capacity, pointer into the heap, and length of contents;
--- all sizes are in bytes, naturally.
+type ReadHandle  = Handle
+type WriteHandle = Handle
 
-data Buffer = Buf !Int !(Ptr Word8) !Int
-              deriving (Show)
+type ByteCount = Word16
+type Capacity  = Word16
+data Buffer    = Buf !Capacity !(Ptr Word8) !ByteCount
+                 deriving (Eq, Show, Typeable)
 
--- |Initialize a 'Buffer' of capacity @n > 0@ and run the
--- given 'IO' computation with it. The buffer will be
--- destroyed when the computation returns.
+-- |Run the given computation with an initialized, empty
+-- 'Buffer'. The buffer is gone when the computation
+-- returns.
 
-withBuffer :: Int -> (Buffer -> IO a) -> IO a
-withBuffer n f = assert (n > 0) bracket (cons) (dest) f
+withBuffer :: Capacity -> (Buffer -> IO a) -> IO a
+withBuffer 0 = fail "BlockIO.withBuffer with size 0 doesn't make sense"
+withBuffer n = bracket cons dest
   where
-  cons = mallocArray n >>= \p -> return (Buf n p 0)
+  cons = mallocArray (fromIntegral n) >>= \p -> return (Buf n p 0)
   dest = \(Buf _ p _) -> free p
 
--- |Drop the first @0 <= n <= size@ octets from the buffer.
+-- |Drop the first @n <= size@ octets from the buffer.
 
-flushBuffer :: Int -> Buffer -> IO Buffer
-flushBuffer n (Buf cap ptr len) =
-  assert (n >= 0) $
-    assert (n <= len) $ do
-       let ptr' = ptr `plusPtr` n
-           len' = len - n
-       when (len' > 0) (copyArray ptr ptr' len')
-       return (Buf cap ptr len')
+flush :: ByteCount -> Buffer -> IO Buffer
+flush 0 buf               = return buf
+flush n (Buf cap ptr len) = assert (n <= len) $ do
+  let ptr' = ptr `plusPtr` (fromIntegral n)
+      len' = (fromIntegral len) - (fromIntegral n)
+  when (len' > 0) (copyArray ptr ptr' len')
+  return (Buf cap ptr (fromIntegral len'))
 
--- |If there is space in the 'Buffer', read and append more
--- octets, then return the modified buffer. In case of
--- @EOF@, 'Nothing' is returned. If the buffer is full
--- already, raise an 'IOError'. Use the 'isBufferOverflow'
--- predicate to test an exception you caught for this
--- condition.
+-- |If there is space, read and append more octets; then
+-- return the modified buffer. In case of 'hIsEOF',
+-- 'Nothing' is returned. If the buffer is full already,
+-- 'throwDyn' a 'BufferOverflow' exception. When the timeout
+-- exceeds, 'ReadTimeout' is thrown.
 
-readBuffer :: Handle -> Buffer -> IO (Maybe Buffer)
-readBuffer h (Buf cap ptr len)
-  | cap <= len = fail "BlockIO: buffer overflow"
-  | otherwise  = handleEOF wrap
-      where
-      wrap = do let ptr' = (ptr `plusPtr` len)
-                    n    = (cap - len)
-                rc <- hGetBufNonBlocking h ptr' n
-                if rc > 0
-                   then return (Buf cap ptr (len + rc))
-                   else hWaitForInput h (-1) >> wrap
+slurp :: Timeout -> ReadHandle -> Buffer -> IO (Maybe Buffer)
+slurp to h b@(Buf cap ptr len) = do
+  when (cap <= len) (throwDyn (BufferOverflow h b))
+  timeout to (handleEOF wrap) >>=
+    maybe (throwDyn (ReadTimeout to h b)) return
+  where
+  wrap = do let ptr' = ptr `plusPtr` (fromIntegral len)
+                n    = cap - len
+            rc <- hGetBufNonBlocking h ptr' (fromIntegral n)
+            if rc > 0
+               then return (Buf cap ptr (len + (fromIntegral rc)))
+               else hWaitForInput h (-1) >> wrap
 
--- * BlockIO Monad
+-- * BlockHandler and I\/O Driver
 
--- |The internal state of a block-I\/O execution thread.
+-- |A callback function suitable for use with 'runLoop'
+-- takes a buffer and a state, then returns a modified
+-- buffer and a modified state. Usually the callback will
+-- use 'slurp' to remove data it has processed already.
 
-data BIOState st = BIO !Handle !Buffer !st
-                   deriving (Show)
+type BlockHandler st = Buffer -> st -> IO (Buffer, st)
 
--- |A block-I\/O execution thread.
+-- |Our main I\/O driver.
 
-type BlockIO st a = StateT (BIOState st) IO a
+runLoopNB
+  :: (st -> Timeout)            -- ^ user state provides timeout
+  -> (Exception -> st -> IO st) -- ^ user provides I\/O error handler
+  -> ReadHandle                 -- ^ the input source
+  -> Capacity                   -- ^ I\/O buffer size
+  -> BlockHandler st            -- ^ callback
+  -> st                         -- ^ initial callback state
+  -> IO st                      -- ^ return final callback state
+runLoopNB mkTO errH hIn cap f initST = withBuffer cap (flip ioloop $ initST)
+  where
+  ioloop buf st = buf `seq` st `seq`
+    handle (\e -> errH e st) $ do
+      rc <- slurp (mkTO st) hIn buf
+      case rc of
+        Nothing   -> return st
+        Just buf' -> f buf' st >>= uncurry ioloop
 
--- |Run a 'BlockIO' computation in the 'IO' monad. The
--- contents of the I\/O buffer is lost when 'runBlockIO'
--- returns. If you need more control, use 'withBuffer' to
--- construct your own 'BIOState' and run the monad with
--- 'runStateT'.
+-- |A variant which won't time out and will just 'throw' all
+-- exceptions.
 
-runBlockIO :: Handle
-	   -> Int               -- ^ buffer capacity
-	   -> BlockIO st a      -- ^ computation to run
-	   -> st                -- ^ initial state
-	   -> IO (a, st)
-runBlockIO h size f st =
-  withBuffer size $ \buf -> do
-    (a, BIO _ _ st') <- runStateT f (BIO h buf st)
-    return (a,st')
-
--- ** Primitives
-
--- |Read some more input data into the I\/O buffer. Returns
--- 'True' if there is more, 'False' when @EOF@ occurs. May
--- raise an 'isBufferOverflow' or 'isTimeout' exception.
-
-slurp :: Timeout -> BlockIO st Bool
-slurp to = do
-  BIO h b st <- get
-  r <- liftIO $ timeout to (readBuffer h b)
-                  >>= maybe (fail "BlockIO: read timeout") return
-  case r of
-    Nothing -> return False
-    Just b' -> put (BIO h b' st) >> return True
-
--- |Drop the first @0 <= n <= size@ octets from the I\/O
--- buffer.
-
-flush :: Int -> BlockIO st ()
-flush 0 = return ()
-flush n = do
-  BIO h b st <- get
-  b' <- liftIO (flushBuffer n b)
-  put (BIO h b' st)
-
--- ** Handler and I\/O Driver
-
--- |A handler is a stateful 'IO' computation which the I\/O
--- driver 'consume' calls every time new input has arrived.
--- If the buffer contains enough data to do something useful
--- with it, it should do it, and signal how many octets have
--- been consumed with the returned @Int@. These will be
--- flushed from the beginning of buffer when the handler is
--- called the next time. The handler itself should /not/
--- modify the buffer.
-
-type Handler st a = (Ptr Word8, Int)
-                  -> StateT st IO (Maybe (a,Int))
-
--- |A handler which can be run in an I\/O loop without ever
--- needing to return values to the main program, for
--- instance with 'runLoop'.
-
-type LoopHandler st = Handler st ()
-
--- |Use the given handler to consume a token from the I\/O
--- buffer. Returns 'Nothing' in case of @EOF@. May raise an
--- 'isBufferOverflow' or 'isTimeout' exception.
-
-consume :: Timeout -> Handler st a -> BlockIO st (Maybe a)
-consume to f = do
-  more <- slurp to
-  BIO h b@(Buf _ ptr len) st <- get
-  (tok, st') <- liftIO (runStateT (f (ptr,len)) st)
-  put (BIO h b st')
-  case (tok,more) of
-    (Just (a,n), _)  -> flush n >> return (Just a)
-    (Nothing, True)  -> consume to f
-    (Nothing, False) -> return Nothing
-
--- |Repeated 'consume' until @EOF@. The handler may only
--- return @()@ to prevent space leaks. Use @st@ instead.
--- @:-)@
-
-loop :: (st -> Timeout) -> LoopHandler st -> BlockIO st ()
-loop to f = get >>= \(BIO _ _ st) ->
-  consume (to st) f >>= maybe (return ()) (const (loop to f))
-
--- |Iterate a handle until @EOF@ and use the given 'Handler'
--- to do stuff with the data we've read. The @(st ->
--- Timeout)@ function will be used to to determine the read
--- timeout from the current handler state.
-
-runLoopNB :: (st -> Timeout)    -- ^ user state provides timeout
-          -> Handle             -- ^ read from here
-          -> Int                -- ^ buffer size to allocate
-          -> LoopHandler st     -- ^ call-back to handle the data
-          -> st                 -- ^ initial handler state
-          -> IO st              -- ^ the state at time of @EOF@
-runLoopNB to h size f st =
-  fmap snd (runBlockIO h size (loop to f) st)
-
--- | @runLoop@ @=@ @'runLoopNB' (const (-1))@
-
-runLoop :: Handle -> Int -> LoopHandler st -> st -> IO st
-runLoop = runLoopNB (const (-1))
+runLoop :: ReadHandle -> Capacity -> BlockHandler st -> st -> IO st
+runLoop = runLoopNB (const (-1)) (\e _ -> throw e)
 
 -- * Handler Combinators
 
--- ** Lines
+-- |Signal how many bytes have been consumed from the
+-- /front/ of the list; these octets will be dropped.
 
--- |Wrap an integer signifying the front gap of the buffer
--- into the user state. Initialize it to @0@.
+type StreamHandler st = [Word8] -> st -> IO (ByteCount, st)
 
-type LineHandler st a = Handler (Int,st) [a]
+handleStream :: StreamHandler st -> BlockHandler st
+handleStream f buf@(Buf _ ptr len) st = do
+  (i, st') <- peekArray (fromIntegral len) ptr >>= (flip f) st
+  buf' <- flush i buf
+  return (buf', st')
 
--- |Split the input buffer into lines using \'@\\n@\' as
--- end-of-line marker. The \'@\\n@\' is /not/ stripped. Then
--- call the given 'IO' computation line-by-line until all
--- lines have been consumed.
+-- * I\/O Exceptions
 
-handleLines :: (String -> StateT st IO a) -> LineHandler st a
-handleLines f (ptr,len) = do
-  (gap,st) <- get
-  when (len < gap) (fail "BlockIO.handleLines: inconsistent buffer")
-  if len == gap
-     then return Nothing
-     else do
-       buf <- liftIO (peekArray len ptr)
-       let buf'      = map (toEnum . fromEnum) buf
-           (old,new) = splitAt gap buf'
-           (ls,rem)  = splitBy (=='\n') new
-           gap'      = length rem
-       case ls of
-         []     -> do put (len,st) >> return Nothing
-         (x:xs) -> do
-           (as,st') <- liftIO (runStateT (mapM f ((old++x):xs)) st)
-           put (gap',st')
-           return (Just (as,len-gap'))
+-- |Thrown by 'slurp'.
 
--- * Error Handling
+data BufferOverflow = BufferOverflow ReadHandle Buffer
+                    deriving (Show, Typeable)
 
--- |Predicate to determine whether a caught 'IOError' was
--- caused by a buffer overflow.
+-- |Thrown by 'slurp'.
 
-isBufferOverflow :: IOError -> Bool
-isBufferOverflow e =
-  (isUserError e) && (ioeGetErrorString e == "BlockIO: buffer overflow")
+data ReadTimeout    = ReadTimeout Timeout ReadHandle Buffer
+                    deriving (Show, Typeable)
 
--- |Determine whether a given exception is a read timeout
--- error raised by the BlockIO code.
-
-isTimeout :: IOError -> Bool
-isTimeout e =
-  (isUserError e) && (ioeGetErrorString e == "BlockIO: read timeout")
 
 -- * Internal Helper Functions
 
 -- |Return 'Nothing' if the given computation throws an
--- 'isEOFError' exception. Used by 'readBuffer'.
+-- 'isEOFError' exception. Used by 'slurp'.
 
 handleEOF :: IO a -> IO (Maybe a)
 handleEOF f =
-  catch (f >>= return . Just)
-    (\e -> case isEOFError e of True  -> return Nothing
-                                False -> ioError e)
+  catchJust ioErrors
+    (fmap Just f)
+    (\e -> if isEOFError e then return Nothing else ioError e)
 
-splitBy :: (a -> Bool) -> [a] -> ([[a]], [a])
-splitBy f as = foldr coll ([],[]) (splitBy' [] as)
+-- |Our version of C's @strstr(3)@.
+
+strstr :: [Word8] -> [Word8] -> Maybe Int
+strstr tok = strstr' 0
   where
-  coll (Right x) (ls, rem) = (x : ls, rem)
-  coll (Left x)  (ls, rem) = (ls, rem ++ x)
+  strstr'  _     []       = Nothing
+  strstr' pos ls@(_:xs)
+    | tok `isPrefixOf` ls = Just (pos + length tok)
+    | otherwise           = strstr' (pos + 1) xs
 
-  splitBy'  [] []     = []
-  splitBy' acc []     = Left acc : []
-  splitBy' acc (x:xs) =
-    if f x
-       then Right (acc++[x]) : splitBy' [] xs
-       else splitBy' (acc++[x]) xs
+-- |Split a list by some delimiter. Will soon be provided by
+-- "Data.List".
+
+splitList :: Eq a => [a] -> [a] -> [[a]]
+splitList d' l' =
+  unfoldr (\x -> (null x) ? (Nothing, Just $ nextToken d' [] (snd $ splitAt (length d') x))) (d'++l')
+  where nextToken _ r [] = (r, [])
+        nextToken d r l@(h:t) | (d `isPrefixOf` l) = (r, l)
+                              | otherwise = nextToken d (r++[h]) t
+
+-- |Shorthand for if-then-else. Will soon by provided by
+-- "Data.Bool".
+
+(?) :: Bool -> (a,a) -> a
+(?) True  (x,_) = x
+(?) False (_,x) = x
