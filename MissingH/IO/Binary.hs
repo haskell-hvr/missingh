@@ -29,13 +29,13 @@ This module provides various helpful utilities for dealing with binary
 input and output.
 
 You can use this module to deal with binary blocks of data as either Strings 
-or lists of Word8.  The BinaryConvertable class provides this abstraction.
+or lists of Word8.  The BinaryConvertible class provides this abstraction.
 
 Wherever you see HVIO, you can transparently substite a regular Handle.
 This module can work with any HVIO object, however.  See
-'MissingH.IO.HVIO' for more details.
+"MissingH.IO.HVIO" for more details.
 
-Versions of MissingH prior 0.11.6 lacked the BinaryConvertable class
+Versions of MissingH prior 0.11.6 lacked the 'BinaryConvertible' class
 and worked only with Strings and Handles.
 
 Important note: /binary functions are not supported in all Haskell
@@ -55,12 +55,14 @@ is the support status:
 
 Non-binary functions may be found in "MissingH.IO".
 
+See also: "MissingH.IO.BlockIO"
+
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.IO.Binary(
                        -- * Support for different types of blocks
-                       BinaryConvertable(..),
+                       BinaryConvertible(..),
                        -- * Entire File\/Handle Utilities
                        -- ** Opened Handle Data Copying
                        hBlockCopy, blockCopy,
@@ -91,12 +93,15 @@ import MissingH.IO.HVIO
 import MissingH.IO.HVFS
 
 {- | Provides support for handling binary blocks with convenient
-types. -}
-class (Eq a, Show a) => BinaryConvertable a where
+types.
+
+This module provides implementations for Strings and for [Word8] (lists of
+Word8s). -}
+class (Eq a, Show a) => BinaryConvertible a where
     toBuf :: [a] -> (Ptr CChar -> IO c) -> IO c
     fromBuf :: Int -> (Ptr CChar -> IO Int) -> IO [a]
 
-instance BinaryConvertable Char where
+instance BinaryConvertible Char where
     toBuf = withCString
     fromBuf len func = 
         do fbuf <- mallocForeignPtrArray (len + 1)
@@ -105,7 +110,7 @@ instance BinaryConvertable Char where
                   do bytesread <- func ptr
                      peekCStringLen (ptr, bytesread)
 
-instance BinaryConvertable Word8 where
+instance BinaryConvertible Word8 where
     toBuf hslist func = withArray hslist (\ptr -> func (castPtr ptr))
     fromBuf len func =
         do (fbuf::(ForeignPtr Word8)) <- mallocForeignPtrArray (len + 1)
@@ -128,11 +133,11 @@ the length of the passed String or list..
 
 If it helps, you can thing of this function as being of type
 @Handle -> String -> IO ()@. -}
-hPutBufStr :: (HVIO a, BinaryConvertable b) => a -> [b] -> IO ()
+hPutBufStr :: (HVIO a, BinaryConvertible b) => a -> [b] -> IO ()
 hPutBufStr f s = toBuf s (\cs -> vPutBuf f cs (length s))
 
 -- | An alias for 'hPutBufStr' 'stdout'
-putBufStr :: (BinaryConvertable b) => [b] -> IO ()
+putBufStr :: (BinaryConvertible b) => [b] -> IO ()
 putBufStr = hPutBufStr stdout
 
 {- | Acts a wrapper around the standard function 'System.IO.hGetBuf',
@@ -142,17 +147,17 @@ semantice are the same as with 'hGetBuf'; namely, the empty string
 is returned with EOF is reached, and any given read may read fewer
 bytes than the given length.
 
-(Actually, it's a wrapper around "MissingH.IO.HVIO.vGetBuf") -}
-hGetBufStr :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [b]
+(Actually, it's a wrapper around 'MissingH.IO.HVIO.vGetBuf') -}
+hGetBufStr :: (HVIO a, BinaryConvertible b) => a -> Int -> IO [b]
 hGetBufStr f count = fromBuf count (\buf -> vGetBuf f buf count)
 
 -- | An alias for 'hGetBufStr' 'stdin'
-getBufStr :: (BinaryConvertable b) => Int -> IO [b]
+getBufStr :: (BinaryConvertible b) => Int -> IO [b]
 getBufStr = hGetBufStr stdin
 
 {- | Like 'hGetBufStr', but guarantees that it will only return fewer than
 the requested number of bytes when EOF is encountered. -}
-hFullGetBufStr :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [b]
+hFullGetBufStr :: (HVIO a, BinaryConvertible b) => a -> Int -> IO [b]
 hFullGetBufStr f 0 = return []
 hFullGetBufStr f count = do
                          thisstr <- hGetBufStr f count
@@ -163,7 +168,7 @@ hFullGetBufStr f count = do
                                  return (thisstr ++ remainder)
 
 -- | An alias for 'hFullGetBufStr' 'stdin'
-fullGetBufStr :: BinaryConvertable b => Int -> IO [b]
+fullGetBufStr :: BinaryConvertible b => Int -> IO [b]
 fullGetBufStr = hFullGetBufStr stdin
 
 {- | Writes the list of blocks to the given file handle -- a wrapper around
@@ -174,35 +179,35 @@ Think of this function as:
 >Handle -> [String] -> IO ()
 
 (You can use it that way) -}
-hPutBlocks :: (HVIO a, BinaryConvertable b) => a -> [[b]] -> IO ()
+hPutBlocks :: (HVIO a, BinaryConvertible b) => a -> [[b]] -> IO ()
 hPutBlocks _ [] = return ()
 hPutBlocks h (x:xs) = do
                       hPutBufStr h x
                       hPutBlocks h xs
 
 -- | An alias for 'hPutBlocks' 'stdout'
-putBlocks :: (BinaryConvertable b) => [[b]] -> IO ()
+putBlocks :: (BinaryConvertible b) => [[b]] -> IO ()
 putBlocks = hPutBlocks stdout
 
 {- | Returns a lazily-evaluated list of all blocks in the input file,
 as read by 'hGetBufStr'.  There will be no 0-length block in this list.
 The list simply ends at EOF. -}
-hGetBlocks :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [[b]]
+hGetBlocks :: (HVIO a, BinaryConvertible b) => a -> Int -> IO [[b]]
 hGetBlocks = hGetBlocksUtil hGetBufStr
 
 -- | An alias for 'hGetBlocks' 'stdin'
-getBlocks :: BinaryConvertable b => Int -> IO [[b]]
+getBlocks :: BinaryConvertible b => Int -> IO [[b]]
 getBlocks = hGetBlocks stdin
 
 {- | Same as 'hGetBlocks', but using 'hFullGetBufStr' underneath. -}
-hFullGetBlocks :: (HVIO a, BinaryConvertable b) => a -> Int -> IO [[b]]
+hFullGetBlocks :: (HVIO a, BinaryConvertible b) => a -> Int -> IO [[b]]
 hFullGetBlocks = hGetBlocksUtil hFullGetBufStr
 
 -- | An alias for 'hFullGetBlocks' 'stdin'
-fullGetBlocks :: BinaryConvertable b => Int -> IO [[b]]
+fullGetBlocks :: BinaryConvertible b => Int -> IO [[b]]
 fullGetBlocks = hFullGetBlocks stdin
 
-hGetBlocksUtil :: (HVIO a, BinaryConvertable b) => (a -> Int -> IO [b]) -> a -> Int -> IO [[b]]
+hGetBlocksUtil :: (HVIO a, BinaryConvertible b) => (a -> Int -> IO [b]) -> a -> Int -> IO [[b]]
 hGetBlocksUtil readfunc h count =
     unsafeInterleaveIO (do
                        block <- readfunc h count
@@ -219,26 +224,26 @@ out.  Take a look at 'hBlockCopy' for an example.  The integer argument
 is the size of input binary blocks.  This function uses 'hGetBlocks'
 internally.
 -}
-hBlockInteract :: (HVIO a, HVIO d, BinaryConvertable b, BinaryConvertable c) =>
+hBlockInteract :: (HVIO a, HVIO d, BinaryConvertible b, BinaryConvertible c) =>
                   Int -> a -> d -> ([[b]] -> [[c]]) -> IO ()
 hBlockInteract = hBlockInteractUtil hGetBlocks
 
 -- | An alias for 'hBlockInteract' over 'stdin' and 'stdout'
-blockInteract :: (BinaryConvertable b, BinaryConvertable c) => Int -> ([[b]] -> [[c]]) -> IO ()
+blockInteract :: (BinaryConvertible b, BinaryConvertible c) => Int -> ([[b]] -> [[c]]) -> IO ()
 blockInteract x = hBlockInteract x stdin stdout
 
 {- | Same as 'hBlockInteract', but uses 'hFullGetBlocks' instead of
 'hGetBlocks' internally. -}
-hFullBlockInteract :: (HVIO a, HVIO d, BinaryConvertable b, BinaryConvertable c) =>
+hFullBlockInteract :: (HVIO a, HVIO d, BinaryConvertible b, BinaryConvertible c) =>
                       Int -> a -> d -> ([[b]] -> [[c]]) -> IO ()
 hFullBlockInteract = hBlockInteractUtil hFullGetBlocks
 
 -- | An alias for 'hFullBlockInteract' over 'stdin' and 'stdout'
-fullBlockInteract :: (BinaryConvertable b, BinaryConvertable c) => 
+fullBlockInteract :: (BinaryConvertible b, BinaryConvertible c) => 
                      Int -> ([[b]] -> [[c]]) -> IO ()
 fullBlockInteract x = hFullBlockInteract x stdin stdout
 
-hBlockInteractUtil :: (HVIO a, HVIO d, BinaryConvertable b, BinaryConvertable c) => 
+hBlockInteractUtil :: (HVIO a, HVIO d, BinaryConvertible b, BinaryConvertible c) => 
                       (a -> Int -> IO [[b]]) -> Int ->
                       a -> d -> ([[b]] -> [[c]]) -> IO ()
 hBlockInteractUtil blockreader blocksize hin hout func =
