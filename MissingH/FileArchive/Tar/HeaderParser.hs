@@ -63,14 +63,36 @@ data Header =
            prefix :: String}
     deriving (Eq, Show)
 
-parseHeader :: CharParser st ()
-parseHeader =
-    do name <- (slurp 100 >>= rchopstr)
-       return ()
-    where slurp n = count n anyChar
+parseUStarHeader :: CharParser st Header
+parseUStarHeader =
+    do name <- (grab 100 >>= rchopstr)
+       mode <- (grab 8 >>= rreadoct)
+       uid <- (grab 8 >>= rreadoct)
+       gid <- (grab 8 >>= rreadoct)
+       size <- (grab 8 >>= rreadoct)
+       mtime <- (grab 12 >>= rreadoct)
+       chksum <- (grab 8 >>= rreadoct)
+       typeflag <- anyChar
+       linkname <- (grab 100 >>= rchopstr)
+       string "ustar\0"         -- Magic
+       string "00"              -- Version
+       uname <- (grab 32 >>= rchopstr)
+       gname <- (grab 32 >>= rchopstr)
+       devmajor <- (grab 8 >>= rreadoct)
+       devminor <- (grab 8 >>= rreadoct)
+       prefix <- (grab 155 >>= rchopstr)
+
+       return $ UStar  {name = name, mode = mode, uid = uid, gid = gid,
+                        size = size, mtime = mtime, chksum = chksum,
+                        typeflag = typeflag, linkname = linkname,
+                        magic = "", version = "",
+                        uname = uname, gname = gname, devmajor = devmajor,
+                        devminor = devminor, prefix = prefix}
+    where grab n = count n anyChar
           chopstr = takeWhile (\c -> c /= '\0')
           rchopstr = return . chopstr
           chopsstr = takeWhile (\c -> c /= ' ') . chopstr
-
---          readoct = fst . head . readOct . chopsstr
---         rreadoct = return . readoct
+          readoct :: (Num a) => String -> a
+          readoct = fst . head . readOct . chopsstr
+          rreadoct :: (Num a, Monad m) => String -> m a
+          rreadoct = return . readoct
