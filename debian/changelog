@@ -1,3 +1,10 @@
+missingh (0.12.1) unstable; urgency=low
+
+  * Update for GHC 6.4.1.
+  * Updated standards-version.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sun, 16 Oct 2005 23:31:43 -0500
+
 missingh (0.12.0) unstable; urgency=low
 
   * Added simplegrap.hs example
