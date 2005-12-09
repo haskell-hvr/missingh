@@ -21,7 +21,7 @@ import Test.HUnit
 import MissingH.ConfigParser
 import MissingH.Either
 import MissingH.IO.PlafCompat(nullFileName)
-import Testutil
+import MissingH.HUnit
 import Control.Exception
 import System.IO
 

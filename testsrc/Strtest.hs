@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Strtest(tests) where
 import Test.HUnit
 import MissingH.Str
-import Testutil
+import MissingH.HUnit
 import Text.Regex
 
 test_lstrip =
