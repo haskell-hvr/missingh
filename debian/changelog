@@ -1,3 +1,9 @@
+missingh (0.12.2) unstable; urgency=low
+
+  * Made generic unit tests available.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri,  9 Dec 2005 05:03:10 -0600
+
 missingh (0.12.1) unstable; urgency=low
 
   * Update for GHC 6.4.1.

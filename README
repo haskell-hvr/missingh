@@ -102,6 +102,8 @@ MissingH.FiniteMap        * Flip a finite map
 
 MissingH.Hsemail          * E-mail parsers
 
+MissingH.HUnit            * Utilities for writing HUnit unit tests
+
 MissingH.IO               * Copying data between files or handles
                           * Lazy operations on line input
 
