@@ -370,7 +370,6 @@ pOpen pm fp args func =
                                        closeFd (fst pipepair)
                                        h <- fdToHandle (snd pipepair)
                                        x <- func h
-                                       seq x x
                                        hClose h
                                        return $! x
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
