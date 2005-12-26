@@ -8,6 +8,7 @@ Copyright: Copyright (c) 2004-2005 John Goerzen
 Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Daemon,
   MissingH.Parsec,
+  MissingH.HUnit,
   MissingH.Email.Mailbox,
   MissingH.Logging, MissingH.Logging.Handler,
     MissingH.Logging.Handler.Simple, MissingH.Logging.Handler.Syslog,
