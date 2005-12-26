@@ -268,7 +268,7 @@ strToAL inp =
 {- | Returns a count of the number of times the given element occured in the
 given list. -}
 countElem :: Eq a => a -> [a] -> Int
-countElem i l = length (elemIndices i l)
+countElem i = length . filter (i==)
 
 {- | Returns the rightmost index of the given element in the
 given list. -}
@@ -288,7 +288,7 @@ alwaysElemRIndex item list =
 {- | Forces the evaluation of the entire list. -}
 seqList :: [a] -> [a]
 seqList [] = []
-seqList (x:xs) = seq (seqList xs) (x:xs)
+seqList list@(x:xs) = seq (seqList xs) list
 
 --------------------------------------------------
 -- Advanced Conversions
