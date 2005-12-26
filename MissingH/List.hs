@@ -55,10 +55,11 @@ module MissingH.List(-- * Tests
                      -- sub,
                     ) where
 import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
-                elemIndex, elemIndices)
+                elemIndex, elemIndices, tails, find)
 import IO
 import System.IO.Unsafe
 import Control.Monad.State(State, get, put)
+import Data.Maybe(isJust)
 
 {- | Returns true if the given list starts with the specified elements;
 false otherwise.  (This is an alias for "Data.List.isPrefixOf".)
@@ -179,14 +180,7 @@ Example:
 -}
 
 contains :: Eq a => [a] -> [a] -> Bool
-contains [] _ = True                    -- Sub is empty; matches anything
-contains _ [] = False                   -- List is empty; matches nothing
-contains sub searchlist =
-    let testlist = take (length sub) searchlist
-        in
-        case sub == testlist of
-                             True -> True
-                             False -> contains sub (tail searchlist)
+contains substr str = isJust $ find (isPrefixOf substr) (tails str)
 
 {- | Adds the specified (key, value) pair to the given list, removing any
 existing pair with the same key already present. -}
