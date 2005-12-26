@@ -1,5 +1,5 @@
 {- arch-tag: Simple log handlers
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Logging.Handler.Simple
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -36,6 +36,7 @@ module MissingH.Logging.Handler.Simple(streamHandler, fileHandler)
 import MissingH.Logging
 import MissingH.Logging.Handler
 import IO
+import Control.Concurrent.MVar
 
 
 data GenericHandler a = GenericHandler {priority :: Priority,
@@ -57,10 +58,14 @@ instance LogHandler (GenericHandler a) where
 
 streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
 streamHandler h pri = 
-    return (GenericHandler {priority = pri,
-                            privData = h,
-                            writeFunc = hPutStrLn,
-                            closeFunc = \x -> return ()})
+    do lock <- newMVar ()
+       let mywritefunc hdl msg = withMVar lock (\_ -> do hPutStrLn hdl msg
+                                                         hFlush hdl
+                                               )
+       return (GenericHandler {priority = pri,
+                               privData = h,
+                               writeFunc = mywritefunc,
+                               closeFunc = \x -> return ()})
 
 {- | Create a file log handler.  Log messages sent to this handler
    will be sent to the filename specified, which will be opened
