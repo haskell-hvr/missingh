@@ -1,3 +1,9 @@
+missingh (0.12.3) unstable; urgency=low
+
+  * Make StreamHandler now lock by default.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sun, 25 Dec 2005 22:33:16 -0600
+
 missingh (0.12.2) unstable; urgency=low
 
   * Made generic unit tests available.
