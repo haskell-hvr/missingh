@@ -181,7 +181,7 @@ import IO
 import System.IO.Unsafe
 import Control.Concurrent.MVar
 import Data.List(map)
-import Data.Map as Map
+import qualified Data.Map as Map
 import qualified Control.Exception
 ---------------------------------------------------------------------------
 -- Basic logger types
@@ -193,7 +193,7 @@ data Logger = Logger { level :: Priority,
                        name :: String}
 
 
-type LogTree = Map String Logger
+type LogTree = Map.Map String Logger
 
 {- | This is the base class for the various log handlers.  They should
 all adhere to this class. -}
@@ -323,12 +323,12 @@ getLogger lname = modifyMVar logTree $ \lt ->
          Nothing -> do
                     --print "Missed it."
                     -- Add it.  Then call myself to retrieve it.
-                    newlt <- createLoggers (componentsOfName lname) lt
+                    let newlt = createLoggers (componentsOfName lname) lt
                     --putStrLn "createLoggers done"
-                    logger <- getLogger lname
-                    return (newlt, logger)
-    where createLoggers :: [String] -> LogTree -> IO ()
-          createLoggers [] lt = return lt
+                    result <- Map.lookup lname newlt
+                    return (newlt, result)
+    where createLoggers :: [String] -> LogTree -> LogTree
+          createLoggers [] lt = lt
           createLoggers (x:xs) lt =
               if Map.member x lt
                  then createLoggers xs lt
@@ -403,7 +403,8 @@ setLevel p l = l{level = p}
 -- account any changes you may have made.
 
 saveGlobalLogger :: Logger -> IO ()
-saveGlobalLogger l = modifyMVar_ logTree (\lt -> Map.insert (name l) l lt)
+saveGlobalLogger l = modifyMVar_ logTree 
+                     (\lt -> return $ Map.insert (name l) l lt)
 
 {- | Helps you make changes on the given logger.  Takes a function
 that makes changes and writes those changes back to the global
