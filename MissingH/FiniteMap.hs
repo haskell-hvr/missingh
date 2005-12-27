@@ -38,7 +38,9 @@ showable on GHC prior to 6.4.  (GHC 6.4 and current Hugs versions have it
 showable already).
 -}
 
-module MissingH.FiniteMap (-- * Basic Utilities
+module MissingH.FiniteMap 
+    {-# DEPRECATED "Please use MissingH.Map instead." #-}
+                          (-- * Basic Utilities
                            flipFM, flippedLookupFM, forceLookupFM,
                            -- * Conversions
                            strToFM,

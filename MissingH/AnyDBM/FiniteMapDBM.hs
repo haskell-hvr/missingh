@@ -30,7 +30,9 @@ Written by John Goerzen, jgoerzen\@complete.org
 Support for working with FiniteMaps through the "MissingH.AnyDBM" framework.
 -}
 
-module MissingH.AnyDBM.FiniteMapDBM (FiniteMapDBM,
+module MissingH.AnyDBM.FiniteMapDBM
+    {-# DEPRECATED "Please use MissingH.AnyDBM.MapDBM instead." #-}
+                                    (FiniteMapDBM,
                                      newFiniteMapDBM,
                                      setFiniteMapDBM,
                                      getFiniteMapDBM
