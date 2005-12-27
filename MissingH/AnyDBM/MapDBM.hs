@@ -52,7 +52,7 @@ given 'Map'. -}
 setMapDBM :: MapDBM -> Map.Map String String -> IO ()
 setMapDBM h fm = swapMVar h fm >> return ()
 
-{- | Gets the embedded FiniteMap in this 'FiniteMapDBM'. -}
+{- | Gets the embedded Map in this 'MapDBM'. -}
 getMapDBM :: MapDBM -> IO (Map.Map String String)
 getMapDBM = readMVar
 

@@ -35,7 +35,8 @@ module MissingH.List(-- * Tests
                      -- * Association List Utilities
                      {- | These functions are designed to augment the
                      association list functions in "Data.List" and
-                     provide an interface similar to "Data.FiniteMap"
+                     provide an interface similar to "Data.FiniteMap" or
+                     "Data.Map"
                      for association lists. -}
                      addToAL, delFromAL, flipAL, keysAL, valuesAL,
                      hasKeyAL,
