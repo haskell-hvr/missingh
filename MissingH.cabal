@@ -1,9 +1,9 @@
 -- arch-tag: MissingH main description file
 Name: MissingH
-Version: 0.12.3
+Version: 0.13.0
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Stability: Alpha
+Stability: Beta
 Copyright: Copyright (c) 2004-2005 John Goerzen
 Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Daemon,
@@ -81,7 +81,6 @@ Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.GetOpt
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances, CPP
--- CPP extension is really only needed in FiniteMap.hs and Rfc2821.hs
 Build-Depends: haskell-src, network, parsec, base,
                unix,
                haskell98, mtl
