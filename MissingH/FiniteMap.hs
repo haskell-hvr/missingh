@@ -28,6 +28,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 This module provides various helpful utilities for dealing with FiniteMaps.
 
+This module is now deprecated in favor of "MissingH.Map" due to the
+similar deprecation in the Haskell standard libraries.
+
 Written by John Goerzen, jgoerzen\@complete.org
 
 In addition to the functions exported, this module also makes a FiniteMap

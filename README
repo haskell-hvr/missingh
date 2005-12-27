@@ -137,6 +137,8 @@ MissingH.Logging.         * Logging to local or remote syslog
 MissingH.Logging.Logger   * Primary user interface to logging
                           * Documentation for the logging system
 
+MissingH.Map              * Flip a finite Map and other utilities
+
 MissingH.Maybe            * forceMaybe utility function
 
 MissingH.MIMETypes        * Determine the MIME type of a file

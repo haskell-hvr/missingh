@@ -21,6 +21,7 @@ import Test.HUnit
 import qualified MIMETypestest
 import qualified Listtest
 import qualified FiniteMaptest
+import qualified Maptest
 import qualified AnyDBMtest
 import qualified Pathtest
 import qualified Strtest
@@ -47,6 +48,7 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "CSV" Str.CSVtest.tests,
                  TestLabel "Time" Timetest.tests,
                  TestLabel "FiniteMap" FiniteMaptest.tests,
+                 TestLabel "Map" Maptest.tests,
                  TestLabel "AnyDBM" AnyDBMtest.tests,
                  TestLabel "Path" Pathtest.tests,
                  TestLabel "HVIO" HVIOtest.tests,
