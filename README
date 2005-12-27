@@ -60,6 +60,9 @@ MissingH.AnyDBM           * Generic DBM-like database infrastructure
 MissingH.AnyDBM.          * Use a FiniteMap in the AnyDBM interface
  FiniteMapDBM
 
+MissingH.AnyDBM.          * Use a Map in the AnyDBM interface
+ MapDBM
+
 MissingH.AnyDBM.          * Simple persistent mapping storage
  StringDBM
 

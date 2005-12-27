@@ -24,6 +24,7 @@ import MissingH.IO.HVFS.InstanceHelpers
 import MissingH.AnyDBM
 import MissingH.AnyDBM.StringDBM
 import MissingH.AnyDBM.FiniteMapDBM
+import MissingH.AnyDBM.MapDBM
 import System.Directory
 import MissingH.IO.HVFS.Utils
 import MissingH.Path.FilePath
@@ -105,6 +106,8 @@ test_hashtable = generic_test (return ())
 
 test_finitemap = generic_test (return ())
                   (\_ -> newFiniteMapDBM)
+test_mapdbm = generic_test (return ())
+                  (\_ -> newMapDBM)
 test_stringdbm = generic_persist_test (return SystemFS)
                    (\f -> openStringVDBM f (joinPaths "testtmp" "StringDBM") ReadWriteMode)
                  ++
@@ -113,5 +116,6 @@ test_stringdbm = generic_persist_test (return SystemFS)
 
 tests = TestList [TestLabel "HashTable" (TestList test_hashtable),
                   TestLabel "StringDBM" (TestList test_stringdbm),
-                  TestLabel "FiniteMap" (TestList test_finitemap)
+                  TestLabel "FiniteMap" (TestList test_finitemap),
+                  TestLabel "MapDBM" (TestList test_mapdbm)
                  ]
