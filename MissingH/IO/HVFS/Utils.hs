@@ -46,7 +46,7 @@ where
 import MissingH.IO.HVFS
 import MissingH.Time
 import MissingH.IO.PlafCompat
-import MissingH.Printf
+import Text.Printf
 import System.Time
 import System.Locale
 import System.IO.Unsafe
@@ -143,7 +143,7 @@ lsl fs fp =
                                        True -> do sl <- vReadSymbolicLink fh 
                                                            (origdir ++ "/" ++ fp)
                                                   return $ " -> " ++ sl
-                          return $ vsprintf "%c%s  1 %-8d %-8d %-9d %s %s%s" 
+                          return $ printf "%c%s  1 %-8d %-8d %-9d %s %s%s" 
                                      typechar
                                      (showmodes (vFileMode se))
                                      (toInteger $ vFileOwner se)
