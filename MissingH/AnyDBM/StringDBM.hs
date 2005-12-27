@@ -45,9 +45,10 @@ import System.IO
 import MissingH.IO.HVFS
 import MissingH.IO.HVIO
 import Data.HashTable
+import Control.Concurrent.MVar
 
 {- | The type of the StringDBM instances. -}
-data StringDBM = forall a. HVFSOpenable a => StringDBM (HashTable String String) IOMode a FilePath
+data StringDBM = forall a. HVFSOpenable a => StringDBM (MVar ()) (HashTable String String) IOMode a FilePath
 
 {- | Opens a 'StringDBM' file.  Please note: only ReadMode, WriteMode,
 and ReadWriteMode are supported for the IOMode.  AppendMode is not supported. 
@@ -67,26 +68,29 @@ openStringVDBM :: HVFSOpenable a => a -> FilePath -> IOMode -> IO StringDBM
 openStringVDBM _ _ AppendMode = fail "openStringDBM: AppendMode is not supported"
 openStringVDBM h fp ReadMode =
     do ht <- new (==) hashString
+       lock <- newMVar ()
        vReadFile h fp >>= strToA ht
-       return $ StringDBM ht ReadMode h fp
+       return $ StringDBM lock ht ReadMode h fp
 openStringVDBM h fp WriteMode =
     do ht <- new (==) hashString
-       return $ StringDBM ht WriteMode h fp
+       lock <- newMVar ()
+       return $ StringDBM lock ht WriteMode h fp
 openStringVDBM h fp ReadWriteMode =
     -- Nothing different to start with.  Later, we emulate WriteMode.
     -- Nothing is ever read after the object is created.
     do ht <- new (==) hashString
+       lock <- newMVar ()
        d <- vDoesFileExist h fp
        if d
           then vReadFile h fp >>= strToA ht
           else return ()
-       return $ StringDBM ht WriteMode h fp
+       return $ StringDBM lock ht WriteMode h fp
 
 g :: StringDBM -> HashTable String String
-g (StringDBM ht _ _ _) = ht
+g (StringDBM _ ht _ _ _) = ht
 
 instance AnyDBM StringDBM where
-    flushA (StringDBM ht WriteMode h fp) = 
+    flushA (StringDBM lock ht WriteMode h fp) = withMVar lock $ \_ ->
         do s <- strFromA ht
            vWriteFile h fp s
     flushA _ = return ()
