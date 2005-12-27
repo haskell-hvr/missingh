@@ -1,5 +1,5 @@
 {- arch-tag: ConfigParser types
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.ConfigParser.Types
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -39,7 +39,7 @@ module MissingH.ConfigParser.Types (
                                     OptionSpec,
                                     ParseOutput
                                    ) where
-import Data.FiniteMap
+import qualified Data.Map as Map
 import Data.Char
 import Control.Monad.Error
 
@@ -53,7 +53,7 @@ type SectionSpec = String
 type OptionSpec = String
 
 {- | Storage of options. -}
-type CPOptions = FiniteMap OptionSpec String
+type CPOptions = Map.Map OptionSpec String
 
 {- | The main data storage type (storage of sections).
 
@@ -63,7 +63,7 @@ directly.  This type may change in future releases of MissingH, which could
 break your programs.  Please retrict yourself to the interface in
 'MissingH.ConfigParser'.
  -}
-type CPData = FiniteMap SectionSpec CPOptions
+type CPData = Map.Map SectionSpec CPOptions
 
 {- | Possible ConfigParser errors. -}
 data CPErrorData = ParseError String        -- ^ Parse error

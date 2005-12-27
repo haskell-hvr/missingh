@@ -1,5 +1,5 @@
 {- arch-tag: ConfigParser main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.ConfigParser
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Configuration file parsing, generation, and manipulation
 
-Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
+Copyright (c) 2004-2005 John Goerzen, jgoerzen\@complete.org
 
 This module contains extensive documentation.  Please scroll down to the Introduction section to continue reading.
 -}
@@ -105,10 +105,10 @@ module MissingH.ConfigParser
 ) where
 import MissingH.ConfigParser.Types
 import MissingH.ConfigParser.Parser
-import MissingH.FiniteMap
+import MissingH.Map
 import MissingH.Either
 import MissingH.Str
-import Data.FiniteMap
+import qualified Data.Map as Map
 import Data.List
 import System.IO(Handle)
 import Data.Char
@@ -146,9 +146,9 @@ of @DEFAULT@. -}
 fromAL :: ParseOutput -> CPData
 fromAL origal =
     let conv :: CPData -> (String, [(String, String)]) -> CPData
-        conv fm sect = addToFM fm (fst sect) (listToFM $ snd sect)
+        conv fm sect = Map.insert (fst sect) (Map.fromList $ snd sect) fm
         in
-        foldl conv emptyFM origal
+        foldl conv Map.empty origal
 
 {- | Default (non-interpolating) access function -}
 simpleAccess ::  MonadError CPError m =>
@@ -220,8 +220,10 @@ defdefaulthandler ::  MonadError CPError m =>
 
 defdefaulthandler cp sect opt = 
     let fm = content cp
-        lookup s o = do sect <- maybeToEither (NoSection s, "get") $ lookupFM fm s
-                        maybeToEither (NoOption o, "get") $ lookupFM sect o
+        lookup s o = do sect <- maybeToEither (NoSection s, "get") $ 
+                                Map.lookup s fm
+                        maybeToEither (NoOption o, "get") $ 
+                                Map.lookup o sect
         trydefault e = if (usedefault cp)
                        then 
                             lookup "DEFAULT" opt 
@@ -243,11 +245,12 @@ merge :: ConfigParser -> ConfigParser -> ConfigParser
 merge src dest = 
     let conv :: String -> String
         conv = optionxform dest
-        convFM :: String -> CPOptions -> CPOptions
-        convFM _ = listToFM . map (\x -> (conv (fst x), snd x)) . fmToList
-        mergesects a b = plusFM a b
+        convFM :: CPOptions -> CPOptions
+        convFM = Map.fromList . map (\x -> (conv (fst x), snd x)) . Map.toList
+        mergesects a b = Map.union b a
         in
-	dest { content = plusFM_C mergesects (mapFM convFM (content src)) (content dest) }
+	dest { content = Map.unionWith mergesects 
+                         (content dest) (Map.map convFM (content src)) }
 
 {- | Utility to do a special case merge. -}
 readutil :: ConfigParser -> ParseOutput -> ConfigParser
@@ -298,13 +301,13 @@ readstring cp s = do
 {- | Returns a list of sections in your configuration file.  Never includes
 the always-present section @DEFAULT@. -}
 sections :: ConfigParser -> [SectionSpec]
-sections = filter (/= "DEFAULT") . keysFM . content
+sections = filter (/= "DEFAULT") . Map.keys . content
 
 {- | Indicates whether the given section exists.
 
 No special @DEFAULT@ processing is done. -}
 has_section :: ConfigParser -> SectionSpec -> Bool
-has_section cp x = elemFM x (content cp)
+has_section cp x = Map.member x (content cp)
 
 {- | Adds the specified section name.  Returns a
 'SectionAlreadyExists' error if the
@@ -315,7 +318,7 @@ add_section ::  MonadError CPError m =>
 add_section cp s =
     if has_section cp s
        then throwError $ (SectionAlreadyExists s, "add_section")
-       else return $ cp {content = addToFM (content cp) s emptyFM}
+       else return $ cp {content = Map.insert s Map.empty (content cp)}
 
 {- | Removes the specified section.  Returns a 'NoSection' error if
 the section does not exist; otherwise, returns the new 'ConfigParser'
@@ -329,7 +332,7 @@ remove_section ::  MonadError CPError m =>
 remove_section _ "DEFAULT" = throwError $ (NoSection "DEFAULT", "remove_section")
 remove_section cp s = 
     if has_section cp s
-       then return $ cp {content = delFromFM (content cp) s}
+       then return $ cp {content = Map.delete s (content cp)}
        else throwError $ (NoSection s, "remove_section")
 
 {- | Removes the specified option.  Returns a 'NoSection' error if the
@@ -339,11 +342,12 @@ exist.  Otherwise, returns the new 'ConfigParser' object.
 remove_option ::  MonadError CPError m =>
                   ConfigParser -> SectionSpec -> OptionSpec -> m ConfigParser
 remove_option cp s passedo =
-    do sectmap <- maybeToEither (NoSection s, "remove_option") $ lookupFM (content cp) s
+    do sectmap <- maybeToEither (NoSection s, "remove_option") $ 
+                  Map.lookup s (content cp)
        let o = (optionxform cp) passedo
-       let newsect = delFromFM sectmap o
-       let newmap = addToFM (content cp) s newsect
-       if elemFM o sectmap
+       let newsect = Map.delete o sectmap
+       let newmap = Map.insert s newsect (content cp)
+       if Map.member o sectmap
           then return $ cp {content = newmap}
           else throwError $ (NoOption o, "remove_option")
 
@@ -356,8 +360,8 @@ options ::  MonadError CPError m =>
             ConfigParser -> SectionSpec -> m [OptionSpec]
 options cp x = maybeToEither (NoSection x, "options") $ 
                do
-               o <- lookupFM (content cp) x
-               return $ keysFM o
+               o <- Map.lookup x (content cp)
+               return $ Map.keys o
 
 {- | Indicates whether the given option is present.  Returns True
 only if the given section is present AND the given option is present
@@ -367,8 +371,8 @@ exception could be raised or error returned.
 has_option :: ConfigParser -> SectionSpec -> OptionSpec -> Bool
 has_option cp s o = 
     let c = content cp
-        v = do secthash <- lookupFM c s
-               return $ elemFM (optionxform cp $ o) secthash
+        v = do secthash <- Map.lookup s c
+               return $ Map.member (optionxform cp $ o) secthash
         in maybe False id v
 
 {- | The class representing the data types that can be returned by "get".
@@ -447,8 +451,9 @@ getbool cp s o =
 of the given section.  Returns an error the section is invalid. -}
 items ::  MonadError CPError m =>
           ConfigParser -> SectionSpec -> m [(OptionSpec, String)]
-items cp s = do fm <- maybeToEither (NoSection s, "items") $ lookupFM (content cp) s
-                return $ fmToList fm
+items cp s = do fm <- maybeToEither (NoSection s, "items") $ 
+                      Map.lookup s (content cp)
+                return $ Map.toList fm
 
 {- | Sets the option to a new value, replacing an existing one if it exists.
 
@@ -456,10 +461,11 @@ Returns an error if the section does not exist. -}
 set ::  MonadError CPError m =>
         ConfigParser -> SectionSpec -> OptionSpec -> String -> m ConfigParser
 set cp s passedo val = 
-    do sectmap <- maybeToEither (NoSection s, "set") $ lookupFM (content cp) s
+    do sectmap <- maybeToEither (NoSection s, "set") $ 
+                  Map.lookup s (content cp)
        let o = (optionxform cp) passedo
-       let newsect = addToFM sectmap o val
-       let newmap = addToFM (content cp) s newsect
+       let newsect = Map.insert o val sectmap
+       let newmap = Map.insert s newsect (content cp)
        return $ cp { content = newmap}
 
 {- | Sets the option to a new value, replacing an existing one if it exists.
@@ -487,12 +493,12 @@ to_string cp =
     let gen_option (key, value) = 
             key ++ ": " ++ (replace "\n" "\n    " value) ++ "\n"
         gen_section (sect, valfm) = -- gen a section, but omit DEFAULT if empty
-            if (sect /= "DEFAULT") || (sizeFM valfm > 0)
+            if (sect /= "DEFAULT") || (Map.size valfm > 0)
                then "[" ++ sect ++ "]\n" ++
-                        (concat $ map gen_option (fmToList valfm)) ++ "\n"
+                        (concat $ map gen_option (Map.toList valfm)) ++ "\n"
                else ""
         in
-        concat $ map gen_section (fmToList (content cp))
+        concat $ map gen_section (Map.toList (content cp))
 
 ----------------------------------------------------------------------
 -- Docs
