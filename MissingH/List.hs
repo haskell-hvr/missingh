@@ -50,12 +50,13 @@ module MissingH.List(-- * Tests
                      -- * Fixed-Width and State Monad Utilities
                      grab,
                      -- * Miscellaneous
-                     countElem, elemRIndex, alwaysElemRIndex, seqList
+                     countElem, elemRIndex, alwaysElemRIndex, seqList,
+                     subIndex
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
 import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
-                elemIndex, elemIndices, tails, find)
+                elemIndex, elemIndices, tails, find, findIndex)
 import IO
 import System.IO.Unsafe
 import Control.Monad.State(State, get, put)
@@ -381,3 +382,22 @@ grab count =
        put g'
        return x
 
+{- | Similar to Data.List.elemIndex.  Instead of looking for one element in a
+list, this function looks for the first occurance of a sublist in the list,
+and returns the index of the first element of that occurance.  If there is no
+such list, returns Nothing.
+
+If the list to look for is the empyt list, will return Just 0 regardless
+of the content of the list to search.
+
+Examples:
+
+>subIndex "foo" "asdfoobar" -> Just 3
+>subIndex "foo" [] -> Nothing
+>subIndex "" [] -> Just 0
+>subIndex "" "asdf" -> Just 0
+>subIndex "test" "asdftestbartest" -> Just 4
+>subIndex [(1::Int), 2] [0, 5, 3, 2, 1, 2, 4] -> Just 4
+ -}
+subIndex :: Eq a => [a] -> [a] -> Maybe Int
+subIndex substr str = findIndex (isPrefixOf substr) (tails str)

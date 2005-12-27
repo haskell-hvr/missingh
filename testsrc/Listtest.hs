@@ -144,6 +144,16 @@ test_alwaysElemRIndex =
         ,f 'f' ['f', 'b', 'f', 'f', 'b'] 3
         ]
 
+test_subIndex = 
+    let f item inp exp = TestCase $ exp @=? subIndex item inp in 
+        [f "foo" "asdfoobar" (Just 3)
+        ,f "foo" [] (Nothing)
+        ,f "" [] (Just 0)
+        ,f "" "asdf" (Just 0)
+        ,f "test" "asdftestbartest" (Just 4)
+        ,f [(1::Int), 2] [0, 5, 3, 2, 1, 2, 4] (Just 4)
+        ]
+
 test_fixedWidth =
     let f inplen inplist exp = TestLabel ((show inplen) ++ ", " ++
                                           (show inplist)) $ TestCase $
@@ -190,7 +200,8 @@ tests = TestList [TestLabel "delFromAL" (TestList test_delFromAL),
                   TestLabel "replace" (TestList test_replace),
                   TestLabel "contains" (TestList test_contains),
                   TestLabel "strFromAL & strToAL" (TestList test_strToAL),
-                  TestLabel "fixedWidth" (TestList test_fixedWidth)]
+                  TestLabel "fixedWidth" (TestList test_fixedWidth),
+                  TestLabel "subIndex" (TestList test_subIndex)]
 
 
 
