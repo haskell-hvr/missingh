@@ -45,7 +45,9 @@ With hugs:
 
 -}
 
-module MissingH.Printf(-- * Introduction
+module MissingH.Printf
+    {-# DEPRECATED "Please use the standard Test.Printf instead" #-}
+                      (-- * Introduction
                        -- $introduction
 
                        -- * Methods of Use
