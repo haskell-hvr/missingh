@@ -158,7 +158,7 @@ simpleAccess cp s o = defdefaulthandler cp s (optionxform cp $ o)
 {- | Interpolating access function.  Please see the Interpolation section
 above for a background on interpolation.
 
-Although the format string looks similar to one used by "MissingH.Printf",
+Although the format string looks similar to one used by "Text.Printf",
 it is not the same.  In particular, only the %(...)s format is supported.
 No width specifiers are supported and no conversions other than s are supported.
 
