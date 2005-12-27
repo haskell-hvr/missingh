@@ -90,13 +90,12 @@ import MissingH.Logging.Logger
 import MissingH.Network
 import MissingH.Network.SocketServer
 import MissingH.Str
-import MissingH.Printf
 import MissingH.IO.HVIO
 import MissingH.IO.HVFS
 import MissingH.IO.HVFS.InstanceHelpers
 import MissingH.IO.HVFS.Utils
+import Text.Printf
 import Data.Char
-import MissingH.Printf
 import Data.IORef
 import Data.List
 import Control.Exception(finally)
@@ -131,7 +130,7 @@ ftpPutStrLn (FTPServer h _ _) text =
 {- | Send a reply code, handling multi-line text as necessary. -}
 sendReply :: FTPServer -> Int -> String -> IO ()
 sendReply h codei text =
-    let codes = vsprintf "%03d" codei
+    let codes = printf "%03d" codei
         writethis [] = ftpPutStrLn h (codes ++ "  ")
         writethis [item] = ftpPutStrLn h (codes ++ " " ++ item)
         writethis (item:xs) = do ftpPutStrLn h (codes ++ "-" ++ item)
@@ -627,7 +626,7 @@ cmd_help h@(FTPServer _ _ state) args =
           ,""
           ,""
           ,"I know of the following commands:"
-          ,concatMap (\ (name, (_, (summary, _))) -> vsprintf "%-10s %s\n" name summary)
+          ,concatMap (\ (name, (_, (summary, _))) -> printf "%-10s %s\n" name summary)
               (sort commands)
           ,""
           ,"You may type \"HELP command\" for more help on a specific command."
