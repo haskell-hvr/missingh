@@ -179,9 +179,9 @@ import qualified MissingH.Logging.Handler(handle)
 import MissingH.Logging.Handler.Simple
 import IO
 import System.IO.Unsafe
-import Data.IORef
+import Control.Concurrent.MVar
 import Data.List(map)
-import Data.FiniteMap
+import Data.Map as Map
 import qualified Control.Exception
 ---------------------------------------------------------------------------
 -- Basic logger types
@@ -193,7 +193,7 @@ data Logger = Logger { level :: Priority,
                        name :: String}
 
 
-type LogTree = FiniteMap String Logger
+type LogTree = Map String Logger
 
 {- | This is the base class for the various log handlers.  They should
 all adhere to this class. -}
@@ -220,12 +220,12 @@ placeholder = Logger {level = WARNING, handlers = [], name = ""}
 
 {-# NOINLINE logTree #-}
 
-logTree :: IORef LogTree
+logTree :: MVar LogTree
 -- note: only kick up tree if handled locally
 logTree = 
     unsafePerformIO $ do
                       h <- streamHandler stderr DEBUG
-                      newIORef (unitFM rootLoggerName (Logger 
+                      newMVar (Map.singleton rootLoggerName (Logger 
                                                    {level = WARNING,
                                                     name = "",
                                                     handlers = [HandlerT h]}))
@@ -240,17 +240,6 @@ componentsOfName name =
                 newlevel : joinComp xs newlevel
         in
         rootLoggerName : joinComp (split "." name) []
-
-createLoggers :: [String] -> IO ()
-createLoggers [] = return ()
-createLoggers (x:xs) = 
-    do
-    lt <- readIORef logTree
-    if elemFM x lt
-       then createLoggers xs
-       else do
-         modifyIORef logTree (\a -> addToFM a x (placeholder {name = x}))
-         createLoggers xs
 
 ---------------------------------------------------------------------------
 -- Logging With Location
@@ -328,21 +317,23 @@ emergencyM s = logM s EMERGENCY
 -- no connected handlers.
 
 getLogger :: String -> IO Logger
-getLogger lname =
-    do
-    --putStrLn lname
-    lt <- readIORef logTree
-    --putStrLn (show (keysFM lt))
-    case lookupFM lt lname of
-         Just x ->  return x
+getLogger lname = modifyMVar logTree $ \lt ->
+    case Map.lookup lname lt of
+         Just x ->  return (lt, x)
          Nothing -> do
                     --print "Missed it."
                     -- Add it.  Then call myself to retrieve it.
-                    createLoggers (componentsOfName lname)
+                    newlt <- createLoggers (componentsOfName lname) lt
                     --putStrLn "createLoggers done"
-                    getLogger lname
+                    logger <- getLogger lname
+                    return (newlt, logger)
+    where createLoggers :: [String] -> LogTree -> IO ()
+          createLoggers [] lt = return lt
+          createLoggers (x:xs) lt =
+              if Map.member x lt
+                 then createLoggers xs lt
+                 else createLoggers xs (Map.insert x (placeholder {name=x}) lt)
 
-                            
 -- | Returns the root logger.
 
 getRootLogger :: IO Logger
@@ -412,7 +403,7 @@ setLevel p l = l{level = p}
 -- account any changes you may have made.
 
 saveGlobalLogger :: Logger -> IO ()
-saveGlobalLogger l = modifyIORef logTree (\a -> addToFM a (name l) l)
+saveGlobalLogger l = modifyMVar_ logTree (\lt -> Map.insert (name l) l lt)
 
 {- | Helps you make changes on the given logger.  Takes a function
 that makes changes and writes those changes back to the global
@@ -426,9 +417,8 @@ updateGlobalLogger :: String            -- ^ Logger name
                       -> (Logger -> Logger) -- ^ Function to call
                       -> IO ()
 updateGlobalLogger ln func =
-    do 
-    l <- getLogger ln
-    saveGlobalLogger (func l)
+    do l <- getLogger ln
+       saveGlobalLogger (func l)
 
 {- | Traps exceptions that may occur, logging them, then passing them on.
 
