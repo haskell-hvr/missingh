@@ -10,21 +10,17 @@ PREREQUISITES
 
 You must satisfy one or more of these major categories:
 
-1. GHC 6.4 or above (including cpphs)
+1. GHC 6.4.1 or above (including cpphs)
+   (GHC 6.4 may work but is untested)
 
-2. GHC 6.2.x (including cpphs) plus Cabal 0.5 or above
-
-3. Hugs 2005xx or above, plus cpphs
-
-4. Hugs 2003xx partially supported, plus cpphs
+2. Hugs 2005xx or above, plus cpphs
 
 If you don't already have cpphs, get it from
 http://www.cs.york.ac.uk/fp/cpphs/.
 
 If you need Cabal, get it from http://www.haskell.org/cabal.
 
-Debian users can install the packages cpphs and libghc6-cabal-dev
-(or, if using ghc6 6.4 or above, the ghc6 package includes Cabal).
+Debian users can install the packages cpphs and ghc6
 
 INSTALLATION
 ------------
