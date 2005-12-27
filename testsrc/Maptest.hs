@@ -34,7 +34,7 @@ test_flipM =
         ]
 
 test_flippedLookupM =
-    let f item inp exp = TestCase $ exp @=? flippedLookupM (M.fromList inp) item in
+    let f item inp exp = TestCase $ exp @=? flippedLookupM item (M.fromList inp) in
         [
          f 'a' ([]::[(Char, Char)]) []
         ,f 'a' [("Test1", 'a'), ("Test2", 'b')] ["Test1"]

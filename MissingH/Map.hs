@@ -75,8 +75,8 @@ flipM = Data.Map.fromList . flipAL . Data.Map.toList
 parameter. If the value does not occur in the Map, the empty
 list is returned. -}
 
-flippedLookupM :: (Ord val, Ord key) => Data.Map.Map key val -> val-> [key]
-flippedLookupM fm v =
+flippedLookupM :: (Ord val, Ord key) => val -> Data.Map.Map key val -> [key]
+flippedLookupM v fm =
     case Data.Map.lookup v (flipM fm) of
                              Nothing -> []
                              Just x -> x
@@ -84,9 +84,9 @@ flippedLookupM fm v =
 {- | Performs a lookup, and raises an exception (with an error message
 prepended with the given string) if the key could not be found.
 -}
-forceLookupM :: (Show key, Ord key) => String -> 
-                                       Data.Map.Map key elt -> key -> elt
-forceLookupM msg fm k =
+forceLookupM :: (Show key, Ord key) => String -> key ->
+                                       Data.Map.Map key elt -> elt
+forceLookupM msg k fm =
     case Data.Map.lookup k fm of
          Just x -> x
          Nothing -> error $ msg ++ ": could not find key " ++ (show k)
