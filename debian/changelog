@@ -1,3 +1,42 @@
+missingh (0.13.0) unstable; urgency=low
+
+  * This release introduces some API changes that will affect 
+    a small percentage of programmers that use ConfigParser.
+  * This release requires GHC 6.4.x or Hugs 2005xx or above.
+    This has been noted in INSTALL.
+  * MissingH.List: Committed some patches from Bulat Ziganshin
+    to improve performance.
+  * New function MissingH.List.subIndex based on suggestion
+    from Bulat Ziganshin.  Also added tests for it.
+  * New module MissingH.Map, similar to MissingH.FiniteMap but for
+    Data.Map instead of Data.FiniteMap.  Also added tests for
+    MissingH.Map.
+  * New module MissingH.AnyDBM.MapDBM, plus tests for it.
+    Converted from MissingH.AnyDBM.FiniteMapDBM.
+  * Converted these modules to use MVars instead of IORefs:
+    + MissingH.Logging.Logger
+  * Converted these modules to use Data.Map instead of Data.FiniteMap:
+    + MissingH.Logging.Logger
+    + MissingH.MIMETypes
+    + MissingH.ConfigParser (exposes an API change to a few people)
+  * Converted these modules to use Text.Printf instead of MissingH.Printf:
+    + MissingH.IO.HVFS.Utils
+    + MissingH.Network.FTP.Server
+  * Added deprecation warnings to these modules:
+    + MissingH.FiniteMap (deprecation of Data.FiniteMap)
+    + MissingH.AnyDBM.FiniteMapDBM (deprecation of Data.FiniteMap)
+    + MissingH.Printf (introduction of Text.Printf)
+  * Added deprecation warnings for two specific functions in
+    MissingH.Str: subRe and splitRe.  I had submitted the code for
+    these to fptools, and the current releases of GHC and Hugs have
+    Text.Regex.subRegex and splitRegex using the code for MissingH.
+    Therefore, these functions in MissingH are deprecated in favor of
+    the implementations in the standard library.
+  * Added locking to StringDBM for thread safety improvements
+  * Merry Christmas!
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 26 Dec 2005 15:24:13 -0600
+
 missingh (0.12.3) unstable; urgency=low
 
   * Make StreamHandler now lock by default.
