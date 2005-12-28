@@ -93,15 +93,10 @@ child files\/directories.
 -}
 recursiveRemove :: HVFS a => a -> FilePath -> IO ()
 recursiveRemove h fn =
-    let worker [] = return ()
-        worker ((fn, fs):xs) =
-            do --putStrLn $ "worker " ++ fn
-               if withStat fs vIsDirectory 
-                  then vRemoveDirectory h fn
-                  else vRemoveFile h fn
-               worker xs
-        in
-        recurseDirStat h fn >>= worker
+    recurseDirStat h fn >>= mapM_ $
+        \(fn, fs) -> if withStat fs vIsDirectory 
+                         then vRemoveDirectory h fn
+                         else vRemoveFile h fn
 
 {- | Provide a result similar to the command ls -l over a directory.
 
