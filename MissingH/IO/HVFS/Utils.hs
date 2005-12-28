@@ -93,10 +93,11 @@ child files\/directories.
 -}
 recursiveRemove :: HVFS a => a -> FilePath -> IO ()
 recursiveRemove h fn =
-    recurseDirStat h fn >>= mapM_ $
+    recurseDirStat h fn >>= (mapM_ $
         \(fn, fs) -> if withStat fs vIsDirectory 
                          then vRemoveDirectory h fn
                          else vRemoveFile h fn
+                              )
 
 {- | Provide a result similar to the command ls -l over a directory.
 
