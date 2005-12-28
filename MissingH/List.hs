@@ -110,10 +110,6 @@ list instead of just one element.
 @spanList p xs@ is the same as @(takeWhileList p xs, dropWhileList p xs)@ 
 -}
 spanList :: ([a] -> Bool) -> [a] -> ([a], [a])
-spanList p xs = (takeWhileList p xs, dropWhileList p xs)
-
-{- Suggestion from Bulat Ziganshin <bulatz@HotPOP.com>:
-(not yet applied due to lack of unit test for this function)
 
 spanList _ [] = ([],[])
 spanList func list@(x:xs) =
@@ -121,9 +117,6 @@ spanList func list@(x:xs) =
        then (x:ys,zs)
        else ([],list)
     where (ys,zs) = spanList func xs
--}
-
-
 
 {- | Similar to Data.List.break, but performs the test on the entire remaining
 list instead of just one element.
