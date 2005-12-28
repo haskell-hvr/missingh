@@ -369,7 +369,9 @@ class (Show a) => HVIO a where
 instance HVIO Handle where
     vClose = hClose
     vIsEOF = hIsEOF
-    --vShow = hShow
+#ifdef __GLASGOW_HASKELL__
+    vShow = hShow
+#endif
     vMkIOError h et desc mfp =
         mkIOError et desc (Just h) mfp
     vGetChar = hGetChar
@@ -390,6 +392,9 @@ instance HVIO Handle where
     vGetBuffering = hGetBuffering
     vGetBuf = hGetBuf
     vPutBuf = hPutBuf
+    vIsOpen = hIsOpen
+    vIsClosed = hIsClosed
+
 
 ----------------------------------------------------------------------
 -- VIO Support
