@@ -52,7 +52,7 @@ import System.Locale
 import System.IO.Unsafe
 
 {- | Obtain a recursive listing of all files\/directories beneath 
-the specified directory.  The traversal is depth-first (FIXME: is this true?)
+the specified directory.  The traversal is depth-first
 and the original
 item is always present in the returned list.
 
