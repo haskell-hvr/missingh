@@ -35,7 +35,7 @@ Inspiration and ideas from haskell-xml-rpc by Bjorn Bringert
 
 Please scroll down to read the detailed documentation.
 
-/NOTE/: to compile this module under ghc, you must use:
+/NOTE/: to use this module under ghc, you must use:
 
 > -fallow-overlapping-instances
 
@@ -46,7 +46,7 @@ With hugs:
 -}
 
 module MissingH.Printf
-    {-# DEPRECATED "Please use the standard Test.Printf instead" #-}
+    {-# DEPRECATED "Please use the standard Text.Printf instead" #-}
                       (-- * Introduction
                        -- $introduction
 

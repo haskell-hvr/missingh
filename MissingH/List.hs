@@ -401,7 +401,7 @@ list, this function looks for the first occurance of a sublist in the list,
 and returns the index of the first element of that occurance.  If there is no
 such list, returns Nothing.
 
-If the list to look for is the empyt list, will return Just 0 regardless
+If the list to look for is the empty list, will return Just 0 regardless
 of the content of the list to search.
 
 Examples:
