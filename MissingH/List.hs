@@ -151,6 +151,10 @@ list with the replacement list in the operation list.
 Example:
 
 >replace "," "." "127,0,0,1" -> "127.0.0.1"
+
+This could logically be thought of as:
+
+>replace old new l = join new . split old $ l
 -}
 
 replace :: Eq a => [a] -> [a] -> [a] -> [a]
