@@ -188,6 +188,16 @@ test_strToAL =
            "\"one\",1.0\n\"n\\nl\",2.0\n"
         ]
 
+test_spanList =
+    let f func inp exp = TestLabel (show inp) $ TestCase $ exp @=? spanList func inp
+        in
+          [f (contains "foo") "Testfoobar" ("Testf", "oobar"),
+           f (\_ -> True) "Testasdf" ("Testasdf", ""),
+           f (\_ -> False) "Testasdf" ("", "Testasdf"),
+           f (contains "foo") "" ("", ""),
+           f (contains "foo") "foo" ("f", "oo")]
+
+
 tests = TestList [TestLabel "delFromAL" (TestList test_delFromAL),
                   TestLabel "addToAL" (TestList test_addToAL),
                   TestLabel "split" (TestList test_split),
@@ -201,7 +211,8 @@ tests = TestList [TestLabel "delFromAL" (TestList test_delFromAL),
                   TestLabel "contains" (TestList test_contains),
                   TestLabel "strFromAL & strToAL" (TestList test_strToAL),
                   TestLabel "fixedWidth" (TestList test_fixedWidth),
-                  TestLabel "subIndex" (TestList test_subIndex)]
+                  TestLabel "subIndex" (TestList test_subIndex),
+                  TestLabel "spanList" (TestList test_spanList)]
 
 
 
