@@ -314,9 +314,7 @@ class (Show a) => HVIO a where
                                 else ioError e
                     in catch func handler
             in
-            do firstchar <- vGetChar h
-               rest <- loop
-               return (firstchar : rest)
+            do loop
            
     vReady h = do vTestEOF h
                   return True
