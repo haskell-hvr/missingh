@@ -157,7 +157,7 @@ getProcessStatus on the 'PipeHandle'.  Zomeibes will result otherwise.
 
 This function logs as pipeFrom.
 
-Not available on Windows.
+Not available on Windows or with Hugs.
 -}
 hPipeFrom :: FilePath -> [String] -> IO (PipeHandle, Handle)
 hPipeFrom fp args = 
@@ -166,7 +166,11 @@ hPipeFrom fp args =
        let childstuff = do dupTo (snd pipepair) stdOutput
                            closeFd (fst pipepair)
                            executeFile fp True args Nothing
+#ifdef __HUGS__
+       fail $ "hPipeFrom: forkProcess is not available in Hugs."
+#else
        p <- try (forkProcess childstuff)
+#endif
        -- parent
        pid <- case p of
                   Right x -> return x
@@ -211,7 +215,11 @@ hPipeTo fp args =
        let childstuff = do dupTo (fst pipepair) stdInput
                            closeFd (snd pipepair)
                            executeFile fp True args Nothing
+#ifdef __HUGS__
+       fail $ "hPipeTo: forkProcess is not available in Hugs."
+#else
        p <- try (forkProcess childstuff)
+#endif
        -- parent
        pid <- case p of
                    Right x -> return x
@@ -263,7 +271,11 @@ hPipeBoth fp args =
                            dupTo (fst topair) stdInput
                            closeFd (snd topair)
                            executeFile fp True args Nothing
+#ifdef __HUGS__
+       fail $ "hPipeBoth: forkProcess is not available in Hugs."
+#else
        p <- try (forkProcess childstuff)
+#endif
        -- parent
        pid <- case p of
                    Right x -> return x
@@ -410,7 +422,11 @@ pOpen3 pin pout perr fp args func childfunc =
                      func p
         in
         do 
+#ifdef __HUGS__
+       fail $ "pOpen3: forkProcess is not available in Hugs."
+#else
         p <- try (forkProcess childstuff)
+#endif
         pid <- case p of
                 Right x -> return x
                 Left e -> fail ("Error in fork: " ++ (show e))
