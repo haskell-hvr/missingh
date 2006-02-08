@@ -93,7 +93,9 @@ module MissingH.Cmd(-- * High-Level Tools
                     -- * Low-Level Tools
                     PipeMode(..),
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
                     pOpen, pOpen3
+#endif
 #endif
 		   )
 where
