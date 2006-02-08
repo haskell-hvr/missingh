@@ -78,6 +78,7 @@ module MissingH.Cmd(-- * High-Level Tools
                     safeSystem,
 #ifndef mingw32_HOST_OS
                     forceSuccess,
+#ifndef __HUGS__
                     -- ** Piping with lazy strings
                     pipeFrom,
                     pipeLinesFrom,
@@ -87,6 +88,7 @@ module MissingH.Cmd(-- * High-Level Tools
                     hPipeFrom,
                     hPipeTo,
                     hPipeBoth,
+#endif
 #endif
                     -- * Low-Level Tools
                     PipeMode(..),
@@ -131,6 +133,7 @@ data PipeHandle =
     deriving (Eq, Show)
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Like 'pipeFrom', but returns data in lines instead of just a String.
 Shortcut for calling lines on the result from 'pipeFrom'.
 
@@ -142,6 +145,7 @@ pipeLinesFrom fp args =
     do (pid, c) <- pipeFrom fp args
        return $ (pid, lines c)
 #endif
+#endif
 
 logRunning func fp args = debugM (logbase ++ "." ++ func) (showCmd fp args)
 warnFail funcname fp args msg =
@@ -150,6 +154,7 @@ warnFail funcname fp args msg =
               fail m
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Read data from a pipe.  Returns a Handle and a 'PipeHandle'.
 
 When done, you must hClose the handle, and then use either 'forceSuccess' or
@@ -166,11 +171,7 @@ hPipeFrom fp args =
        let childstuff = do dupTo (snd pipepair) stdOutput
                            closeFd (fst pipepair)
                            executeFile fp True args Nothing
-#ifdef __HUGS__
-       fail $ "hPipeFrom: forkProcess is not available in Hugs."
-#else
        p <- try (forkProcess childstuff)
-#endif
        -- parent
        pid <- case p of
                   Right x -> return x
@@ -180,8 +181,10 @@ hPipeFrom fp args =
        h <- fdToHandle (fst pipepair)
        return (PipeHandle pid fp args "pipeFrom", h)
 #endif
+#endif
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Read data from a pipe.  Returns a lazy string and a 'PipeHandle'.
 
 ONLY AFTER the string has been read completely, You must call either
@@ -196,8 +199,10 @@ pipeFrom fp args =
        c <- hGetContents h
        return (pid, c)
 #endif
+#endif
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Write data to a pipe.  Returns a 'PipeHandle' and a new Handle to write
 to.
 
@@ -215,11 +220,7 @@ hPipeTo fp args =
        let childstuff = do dupTo (fst pipepair) stdInput
                            closeFd (snd pipepair)
                            executeFile fp True args Nothing
-#ifdef __HUGS__
-       fail $ "hPipeTo: forkProcess is not available in Hugs."
-#else
        p <- try (forkProcess childstuff)
-#endif
        -- parent
        pid <- case p of
                    Right x -> return x
@@ -229,8 +230,10 @@ hPipeTo fp args =
        h <- fdToHandle (snd pipepair)
        return (PipeHandle pid fp args "pipeTo", h)
 #endif
+#endif
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Write data to a pipe.  Returns a ProcessID.
 
 You must call either
@@ -246,8 +249,10 @@ pipeTo fp args message =
                (hClose h)
        return pid
 #endif
+#endif
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Like a combination of 'hPipeTo' and 'hPipeFrom'; returns
 a 3-tuple of ('PipeHandle', Data From Pipe, Data To Pipe).
 
@@ -271,11 +276,7 @@ hPipeBoth fp args =
                            dupTo (fst topair) stdInput
                            closeFd (snd topair)
                            executeFile fp True args Nothing
-#ifdef __HUGS__
-       fail $ "hPipeBoth: forkProcess is not available in Hugs."
-#else
        p <- try (forkProcess childstuff)
-#endif
        -- parent
        pid <- case p of
                    Right x -> return x
@@ -287,8 +288,10 @@ hPipeBoth fp args =
        toh <- fdToHandle (snd topair)
        return (PipeHandle pid fp args "pipeBoth", fromh, toh)
 #endif
+#endif
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
 to send data to the piped program, and simultaneously returns its output
 stream.
@@ -303,6 +306,7 @@ pipeBoth fp args message =
                         (hClose toh)
        c <- hGetContents fromh
        return (pid, c)
+#endif
 #endif
 
 #ifndef mingw32_HOST_OS
@@ -351,6 +355,7 @@ cmdfailed funcname command args failcode = do
     ioError e
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Open a pipe to the specified command.
 
 Passes the handle on to the specified function.
@@ -387,8 +392,10 @@ pOpen pm fp args func =
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
                                callfunc (closeFd (snd pipepair))
 #endif
+#endif
 
 #ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 {- | Runs a command, redirecting things to pipes. 
 
 Not available on Windows.-}
@@ -422,11 +429,7 @@ pOpen3 pin pout perr fp args func childfunc =
                      func p
         in
         do 
-#ifdef __HUGS__
-       fail $ "pOpen3: forkProcess is not available in Hugs."
-#else
         p <- try (forkProcess childstuff)
-#endif
         pid <- case p of
                 Right x -> return x
                 Left e -> fail ("Error in fork: " ++ (show e))
@@ -434,6 +437,7 @@ pOpen3 pin pout perr fp args func childfunc =
         let rv = seq retval retval
         forceSuccess (PipeHandle (seq retval pid) fp args "pOpen3")
         return rv
+#endif
 #endif
 
 showCmd :: FilePath -> [String] -> String
