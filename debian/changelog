@@ -1,6 +1,17 @@
 missingh (0.13.1) unstable; urgency=low
 
   * Note Build-Depends on HUnit in MissingH.Cabal.  Closes: #356196.
+  * MissingH.IO.HVIO: No longer return EOFError when vGetContents called
+    at EOF, for compatibility with hGetContents.  Reported by
+    Bulat Ziganshin.
+  * MissingH.IO.HVFS.Utils: Applied suggestion from Bulat
+    to make recursiveRemove cleaner.
+  * MissingH.IO.HVIO: Minor bugfixes suggested by Bulat.
+  * Updated, fixed typos, and enhanced various docs.
+  * testsrc/Listtest: Added unit tests for spanList
+  * MissingH.List: Replaced implementation of spanList with one
+    suggested by Bulat.
+  * Added ghc6 (>= 6.4.1) to Debian build-depends.
 
  -- John Goerzen <jgoerzen@complete.org>  Sat, 11 Mar 2006 12:26:03 -0600
 
