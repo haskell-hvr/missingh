@@ -83,7 +83,7 @@ Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances, CPP
 Build-Depends: haskell-src, network, parsec, base,
                unix,
-               haskell98, mtl
+               haskell98, mtl, HUnit
 GHC-Options: -O2
 
 Executable: runtests

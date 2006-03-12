@@ -1,3 +1,9 @@
+missingh (0.13.1) unstable; urgency=low
+
+  * Note Build-Depends on HUnit in MissingH.Cabal.  Closes: #356196.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sat, 11 Mar 2006 12:26:03 -0600
+
 missingh (0.13.0) unstable; urgency=low
 
   * This release introduces some API changes that will affect 
