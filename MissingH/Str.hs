@@ -1,5 +1,5 @@
 {- arch-tag: String utilities main file
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and\/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Str
-   Copyright  : Copyright (C) 2004-2005 John Goerzen
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org>
@@ -32,7 +32,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.Str
                        (-- * Whitespace Removal
-                        strip, lstrip, rstrip,
+                        strip, lstrip, rstrip
                         -- * Tests
                         -- | Note: These functions are aliases for functions
                         -- in "MissingH.List".
@@ -40,7 +40,7 @@ module MissingH.Str
                         -- * Conversions
                         -- | Note: Some of these functions are aliases for functions
                         -- in "MissingH.List".
-                        join, split, splitRe, replace, subRe
+                        join, split, splitWs, splitRe, replace, subRe
                        ) where
 import MissingH.List(startswith, endswith, join, split, replace)
 import Text.Regex
@@ -105,3 +105,8 @@ as Text.Regex.splitRegex and is thus deprecated in MissingH.
 
 splitRe :: Regex -> String -> [String]
 splitRe = splitRegex
+
+{- | Splits a string around whitespace.  Empty elements in the result
+list are automatically removed. -}
+splitWs :: String -> [String]
+splitWs = filter (\x -> x /= []) . splitRegex (mkRegex "[ \t\n\r\v\f]+")

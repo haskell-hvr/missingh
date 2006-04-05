@@ -51,6 +51,16 @@ test_strip =
                     ("\nbas", "bas"),
                     ("abc def", "abc def")]
 
+test_splitWs =
+    let f inp exp = TestCase $ exp @=? splitWs inp
+        in [
+            f [] "    ",
+            f [] "",
+            f ["asdf"] " asdf\n",
+            f ["one", "two", "three"] "  one\ntwo \tthree \n"
+           ]
+
+
 test_splitRe =
     let f re inp exp = TestCase $ exp @=? splitRe (mkRegex re) inp
         in [
@@ -76,6 +86,7 @@ test_subRe =
 tests = TestList [TestLabel "lstrip" (TestList test_lstrip),
                   TestLabel "rstrip" $ TestList test_rstrip,
                   TestLabel "strip" $ TestList test_strip,
+                  TestLabel "splitWs" $ TestList test_splitWs,
                   TestLabel "subRe" $ TestList test_subRe,
                   TestLabel "splitRe" $ TestList test_splitRe
                   ]
