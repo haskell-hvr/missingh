@@ -52,7 +52,7 @@ test_strip =
                     ("abc def", "abc def")]
 
 test_splitWs =
-    let f inp exp = TestCase $ exp @=? splitWs inp
+    let f exp inp = TestCase $ exp @=? splitWs inp
         in [
             f [] "    ",
             f [] "",
