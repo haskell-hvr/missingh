@@ -1,5 +1,5 @@
 {- arch-tag: Logger main definition
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Logging.Logger
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -115,8 +115,7 @@ Here's an example to illustrate some of these concepts:
 >        updateGlobalLogger "MyApp.BuggyComponent"
 >                           (setLevel DEBUG)
 >
->        -- This message will go to syslog -- the default
->        -- restrictions on the root logger will filter it out.
+>        -- This message will go to syslog and stderr
 >        debugM "MyApp.BuggyComponent" "This buggy component is buggy"
 > 
 >        -- This message will go to syslog and stderr too.
