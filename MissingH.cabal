@@ -82,7 +82,7 @@ Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
 Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances, CPP
 Build-Depends: haskell-src, network, parsec, base,
-               unix,
+               unix, HUnit,
                haskell98, mtl
 GHC-Options: -O2
 
