@@ -32,7 +32,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.Str
                        (-- * Whitespace Removal
-                        strip, lstrip, rstrip
+                        strip, lstrip, rstrip,
                         -- * Tests
                         -- | Note: These functions are aliases for functions
                         -- in "MissingH.List".
