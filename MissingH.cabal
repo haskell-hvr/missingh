@@ -1,10 +1,10 @@
 -- arch-tag: MissingH main description file
 Name: MissingH
-Version: 0.13.1
+Version: 0.13.2
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Beta
-Copyright: Copyright (c) 2004-2005 John Goerzen
+Copyright: Copyright (c) 2004-2006 John Goerzen
 Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.Daemon,
   MissingH.Parsec,
@@ -83,7 +83,7 @@ Extensions: ExistentialQuantification, AllowOverlappingInstances,
     AllowUndecidableInstances, CPP
 Build-Depends: haskell-src, network, parsec, base,
                unix, HUnit,
-               haskell98, mtl
+               haskell98, mtl, HUnit
 GHC-Options: -O2
 
 Executable: runtests
