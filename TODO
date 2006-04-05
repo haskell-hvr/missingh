@@ -1,5 +1,7 @@
 arch-tag: TODO file
 
+Test forceEitherMsg
+
 Cmd: pOpenBoth -- read and write, use forkIO for one of them
 
 Printf:
