@@ -1,5 +1,5 @@
 {- arch-tag: Euither utilities
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Either
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -33,6 +33,7 @@ module MissingH.Either
     (
      maybeToEither,
      forceEither,
+     forceEitherMsg,
      eitherToMonadError
 ) where
 import Control.Monad.Error
@@ -59,6 +60,11 @@ Left, raises an exception with "error". -}
 forceEither :: Show e => Either e a -> a
 forceEither (Left x) = error (show x)
 forceEither (Right x) = x
+
+{- | Like 'forceEither', but can raise a specific message with the error. -}
+forceEitherMsg :: Show e => String -> Either e a -> a
+forceEitherMsg msg (Left x) = error $ msg ++ ": " ++ show x
+forceEitherMsg _ (Right x) = x
 
 {- | Takes an either and transforms it into something of the more generic
 MonadError class. -}
