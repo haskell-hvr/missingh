@@ -2,7 +2,10 @@ missingh (0.14.0) unstable; urgency=low
 
   * New function splitWs
   * Loggers: When creating new loggers, use the new parent for defaults
-    when possible.
+    when possible. [API change]
+  * Logger handlers: Now pass the calling logger name to handlers.
+    [API change]
+  * New log handler: verboseStreamHandler
 
  -- John Goerzen <jgoerzen@complete.org>  Tue,  4 Apr 2006 05:31:15 -0500
 
