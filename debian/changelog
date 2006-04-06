@@ -6,6 +6,7 @@ missingh (0.14.0) unstable; urgency=low
   * Logger handlers: Now pass the calling logger name to handlers.
     [API change]
   * New log handler: verboseStreamHandler
+  * Syslog handler also includes priority and logger name for each message.
 
  -- John Goerzen <jgoerzen@complete.org>  Tue,  4 Apr 2006 05:31:15 -0500
 
