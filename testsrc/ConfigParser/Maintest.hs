@@ -1,5 +1,5 @@
 {- arch-tag: ConfigParser tests main file
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -89,8 +89,10 @@ test_defaults =
       [
        f2 "default item" (Right "ault") (get cp "sect1" "def")
       ,f2 "normal item" (Right "bar") (get cp "sect1" "foo")
-      ,f2s "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
-      ,f2s "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
+      ,f2s "no option" (Left (NoOption "abc", "get (sect1/abc)")) 
+               (get cp "sect1" "abc")
+      ,f2s "no section" (Left (NoSection "sect2", "get (sect2/foo)")) 
+               (get cp "sect2" "foo")
       ,f2 "default from bad sect" (Right "ault") (get cp "sect2" "def")
       ,f2 "overriding default" (Right "different") (get cp "sect4" "def")
       -- not in haskell: ,f2 "using default feature"
@@ -102,11 +104,15 @@ test_defaults =
 test_nodefault =
     let cp = (p "def: ault\n[sect1]\nfoo: bar\nbaz: quuz\nint: 2\nfloat: 3\nbool: yes\n[sect4]\ndef: different"){usedefault = False} in
       [
-       f2s "default item" (Left (NoOption "def", "get")) (get cp "sect1" "def")
+       f2s "default item" (Left (NoOption "def", "get (sect1/def)")) 
+               (get cp "sect1" "def")
       ,f2 "normal item" (Right "bar") (get cp "sect1" "foo")
-      ,f2s "no option" (Left (NoOption "abc", "get")) (get cp "sect1" "abc")
-      ,f2s "no section" (Left (NoSection "sect2", "get")) (get cp "sect2" "foo")
-      ,f2s "default from bad sect" (Left (NoSection "sect2", "get")) (get cp "sect2" "def")
+      ,f2s "no option" (Left (NoOption "abc", "get (sect1/abc)")) 
+               (get cp "sect1" "abc")
+      ,f2s "no section" (Left (NoSection "sect2", "get (sect2/foo)")) 
+               (get cp "sect2" "foo")
+      ,f2s "default bad sect" (Left (NoSection "sect2", "get (sect2/def)"))
+               (get cp "sect2" "def")
       ,f2 "overriding default" (Right "different") (get cp "sect4" "def")
       -- not in haskell: ,f2 "using default feature"
       -- default int
@@ -118,7 +124,7 @@ test_instances =
     let cp = p "[x]\na: true\nb: 1\nbad: never"
 	in [f2 "bool 1st" (Right True) (get cp "x" "a"),
 	    f2 "bool 1nd" (Right True) (get cp "x" "b"),
-            f2b "bad bool" (Left (ParseError "couldn't parse bool never from x/bad", "getbool")) (get cp "x" "bad"),
+            f2b "bad bool" (Left (ParseError "couldn't parse bool never from (x/bad)", "getbool")) (get cp "x" "bad"),
             f2 "number" (Right (1::Int)) (get cp "x" "b")
 	   ]
 
@@ -150,9 +156,11 @@ test_remove =
                    y <- options x "sect1"
                    return (sections x, y)
                 )
-           ,f2 "option err 1" (Left (NoSection "sect4", "remove_option"))
+           ,f2 "option err 1" (Left (NoSection "sect4", 
+                                     "remove_option (sect4/s4o1)"))
                (remove_option cp "sect4" "s4o1")
-           ,f2 "option err 2" (Left (NoOption "s1o3", "remove_option"))
+           ,f2 "option err 2" (Left (NoOption "s1o3",
+                                     "remove_option (sect1/s1o3)"))
                (remove_option cp "sect1" "s1o3")
            ]
                   
@@ -178,7 +186,7 @@ test_ex_errormonad =
           cp <- set cp "sect1" "opt2" "bar"
           options cp "sect1"
      ,TestLabel "chaining2" $ TestCase $ 
-      (Left (NoSection "sect2", "set")) @=? 
+      (Left (NoSection "sect2", "set (sect2/opt2)")) @=? 
        do let cp = emptyCP
           cp <- add_section cp "sect1"
           cp <- set cp "sect1" "opt1" "foo"
