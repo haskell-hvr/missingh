@@ -206,7 +206,9 @@ all adhere to this class. -}
 -- on the system.
 rootLoggerName = ""
 
--- | Placeholders created when a new logger must be created.
+{- | Placeholders created when a new logger must be created.  This is used
+only for the root logger default for now, as all others crawl up the tree
+to find a sensible default. -}
 placeholder :: Logger
 placeholder = Logger {level = WARNING, handlers = [], name = ""}
 
@@ -229,7 +231,12 @@ logTree =
                                                     name = "",
                                                     handlers = [HandlerT h]}))
 
--- | Given a name, return all components of it, starting from the root.
+{- | Given a name, return all components of it, starting from the root.
+Example return value: 
+
+>["", "MissingH", "MissingH.Cmd", "MissingH.Cmd.pOpen"]
+
+-}
 componentsOfName :: String -> [String]
 componentsOfName name =
     let joinComp [] _ = []
@@ -318,20 +325,28 @@ emergencyM s = logM s EMERGENCY
 getLogger :: String -> IO Logger
 getLogger lname = modifyMVar logTree $ \lt ->
     case Map.lookup lname lt of
-         Just x ->  return (lt, x)
+         Just x ->  return (lt, x) -- A logger exists; return it and leave tree
          Nothing -> do
-                    --print "Missed it."
-                    -- Add it.  Then call myself to retrieve it.
+                    -- Add logger(s).  Then call myself to retrieve it.
                     let newlt = createLoggers (componentsOfName lname) lt
-                    --putStrLn "createLoggers done"
                     result <- Map.lookup lname newlt
                     return (newlt, result)
     where createLoggers :: [String] -> LogTree -> LogTree
-          createLoggers [] lt = lt
-          createLoggers (x:xs) lt =
+          createLoggers [] lt = lt -- No names to add; return tree unmodified
+          createLoggers (x:xs) lt = -- Add logger to tree
               if Map.member x lt
                  then createLoggers xs lt
-                 else createLoggers xs (Map.insert x (placeholder {name=x}) lt)
+                 else createLoggers xs 
+                          (Map.insert x ((modellogger lt) {name=x}) lt)
+          modellogger :: LogTree -> Logger
+          -- the modellogger is what we use for adding new loggers
+          modellogger lt =
+              findmodellogger lt (reverse $ componentsOfName lname)
+          findmodellogger _ [] = error "findmodellogger: root logger does not exist?!"
+          findmodellogger lt (x:xs) =
+              case Map.lookup x lt of
+                Left (_::String) -> findmodellogger lt xs
+                Right logger -> logger {handlers = []}
 
 -- | Returns the root logger.
 
