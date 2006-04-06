@@ -55,15 +55,15 @@ class LogHandler a where
                    getLevel :: a -> Priority
                    -- | Logs an event if it meets the requirements
                    -- given by the most recent call to 'setLevel'.
-                   handle :: a -> LogRecord -> IO ()
+                   handle :: a -> LogRecord -> String-> IO ()
 
-                   handle h (pri, msg) = 
+                   handle h (pri, msg) logname = 
                        if pri >= (getLevel h)
-                          then emit h (pri, msg)
+                          then emit h (pri, msg) logname
                           else return ()
                    -- | Forces an event to be logged regardless of
                    -- the configured level.
-                   emit :: a -> LogRecord -> IO ()
+                   emit :: a -> LogRecord -> String -> IO ()
                    -- | Closes the logging system, causing it to close
                    -- any open files, etc.
                    close :: a -> IO ()

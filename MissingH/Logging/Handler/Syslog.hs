@@ -1,6 +1,6 @@
 {-# LANGUAGE CPP #-}
 {- arch-tag: Syslog handler
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Logging.Handler.Syslog
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -222,7 +222,7 @@ openlog_generic sock addr ident opt fac pri =
 instance LogHandler SyslogHandler where
     setLevel sh p = sh{priority = p}
     getLevel sh = priority sh
-    emit sh (p, msg) = 
+    emit sh (p, msg) loggername = 
         let code = makeCode (facility sh) p
             getpid :: IO String
             getpid = if (elem PID (options sh))
@@ -244,7 +244,8 @@ instance LogHandler SyslogHandler where
             do
             pidstr <- getpid
             let outstr = "<" ++ (show code) ++ ">" 
-                         ++ (identity sh) ++ pidstr ++ ": " ++ msg
+                         ++ (identity sh) ++ pidstr ++ ": "
+                         ++ "[" ++ loggername ++ "/" ++ (show p) ++ "]" ++ msg
             if (elem PERROR (options sh))
                then hPutStrLn stderr outstr
                else return ()

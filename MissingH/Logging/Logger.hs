@@ -377,19 +377,20 @@ handle l (pri, msg) =
         if pri >= (level l)
            then do 
                 ph <- parentHandlers (name l)
-                sequence_ (handlerActions (ph ++ (handlers l)) (pri, msg))
+                sequence_ (handlerActions (ph ++ (handlers l)) (pri, msg)
+                                          (name l))
            else return ()
 
 
 -- | Call a handler given a HandlerT.
-callHandler :: LogRecord -> HandlerT -> IO ()
-callHandler lr ht =
+callHandler :: LogRecord -> String -> HandlerT -> IO ()
+callHandler lr loggername ht =
     case ht of
-            HandlerT x -> MissingH.Logging.Handler.handle x lr
+            HandlerT x -> MissingH.Logging.Handler.handle x lr loggername
 
 -- | Generate IO actions for the handlers.
-handlerActions :: [HandlerT] -> LogRecord -> [IO ()]
-handlerActions h lr = map (callHandler lr) h
+handlerActions :: [HandlerT] -> LogRecord -> String -> [IO ()]
+handlerActions h lr loggername = map (callHandler lr loggername ) h
                          
 -- | Add handler to 'Logger'.  Returns a new 'Logger'.
 addHandler :: LogHandler a => a -> Logger -> Logger

@@ -1,5 +1,5 @@
 {- arch-tag: Simple log handlers
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.Logging.Handler.Simple
-   Copyright  : Copyright (C) 2004-2005 John Goerzen
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -30,7 +30,8 @@ Simple log handlers
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Logging.Handler.Simple(streamHandler, fileHandler)
+module MissingH.Logging.Handler.Simple(streamHandler, fileHandler,
+                                      verboseStreamHandler)
     where
 
 import MissingH.Logging
@@ -38,16 +39,15 @@ import MissingH.Logging.Handler
 import IO
 import Control.Concurrent.MVar
 
-
 data GenericHandler a = GenericHandler {priority :: Priority,
                                         privData :: a,
-                                        writeFunc :: a -> String -> IO (),
+                                        writeFunc :: a -> LogRecord -> String -> IO (),
                                         closeFunc :: a -> IO () }
 
 instance LogHandler (GenericHandler a) where
     setLevel sh p = sh{priority = p}
     getLevel sh = priority sh
-    emit sh lr = (writeFunc sh) (privData sh) (snd lr)
+    emit sh lr loggername = (writeFunc sh) (privData sh) lr loggername
     close sh = (closeFunc sh) (privData sh)
 
 
@@ -59,9 +59,10 @@ instance LogHandler (GenericHandler a) where
 streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
 streamHandler h pri = 
     do lock <- newMVar ()
-       let mywritefunc hdl msg = withMVar lock (\_ -> do hPutStrLn hdl msg
-                                                         hFlush hdl
-                                               )
+       let mywritefunc hdl (_, msg) _ = 
+               withMVar lock (\_ -> do hPutStrLn hdl msg
+                                       hFlush hdl
+                             )
        return (GenericHandler {priority = pri,
                                privData = h,
                                writeFunc = mywritefunc,
@@ -77,3 +78,20 @@ fileHandler fp pri = do
                      h <- openFile fp AppendMode
                      sh <- streamHandler h pri
                      return (sh{closeFunc = hClose})
+
+{- | Like 'streamHandler', but note the priority and logger name along
+with each message. -}
+verboseStreamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
+verboseStreamHandler h pri =
+    do lock <- newMVar ()
+       let mywritefunc hdl (prio, msg) loggername = 
+               withMVar lock (\_ -> do hPutStrLn hdl ("[" ++ loggername 
+                                                          ++ "/" ++
+                                                          show prio ++
+                                                          "]" ++ msg)
+                                       hFlush hdl
+                             )
+       return (GenericHandler {priority = pri,
+                               privData = h,
+                               writeFunc = mywritefunc,
+                               closeFunc = \x -> return ()})
