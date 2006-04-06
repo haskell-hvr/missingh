@@ -88,7 +88,7 @@ verboseStreamHandler h pri =
                withMVar lock (\_ -> do hPutStrLn hdl ("[" ++ loggername 
                                                           ++ "/" ++
                                                           show prio ++
-                                                          "]" ++ msg)
+                                                          "] " ++ msg)
                                        hFlush hdl
                              )
        return (GenericHandler {priority = pri,

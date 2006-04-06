@@ -245,7 +245,7 @@ instance LogHandler SyslogHandler where
             pidstr <- getpid
             let outstr = "<" ++ (show code) ++ ">" 
                          ++ (identity sh) ++ pidstr ++ ": "
-                         ++ "[" ++ loggername ++ "/" ++ (show p) ++ "]" ++ msg
+                         ++ "[" ++ loggername ++ "/" ++ (show p) ++ "] " ++ msg
             if (elem PERROR (options sh))
                then hPutStrLn stderr outstr
                else return ()
