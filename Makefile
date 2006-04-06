@@ -48,12 +48,14 @@ doctmp:
 	mkdir doctmp
 
 .PHONY: doc
-doc: $(LHSCONVSOURCES) hugsbuild
+doc: $(LHSCONVSOURCES) setup
 	-rm -rf html
-	mkdir html
-	haddock $(HADDOCKARGS) --package=MissingH \
-	   --dump-interface=html/MissingH.haddock \
-	   -t 'MissingH API Manual' -h -o html $(HUGSCONVSOURCES) $(LHSCONVSOURCES)
+	./setup configure
+	./setup haddock
+#	haddock $(HADDOCKARGS) --package=MissingH \
+#	   --dump-interface=html/MissingH.haddock \
+#	   -t 'MissingH API Manual' -h -o html $(HUGSCONVSOURCES) $(LHSCONVSOURCES)
+	mv dist/doc/html .
 
 .PHONY: hugsbuild
 
