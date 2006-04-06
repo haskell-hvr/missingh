@@ -1,5 +1,5 @@
 {- arch-tag: ConfigParser main file
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.ConfigParser
-   Copyright  : Copyright (C) 2004-2005 John Goerzen
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Configuration file parsing, generation, and manipulation
 
-Copyright (c) 2004-2005 John Goerzen, jgoerzen\@complete.org
+Copyright (c) 2004-2006 John Goerzen, jgoerzen\@complete.org
 
 This module contains extensive documentation.  Please scroll down to the Introduction section to continue reading.
 -}
@@ -218,11 +218,13 @@ interpolatingAccess maxdepth cp s o =
 defdefaulthandler ::  MonadError CPError m =>
                       ConfigParser -> SectionSpec -> OptionSpec -> m String
 
-defdefaulthandler cp sect opt = 
+defdefaulthandler cp sectn opt = 
     let fm = content cp
-        lookup s o = do sect <- maybeToEither (NoSection s, "get") $ 
+        lookup s o = do sect <- maybeToEither (NoSection s, 
+                                               "get " ++ formatSO sectn opt) $ 
                                 Map.lookup s fm
-                        maybeToEither (NoOption o, "get") $ 
+                        maybeToEither (NoOption o, 
+                                       "get " ++ formatSO sectn opt) $ 
                                 Map.lookup o sect
         trydefault e = if (usedefault cp)
                        then 
@@ -231,7 +233,7 @@ defdefaulthandler cp sect opt =
                                        `catchError` (\_ -> throwError e)
                        else throwError e
         in 
-        lookup sect opt `catchError` trydefault
+        lookup sectn opt `catchError` trydefault
 
 
 {- | Combines two 'ConfigParser's into one.
@@ -342,14 +344,16 @@ exist.  Otherwise, returns the new 'ConfigParser' object.
 remove_option ::  MonadError CPError m =>
                   ConfigParser -> SectionSpec -> OptionSpec -> m ConfigParser
 remove_option cp s passedo =
-    do sectmap <- maybeToEither (NoSection s, "remove_option") $ 
+    do sectmap <- maybeToEither (NoSection s, 
+                                 "remove_option " ++ formatSO s passedo) $ 
                   Map.lookup s (content cp)
        let o = (optionxform cp) passedo
        let newsect = Map.delete o sectmap
        let newmap = Map.insert s newsect (content cp)
        if Map.member o sectmap
           then return $ cp {content = newmap}
-          else throwError $ (NoOption o, "remove_option")
+          else throwError $ (NoOption o, 
+                             "remove_option " ++ formatSO s passedo)
 
 {- | Returns a list of the names of all the options present in the
 given section.
@@ -445,7 +449,11 @@ getbool cp s o =
                   "disabled" -> return False
                   "false" -> return False
                   _ -> throwError (ParseError $ "couldn't parse bool " ++
-                                   val ++ " from " ++ s ++ "/" ++ o, "getbool")
+                                   val ++ " from " ++ formatSO s o, "getbool")
+
+formatSO s o =
+    "(" ++ s ++ "/" ++ o ++ ")"
+
 
 {- | Returns a list of @(optionname, value)@ pairs representing the content
 of the given section.  Returns an error the section is invalid. -}
@@ -461,7 +469,7 @@ Returns an error if the section does not exist. -}
 set ::  MonadError CPError m =>
         ConfigParser -> SectionSpec -> OptionSpec -> String -> m ConfigParser
 set cp s passedo val = 
-    do sectmap <- maybeToEither (NoSection s, "set") $ 
+    do sectmap <- maybeToEither (NoSection s, "set " ++ formatSO s passedo) $ 
                   Map.lookup s (content cp)
        let o = (optionxform cp) passedo
        let newsect = Map.insert o val sectmap
