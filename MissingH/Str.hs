@@ -40,9 +40,10 @@ module MissingH.Str
                         -- * Conversions
                         -- | Note: Some of these functions are aliases for functions
                         -- in "MissingH.List".
-                        join, split, splitWs, splitRe, replace, subRe
+                        join, split, splitWs, splitRe, replace, subRe, escapeRe
                        ) where
 import MissingH.List(startswith, endswith, join, split, replace)
+import Data.Char
 import Text.Regex
 
 {-# DEPRECATED splitRe "Use Text.Regex.splitRegex instead" #-}
@@ -110,3 +111,18 @@ splitRe = splitRegex
 list are automatically removed. -}
 splitWs :: String -> [String]
 splitWs = filter (\x -> x /= []) . splitRegex (mkRegex "[ \t\n\r\v\f]+")
+
+{- | Escape all characters in the input pattern that are not alphanumeric.
+
+Does not make special allowances for NULL, which isn't valid in a
+Haskell regular expression pattern. -}
+escapeRe :: String -> String
+escapeRe [] = []
+escapeRe (x:xs)
+    -- Chars that we never escape
+    | x `elem` ['\'', '`'] = x : escapeRe xs
+    -- General rules for chars we never escape
+    | isDigit x || (isAscii x && isAlpha x) || x `elem` ['<', '>'] 
+        = x : escapeRe xs
+    -- Escape everything else
+    | otherwise = '\\' : x : escapeRe xs

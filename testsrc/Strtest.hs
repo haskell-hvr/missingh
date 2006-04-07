@@ -21,6 +21,7 @@ import Test.HUnit
 import MissingH.Str
 import MissingH.HUnit
 import Text.Regex
+import Data.Char
 
 test_lstrip =
     mapassertEqual "lstrip" lstrip
@@ -83,12 +84,24 @@ test_subRe =
            ,f "foo" "Test foo bar" "x\\\\x" "Test x\\x bar"
            ]
 
+test_escapeRe =
+    map (\i -> TestLabel (show $ chr i) $ TestCase $ assertEqual [chr i] (Just []) 
+                (matchRegex (mkRegex $ escapeRe $ [chr i]) [chr i]))
+             [1..255]
+    ++
+    [TestCase $ assertEqual "big string" 
+                     (Just ([], teststr, [], []))
+                     (matchRegexAll (mkRegex $ escapeRe teststr) teststr)
+    ]
+    where teststr = map chr [1..255]
+
 tests = TestList [TestLabel "lstrip" (TestList test_lstrip),
                   TestLabel "rstrip" $ TestList test_rstrip,
                   TestLabel "strip" $ TestList test_strip,
                   TestLabel "splitWs" $ TestList test_splitWs,
                   TestLabel "subRe" $ TestList test_subRe,
-                  TestLabel "splitRe" $ TestList test_splitRe
+                  TestLabel "splitRe" $ TestList test_splitRe,
+                  TestLabel "escapeRe" $ TestList test_escapeRe
                   ]
 
 
