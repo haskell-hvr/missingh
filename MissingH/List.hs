@@ -89,7 +89,7 @@ endswith = isSuffixOf
 {- | Returns true if the given list contains any of the elements in the search
 list. -}
 hasAny :: Eq a => [a]           -- ^ List of elements to look for
-       -> a                     -- ^ List to search
+       -> [a]                   -- ^ List to search
        -> Bool                  -- ^ Result
 hasAny [] _ = False             -- An empty search list: always false
 hasAny _ [] = False             -- An empty list to scan: always false

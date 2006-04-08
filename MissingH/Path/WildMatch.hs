@@ -99,6 +99,5 @@ convwild (x:xs) = escapeRe [x] ++ convwild xs
 
 convpat :: String -> String
 convpat ('\\':xs) = "\\\\" ++ convpat xs
-convpat (']':xs) = ']' ++ convwild xs
+convpat (']':xs) = ']' : convwild xs
 convpat (x:xs) = x : convpat xs
-    
