@@ -172,6 +172,8 @@ Default implementations of these functions are provided:
 
  * 'vDoesDirectoryExist' -- implemented in terms of 'vGetFileStatus'
 
+ * 'vDoesExist' -- implemented in terms of 'vGetSymbolicLinkStatus'
+
  * 'vGetSymbolicLinkStatus' -- set to call 'vGetFileStatus'.
 
 Default implementations of all other functions
@@ -190,6 +192,9 @@ class (Show a) => HVFS a where
     vGetDirectoryContents :: a -> FilePath -> IO [FilePath]
     vDoesFileExist :: a -> FilePath -> IO Bool
     vDoesDirectoryExist :: a -> FilePath -> IO Bool
+    {- | True if the file exists, regardless of what type it is.
+       This is even True if the given path is a broken symlink. -}
+    vDoesExist :: a -> FilePath -> IO Bool
     vCreateDirectory :: a -> FilePath -> IO ()
     vRemoveDirectory :: a -> FilePath -> IO ()
     vRenameDirectory :: a -> FilePath -> FilePath -> IO ()
@@ -220,6 +225,10 @@ class (Show a) => HVFS a where
     vDoesDirectoryExist fs fp = 
         catch (do s <- vGetFileStatus fs fp
                   return $ withStat s vIsDirectory
+              ) (\_ -> return False)
+    vDoesExist fs fp =
+        catch (do s <- vGetSymbolicLinkStatus fs fp
+                  return True
               ) (\_ -> return False)
     vCreateDirectory fs _ = eh fs "vCreateDirectory"
     vRemoveDirectory fs _ = eh fs "vRemoveDirectory"
