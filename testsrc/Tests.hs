@@ -39,6 +39,8 @@ import qualified HVIOtest
 import qualified HVFStest
 import qualified Timetest
 import qualified Str.CSVtest
+import qualified WildMatchtest
+import qualified Globtest
 
 test1 = TestCase ("x" @=? "x")
 
@@ -51,8 +53,10 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Map" Maptest.tests,
                  TestLabel "AnyDBM" AnyDBMtest.tests,
                  TestLabel "Path" Pathtest.tests,
+                 TestLabel "WildMatch" WildMatchtest.tests,
                  TestLabel "HVIO" HVIOtest.tests,
                  TestLabel "HVFS" HVFStest.tests,
+                 TestLabel "Glob" Globtest.tests,
                  TestLabel "MIMETypes" MIMETypestest.tests,
                  TestLabel "Bitstest" Bitstest.tests,
                  TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests,
