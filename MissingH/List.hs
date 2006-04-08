@@ -1,5 +1,5 @@
 {- arch-tag: List utilities main file
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.List
-   Copyright  : Copyright (C) 2004-2005 John Goerzen
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -31,7 +31,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.List(-- * Tests
-                     startswith, endswith, contains,
+                     startswith, endswith, contains, hasAny,
                      -- * Association List Utilities
                      {- | These functions are designed to augment the
                      association list functions in "Data.List" and
@@ -85,6 +85,15 @@ Example:
 -}
 endswith :: Eq a => [a] -> [a] -> Bool
 endswith = isSuffixOf
+
+{- | Returns true if the given list contains any of the elements in the search
+list. -}
+hasAny :: Eq a => [a]           -- ^ List of elements to look for
+       -> a                     -- ^ List to search
+       -> Bool                  -- ^ Result
+hasAny [] _ = False             -- An empty search list: always false
+hasAny _ [] = False             -- An empty list to scan: always false
+hasAny search (x:xs) = if x `elem` search then True else hasAny search xs
 
 {- | Similar to Data.List.takeWhile, takes elements while the func is true.
 The function is given the remainder of the list to examine. -}
