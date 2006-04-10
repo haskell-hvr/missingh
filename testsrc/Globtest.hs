@@ -20,14 +20,47 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Globtest(tests) where
 import Test.HUnit
 import MissingH.Path.Glob
+import MissingH.Path
 import MissingH.HUnit
 import MissingH.IO.HVFS
+import System.Posix.Directory
+import System.Posix.Files
+import Control.Exception
+import Data.List
 
-defaultFS :: IO MemoryVFS
-defaultFS =
+bp = "testtmp"
+touch x = writeFile x ""
 
-     
-tests = TestList [TestLabel "wildMatchCase" (TestList test_wildMatchCase)]
+globtest thetest = 
+    bracket_ (setupfs)
+             (recursiveRemove SystemFS bp)
+             thetest
+    where setupfs =
+              do mapM_ (\x -> createDirectory x 0o755)
+                       [bp, bp ++ "/a", bp ++ "/aab", bp ++ "/aaa",
+                        bp ++ "/ZZZ", bp ++ "/a/bcd",
+                        bp ++ "/a/bcd/efg"]
+                 mapM_ touch [bp ++ "/a/D", bp ++ "/aab/F", bp ++ "/aaa/zzzF",
+                              bp ++ "/a/bcd/EF", bp ++ "/a/bcd/efg/ha"]
+                 createSymbolicLink "broken" "sym1"
+                 createSymbolicLink "broken" "sym2"
+                 
+assertEqualSorted msg exp res =
+    assertEqual msg (sort exp) (sort res)
+eq = assertEqualSorted
+mf msg func = TestLabel msg $ TestCase $ globtest func
+f func = TestCase $ globtest func
+preppath x = bp ++ "/" ++ x
+
+test_literal =
+    map f
+            [glob (preppath "a") >>= eq "" [(preppath "a")]
+            ,glob (preppath "a/D") >>= eq "" [(preppath "a/D")]
+            ,glob (preppath "aab") >>= eq "" [(preppath "aab")]
+            ,glob (preppath "nonexistant") >>= eq "empty" []
+            ]
+
+tests = TestList [TestLabel "test_literal" (TestList test_literal)]
 
 
 

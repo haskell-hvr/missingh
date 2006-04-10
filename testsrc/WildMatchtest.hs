@@ -22,11 +22,12 @@ import Test.HUnit
 import MissingH.Path.WildMatch
 import MissingH.HUnit
 
-test_wildMatchCase =
-    let f patt name = assertBool (patt ++ "," ++ name ++ " was false")
-                      (wildMatchCase patt name)
-        f0 patt name = assertBool (patt ++ "," ++ name ++ " was true")
-                       (not $ wildMatchCase patt name)
+test_wildCheckCase =
+    let f patt name = TestCase $ assertBool (patt ++ "," ++ name ++ " was false")
+                      (wildCheckCase patt name)
+        f0 patt name = TestCase $ assertBool (patt ++ "," ++ name ++ " was true")
+                       (not $ wildCheckCase patt name)
+    in
     [f "asdf" "asdf",
      f "?*?" "abc",
      f "???*" "asd",
@@ -40,9 +41,9 @@ test_wildMatchCase =
      f0 "a" "b",
      f "[\\]" "\\",
      f "[!\\]" "a",
-     f0 "[!\\]", "\\"]
+     f0 "[!\\]" "\\"]
      
-tests = TestList [TestLabel "wildMatchCase" (TestList test_wildMatchCase)]
+tests = TestList [TestLabel "wildCheckCase" (TestList test_wildCheckCase)]
 
 
 
