@@ -54,13 +54,30 @@ preppath x = bp ++ "/" ++ x
 
 test_literal =
     map f
-            [glob (preppath "a") >>= eq "" [(preppath "a")]
-            ,glob (preppath "a/D") >>= eq "" [(preppath "a/D")]
-            ,glob (preppath "aab") >>= eq "" [(preppath "aab")]
+            [glob (preppath "a") >>= eq "" [preppath "a"]
+            ,glob (preppath "a/D") >>= eq "" [preppath "a/D"]
+            ,glob (preppath "aab") >>= eq "" [preppath "aab"]
             ,glob (preppath "nonexistant") >>= eq "empty" []
             ]
 
-tests = TestList [TestLabel "test_literal" (TestList test_literal)]
+test_one_dir =
+    map f
+        [glob (preppath "a*") >>= eq "a*" (map preppath ["a", "aab", "aaa"]),
+         glob (preppath "*a") >>= eq "*a" (map preppath ["a", "aaa"]),
+         glob (preppath "aa?") >>= eq "aa?" (map preppath ["aaa", "aab"]),
+         glob (preppath "aa[ab]") >>= eq "aa[ab]" (map preppath ["aaa", "aab"]),
+         glob (preppath "*q") >>= eq "*q" []
+        ]
+
+test_nested_dir =
+    map f
+        [glob (preppath "a/bcd/E*") >>= eq "a/bcd/E*" [preppath "a/bcd/EF"],
+         glob (preppath "a/bcd/*g") >>= eq "a/bcd/*g" [preppath "a/bcd/efg"]
+        ]
+
+tests = TestList [TestLabel "test_literal" (TestList test_literal),
+                  TestLabel "test_one_dir" (TestList test_one_dir),
+                  TestLabel "test_nested_dir" (TestList test_nested_dir)]
 
 
 
