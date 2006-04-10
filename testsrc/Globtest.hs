@@ -45,9 +45,8 @@ globtest thetest =
                  createSymbolicLink (preppath "broken") (preppath "sym1")
                  createSymbolicLink (preppath "broken") (preppath "sym2")
                  
-assertEqualSorted msg exp res =
+eq msg exp res =
     assertEqual msg (sort exp) (sort res)
-eq = assertEqualSorted
 mf msg func = TestLabel msg $ TestCase $ globtest func
 f func = TestCase $ globtest func
 preppath x = bp ++ "/" ++ x
