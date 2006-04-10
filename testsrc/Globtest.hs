@@ -75,9 +75,27 @@ test_nested_dir =
          glob (preppath "a/bcd/*g") >>= eq "a/bcd/*g" [preppath "a/bcd/efg"]
         ]
 
+test_dirnames = 
+    map f
+        [glob (preppath "*/D") >>= eq "*/D" [preppath "a/D"],
+         glob (preppath "*/*a") >>= eq "*/*a" [],
+         glob (preppath "a/*/*/*a") >>= eq "a/*/*/*a" [preppath "a/bcd/efg/ha"],
+         glob (preppath "?a?/*F") >>= eq "?a?/*F" (map preppath ["aaa/zzzF", "aab/F"])
+        ]
+
+test_brokensymlinks =
+    map f
+        [glob (preppath "sym*") >>= eq "sym*" (map preppath ["sym1", "sym2"]),
+         glob (preppath "sym1") >>= eq "sym1" [preppath "sym1"],
+         glob (preppath "sym2") >>= eq "sym2" [preppath "sym2"]
+        ]
+         
+
 tests = TestList [TestLabel "test_literal" (TestList test_literal),
                   TestLabel "test_one_dir" (TestList test_one_dir),
-                  TestLabel "test_nested_dir" (TestList test_nested_dir)]
+                  TestLabel "test_nested_dir" (TestList test_nested_dir),
+                  TestLabel "test_dirnames" (TestList test_dirnames),
+                  TestLabel "test_brokensymlinks" (TestList test_brokensymlinks)]
 
 
 

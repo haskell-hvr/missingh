@@ -85,7 +85,9 @@ expandGlob fs fn =
           expandNormalBase :: FilePath -> IO [FilePath]
           expandNormalBase dname =
               do isdir <- vDoesDirectoryExist fs dname
-                 if (basename /= "." && basename /= "") || isdir
+                 let newname = dname ++ "/" ++ basename
+                 isexists <- vDoesExist fs newname
+                 if isexists && ((basename /= "." && basename /= "") || isdir)
                     then return [dname ++ "/" ++ basename]
                     else return []
 
