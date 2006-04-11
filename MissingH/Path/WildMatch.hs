@@ -50,7 +50,7 @@ Please note:
 
 * Neither the path separator (the slash or backslash) nor the period carry
 any special meaning for the functions in this module.  That is, @*@ will
-match @/@ in a filename.  If this is not the behavior you want, you probably
+match @\/@ in a filename.  If this is not the behavior you want, you probably
 want "MissingH.Path.Glob" instead of this module.
 
 * Unlike the Unix shell, filenames that begin with a period are not ignored

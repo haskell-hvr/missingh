@@ -49,7 +49,9 @@ Filenames that begin with a dot are not included in the result set unless
 that component of the pattern also begins with a dot.
 
 In MissingH, this function is defined as:
->glob = vGlob SystemFS -}
+
+>glob = vGlob SystemFS
+-}
 glob :: FilePath -> IO [FilePath]
 glob = vGlob SystemFS
 
