@@ -166,6 +166,11 @@ MissingH.Path             * Split apart filename components
                           * Recursive directory scanning
                           * Recursive file/directory removal (rm -r)
 
+MissingH.Path.Glob        * Expand wildcards to obtain a list of files
+
+MissingH.Path.WildPath    * Evaluate filenames or strings against wildcards
+                          * Convert wildcards to regular expressions
+
 MissingH.Printf           * Format strings using C-like syntax
                           * Support for args as a list or as
                             a variable-length argument

@@ -1,3 +1,18 @@
+missingh (0.14.2) unstable; urgency=low
+
+  * ConfigParser gives more helpful error messages when possible --
+    it now includes section and option in most error messages
+  * Unit tests updated for new ConfigParser output
+  * MissingH.Str: New function escapeRe that takes a string and makes
+    a regular expression that matches the string literally.
+  * MissingH.IO.HVFS: New function vDoesExist
+  * MissingH.List: New function hasAny
+  * New modules: MissingH.Path.Glob and MissingH.Path.WildMatch
+    and tests for them
+  * 716 total unit tests now
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 13 Apr 2006 00:14:10 -0500
+
 missingh (0.14.0) unstable; urgency=low
 
   * New function splitWs
