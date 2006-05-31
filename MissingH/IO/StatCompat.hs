@@ -38,6 +38,7 @@ import System.Posix.Types
 import MissingH.IO.PosixConsts
 #ifndef mingw32_HOST_OS
 import System.Posix.Files(intersectFileModes)
+import Data.Bits
 #endif
 
 #ifdef mingw32_HOST_OS
