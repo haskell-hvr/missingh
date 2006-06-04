@@ -1,5 +1,5 @@
 MissingH: Haskell libraries
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 All code is under the following license unless otherwise noted:
    This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@ All code is under the following license unless otherwise noted:
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 The GNU General Public License is available in the file COPYING in the source
 distribution.  Debian GNU/Linux users may find this in
@@ -37,18 +37,52 @@ completely independently of the rest of the library, you may treat them
 under the licenses shown below.
 
 ----------------------------------------------------
-The MissingH.Hsemail modules come from hsemail 2004-10-24 from 
+The MissingH.Hsemail modules come from hsemail 2005-04-29 from 
 http://cryp.to/hsemail/.
 
 Copyright/License:
 
-  Copyright (c) 2004 Peter Simons <simons@cryp.to>. All rights reserved. This
+  Copyright (c) 2005 Peter Simons <simons@cryp.to>. All rights reserved. This
   software is released under the terms of the GNU General Public License.
 
 I (John Goerzen) have made these modifications:
 
  * Module names adjusted to work with MissingH, and to not conflict
    with user-installed copies of hsemail
+
+ * Some files from the source distribution are not relevant to MissingH
+   and were removed.
+
+ * One GHC 6.4 compatibility issue was fixed.
+
+----------------------------------------------------
+The MissingH.Threads.Child and MissingH.Threads.Timeout modules are from
+child-2005-02-14 at http://cryp.to/blockio/.
+
+Copyright/License:
+
+Copyright (c) 2005 Peter Simons <simons@cryp.to>. All rights reserved. This
+software is released under the terms of the GNU General Public License.
+
+John Goerzen has made these modifications:
+
+ * Module names adjusted for MissingH namespace
+
+ * Some files from the source distribution are not relevant to
+   MissingH and have been removed.
+
+----------------------------------------------------
+The MissingH.IO.BlockIO module is from blockio 2005-02-14 at
+http://cryp.to/blockio/.
+
+Copyright/License:
+
+  Copyright (c) 2005 Peter Simons <simons@cryp.to>. All rights reserved. This
+  software is released under the terms of the GNU General Public License.
+
+I (John Goerzen) have made these modifications:
+
+ * Module names adjusted to work with MissingH
 
  * Some files from the source distribution are not relevant to MissingH
    and were removed.
@@ -103,5 +137,76 @@ at 3rd-party-licenses/LGPL-2.1 in the source distribution.
 Pursuant to the terms of the LGPL, you may consider this code to fall
 under the GPL as part of the whole MissingH work.
 
-------------------------------------------------------------------
-arch-tag: copyright statement
+----------------------------------------------------
+Portions if MissingH.Path come from Volker Wysk's HsShellScript
+library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
+and is licensed under the GNU LGPL 2.1
+
+Debian GNU/Linux users may find the GNU LGPL 2.1 at
+/usr/share/common-licenses/LGPL-2.1.  Alternatively, you may find it
+at 3rd-party-licenses/LGPL-2.1 in the source distribution.
+
+Pursuant to the terms of the LGPL, you may consider this code to fall
+under the GPL as part of the whole MissingH work.
+----------------------------------------------------
+MissingH.Checksum.CRC32.Posix is
+(C) 2002 HardCore SoftWare, Doug Hoyte
+and is "distributed under the terms of the GNU GPL."  This license is
+the same as the main license for MissingH.
+
+The code was obtained from 
+http://cvs.sourceforge.net/viewcvs.py/haskell-libs/libs/crypto/crc32.hs
+
+----------------------------------------------------
+MissingH.Compression.Inflate is
+Copyright 2004 Ian Lynagh <igloo@earth.li>
+Licence: 3 clause BSD.
+
+Debian GNU/Linux users may find the 3-clause BSD license at
+/usr/share/common-licenses/BSD.  Alternatively, you may find it at
+3rd-party-licenses/BSD.  Please note that the University of California
+has no claim on this code; simply substitute Ian Lynagh for the
+University wherever it may occur in that file.
+
+The code was obtained from
+http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
+
+----------------------------------------------------
+MissingH.Time.ParseDate is from 
+http://www.dtek.chalmers.se/~d00bring/projects.html
+
+Copyright (c) Björn Bringert
+License: GNU General Public License, version 2
+
+I (John Goerzen) have modified only the module name and Haddock
+comments at the top of it.
+
+----------------------------------------------------
+MissingH.Regex.Pesco was written by Sven Moritz Hallberg,
+<pesco@@gmx.de>, on December 6, 2004.  It was pulled from the darcs
+repository at http://www.scannedinavian.org/~pesco/code/Regex/ as of
+January 28, 2005.  The pescofmt.fmt in the doc/ directory was also
+written by him.  The Pesco.pdf in the doc/ directory is generated from
+these two files.
+
+Sven's license is:
+
+TO THOSE CONCERNED ABOUT THE LAW:
+
+         All of this is mine! Take it and your soul shall be damned forever.
+         But you can keep it and do with it whatever you want.
+           -- SMH, Creator, Programmer.
+
+----------------------------------------------------
+MissingH.Path.FilePath was written by Isaac Jones.  It was pulled from
+the darcs repository at
+http://www.scannedinavian.org/~lemmih/FilePath/ as of July 21, 2005.
+
+The software is Copyright Isaac Jones 2003-2005.  All rights reserved.
+
+Debian GNU/Linux users may find the 3-clause BSD license at
+/usr/share/common-licenses/BSD.  Alternatively, you may find it at
+3rd-party-licenses/BSD.  Please note that the University of California
+has no claim on this code; simply substitute Isaac Jones for the
+University wherever it may occur in that file.
+

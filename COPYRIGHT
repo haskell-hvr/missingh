@@ -1,5 +1,5 @@
 MissingH: Haskell libraries
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
 All code is under the following license unless otherwise noted:
    This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@ All code is under the following license unless otherwise noted:
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 The GNU General Public License is available in the file COPYING in the source
 distribution.  Debian GNU/Linux users may find this in
@@ -210,5 +210,3 @@ Debian GNU/Linux users may find the 3-clause BSD license at
 has no claim on this code; simply substitute Isaac Jones for the
 University wherever it may occur in that file.
 
-------------------------------------------------------------------
-arch-tag: copyright statement
