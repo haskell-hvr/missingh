@@ -423,12 +423,14 @@ pOpen3 pin pout perr fp args func childfunc =
                      debugM (logbase ++ ".pOpen3")
                             ("Running: " ++ fp ++ " " ++ (show args))
                      executeFile fp True args Nothing
+{-
         realfunc p = do
                      System.Posix.Signals.installHandler
                            System.Posix.Signals.sigPIPE
                            System.Posix.Signals.Ignore
                            Nothing
                      func p
+-}
         in
         do 
         p <- try (forkProcess childstuff)
