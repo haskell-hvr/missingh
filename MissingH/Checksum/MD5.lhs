@@ -26,7 +26,7 @@ Also need a rotate left function that actually works.
 
 #ifdef __GLASGOW_HASKELL__
 #define rotL rotateL
->type Zord64 = Word64
+> type Zord64 = Word64
 #else
 
 > import MissingH.Checksum.MD5.Zord64_HARD
