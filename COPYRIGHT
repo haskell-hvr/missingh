@@ -172,6 +172,20 @@ The code was obtained from
 http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
 
 ----------------------------------------------------
+MissingH.Checksum.MD5* is
+Copyright 2001 Ian Lynagh <igloo@earth.li>
+Licence: GPL or 3 clause BSD
+
+Debian GNU/Linux users may find the 3-clause BSD license at
+/usr/share/common-licenses/BSD.  Alternatively, you may find it at
+3rd-party-licenses/BSD.  Please note that the University of California
+has no claim on this code; simply substitute Ian Lynagh for the
+University wherever it may occur in that file.
+
+The code was obtained from
+http://web.comlab.ox.ac.uk/oucl/work/ian.lynagh/md5/
+
+----------------------------------------------------
 MissingH.Time.ParseDate is from 
 http://www.dtek.chalmers.se/~d00bring/projects.html
 
