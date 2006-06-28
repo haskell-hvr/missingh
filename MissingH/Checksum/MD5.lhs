@@ -12,7 +12,7 @@
 >Written by Ian Lynagh, igloo\@earth.li
 >-}
 
-> module MD5 (md5,  md5s,  md5i,
+> module MissingH.Checksum.MD5 (md5,  md5s,  md5i,
 >             MD5(..), ABCD(..), Zord64, Str(..), BoolList(..), WordList(..)) where
 
 > import Char
@@ -46,7 +46,7 @@ Also need a rotate left function that actually works.
 > newtype BoolList = BoolList [Bool]
 > newtype WordList = WordList ([Word32], Zord64)
 
->-- | Anything we want to work out the MD5 of must be an instance of class MD5
+> -- | Anything we want to work out the MD5 of must be an instance of class MD5
 > class MD5 a where
 >  get_next :: a -> ([Word32], Int, a) -- get the next blocks worth
 >  --                     \      \   \------ the rest of the input
@@ -118,18 +118,18 @@ YA instance that is believed will be useful
 ======================== EXPORTED FUNCTIONS ========================
 
 
->{- |The simplest function, gives you the MD5 of a string as 4-tuple of
+> {- | The simplest function, gives you the MD5 of a string as 4-tuple of
 > 32bit words. -}
 > md5 :: (MD5 a) => a -> ABCD
 > md5 m = md5_main False 0 magic_numbers m
 
 
->{- | Returns a hex number ala the md5sum program. -}
+> {- | Returns a hex number ala the md5sum program. -}
 > md5s :: (MD5 a) => a -> String
 > md5s = abcd_to_string . md5
 
 
->{- | Returns an integer equivalent to hex number from 'md5s'. -}
+> {- | Returns an integer equivalent to hex number from 'md5s'. -}
 > md5i :: (MD5 a) => a -> Integer
 > md5i = abcd_to_integer . md5
 
