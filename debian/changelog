@@ -1,3 +1,12 @@
+missingh (0.14.3) unstable; urgency=low
+
+  * IO/StatCompat: Fixed missing Data.Bits import on mingw32 
+  * Updated COPYING file with new FSF address
+  * Cmd.hs: Commented out code that was never used
+  * Import new package MD5 0.2.7 from Ian Lynagh
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed, 28 Jun 2006 03:48:24 -0500
+
 missingh (0.14.2) unstable; urgency=low
 
   * ConfigParser gives more helpful error messages when possible --
