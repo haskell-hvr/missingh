@@ -80,8 +80,8 @@ Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.AnyDBM.MapDBM,
     MissingH.AnyDBM.StringDBM,
   MissingH.GetOpt
-Extensions: ExistentialQuantification, AllowOverlappingInstances,
-    AllowUndecidableInstances, CPP
+Extensions: ExistentialQuantification, OverlappingInstances, 
+   UndecidableInstances, CPP
 Build-Depends: haskell-src, network, parsec, base,
                unix,
                haskell98, mtl, HUnit
