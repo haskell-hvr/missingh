@@ -91,5 +91,5 @@ Executable: runtests
 Buildable: False
 Main-Is: runtests.hs
 HS-Source-Dir: testsrc
-Extensions: ExistentialQuantification, AllowOverlappingInstances,
-    AllowUndecidableInstances, CPP
+Extensions: ExistentialQuantification, OverlappingInstances,
+    UndecidableInstances, CPP
