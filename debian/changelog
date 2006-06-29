@@ -1,7 +1,6 @@
 missingh (0.14.4) unstable; urgency=low
 
   * Fix a bug in ConfigParser.merge and write a test for it.
-  * THIS VERSION NOT YET UPLOADED TO DEBIAN
 
  -- John Goerzen <jgoerzen@complete.org>  Wed, 28 Jun 2006 14:05:56 -0500
 
