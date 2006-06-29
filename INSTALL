@@ -10,8 +10,8 @@ PREREQUISITES
 
 You must satisfy one or more of these major categories:
 
-1. GHC 6.4.1 or above (including cpphs)
-   (GHC 6.4 may work but is untested)
+1. GHC 6.4.2 or above (including cpphs)
+   (for GHC 6.4.0 or 6.4.1, use MissingH 0.14.3 or below)
 
 2. Hugs 2005xx or above, plus cpphs
 
