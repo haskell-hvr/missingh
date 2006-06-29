@@ -94,6 +94,22 @@ test_flipAL =
                          ("e", ["d"])]
         ]
 
+test_uniq =
+    let f inp exp = TestCase $ exp @=? uniq inp in
+    [f ([]::[Int]) [],
+     f "asdf" "asdf",
+     f "aabbcc" "abc",
+     f "abcabc" "abc",
+     f "aaaaaa" "a",
+     f "aaaaaab" "ab",
+     f "111111111111111" "1",
+     f "baaaaaaaaa" "ba",
+     f "baaaaaaaaab" "ba",
+     f "aaacccdbbbefff" "acdbef",
+     f "foo" "fo",
+     f "15553344409" "153409",
+     f "Mississippi" "Misp"]
+
 test_trunc =
     let f len inp exp = TestCase $ exp @=? take len inp in
         [
@@ -199,6 +215,7 @@ test_spanList =
 
 
 tests = TestList [TestLabel "delFromAL" (TestList test_delFromAL),
+                  TestLabel "uniq" (TestList test_uniq),
                   TestLabel "addToAL" (TestList test_addToAL),
                   TestLabel "split" (TestList test_split),
                   TestLabel "join" (TestList test_join),

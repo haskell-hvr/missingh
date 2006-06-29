@@ -52,7 +52,7 @@ module MissingH.List(-- * Tests
                      grab,
                      -- * Miscellaneous
                      countElem, elemRIndex, alwaysElemRIndex, seqList,
-                     subIndex
+                     subIndex, uniq
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
@@ -421,3 +421,22 @@ Examples:
  -}
 subIndex :: Eq a => [a] -> [a] -> Maybe Int
 subIndex substr str = findIndex (isPrefixOf substr) (tails str)
+
+{- | Given a list, returns a new list with all duplicate elements removed.
+For example:
+
+>uniq "Mississippi" -> "Misp"
+
+You should not rely on this function necessarily preserving order, though
+the current implementation happens to.
+
+This function is not compatible with infinite lists. -}
+uniq :: Eq a => [a] -> [a]
+uniq [] = []
+uniq (x:xs) = x : filter (/= x) (uniq xs)
+
+----- same as
+--uniq (x:xs) = x : [y | y <- uniq xs, y /= x]
+
+
+
