@@ -130,8 +130,11 @@ test_instances =
 
 test_merge =
     let cp = p "test: foo"
+        cp2 = p "test: bar"
         in [f2 "merge1" (cp) (merge emptyCP cp)
-           ,f2 "merge2" (cp) (merge cp emptyCP)]
+           ,f2 "merge2" (cp) (merge cp emptyCP)
+           ,f2 "merge3" (cp2) (merge cp cp2)
+           ,f2 "merge4" (cp) (merge cp2 cp)]
 
 test_remove = 
     let cp = forceEither $ readstring emptyCP "def:ault\n[sect1]\ns1o1: v1\ns1o2:v2\n[sect2]\ns2o1: v1\ns2o2: v2\n[sect3]"

@@ -249,7 +249,7 @@ merge src dest =
         conv = optionxform dest
         convFM :: CPOptions -> CPOptions
         convFM = Map.fromList . map (\x -> (conv (fst x), snd x)) . Map.toList
-        mergesects a b = Map.union b a
+        mergesects a b = Map.union a b
         in
 	dest { content = Map.unionWith mergesects 
                          (content dest) (Map.map convFM (content src)) }
