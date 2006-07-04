@@ -400,7 +400,8 @@ cmdfailed funcname command args failcode = do
     warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
 
-cmdsifnalled :: String -> FilePath -> [String] -> Signal -> IO a
+cmdsignalled :: String -> FilePath -> [String] -> Signal -> IO a
+cmdsignalled funcname command args failcode = do
     let errormsg = "Command " ++ command ++ " " ++ (show args) ++
             " failed due to signal " ++ (show failcode)
     let e = userError (errormsg)
