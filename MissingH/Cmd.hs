@@ -346,17 +346,17 @@ safeSystem command args =
     do debugM (logbase ++ ".safeSystem")
                ("Running: " ++ command ++ " " ++ (show args))
 #if defined(__HUGS__) || defined(mingw32_HOST_OS)
-    ec <- rawSystem command args
-    case ec of
+       ec <- rawSystem command args
+       case ec of
             ExitSuccess -> return ()
             ExitFailure fc -> cmdfailed "safeSystem" command args fc
 #else
-    ec <- posixRawSystem command args
-    case ec of
-        Exited 0 -> return ()
-        Exited fc -> cmdfailed "safeSystem" command args fc
-        Terminated s -> cmdsignalled "safeSystem" command args s
-        Stopped s -> cmdsignalled "safeSystem" command args s
+       ec <- posixRawSystem command args
+       case ec of
+            Exited 0 -> return ()
+            Exited fc -> cmdfailed "safeSystem" command args fc
+            Terminated s -> cmdsignalled "safeSystem" command args s
+            Stopped s -> cmdsignalled "safeSystem" command args s
 #endif
 
 #ifndef mingw32_HOST_OS
