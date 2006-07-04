@@ -79,6 +79,7 @@ module MissingH.Cmd(-- * High-Level Tools
 #ifndef mingw32_HOST_OS
                     forceSuccess,
 #ifndef __HUGS__
+                    posixRawSystem,
                     -- ** Piping with lazy strings
                     pipeFrom,
                     pipeLinesFrom,
@@ -337,23 +338,36 @@ forceSuccess (PipeHandle pid fp args funcname) =
 {- | Invokes the specified command in a subprocess, waiting for the result.
 If the command terminated successfully, return normally.  Otherwise,
 raises a userError with the problem.
+
+Implemented in terms of 'posixRawSystem' where supported, and System.Posix.rawSystem otherwise.
 -}
 safeSystem :: FilePath -> [String] -> IO ()
 safeSystem command args = 
-    do
-    debugM (logbase ++ ".safeSystem")
+    do debugM (logbase ++ ".safeSystem")
                ("Running: " ++ command ++ " " ++ (show args))
+#if defined(__HUGS__) || defined(mingw32_HOST_OS)
     ec <- rawSystem command args
     case ec of
             ExitSuccess -> return ()
             ExitFailure fc -> cmdfailed "safeSystem" command args fc
+#else
+    ec <- posixRawSystem command args
+    case ec of
+        Exited 0 -> return ()
+        Exited fc -> cmdfailed "safeSystem" command args fc
+        Terminated s -> cmdsignalled "safeSystem" command args s
+        Stopped s -> cmdsignalled "safeSystem" command args s
+#endif
 
 #ifndef mingw32_HOST_OS
 #ifndef __HUGS__
 {- | Invokes the specified command in a subprocess, waiting for the result.
 Return the result status.  Never raises an exception.  Only available
-on POSIX platforms. -}
-posixRawSystem :: FilePath -> [String] -> IO 
+on POSIX platforms.
+
+Like system(3), this command ignores SIGINT and SIGQUIT and blocks SIGCHLD
+during its execution. -}
+posixRawSystem :: FilePath -> [String] -> IO ProcessStatus
 posixRawSystem program args =
     do oldint <- installHandler sigINT Ignore Nothing
        oldquit <- installHandler sigQUIT Ignore Nothing
@@ -362,14 +376,18 @@ posixRawSystem program args =
        blockSignals sigset
        childpid <- forkProcess childaction
        
-       
+       mps <- getProcessStatus True False childpid
+       let retval = case mps of
+                      Just x -> x
+                      Nothing -> error "Nothing returned from getProcessStatus"
 
        installHandler sigINT oldint Nothing
        installHandler sigQUIT oldquit Nothing
        setSignalMask oldset
 
-    where childaction =
-              do 
+       return retval
+
+    where childaction = executeFile program True args Nothing 
 #endif
 #endif
 
@@ -378,6 +396,13 @@ cmdfailed :: String -> FilePath -> [String] -> Int -> IO a
 cmdfailed funcname command args failcode = do
     let errormsg = "Command " ++ command ++ " " ++ (show args) ++
             " failed; exit code " ++ (show failcode)
+    let e = userError (errormsg)
+    warningM (logbase ++ "." ++ funcname) errormsg
+    ioError e
+
+cmdsifnalled :: String -> FilePath -> [String] -> Signal -> IO a
+    let errormsg = "Command " ++ command ++ " " ++ (show args) ++
+            " failed due to signal " ++ (show failcode)
     let e = userError (errormsg)
     warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
