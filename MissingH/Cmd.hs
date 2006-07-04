@@ -367,10 +367,14 @@ Return the result status.  Never raises an exception.  Only available
 on POSIX platforms.
 
 Like system(3), this command ignores SIGINT and SIGQUIT and blocks SIGCHLD
-during its execution. -}
+during its execution.
+
+Logs as MissingH.Cmd.posixRawSystem -}
 posixRawSystem :: FilePath -> [String] -> IO ProcessStatus
 posixRawSystem program args =
-    do oldint <- installHandler sigINT Ignore Nothing
+    do debugM (logbase ++ ".posixRawSystem")
+               ("Running: " ++ program ++ " " ++ (show args))
+       oldint <- installHandler sigINT Ignore Nothing
        oldquit <- installHandler sigQUIT Ignore Nothing
        let sigset = addSignal sigCHLD emptySignalSet
        oldset <- getSignalMask
@@ -383,6 +387,8 @@ posixRawSystem program args =
                       Just x -> x
                       Nothing -> error "Nothing returned from getProcessStatus"
 
+       debugM (logbase ++ ".posixRawSystem")
+              (program ++ ": exited with " ++ show retval)
        return retval
 
     where childaction oldint oldquit oldset = 
