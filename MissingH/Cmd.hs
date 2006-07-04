@@ -109,6 +109,7 @@ import MissingH.Logging.Logger
 #ifndef mingw32_HOST_OS
 import System.Posix.IO
 import System.Posix.Process
+import System.Posix.Signals
 #endif
 import System.Posix.Types
 import System.IO
@@ -353,8 +354,8 @@ safeSystem command args =
 #else
        ec <- posixRawSystem command args
        case ec of
-            Exited 0 -> return ()
-            Exited fc -> cmdfailed "safeSystem" command args fc
+            Exited ExitSuccess -> return ()
+            Exited (ExitFailure fc) -> cmdfailed "safeSystem" command args fc
             Terminated s -> cmdsignalled "safeSystem" command args s
             Stopped s -> cmdsignalled "safeSystem" command args s
 #endif
