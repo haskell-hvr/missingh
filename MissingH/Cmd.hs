@@ -375,20 +375,24 @@ posixRawSystem program args =
        let sigset = addSignal sigCHLD emptySignalSet
        oldset <- getSignalMask
        blockSignals sigset
-       childpid <- forkProcess childaction
+       childpid <- forkProcess (childaction oldint oldquit oldset)
        
        mps <- getProcessStatus True False childpid
+       restoresignals oldint oldquit oldset
        let retval = case mps of
                       Just x -> x
                       Nothing -> error "Nothing returned from getProcessStatus"
 
-       installHandler sigINT oldint Nothing
-       installHandler sigQUIT oldquit Nothing
-       setSignalMask oldset
-
        return retval
 
-    where childaction = executeFile program True args Nothing 
+    where childaction oldint oldquit oldset = 
+              do restoresignals oldint oldquit oldset
+                 executeFile program True args Nothing 
+          restoresignals oldint oldquit oldset =
+              do installHandler sigINT oldint Nothing
+                 installHandler sigQUIT oldquit Nothing
+                 setSignalMask oldset
+
 #endif
 #endif
 
