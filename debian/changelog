@@ -1,3 +1,11 @@
+missingh (0.14.5) unstable; urgency=low
+
+  * New function: MissingH.Cmd.posixRawSystem
+  * MissingH.Cmd.safeSystem now implemented in terms of posixRawSystem 
+    on supported platforms.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue,  4 Jul 2006 11:34:49 -0500
+
 missingh (0.14.4) unstable; urgency=low
 
   * Fix a bug in ConfigParser.merge and write a test for it.
