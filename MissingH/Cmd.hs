@@ -348,6 +348,32 @@ safeSystem command args =
             ExitSuccess -> return ()
             ExitFailure fc -> cmdfailed "safeSystem" command args fc
 
+#ifndef mingw32_HOST_OS
+#ifndef __HUGS__
+{- | Invokes the specified command in a subprocess, waiting for the result.
+Return the result status.  Never raises an exception.  Only available
+on POSIX platforms. -}
+posixRawSystem :: FilePath -> [String] -> IO 
+posixRawSystem program args =
+    do oldint <- installHandler sigINT Ignore Nothing
+       oldquit <- installHandler sigQUIT Ignore Nothing
+       let sigset = addSignal sigCHLD emptySignalSet
+       oldset <- getSignalMask
+       blockSignals sigset
+       childpid <- forkProcess childaction
+       
+       
+
+       installHandler sigINT oldint Nothing
+       installHandler sigQUIT oldquit Nothing
+       setSignalMask oldset
+
+    where childaction =
+              do 
+#endif
+#endif
+
+
 cmdfailed :: String -> FilePath -> [String] -> Int -> IO a
 cmdfailed funcname command args failcode = do
     let errormsg = "Command " ++ command ++ " " ++ (show args) ++
