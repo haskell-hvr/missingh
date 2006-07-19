@@ -411,6 +411,8 @@ cmdfailed funcname command args failcode = do
     warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
 
+#ifndef mingw32_HOST_OS
+#ifndef __HUGS__
 cmdsignalled :: String -> FilePath -> [String] -> Signal -> IO a
 cmdsignalled funcname command args failcode = do
     let errormsg = "Command " ++ command ++ " " ++ (show args) ++
@@ -418,6 +420,8 @@ cmdsignalled funcname command args failcode = do
     let e = userError (errormsg)
     warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
+#endif
+#endif
 
 #ifndef mingw32_HOST_OS
 #ifndef __HUGS__
