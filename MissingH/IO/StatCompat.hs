@@ -1,6 +1,6 @@
 {-# LANGUAGE CPP #-}
 {- 
-Copyright (C) 2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2005,2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : MissingH.IO.StatCompat
-   Copyright  : Copyright (C) 2005 John Goerzen
+   Copyright  : Copyright (C) 2005-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Provide a stat-like structure for use in MissingH.  Especially
 useful with HVFS and on Windows.  See also "MissingH.IO.WindowsCompat".
 
-Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
+Copyright (c) 2005-2006 John Goerzen, jgoerzen\@complete.org
 -}
 
 module MissingH.IO.StatCompat 
@@ -38,8 +38,8 @@ import System.Posix.Types
 import MissingH.IO.PosixConsts
 #ifndef mingw32_HOST_OS
 import System.Posix.Files(intersectFileModes)
-import Data.Bits
 #endif
+import Data.Bits
 
 #ifdef mingw32_HOST_OS
 type LinkCount = Int
