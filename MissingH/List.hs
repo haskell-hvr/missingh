@@ -203,6 +203,8 @@ Example:
 contains :: Eq a => [a] -> [a] -> Bool
 contains substr str = isJust $ find (isPrefixOf substr) (tails str)
 
+-- above function submitted to GHC as Data.List.isInfixOf on 8/31/2006
+
 {- | Adds the specified (key, value) pair to the given list, removing any
 existing pair with the same key already present. -}
 addToAL :: Eq key => [(key, elt)] -> key -> elt -> [(key, elt)]
