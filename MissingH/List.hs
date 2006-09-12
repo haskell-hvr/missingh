@@ -30,7 +30,9 @@ This module provides various helpful utilities for dealing with lists.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.List(-- * Tests
+module MissingH.List(-- * Merging
+                     merge, mergeBy,
+                     -- * Tests
                      startswith, endswith, contains, hasAny,
                      -- * Association List Utilities
                      {- | These functions are designed to augment the
@@ -62,6 +64,42 @@ import IO
 import System.IO.Unsafe
 import Control.Monad.State(State, get, put)
 import Data.Maybe(isJust)
+
+
+{- | Merge two sorted lists into a single, sorted whole.
+
+Example:
+
+> merge [1,3,5] [1,2,4,6] -> [1,1,2,3,4,5,6]
+
+QuickCheck test property:
+
+prop_merge xs ys =
+    merge (sort xs) (sort ys) == sort (xs ++ ys)
+          where types = xs :: [Int]
+-}
+merge ::  (Ord a) => [a] -> [a] -> [a]
+merge = mergeBy (compare)
+
+{- | Merge two sorted lists using into a single, sorted whole,
+allowing the programmer to specify the comparison function.
+
+QuickCheck test property:
+
+prop_mergeBy xs ys =
+    mergeBy cmp (sortBy cmp xs) (sortBy cmp ys) == sortBy cmp (xs ++ ys)
+          where types = xs :: [ (Int, Int) ]
+                cmp (x1,_) (x2,_) = compare x1 x2
+-}
+mergeBy :: (a -> a -> Ordering) -> [a] -> [a] -> [a]
+mergeBy cmp [] ys = ys
+mergeBy cmp xs [] = xs
+mergeBy cmp (allx@(x:xs)) (ally@(y:ys)) 
+        -- Ordering derives Eq, Ord, so the comparison below is valid.
+        -- Explanation left as an exercise for the reader.
+        -- Someone please put this code out of its misery.
+    | (x `cmp` y) <= EQ = x : mergeBy cmp xs ally
+    | otherwise = y : mergeBy cmp allx ys
 
 {- | Returns true if the given list starts with the specified elements;
 false otherwise.  (This is an alias for "Data.List.isPrefixOf".)
