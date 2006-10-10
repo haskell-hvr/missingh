@@ -39,6 +39,11 @@ module MissingH.ProgressTracker (-- * Types
                                  -- * Creation
                                  newProgress, newProgress',
                                  -- * Updating
+                                 incrP, incrP',
+                                 -- * Reading and Processing
+                                 getSpeed,
+                                 getETR,
+                                 getETA,
                                  -- * Utilities
                                  defaultTimeSource
                                )
@@ -130,10 +135,29 @@ newProgress' news newts newcb =
 -- Updating
 ----------------------------------------------------------------------
 {- | Increment the completed unit count in the 'Progress' object
-by the amount given. -}
+by the amount given.  If the value as given exceeds the total, then
+the total will also be raised to match this value so that the 
+completed count never exceeds the total.
+
+You can decrease the completed unit count by supplying a negative number
+here. -}
 incrP :: Progress -> Integer -> IO ()
-incrP po count = 
+-- FIXME: handle parents/callbacks
+incrP po count = modStatus po statusfunc
+    where statusfunc s = 
+             s {completedUnits = newcu s,
+                totalUnits = if newcu s > totalUnits s
+                                 then newcu s
+                                 else totalUnits s}
+          newcu s = completedUnits s + count                  
+
+{- | Like 'incrP', but never modify the total. -}
+incrP' :: Progress -> Integer -> IO ()
+-- FIXME: handle parents/callbacks
+incrP' po count = 
     modStatus po (\s -> s {completedUnits = completedUnits s + count})
+
+
 
 ----------------------------------------------------------------------
 -- Utilities
