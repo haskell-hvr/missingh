@@ -31,13 +31,25 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.ProgressTracker (ProgressStatus(..),
-                                 Progress,
-                                 ProgressStatuses(..)
+module MissingH.ProgressTracker (-- * Types
+                                 ProgressStatus(..),
+                                 Progress, ProgressTimeSource,
+                                 ProgressCallback,
+                                 ProgressStatuses(..),
+                                 -- * Use
+                                 newProgress,
+                                 -- * Utilities
+                                 defaultTimeSource
                                )
 
 where
 import Control.Concurrent.MVar
+import System.Time
+import MissingH.Time
+
+----------------------------------------------------------------------
+-- TYPES
+----------------------------------------------------------------------
 
 type ProgressTimeSource = IO Integer
 type ProgressCallback = ProgressRecord -> IO ()
@@ -64,10 +76,12 @@ class ProgressStatuses a b where
 class ProgressRecords a b where
     withRecord :: a -> (ProgressRecord -> b) -> b
 
+{-
 instance ProgressStatuses ProgressRecord b where
     withStatus x func = func (status x)
 instance ProgressRecords ProgressRecord b where
     withRecord x func = func x
+-}
 
 instance ProgressStatuses Progress (IO b) where
     withStatus (Progress x) func = withMVar x (\y -> func (status y))
@@ -77,13 +91,50 @@ instance ProgressRecords Progress (IO b) where
 instance ProgressStatuses ProgressStatus b where
     withStatus x func = func x
 
+----------------------------------------------------------------------
+-- Use
+----------------------------------------------------------------------
+{- | Create a new 'Progress' object with the given name and number
+of total units initialized as given.  The start time will be initialized
+with the current time at the present moment according to the system clock.
+The units completed will be set to 0, the time source will be set to the
+system clock, and the parents and callbacks will be empty.
+
+If you need more control, see 'newProgress\''.
+-}
+newProgress :: String           -- ^ Name of this tracker
+            -> Integer          -- ^ Total units expected
+            -> IO Progress
+newProgress name total =
+    do t <- defaultTimeSource
+       newProgress' (ProgressStatus {completedUnits = 0, totalUnits = total,
+                                     startTime = t, trackerName = name})
+                    defaultTimeSource []
+
+{- | Create a new 'Progress' object initialized with the given status,
+time source, and callbacks.
+No adjustment to the 'startTime' will be made.  If you
+want to use the system clock, you can initialize 'startTime' with
+the return value of 'defaultTimeSource' and also pass 'defaultTimeSource'
+as the timing source. -}
+newProgress' :: ProgressStatus -> ProgressTimeSource
+             -> [ProgressCallback] -> IO Progress
+newProgress' news newts newcb =
+    do r <- newMVar $ ProgressRecord {timeSource = newts, parents = [],
+                                      callbacks = newcb, status = news}
+       return (Progress r)
+
+
+----------------------------------------------------------------------
+-- Utilities
+----------------------------------------------------------------------
+{- | The default time source for the system.  This is defined as:
+
+>getClockTime >>= (return . clockTimeToEpoch)
+-}
+defaultTimeSource :: ProgressTimeSource
+defaultTimeSource = getClockTime >>= (return . clockTimeToEpoch)
+
 now :: ProgressRecords a ProgressTimeSource => a -> ProgressTimeSource
 now x = withRecord x timeSource
 
-new :: IO Progress
-new = 
-    do r <- newMVar $ ProgressRecord {timeSource = return 0,
-                                      parents = [],
-                                      callbacks = [],
-                                      status = ProgressStatus 0 1 1 ""}
-       return (Progress r)
