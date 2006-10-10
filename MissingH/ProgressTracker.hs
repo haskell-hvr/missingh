@@ -33,7 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module MissingH.ProgressTracker (ProgressStatus(..),
                                  Progress,
-                                 ProgressTypes(..)
+                                 ProgressStatuses(..)
                                )
 
 where
@@ -58,19 +58,26 @@ data ProgressRecord =
 
 newtype Progress = Progress (MVar ProgressRecord)
 
-class ProgressTypes a b where
+class ProgressStatuses a b where
     withStatus :: a -> (ProgressStatus -> b) -> b
+
+class ProgressRecords a b where
     withRecord :: a -> (ProgressRecord -> b) -> b
 
-instance ProgressTypes ProgressRecord b where
+instance ProgressStatuses ProgressRecord b where
     withStatus x func = func (status x)
+instance ProgressRecords ProgressRecord b where
     withRecord x func = func x
 
-instance ProgressTypes Progress (IO b) where
+instance ProgressStatuses Progress (IO b) where
     withStatus (Progress x) func = withMVar x (\y -> func (status y))
+instance ProgressRecords Progress (IO b) where
     withRecord (Progress x) func = withMVar x func
 
-now :: ProgressTypes a ProgressTimeSource => a -> ProgressTimeSource
+instance ProgressStatuses ProgressStatus b where
+    withStatus x func = func x
+
+now :: ProgressRecords a ProgressTimeSource => a -> ProgressTimeSource
 now x = withRecord x timeSource
 
 new :: IO Progress
