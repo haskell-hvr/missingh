@@ -36,8 +36,9 @@ module MissingH.ProgressTracker (-- * Types
                                  Progress, ProgressTimeSource,
                                  ProgressCallback,
                                  ProgressStatuses(..),
-                                 -- * Use
-                                 newProgress,
+                                 -- * Creation
+                                 newProgress, newProgress',
+                                 -- * Updating
                                  -- * Utilities
                                  defaultTimeSource
                                )
@@ -92,8 +93,9 @@ instance ProgressStatuses ProgressStatus b where
     withStatus x func = func x
 
 ----------------------------------------------------------------------
--- Use
+-- Creation
 ----------------------------------------------------------------------
+
 {- | Create a new 'Progress' object with the given name and number
 of total units initialized as given.  The start time will be initialized
 with the current time at the present moment according to the system clock.
@@ -124,6 +126,14 @@ newProgress' news newts newcb =
                                       callbacks = newcb, status = news}
        return (Progress r)
 
+----------------------------------------------------------------------
+-- Updating
+----------------------------------------------------------------------
+{- | Increment the completed unit count in the 'Progress' object
+by the amount given. -}
+incrP :: Progress -> Integer -> IO ()
+incrP po count = 
+    modStatus po (\s -> s {completedUnits = completedUnits s + count})
 
 ----------------------------------------------------------------------
 -- Utilities
@@ -138,3 +148,8 @@ defaultTimeSource = getClockTime >>= (return . clockTimeToEpoch)
 now :: ProgressRecords a ProgressTimeSource => a -> ProgressTimeSource
 now x = withRecord x timeSource
 
+modStatus :: Progress -> (ProgressStatus -> ProgressStatus) -> IO ()
+modStatus (Progress mp) func =
+    modifyMVar_ mp modfunc
+    where modfunc :: ProgressRecord -> IO ProgressRecord
+          modfunc pr = return $ pr {status = func (status pr)}
