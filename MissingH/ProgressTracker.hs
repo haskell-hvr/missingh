@@ -58,15 +58,25 @@ data ProgressRecord =
 
 newtype Progress = Progress (MVar ProgressRecord)
 
-class ProgressTypes a where
-    withStatus :: a -> (ProgressRecord -> IO b) -> IO b
+class ProgressTypes a b where
+    withStatus :: a -> (ProgressStatus -> b) -> b
+    withRecord :: a -> (ProgressRecord -> b) -> b
 
-instance ProgressTypes ProgressRecord where
-    withStatus x func = func x
+instance ProgressTypes ProgressRecord b where
+    withStatus x func = func (status x)
+    withRecord x func = func x
 
-instance ProgressTypes Progress where
-    withStatus (Progress x) func = withMVar x func
+instance ProgressTypes Progress (IO b) where
+    withStatus (Progress x) func = withMVar x (\y -> func (status y))
+    withRecord (Progress x) func = withMVar x func
 
-now :: ProgressTypes a => ProgressTimeSource
-now x = withStatus x timeSource
+now :: ProgressTypes a ProgressTimeSource => a -> ProgressTimeSource
+now x = withRecord x timeSource
 
+new :: IO Progress
+new = 
+    do r <- newMVar $ ProgressRecord {timeSource = return 0,
+                                      parents = [],
+                                      callbacks = [],
+                                      status = ProgressStatus 0 1 1 ""}
+       return (Progress r)
