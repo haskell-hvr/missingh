@@ -31,10 +31,9 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.ProgressTracker (ProgressRecord(completedUnits, totalUnits,
-                                                startTime, trackerName,
-                                                timeSource),
-                                 Progress
+module MissingH.ProgressTracker (ProgressStatus(..),
+                                 Progress,
+                                 ProgressTypes(..)
                                )
 
 where
@@ -43,15 +42,19 @@ import Control.Concurrent.MVar
 type ProgressTimeSource = IO Integer
 type ProgressCallback = ProgressRecord -> IO ()
 
-{- | The main progress status unit. -}
-data ProgressRecord = 
-     ProgressRecord {completedUnits :: Integer,
+{- | The main progress status record. -}
+data ProgressStatus = 
+     ProgressStatus {completedUnits :: Integer,
                      totalUnits :: Integer,
                      startTime :: Integer,
-                     trackerName :: String,
-                     timeSource :: ProgressTimeSource,
-                     parents :: [Progress],
-                     callbacks :: [ProgressCallback]}
+                     trackerName :: String}
+     deriving (Eq, Show, Read)
+
+data ProgressRecord =
+    ProgressRecord {timeSource :: ProgressTimeSource,
+                    parents :: [Progress],
+                    callbacks :: [ProgressCallback],
+                    status :: ProgressStatus}
 
 newtype Progress = Progress (MVar ProgressRecord)
 
@@ -61,8 +64,8 @@ class ProgressTypes a where
 instance ProgressTypes ProgressRecord where
     withStatus x func = func x
 
-instance ProgressTypes (MVar ProgressRecord) where
-    withStatus x func = withMVar x func
+instance ProgressTypes Progress where
+    withStatus (Progress x) func = withMVar x func
 
 now :: ProgressTypes a => ProgressTimeSource
 now x = withStatus x timeSource
