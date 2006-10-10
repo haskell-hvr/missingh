@@ -31,15 +31,26 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.ProgressTracer (
+module MissingH.ProgressTracker (ProgressRecord(..),
                                )
 
 where
+import Control.Concurrent.MVar
 
-data ProgressInfo = 
-    ProgressInfo {completedUnits :: Integer,
-                  totalUnits :: Integer,
-                  startTime :: Integer,
-                  trackerName :: String}
-    deriving (Eq, Show, Read)
+type ProgressTimeSource = IO Integer
+type ProgressCallback = ProgressRecord -> IO ()
 
+{- | The main progress status unit. -}
+data ProgressRecord = 
+     ProgressRecord {completedUnits :: Integer,
+                     totalUnits :: Integer,
+                     startTime :: Integer,
+                     trackerName :: String,
+                     timeSource :: ProgressTimeSource,
+                     parents :: [Progress],
+                     callbacks :: [ProgressCallback]}
+
+type Progress = MVar ProgressRecord
+
+-- class ProgressTypes where
+--    getStatus 
