@@ -31,7 +31,10 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.ProgressTracker (ProgressRecord(..),
+module MissingH.ProgressTracker (ProgressRecord(completedUnits, totalUnits,
+                                                startTime, trackerName,
+                                                timeSource),
+                                 Progress
                                )
 
 where
@@ -50,7 +53,17 @@ data ProgressRecord =
                      parents :: [Progress],
                      callbacks :: [ProgressCallback]}
 
-type Progress = MVar ProgressRecord
+newtype Progress = Progress (MVar ProgressRecord)
 
--- class ProgressTypes where
---    getStatus 
+class ProgressTypes a where
+    withStatus :: a -> (ProgressRecord -> IO b) -> IO b
+
+instance ProgressTypes ProgressRecord where
+    withStatus x func = func x
+
+instance ProgressTypes (MVar ProgressRecord) where
+    withStatus x func = withMVar x func
+
+now :: ProgressTypes a => ProgressTimeSource
+now x = withStatus x timeSource
+
