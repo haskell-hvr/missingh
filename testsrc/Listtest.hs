@@ -19,11 +19,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Listtest(tests) where
 import Test.HUnit
 import MissingH.List
--- module QUnit where
 
 import System.Random hiding (split)
 import Data.List
--- import Test.HUnit
 import Test.QuickCheck as QC
 
 qunit :: (QC.Testable a) => String -> a -> Test
