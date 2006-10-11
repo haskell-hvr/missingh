@@ -44,8 +44,8 @@ module MissingH.ProgressTracker (-- * Types
                                  -- * Reading and Processing
                                  getSpeed,
                                  currentSpeed,
-                                 getETR,
-                                 getETA,
+                                 --getETR,
+                                 --getETA,
                                  -- * Utilities
                                  defaultTimeSource
                                )
@@ -54,6 +54,7 @@ where
 import Control.Concurrent.MVar
 import System.Time
 import MissingH.Time
+import Data.Ratio
 
 ----------------------------------------------------------------------
 -- TYPES
@@ -67,12 +68,12 @@ data ProgressStatus =
      ProgressStatus {completedUnits :: Integer,
                      totalUnits :: Integer,
                      startTime :: Integer,
-                     trackerName :: String}
-     deriving (Eq, Show, Read)
+                     trackerName :: String,
+                     timeSource :: ProgressTimeSource
+                    }
 
 data ProgressRecord =
-    ProgressRecord {timeSource :: ProgressTimeSource,
-                    parents :: [Progress],
+    ProgressRecord {parents :: [Progress],
                     callbacks :: [ProgressCallback],
                     status :: ProgressStatus}
 
@@ -117,19 +118,20 @@ newProgress :: String           -- ^ Name of this tracker
 newProgress name total =
     do t <- defaultTimeSource
        newProgress' (ProgressStatus {completedUnits = 0, totalUnits = total,
-                                     startTime = t, trackerName = name})
-                    defaultTimeSource []
+                                     startTime = t, trackerName = name,
+                                     timeSource = defaultTimeSource})
+                    []
 
-{- | Create a new 'Progress' object initialized with the given status,
-time source, and callbacks.
+{- | Create a new 'Progress' object initialized with the given status and 
+callbacks.
 No adjustment to the 'startTime' will be made.  If you
 want to use the system clock, you can initialize 'startTime' with
 the return value of 'defaultTimeSource' and also pass 'defaultTimeSource'
 as the timing source. -}
-newProgress' :: ProgressStatus -> ProgressTimeSource
+newProgress' :: ProgressStatus
              -> [ProgressCallback] -> IO Progress
-newProgress' news newts newcb =
-    do r <- newMVar $ ProgressRecord {timeSource = newts, parents = [],
+newProgress' news newcb =
+    do r <- newMVar $ ProgressRecord {parents = [],
                                       callbacks = newcb, status = news}
        return (Progress r)
 
@@ -172,7 +174,7 @@ setP po count = modStatus po statusfunc
 
 {- | Like 'setP', but never modify the total. -}
 setP' :: Progress -> Integer -> IO ()
-setP po count = modStatus po (\s -> s {completedUnits = count})
+setP' po count = modStatus po (\s -> s {completedUnits = count})
 
 {- | Increment the total unit count in the 'Progress' object by the amount
 given.  This would rarely be needed, but could be needed in some special cases 
@@ -199,8 +201,8 @@ If all you have is a 'ProgressSpeed', see 'currentSpeed'.
 If no time has elapsed yet, returns 0. -}
 getSpeed :: Fractional a => Progress -> IO a
 getSpeed po = withRecord po $ \rec ->
-              do t <- timeSource rec
-                 return $currentSpeed (status rec) t
+              do t <- timeSource (status rec)
+                 return $ currentSpeed (status rec) t
 
 {- | Given a status object and the current time as returned by the
 time source for the object, give the current speed in units processed per time
@@ -208,8 +210,8 @@ unit.  Returns 0 if no time has yet elapsed. -}
 currentSpeed :: Fractional a => ProgressStatus -> Integer -> a
 currentSpeed status t =
     if elapsed == 0
-       then 0
-       else (completedUnits status) / elapsed
+       then fromRational 0
+       else fromRational ((completedUnits status) % elapsed)
     where elapsed = t - (startTime status)
 
 ----------------------------------------------------------------------
@@ -223,7 +225,7 @@ defaultTimeSource :: ProgressTimeSource
 defaultTimeSource = getClockTime >>= (return . clockTimeToEpoch)
 
 now :: ProgressRecords a ProgressTimeSource => a -> ProgressTimeSource
-now x = withRecord x timeSource
+now x = withRecord x (timeSource . status)
 
 modStatus :: Progress -> (ProgressStatus -> ProgressStatus) -> IO ()
 -- FIXME/TODO: handle parents
@@ -233,3 +235,4 @@ modStatus (Progress mp) func =
           modfunc pr = 
               do let newpr = pr {status = func (status pr)}
                  mapM_ (\x -> x pr newpr) (callbacks pr)
+                 return newpr
