@@ -45,7 +45,7 @@ module MissingH.ProgressTracker (-- * Types
                                  getSpeed,
                                  withStatus,
                                  getETR,
-                                 --getETA,
+                                 getETA,
                                  -- * Utilities
                                  defaultTimeSource
                                )
@@ -218,12 +218,23 @@ getSpeed po = withStatus po $ \status ->
 getETR :: (ProgressStatuses a (IO Integer),
            ProgressStatuses a (IO Rational)) => a -> IO Integer
 getETR po = 
-    do (speed::Rational) <- getSpeed po
+    do speed <- ((getSpeed po)::IO Rational)
        -- FIXME: potential for a race condition here, but it should
        -- be negligible
        withStatus po $ \status ->
            do let remaining = totalUnits status - completedUnits status
               return $ round $ (toRational remaining) / speed
+
+{- | Returns the estimated system clock time of completion, in standard
+time units. -}
+getETA :: (ProgressStatuses a (IO Integer),
+           ProgressStatuses a (IO Rational)) => a -> IO Integer
+getETA po =
+    do etr <- getETR po
+       -- FIXME: similar race potential here
+       withStatus po $ \status ->
+           do timenow <- timeSource status
+              return $ timenow + etr
 
 ----------------------------------------------------------------------
 -- Utilities
