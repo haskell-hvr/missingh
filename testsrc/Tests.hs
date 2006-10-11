@@ -41,6 +41,7 @@ import qualified Timetest
 import qualified Str.CSVtest
 import qualified WildMatchtest
 import qualified Globtest
+import qualified ProgressTrackertest
 
 test1 = TestCase ("x" @=? "x")
 
@@ -51,6 +52,7 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Time" Timetest.tests,
                  TestLabel "FiniteMap" FiniteMaptest.tests,
                  TestLabel "Map" Maptest.tests,
+                 TestLabel "ProgressTracker" ProgressTrackertest.tests,
                  TestLabel "AnyDBM" AnyDBMtest.tests,
                  TestLabel "Path" Pathtest.tests,
                  TestLabel "WildMatch" WildMatchtest.tests,
