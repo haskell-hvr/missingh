@@ -36,12 +36,14 @@ module MissingH.ProgressTracker (-- * Types
                                  Progress, ProgressTimeSource,
                                  ProgressCallback,
                                  ProgressStatuses(..),
-                                 -- * Creation
+                                 -- * Creation and Options
                                  newProgress, newProgress',
                                  -- * Updating
-                                 incrP, incrP',
+                                 incrP, incrP', setP, incrTotal,
+                                 setTotal,
                                  -- * Reading and Processing
                                  getSpeed,
+                                 currentSpeed,
                                  getETR,
                                  getETA,
                                  -- * Utilities
@@ -58,7 +60,7 @@ import MissingH.Time
 ----------------------------------------------------------------------
 
 type ProgressTimeSource = IO Integer
-type ProgressCallback = ProgressRecord -> IO ()
+type ProgressCallback = ProgressRecord -> ProgressRecord -> IO ()
 
 {- | The main progress status record. -}
 data ProgressStatus = 
@@ -142,7 +144,6 @@ completed count never exceeds the total.
 You can decrease the completed unit count by supplying a negative number
 here. -}
 incrP :: Progress -> Integer -> IO ()
--- FIXME: handle parents/callbacks
 incrP po count = modStatus po statusfunc
     where statusfunc s = 
              s {completedUnits = newcu s,
@@ -153,11 +154,63 @@ incrP po count = modStatus po statusfunc
 
 {- | Like 'incrP', but never modify the total. -}
 incrP' :: Progress -> Integer -> IO ()
--- FIXME: handle parents/callbacks
 incrP' po count = 
     modStatus po (\s -> s {completedUnits = completedUnits s + count})
 
+{- | Set the completed unit count in the 'Progress' object to the specified
+value.  Unlike 'incrP', this function sets the count to a specific value,
+rather than adding to the existing value.  If this value exceeds the total,
+then the total will also be raised to match this value so that the completed
+count never exceeds teh total. -}
+setP :: Progress -> Integer -> IO ()
+setP po count = modStatus po statusfunc
+    where statusfunc s =
+              s {completedUnits = count,
+                 totalUnits = if count > totalUnits s
+                                  then count
+                                  else totalUnits s}
 
+{- | Like 'setP', but never modify the total. -}
+setP' :: Progress -> Integer -> IO ()
+setP po count = modStatus po (\s -> s {completedUnits = count})
+
+{- | Increment the total unit count in the 'Progress' object by the amount
+given.  This would rarely be needed, but could be needed in some special cases 
+when the total number of units is not known in advance. -}
+incrTotal :: Progress -> Integer -> IO ()
+incrTotal po count = 
+    modStatus po (\s -> s {totalUnits = totalUnits s + count})
+
+{- | Set the total unit count in the 'Progress' object to the specified
+value.  Like 'incrTotal', this would rarely be needed. -}
+setTotal :: Progress -> Integer -> IO ()
+setTotal po count =
+    modStatus po (\s -> s {totalUnits = count})
+
+----------------------------------------------------------------------
+-- Reading and Processing
+----------------------------------------------------------------------
+
+{- | Returns the speed in units processed per time unit.  (If you are
+using the default time source, this would be units processed per second).
+This obtains the current speed solely from analyzing the 'Progress' object.
+If all you have is a 'ProgressSpeed', see 'currentSpeed'.
+
+If no time has elapsed yet, returns 0. -}
+getSpeed :: Fractional a => Progress -> IO a
+getSpeed po = withRecord po $ \rec ->
+              do t <- timeSource rec
+                 return $currentSpeed (status rec) t
+
+{- | Given a status object and the current time as returned by the
+time source for the object, give the current speed in units processed per time
+unit.  Returns 0 if no time has yet elapsed. -}
+currentSpeed :: Fractional a => ProgressStatus -> Integer -> a
+currentSpeed status t =
+    if elapsed == 0
+       then 0
+       else (completedUnits status) / elapsed
+    where elapsed = t - (startTime status)
 
 ----------------------------------------------------------------------
 -- Utilities
@@ -173,7 +226,10 @@ now :: ProgressRecords a ProgressTimeSource => a -> ProgressTimeSource
 now x = withRecord x timeSource
 
 modStatus :: Progress -> (ProgressStatus -> ProgressStatus) -> IO ()
+-- FIXME/TODO: handle parents
 modStatus (Progress mp) func =
     modifyMVar_ mp modfunc
     where modfunc :: ProgressRecord -> IO ProgressRecord
-          modfunc pr = return $ pr {status = func (status pr)}
+          modfunc pr = 
+              do let newpr = pr {status = func (status pr)}
+                 mapM_ (\x -> x pr newpr) (callbacks pr)
