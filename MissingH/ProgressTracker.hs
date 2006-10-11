@@ -35,7 +35,7 @@ module MissingH.ProgressTracker (-- * Types
                                  ProgressStatus(..),
                                  Progress, ProgressTimeSource,
                                  ProgressCallback,
-                                 ProgressStatuses(..),
+                                 ProgressStatuses,
                                  -- * Creation and Options
                                  newProgress, newProgress',
                                  -- * Updating
@@ -43,8 +43,8 @@ module MissingH.ProgressTracker (-- * Types
                                  setTotal,
                                  -- * Reading and Processing
                                  getSpeed,
-                                 currentSpeed,
-                                 --getETR,
+                                 withStatus,
+                                 getETR,
                                  --getETA,
                                  -- * Utilities
                                  defaultTimeSource
@@ -196,23 +196,34 @@ setTotal po count =
 {- | Returns the speed in units processed per time unit.  (If you are
 using the default time source, this would be units processed per second).
 This obtains the current speed solely from analyzing the 'Progress' object.
-If all you have is a 'ProgressSpeed', see 'currentSpeed'.
 
-If no time has elapsed yet, returns 0. -}
-getSpeed :: Fractional a => Progress -> IO a
-getSpeed po = withRecord po $ \rec ->
-              do t <- timeSource (status rec)
-                 return $ currentSpeed (status rec) t
+If no time has elapsed yet, returns 0.
 
-{- | Given a status object and the current time as returned by the
-time source for the object, give the current speed in units processed per time
-unit.  Returns 0 if no time has yet elapsed. -}
-currentSpeed :: Fractional a => ProgressStatus -> Integer -> a
-currentSpeed status t =
-    if elapsed == 0
-       then fromRational 0
-       else fromRational ((completedUnits status) % elapsed)
-    where elapsed = t - (startTime status)
+You can use this against either a 'Progress' object or a 'ProgressStatus'
+object.  This is in the IO monad because the speed is based on the current
+time.
+
+Example:
+>getSpeed progressobj >>= print
+-}
+getSpeed :: (ProgressStatuses a (IO b), Fractional b) => a -> IO b
+getSpeed po = withStatus po $ \status -> 
+                do t <- timeSource status
+                   let elapsed = t - (startTime status)
+                   return $ if elapsed == 0
+                       then fromRational 0
+                       else fromRational ((completedUnits status) % elapsed)
+
+{- | Returns the estimated time remaining, in standard time units. -}
+getETR :: (ProgressStatuses a (IO Integer),
+           ProgressStatuses a (IO Rational)) => a -> IO Integer
+getETR po = 
+    do (speed::Rational) <- getSpeed po
+       -- FIXME: potential for a race condition here, but it should
+       -- be negligible
+       withStatus po $ \status ->
+           do let remaining = totalUnits status - completedUnits status
+              return $ round $ (toRational remaining) / speed
 
 ----------------------------------------------------------------------
 -- Utilities
