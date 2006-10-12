@@ -39,7 +39,7 @@ module MissingH.ProgressTracker (-- * Types
                                  -- * Creation and Options
                                  newProgress, newProgress',
                                  -- * Updating
-                                 incrP, incrP', setP, incrTotal,
+                                 incrP, incrP', setP, setP', incrTotal,
                                  setTotal,
                                  -- * Reading and Processing
                                  getSpeed,
@@ -214,19 +214,24 @@ getSpeed po = withStatus po $ \status ->
                        then fromRational 0
                        else fromRational ((completedUnits status) % elapsed)
 
-{- | Returns the estimated time remaining, in standard time units. -}
+{- | Returns the estimated time remaining, in standard time units. 
+
+Returns 0 whenever 'getSpeed' would return 0. -}
 getETR :: (ProgressStatuses a (IO Integer),
            ProgressStatuses a (IO Rational)) => a -> IO Integer
 getETR po = 
     do speed <- ((getSpeed po)::IO Rational)
-       -- FIXME: potential for a race condition here, but it should
-       -- be negligible
-       withStatus po $ \status ->
-           do let remaining = totalUnits status - completedUnits status
-              return $ round $ (toRational remaining) / speed
+       if speed == 0
+          then return 0
+          else 
+              -- FIXME: potential for a race condition here, but it should
+              -- be negligible
+              withStatus po $ \status ->
+                  do let remaining = totalUnits status - completedUnits status
+                     return $ round $ (toRational remaining) / speed
 
 {- | Returns the estimated system clock time of completion, in standard
-time units. -}
+time units.  Returns the current time whenever 'getETR' would return 0. -}
 getETA :: (ProgressStatuses a (IO Integer),
            ProgressStatuses a (IO Rational)) => a -> IO Integer
 getETA po =
