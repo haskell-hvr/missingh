@@ -53,21 +53,23 @@ status and are intended to do things like update on-screen status displays.
 
 -}
 
-module MissingH.ProgressTracker (-- * Types
-                                 ProgressStatus(..),
-                                 Progress, ProgressTimeSource,
-                                 ProgressCallback,
-                                 ProgressStatuses,
+module MissingH.ProgressTracker (
                                  -- * Creation and Options
                                  newProgress, newProgress',
+                                 addCallback, addParent,
                                  -- * Updating
                                  incrP, incrP', setP, setP', incrTotal,
-                                 setTotal,
+                                 setTotal, finishP,
                                  -- * Reading and Processing
                                  getSpeed,
                                  withStatus,
                                  getETR,
                                  getETA,
+                                 -- * Types
+                                 ProgressStatus(..),
+                                 Progress, ProgressTimeSource,
+                                 ProgressCallback,
+                                 ProgressStatuses,
                                  -- * Utilities
                                  defaultTimeSource
                                )
@@ -83,7 +85,15 @@ import Data.Ratio
 ----------------------------------------------------------------------
 
 type ProgressTimeSource = IO Integer
-type ProgressCallback = ProgressRecord -> ProgressRecord -> IO ()
+
+{- | The type for a callback function for the progress tracker.
+When given at creation time to 'newProgress\'' or when added via 'addCallback',
+these functions get called every time the status of the tracker changes.
+
+This function is passed two 'ProgressStatus' records: the first
+reflects the status prior to the update, and the second reflects
+the status after the update. -}
+type ProgressCallback = ProgressStatus -> ProgressStatus -> IO ()
 
 {- | The main progress status record. -}
 data ProgressStatus = 
@@ -157,6 +167,45 @@ newProgress' news newcb =
                                       callbacks = newcb, status = news}
        return (Progress r)
 
+{- | Adds an new callback to an existing 'Progress'. -}
+addCallback :: Progress -> ProgressCallback -> IO ()
+addCallback (Progress mpo) cb = modifyMVar_ mpo $ \po ->
+    return $ po {callbacks = cb : callbacks po}
+
+{- | Adds a new parent to an existing 'Progress'.  The parent
+will automatically have its completed and total counters incremented
+by the value of those counters in the existing 'Progress'. -}
+addParent :: Progress           -- ^ The child object
+          -> Progress           -- ^ The parent to add to this child
+          -> IO ()
+addParent (Progress mcpo) ppo = modifyMVar_ mcpo $ \cpo ->
+    do incrP' ppo (completedUnits . status $ cpo)
+       incrTotal ppo (totalUnits . status $ cpo)
+       return $ cpo {parents = ppo : parents cpo}
+
+{- | Call this when you are finished with the object.  It is especially
+important to do this when parent objects are involved.
+
+This will simply set the totalUnits to the current completedUnits count,
+but will not call the callbacks.  It will additionally propogate
+any adjustment in totalUnits to the parents, whose callbacks /will/ be
+called.
+
+This ensures that the total expected counts on the parent are always correct.
+Without doing this, if, say, a transfer ended earlier than expected, ETA 
+values on the parent would be off since it would be expecting more data than
+actually arrived. -}
+finishP :: Progress -> IO ()
+finishP (Progress mp) =
+    modifyMVar_ mp modfunc
+    where modfunc :: ProgressRecord -> IO ProgressRecord
+          modfunc oldpr =
+              do let adjustment = (completedUnits . status $ oldpr) 
+                                  - (totalUnits . status $ oldpr)
+                 callParents oldpr (\x -> incrTotal x adjustment)
+                 return $ oldpr {status = (status oldpr) 
+                                 {totalUnits = completedUnits . status $ oldpr}}
+
 ----------------------------------------------------------------------
 -- Updating
 ----------------------------------------------------------------------
@@ -226,7 +275,9 @@ object.  This is in the IO monad because the speed is based on the current
 time.
 
 Example:
->getSpeed progressobj >>= print
+
+> getSpeed progressobj >>= print
+
 -}
 getSpeed :: (ProgressStatuses a (IO b), Fractional b) => a -> IO b
 getSpeed po = withStatus po $ \status -> 
@@ -281,7 +332,11 @@ modStatus :: Progress -> (ProgressStatus -> ProgressStatus) -> IO ()
 modStatus (Progress mp) func =
     modifyMVar_ mp modfunc
     where modfunc :: ProgressRecord -> IO ProgressRecord
-          modfunc pr = 
-              do let newpr = pr {status = func (status pr)}
-                 mapM_ (\x -> x pr newpr) (callbacks pr)
+          modfunc oldpr = 
+              do let newpr = oldpr {status = func (status oldpr)}
+                 mapM_ (\x -> x (status oldpr) (status newpr))
+                           (callbacks oldpr)
                  return newpr
+
+callParents :: ProgressRecord -> (Progress -> IO ()) -> IO ()
+callParents pr func = mapM_ func (parents pr)
