@@ -29,6 +29,28 @@ Tools for tracking the status of a long operation.
 
 Written by John Goerzen, jgoerzen\@complete.org
 
+ProgressTracker is a module for tracking the progress on long-running
+operations.  It can be thought of as the back end engine behind
+a status bar.  ProgressTracker can do things such as track how far along
+a task is, provide an estimated time of completion, estimated time remaining,
+current speed, etc.  It is designed to be as generic as possible; it can even
+base its speed calculations on something other than the system clock.
+
+ProgressTracker also supports a notion of a parent tracker.  This is used when
+a large task is composed of several individual tasks which may also be
+long-running.  Downloading many large files over the Internet is a common
+example of this.
+
+Any given ProgressTracker can be told about one or more parent trackers.  
+When the child tracker's status is updated, the parent tracker's status is
+also updated in the same manner.  Therefore, the progress on each individual
+component, as well as the overall progress, can all be kept in sync
+automatically.
+
+Finally, you can register callbacks.  Callbacks are functions that are called
+whenever the status of a tracker changes.  They'll be passed the old and new
+status and are intended to do things like update on-screen status displays.
+
 -}
 
 module MissingH.ProgressTracker (-- * Types
