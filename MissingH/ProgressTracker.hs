@@ -110,7 +110,10 @@ these functions get called every time the status of the tracker changes.
 
 This function is passed two 'ProgressStatus' records: the first
 reflects the status prior to the update, and the second reflects
-the status after the update. -}
+the status after the update.
+
+Please note that the owning 'Progress' object will be locked while the
+callback is running, so the callback will not be able to make changes to it. -}
 type ProgressCallback = ProgressStatus -> ProgressStatus -> IO ()
 
 {- | The main progress status record. -}
@@ -131,6 +134,14 @@ data ProgressRecord =
 newtype Progress = Progress (MVar ProgressRecord)
 
 class ProgressStatuses a b where
+    {- | Lets you examine the 'ProgressStatus' that is contained 
+       within a 'Progress' object.  You can simply pass
+       a 'Progress' object and a function to 'withStatus', and
+       'withStatus' will lock the 'Progress' object (blocking any
+       modifications while you are reading it), then pass the object
+       to your function.  If you happen to already have a 'ProgressStatus'
+       object, withStatus will also accept it and simply pass it unmodified
+       to the function. -}
     withStatus :: a -> (ProgressStatus -> b) -> b
 
 class ProgressRecords a b where
@@ -193,6 +204,9 @@ newProgress' news newcb =
 
 {- | Adds an new callback to an existing 'Progress'.  The callback will be
 called whenever the object's status is updated, except by the call to finishP.
+
+Please note that the Progress object will be locked while the callback is 
+running, so the callback will not be able to make any modifications to it.
 -}
 addCallback :: Progress -> ProgressCallback -> IO ()
 addCallback (Progress mpo) cb = modifyMVar_ mpo $ \po ->
