@@ -102,12 +102,43 @@ test_speed =
        getETR po >>= assertEqual "etr 2" 44
        getETA po >>= assertEqual "eta 2" 444
 
+test_callback =       
+    do (po, _) <- setup
+       mcounter <- newMVar (0::Int)
+       mcounter1 <- newMVar (0::Int)
+       mcounter2 <- newMVar (0::Int)
+       (po2, _) <- setup
+       (po3, _) <- setup
+       
+       addCallback po (minc mv)
+       addParent po po2
+       incrP po 5
+       readMVar mcounter >>= assertEqual "cb1" 1
+       withStatus po (\x -> 5 @=? completedUnits x)
+       withStatus po2 (\x -> do 5 @=? completedUnits x
+                                200 @=? totalUnits x)
+       
+       addCallback po2 mcounter2
+       incrP po 100
+       readMVar mcounter2 >>= assertEqual "cb2" 1
+       withStatus po2 (\x -> do 105 @=? completedUnits x
+                                205 @=? totalUnits x)
+       
+       incrP' po 5
+       withStatus po2 (\x -> do 110 @=? completedUnits x
+                                205 @=? totalUnits x)
+
+       finishP po
+       withStatus po2 (\x -> do 110 @=? completedUnits x
+                                210 @=? totalUnits x)
        
        
+    where minc mv _ _ = modifyMVar_ ((+) 1) mv
 
 tests = TestList [TestLabel "incrP" (TestCase test_incrP),
                   TestLabel "setP" (TestCase test_setP),
-                  TestLabel "speed" (TestCase test_speed)]
+                  TestLabel "speed" (TestCase test_speed),
+                  TestLabel "test_callback" (TestCase test_callback)]
 
 
 
