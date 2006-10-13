@@ -27,33 +27,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Tools for tracking the status of a long operation.
 
-Written by John Goerzen, jgoerzen\@complete.org
-
-ProgressTracker is a module for tracking the progress on long-running
-operations.  It can be thought of as the back end engine behind
-a status bar.  ProgressTracker can do things such as track how far along
-a task is, provide an estimated time of completion, estimated time remaining,
-current speed, etc.  It is designed to be as generic as possible; it can even
-base its speed calculations on something other than the system clock.
-
-ProgressTracker also supports a notion of a parent tracker.  This is used when
-a large task is composed of several individual tasks which may also be
-long-running.  Downloading many large files over the Internet is a common
-example of this.
-
-Any given ProgressTracker can be told about one or more parent trackers.  
-When the child tracker's status is updated, the parent tracker's status is
-also updated in the same manner.  Therefore, the progress on each individual
-component, as well as the overall progress, can all be kept in sync
-automatically.
-
-Finally, you can register callbacks.  Callbacks are functions that are called
-whenever the status of a tracker changes.  They'll be passed the old and new
-status and are intended to do things like update on-screen status displays.
-
--}
+Written by John Goerzen, jgoerzen\@complete.org -}
 
 module MissingH.ProgressTracker (
+                                 -- * Introduction
+                                 -- $introduction
+                                 -- ** Examples
+                                 -- $examples
                                  -- * Creation and Options
                                  newProgress, newProgress',
                                  addCallback, addParent,
@@ -80,10 +60,48 @@ import System.Time
 import MissingH.Time
 import Data.Ratio
 
+{- $introduction
+
+ProgressTracker is a module for tracking the progress on long-running
+operations.  It can be thought of as the back end engine behind
+a status bar.  ProgressTracker can do things such as track how far along
+a task is, provide an estimated time of completion, estimated time remaining,
+current speed, etc.  It is designed to be as generic as possible; it can even
+base its speed calculations on something other than the system clock.
+
+ProgressTracker also supports a notion of a parent tracker.  This is used when
+a large task is composed of several individual tasks which may also be
+long-running.  Downloading many large files over the Internet is a common
+example of this.
+
+Any given ProgressTracker can be told about one or more parent trackers.  
+When the child tracker's status is updated, the parent tracker's status is
+also updated in the same manner.  Therefore, the progress on each individual
+component, as well as the overall progress, can all be kept in sync
+automatically.
+
+Finally, you can register callbacks.  Callbacks are functions that are called
+whenever the status of a tracker changes.  They'll be passed the old and new
+status and are intended to do things like update on-screen status displays.
+-}
+
+{- $examples
+
+Here is an example use:
+
+>do prog <- newProgress "mytracker" 1024
+>   incrP prog 10
+>   getETR prog >>= print           -- prints number of seconds remaining
+>   incrP prog 500
+>   finishP prog
+-}
+
 ----------------------------------------------------------------------
 -- TYPES
 ----------------------------------------------------------------------
 
+{- | A function that, when called, yields the current time. 
+The default is 'defaultTimeSource'. -}
 type ProgressTimeSource = IO Integer
 
 {- | The type for a callback function for the progress tracker.
@@ -100,7 +118,7 @@ data ProgressStatus =
      ProgressStatus {completedUnits :: Integer,
                      totalUnits :: Integer,
                      startTime :: Integer,
-                     trackerName :: String,
+                     trackerName :: String, -- ^ An identifying string
                      timeSource :: ProgressTimeSource
                     }
 
@@ -109,6 +127,7 @@ data ProgressRecord =
                     callbacks :: [ProgressCallback],
                     status :: ProgressStatus}
 
+{- | The main Progress object. -}
 newtype Progress = Progress (MVar ProgressRecord)
 
 class ProgressStatuses a b where
@@ -143,6 +162,9 @@ The units completed will be set to 0, the time source will be set to the
 system clock, and the parents and callbacks will be empty.
 
 If you need more control, see 'newProgress\''.
+
+Example:
+>prog <- newProgress "mytracker" 1024
 -}
 newProgress :: String           -- ^ Name of this tracker
             -> Integer          -- ^ Total units expected
@@ -167,7 +189,9 @@ newProgress' news newcb =
                                       callbacks = newcb, status = news}
        return (Progress r)
 
-{- | Adds an new callback to an existing 'Progress'. -}
+{- | Adds an new callback to an existing 'Progress'.  The callback will be
+called whenever the object's status is updated, except by the call to finishP.
+-}
 addCallback :: Progress -> ProgressCallback -> IO ()
 addCallback (Progress mpo) cb = modifyMVar_ mpo $ \po ->
     return $ po {callbacks = cb : callbacks po}
@@ -278,7 +302,10 @@ Example:
 
 > getSpeed progressobj >>= print
 
--}
+Don't let the type of this function confuse you.  It is a fancy way of saying
+that it can take either a 'Progress' or a 'ProgressStatus' object, and returns
+a number that is valid as any Fractional type, such as a Double, Float, or
+Rational. -}
 getSpeed :: (ProgressStatuses a (IO b), Fractional b) => a -> IO b
 getSpeed po = withStatus po $ \status -> 
                 do t <- timeSource status
@@ -289,7 +316,10 @@ getSpeed po = withStatus po $ \status ->
 
 {- | Returns the estimated time remaining, in standard time units. 
 
-Returns 0 whenever 'getSpeed' would return 0. -}
+Returns 0 whenever 'getSpeed' would return 0.
+
+See the comments under 'getSpeed' for information about this function's type
+and result. -}
 getETR :: (ProgressStatuses a (IO Integer),
            ProgressStatuses a (IO Rational)) => a -> IO Integer
 getETR po = 
@@ -304,7 +334,10 @@ getETR po =
                      return $ round $ (toRational remaining) / speed
 
 {- | Returns the estimated system clock time of completion, in standard
-time units.  Returns the current time whenever 'getETR' would return 0. -}
+time units.  Returns the current time whenever 'getETR' would return 0.
+
+See the comments under 'getSpeed' for information about this function's type
+and result. -}
 getETA :: (ProgressStatuses a (IO Integer),
            ProgressStatuses a (IO Rational)) => a -> IO Integer
 getETA po =
@@ -340,3 +373,4 @@ modStatus (Progress mp) func =
 
 callParents :: ProgressRecord -> (Progress -> IO ()) -> IO ()
 callParents pr func = mapM_ func (parents pr)
+
