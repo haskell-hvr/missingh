@@ -110,7 +110,7 @@ test_callback =
        (po2, _) <- setup
        (po3, _) <- setup
        
-       addCallback po (minc mv)
+       addCallback po (minc mcounter)
        addParent po po2
        incrP po 5
        readMVar mcounter >>= assertEqual "cb1" 1
@@ -118,7 +118,7 @@ test_callback =
        withStatus po2 (\x -> do 5 @=? completedUnits x
                                 200 @=? totalUnits x)
        
-       addCallback po2 mcounter2
+       addCallback po2 (minc mcounter2)
        incrP po 100
        readMVar mcounter2 >>= assertEqual "cb2" 1
        withStatus po2 (\x -> do 105 @=? completedUnits x
@@ -133,7 +133,7 @@ test_callback =
                                 210 @=? totalUnits x)
        
        
-    where minc mv _ _ = modifyMVar_ ((+) 1) mv
+    where minc mv _ _ = modifyMVar_ mv (\x -> return $ x + 1)
 
 tests = TestList [TestLabel "incrP" (TestCase test_incrP),
                   TestLabel "setP" (TestCase test_setP),
