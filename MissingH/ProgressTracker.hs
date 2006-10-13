@@ -385,6 +385,16 @@ modStatus (Progress mp) func =
               do let newpr = oldpr {status = func (status oldpr)}
                  mapM_ (\x -> x (status oldpr) (status newpr))
                            (callbacks oldpr)
+
+                 -- Kick it up to the parents.
+                 case (completedUnits . status $ newpr) -
+                      (completedUnits . status $ oldpr) of
+                   0 -> return ()
+                   x -> callParents newpr (\y -> incrP' y x)
+                 case (totalUnits . status $ newpr) -
+                      (totalUnits . status $ oldpr) of
+                   0 -> return ()
+                   x -> callParents newpr (\y -> incrTotal y x)
                  return newpr
 
 callParents :: ProgressRecord -> (Progress -> IO ()) -> IO ()
