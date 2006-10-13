@@ -164,7 +164,9 @@ system clock, and the parents and callbacks will be empty.
 If you need more control, see 'newProgress\''.
 
 Example:
->prog <- newProgress "mytracker" 1024
+
+> prog <- newProgress "mytracker" 1024
+
 -}
 newProgress :: String           -- ^ Name of this tracker
             -> Integer          -- ^ Total units expected
