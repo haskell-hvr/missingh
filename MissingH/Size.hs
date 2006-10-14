@@ -35,9 +35,9 @@ module MissingH.Size (
 where
 import Data.List
 
-data SizeOpts = SizeOpts { base :: Integer,
-                           powerIncr :: Integer,
-                           firstPower :: Integer,
+data SizeOpts = SizeOpts { base :: Int,
+                           powerIncr :: Int,
+                           firstPower :: Int,
                            suffixes :: String}
                            
 binaryOpts = SizeOpts {base = 2,
@@ -53,7 +53,7 @@ siOpts = SizeOpts {base = 10,
 renderNum opts 0.0 = (0, snd $ renderNum opts 1)
 renderNum opts number =
     (retnum, suffix)
-    where incrList = map idx2pwr [0..genericLength (suffixes opts) - 1]
+    where incrList = map idx2pwr [0..length (suffixes opts) - 1]
           incrIdxList = zip incrList [0..]
           idx2pwr i = i * powerIncr opts + firstPower opts
           
