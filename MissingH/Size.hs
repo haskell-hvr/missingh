@@ -50,17 +50,18 @@ siOpts = SizeOpts {base = 10,
                    suffixes = "yzafpnum kMGTPEZY",
                    powerIncr = 3}
 
+renderNum opts 0.0 = (0, snd $ renderNum opts 1)
 renderNum opts number =
     (retnum, suffix)
-    where exponent = (logBase (fromIntegral $ base opts) number)::Double
-          lastPower = (firstPower opts) + 
-                      (genericLength(suffixes opts) - 1) * (powerIncr opts)
-          usedexp = 
-              if exponent < fromIntegral (firstPower opts)
-                 then firstPower opts
-                 else if exponent > fromIntegral lastPower
-                      then lastPower
-                      else (truncate exponent `div` (powerIncr opts)) * (powerIncr opts)
-          expidx = (usedexp - (firstPower opts)) `div` (powerIncr opts)
+    where incrList = map idx2pwr [0..genericLength (suffixes opts) - 1]
+          incrIdxList = zip incrList [0..]
+          idx2pwr i = i * powerIncr opts + firstPower opts
+          
+          (usedexp, expidx) =
+              case find 
+                  (\(x, _) -> (fromIntegral $ base opts) ** (fromIntegral x) <= number) 
+                  (reverse incrIdxList) of
+                  Just x -> x
+                  Nothing -> last incrIdxList
           suffix = (suffixes opts !! (fromIntegral expidx))
           retnum = number / ((fromIntegral (base opts) ** (fromIntegral usedexp)))
