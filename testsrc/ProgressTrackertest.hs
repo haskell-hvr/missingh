@@ -120,7 +120,7 @@ test_callback =
        
        addCallback po2 (minc mcounter2)
        incrP po 100
-       readMVar mcounter2 >>= assertEqual "cb2" 1
+       readMVar mcounter2 >>= (\x -> assertBool "cb2" (0 /= x))
        withStatus po2 (\x -> do 105 @=? completedUnits x
                                 205 @=? totalUnits x)
        
