@@ -29,30 +29,42 @@ Tools for rendering sizes
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.Size (
+module MissingH.Size (quantifyNum,
+                      renderNum,
+                      SizeOpts(..),
+                      binaryOpts,
+                      siOpts
                      )
 
 where
 import Data.List
+import Text.Printf
 
-data SizeOpts = SizeOpts { base :: Int,
-                           powerIncr :: Int,
-                           firstPower :: Int,
-                           suffixes :: String}
+{- | The options for 'quantifyNum' and 'renderNum' -}
+data SizeOpts = SizeOpts { base :: Int, -- ^ The base from which calculations are made
+                           powerIncr :: Int, -- ^ The increment to the power for each new suffix
+                           firstPower :: Int, -- ^ The first power for which suffixes are given
+                           suffixes :: String -- ^ The suffixes themselves
+                         }
                            
+{- | Predefined definitions for byte measurement in groups of 1024, from 0 to
+2**80 -}
 binaryOpts = SizeOpts {base = 2,
                        firstPower = 0,
                        suffixes = " KMGTPEZY",
                        powerIncr = 10}
 
+{- | Predefined definitions for SI measurement, from 10**-24 to 10**24. -}
 siOpts = SizeOpts {base = 10,
                    firstPower = -24,
                    suffixes = "yzafpnum kMGTPEZY",
                    powerIncr = 3}
 
-renderNum :: (Ord a, Real a, Floating b, Ord b) => SizeOpts -> a -> (b, Char)
-renderNum opts 0 = (0, snd $ renderNum opts 1)
-renderNum opts inpnumber 
+{- | Takes a number and returns a new (quantity, suffix) combination.
+The space character is used as the suffix for items around 0. -}
+quantifyNum :: (Ord a, Real a, Floating b, Ord b) => SizeOpts -> a -> (b, Char)
+quantifyNum opts 0 = (0, snd $ quantifyNum opts 1)
+quantifyNum opts inpnumber 
     | inpnumber < 0 = 
         (posres * (-1), possuf)
     | otherwise = (retnum, suffix)
@@ -62,10 +74,23 @@ renderNum opts inpnumber
           idx2pwr i = i * powerIncr opts + firstPower opts
           finderfunc (x, _) = (fromIntegral $ base opts) ** (fromIntegral x) 
                               <= number
+          -- Find the largest item that does not exceed the number given.
+          -- If the number is larger than the larger item in the list,
+          -- that's fine; we'll just write it in terms of what we have.
+
           (usedexp, expidx) =
               case find finderfunc (reverse incrIdxList) of
                   Just x -> x
                   Nothing -> head incrIdxList -- If not found, it's smaller than the first
           suffix = (suffixes opts !! (fromIntegral expidx))
           retnum = number / ((fromIntegral (base opts) ** (fromIntegral usedexp)))
-          (posres, possuf) = renderNum opts (inpnumber * (-1))
+          (posres, possuf) = quantifyNum opts (inpnumber * (-1))
+
+renderNum :: (Ord a, Real a) => 
+             SizeOpts
+          -> Int                -- ^ Precision of the result
+          -> a                  -- ^ The number to examine
+          -> String
+renderNum opts prec number =
+    (printf ("%." ++ show prec ++ "g") num) ++ [suffix]
+    where (num, suffix) = (quantifyNum opts number)::(Double, Char)
