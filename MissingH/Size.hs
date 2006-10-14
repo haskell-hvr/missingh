@@ -51,7 +51,7 @@ siOpts = SizeOpts {base = 10,
                    powerIncr = 3}
 
 renderNum opts number =
-    return (retnum, suffix)
+    (retnum, suffix)
     where exponent = (logBase (fromIntegral $ base opts) number)::Double
           lastPower = (firstPower opts) + 
                       (genericLength(suffixes opts) - 1) * (powerIncr opts)
@@ -61,6 +61,6 @@ renderNum opts number =
                  else if exponent > fromIntegral lastPower
                       then lastPower
                       else (truncate exponent `div` (powerIncr opts)) * (powerIncr opts)
-          expidx = (usedexp - (firstPower opts)) `div` (base opts)
+          expidx = (usedexp - (firstPower opts)) `div` (powerIncr opts)
           suffix = (suffixes opts !! (fromIntegral expidx))
           retnum = number / ((fromIntegral (base opts) ** (fromIntegral usedexp)))
