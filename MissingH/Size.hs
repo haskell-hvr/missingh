@@ -50,10 +50,12 @@ siOpts = SizeOpts {base = 10,
                    suffixes = "yzafpnum kMGTPEZY",
                    powerIncr = 3}
 
-renderNum opts 0.0 = (0, snd $ renderNum opts 1)
-renderNum opts number =
+renderNum :: (Real a, Floating b, Ord b) => SizeOpts -> a -> (b, Char)
+renderNum opts 0 = (0, snd $ renderNum opts 1)
+renderNum opts inpnumber =
     (retnum, suffix)
-    where incrList = map idx2pwr [0..length (suffixes opts) - 1]
+    where number = fromRational . toRational $ inpnumber
+          incrList = map idx2pwr [0..length (suffixes opts) - 1]
           incrIdxList = zip incrList [0..]
           idx2pwr i = i * powerIncr opts + firstPower opts
           
