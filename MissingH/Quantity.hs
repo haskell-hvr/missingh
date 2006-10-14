@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Size
+   Module     : MissingH.Quantity
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -29,11 +29,11 @@ Tools for rendering sizes
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.Size (quantifyNum,
-                      renderNum,
-                      SizeOpts(..),
-                      binaryOpts,
-                      siOpts
+module MissingH.Quantity (quantifyNum,
+                          renderNum,
+                          SizeOpts(..),
+                          binaryOpts,
+                          siOpts
                      )
 
 where
