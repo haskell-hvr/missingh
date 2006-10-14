@@ -62,6 +62,6 @@ renderNum opts number =
                   (\(x, _) -> (fromIntegral $ base opts) ** (fromIntegral x) <= number) 
                   (reverse incrIdxList) of
                   Just x -> x
-                  Nothing -> last incrIdxList
+                  Nothing -> head incrIdxList
           suffix = (suffixes opts !! (fromIntegral expidx))
           retnum = number / ((fromIntegral (base opts) ** (fromIntegral usedexp)))
