@@ -58,11 +58,10 @@ renderNum opts inpnumber =
           incrList = map idx2pwr [0..length (suffixes opts) - 1]
           incrIdxList = zip incrList [0..]
           idx2pwr i = i * powerIncr opts + firstPower opts
-          
+          finderfunc (x, _) = (fromIntegral $ base opts) ** (fromIntegral x) 
+                              <= number
           (usedexp, expidx) =
-              case find 
-                  (\(x, _) -> (fromIntegral $ base opts) ** (fromIntegral x) <= number) 
-                  (reverse incrIdxList) of
+              case find finderfunc (reverse incrIdxList) of
                   Just x -> x
                   Nothing -> head incrIdxList
           suffix = (suffixes opts !! (fromIntegral expidx))
