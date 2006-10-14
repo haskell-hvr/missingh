@@ -50,10 +50,12 @@ siOpts = SizeOpts {base = 10,
                    suffixes = "yzafpnum kMGTPEZY",
                    powerIncr = 3}
 
-renderNum :: (Real a, Floating b, Ord b) => SizeOpts -> a -> (b, Char)
+renderNum :: (Ord a, Real a, Floating b, Ord b) => SizeOpts -> a -> (b, Char)
 renderNum opts 0 = (0, snd $ renderNum opts 1)
-renderNum opts inpnumber =
-    (retnum, suffix)
+renderNum opts inpnumber 
+    | inpnumber < 0 = 
+        (posres * (-1), possuf)
+    | otherwise = (retnum, suffix)
     where number = fromRational . toRational $ inpnumber
           incrList = map idx2pwr [0..length (suffixes opts) - 1]
           incrIdxList = zip incrList [0..]
@@ -63,6 +65,7 @@ renderNum opts inpnumber =
           (usedexp, expidx) =
               case find finderfunc (reverse incrIdxList) of
                   Just x -> x
-                  Nothing -> head incrIdxList
+                  Nothing -> head incrIdxList -- If not found, it's smaller than the first
           suffix = (suffixes opts !! (fromIntegral expidx))
           retnum = number / ((fromIntegral (base opts) ** (fromIntegral usedexp)))
+          (posres, possuf) = renderNum opts (inpnumber * (-1))
