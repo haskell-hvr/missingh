@@ -47,11 +47,16 @@ test_MemoryBuffer =
                         "e1" `ioeq` vGetLine x
                         vSeek x SeekFromEnd (-3)
                         "e2" `ioeq` vGetLine x
+                        vSeek x AbsoluteSeek 1
+                        vPutStr x "IN"
+                        vRewind x
+                        "LINe1" `ioeq` vGetLine x
+                        "Line2" `ioeq` vGetLine x                        
                         vSeek x SeekFromEnd 0
                         vPutChar x 'c'
                         assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
                         vRewind x
-                        "Line1\nLine2\nc" `ioeq` vGetContents x
+                        "LINe1\nLine2\nc" `ioeq` vGetContents x
               )
         ]
 

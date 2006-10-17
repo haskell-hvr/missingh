@@ -540,7 +540,7 @@ instance HVIO MemoryBuffer where
 
     vPutStr h s = do (pos, buf) <- vioc_get (vrv h)
                      let (pre, post) = splitAt pos buf
-                     let newbuf = pre ++ s ++ (drop (length buf) post)
+                     let newbuf = pre ++ s ++ (drop (length s) post)
                      vioc_set (vrv h) (pos + (length s), newbuf)
     vPutChar h c = vPutStr h [c]
     vIsWritable _ = return True
