@@ -320,7 +320,7 @@ data TimeOfDay2822 =
   TimeOfDay2822 Int Int Int
   deriving Show
 parseTimeOfDay =
-  do hh <- parseTwoDigits
+  do hh <- parseOneOrTwoDigits
      char ':'
      mm <- parseTwoDigits
      ss <- option 0 (try $ do char ':'
@@ -361,3 +361,11 @@ parseTwoDigits =
      d2 <- digit
      return (10 * digitToInt d1 + digitToInt d2)
 
+parseOneOrTwoDigits =
+  do d1 <- digit
+     md2 <- option Nothing (digit >>= (return . Just))
+     case md2 of
+       Just d2 ->
+         return (10 * digitToInt d1 + digitToInt d2)
+       Nothing ->
+         return (digitToInt d1)
