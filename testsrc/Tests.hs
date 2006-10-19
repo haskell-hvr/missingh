@@ -20,14 +20,12 @@ module Tests(tests) where
 import Test.HUnit
 import qualified MIMETypestest
 import qualified Listtest
-import qualified FiniteMaptest
 import qualified Maptest
 import qualified AnyDBMtest
 import qualified Pathtest
 import qualified Strtest
 import qualified IOtest
 import qualified Bitstest
-import qualified Printftest
 import qualified Network.FTP.Parsertest
 import qualified Eithertest
 import qualified ConfigParser.Parsertest
@@ -50,7 +48,6 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Str" Strtest.tests,
                  TestLabel "CSV" Str.CSVtest.tests,
                  TestLabel "Time" Timetest.tests,
-                 TestLabel "FiniteMap" FiniteMaptest.tests,
                  TestLabel "Map" Maptest.tests,
                  TestLabel "ProgressTracker" ProgressTrackertest.tests,
                  TestLabel "AnyDBM" AnyDBMtest.tests,
@@ -62,7 +59,6 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "MIMETypes" MIMETypestest.tests,
                  TestLabel "Bitstest" Bitstest.tests,
                  TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests,
-                 TestLabel "Printftest" Printftest.tests,
                  TestLabel "Eithertest" Eithertest.tests,
                  TestLabel "ConfigParser.RunParser" ConfigParser.Parsertest.tests,
                  TestLabel "ConfigParser.Main" ConfigParser.Maintest.tests,
