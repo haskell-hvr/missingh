@@ -19,3 +19,17 @@ FTP server:
 
 CSVtest:
   Test CSV generation
+
+--------------------------------------------------
+From: Jeremy Shaw 
+The patch to MissingH.HUnit includes a modified version of the 'tests' function
+from Test.QuickCheck. That module has the license:
+
+-- Module      :  Test.QuickCheck
+-- Copyright   :  (c) Koen Claessen, John Hughes 2001
+-- License     :  BSD-style (see the file libraries/base/LICENSE)
+
+If this is problematic, let me know, and I can rewrite it.
+
+j.
+
