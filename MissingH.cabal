@@ -76,7 +76,6 @@ Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Wash.Utility.URLCoding,
     MissingH.Wash.Utility.Unique,
   MissingH.AnyDBM,
-    MissingH.AnyDBM.FiniteMapDBM,
     MissingH.AnyDBM.MapDBM,
     MissingH.AnyDBM.StringDBM,
   MissingH.GetOpt
