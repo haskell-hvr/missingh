@@ -19,21 +19,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Listtest(tests) where
 import Test.HUnit
 import MissingH.List
-
-import System.Random hiding (split)
 import Data.List
+import Test.HUnit
 import Test.QuickCheck as QC
-
-qunit :: (QC.Testable a) => String -> a -> Test
-qunit lbl property =
-    TestLabel lbl $ TestCase $
-              do stdGen <- newStdGen
-                 case generate 100 stdGen (evaluate property) of
-                   (Result (Just True) _ _ ) -> return ()
-                   (Result res stamp args) -> assertFailure $ show (res, stamp, args)
-
-
-
+import MissingH.HUnit
 
 test_delFromAL = 
     let f :: [(String, Int)] -> [(String, Int)] -> Test
@@ -230,14 +219,14 @@ test_spanList =
 
 
 test_merge =
-    qunit "prop_merge" prop_merge
+    qctest "prop_merge" prop_merge
 
 prop_merge xs ys =
     merge (sort xs) (sort ys) == sort (xs ++ ys)
           where types = xs :: [Int]
 
 test_mergeBy =
-    qunit "test_mergeBy" prop_mergeBy
+    qctest "test_mergeBy" prop_mergeBy
 
 prop_mergeBy xs ys =
     mergeBy cmp (sortBy cmp xs) (sortBy cmp ys) == sortBy cmp (xs ++ ys)
