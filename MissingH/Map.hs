@@ -59,7 +59,7 @@ This implementation is simple:
 
 >strToM = Data.Map.fromList . strToAL
 
-This function is designed to work with FiniteMap String String objects,
+This function is designed to work with Map String String objects,
 but may work with other key\/value combinations if they have simple
 representations.  -}
 strToM :: (Read a, Read b, Ord a) => String -> Data.Map.Map a b
