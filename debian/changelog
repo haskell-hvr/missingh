@@ -1,3 +1,32 @@
+missingh (0.16.0) unstable; urgency=low
+
+  * NEW: MissingH.Quantity that is used to render numbers as binary
+    units (MB, KB, etc) or SI units, or other similar units
+  * NEW: MissingH.ProgressTracker that is used to track the progress
+    of long-running tasks, measure their speed, and give estimated
+    completion times
+  * Update to support GHC 6.6
+    + Remove FiniteMap support everywhere (no longer supported in GHC)
+    + Remove MissingH.Printf (has been deprecated since 0.13.0 due to
+      Text.Printf)
+    + Update README
+    + Fix MissingH.FTP.Server for GHC 6.6.0 compatibility
+    + Update cabal file for GHC 6.6 compatibility
+  * Patch from Jeremy Shaw to add to MissingH.HUnit the ability to turn
+    QuickCheck tests into HUnit tests
+  * Patch from Joe Edmonds to MissingH.Wash.Mail.MailParser to
+    accept a slight violation of RFC2822 in which date headers may have
+    a single-digit date
+  * Fix a logic error in MemoryBuffer's vPutStr that could corrupt
+    data when a write occurs after a seek, and wrote a test to
+    detect this condition.  Thanks to Bulat Ziganshin for finding this.
+  * New function in MissingH.List to merge two sorted lists into
+    a single sorted whole.  Patch from Clifford Beshers.
+  * Work around lack of signals on Windows in MissingH.Cmd.
+  * Make sure Data.Bits is imported in MissingH.IO.StatCompat.
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 19 Oct 2006 04:38:10 -0500
+
 missingh (0.14.5) unstable; urgency=low
 
   * New function: MissingH.Cmd.posixRawSystem
