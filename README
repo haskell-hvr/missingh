@@ -57,9 +57,6 @@ likely to follow:
 
 MissingH.AnyDBM           * Generic DBM-like database infrastructure
 
-MissingH.AnyDBM.          * Use a FiniteMap in the AnyDBM interface
- FiniteMapDBM
-
 MissingH.AnyDBM.          * Use a Map in the AnyDBM interface
  MapDBM
 
@@ -101,8 +98,6 @@ MissingH.Email.Sendmail   * Send a message via a locally-installed Sendmail
 MisssingH.FileArchive.    * Support for analyzing and extracting
   GZip                      GZip archives
 
-MissingH.FiniteMap        * Flip a finite map
-
 MissingH.Hsemail          * E-mail parsers
 
 MissingH.HUnit            * Utilities for writing HUnit unit tests
@@ -140,7 +135,7 @@ MissingH.Logging.         * Logging to local or remote syslog
 MissingH.Logging.Logger   * Primary user interface to logging
                           * Documentation for the logging system
 
-MissingH.Map              * Flip a finite Map and other utilities
+MissingH.Map              * Flip a Map and other utilities
 
 MissingH.Maybe            * forceMaybe utility function
 
@@ -170,10 +165,6 @@ MissingH.Path.Glob        * Expand wildcards to obtain a list of files
 
 MissingH.Path.WildPath    * Evaluate filenames or strings against wildcards
                           * Convert wildcards to regular expressions
-
-MissingH.Printf           * Format strings using C-like syntax
-                          * Support for args as a list or as
-                            a variable-length argument
 
 MissingH.Regex.Pesco      * Perl-like regular expression operations and
                             operators
