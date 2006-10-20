@@ -157,12 +157,12 @@ anonFtpHandler f h saremote salocal =
              commandLoop s
 
 type CommandHandler = FTPServer -> String -> IO Bool
-type Command = (String, (CommandHandler, (String, String)))
+data Command = Command String (CommandHandler, (String, String))
 
 instance Eq Command where
-    x == y = (fst x) == (fst y)
+    (Command x _) == (Command y _) = x == y
 instance Ord Command where
-    compare x y = compare (fst x) (fst y)
+    compare (Command x _) (Command y _) = compare x y
 
 trapIOError :: FTPServer -> IO a -> (a -> IO Bool) -> IO Bool
 trapIOError h testAction remainingAction =
@@ -182,30 +182,30 @@ forceLogin func h@(FTPServer _ _ state) args =
 
 commands :: [Command]
 commands =
-    [("HELP", (cmd_help,             help_help))
-    ,("QUIT", (cmd_quit,             help_quit))
-    ,("USER", (cmd_user,             help_user))
-    ,("PASS", (cmd_pass,             help_pass))
-    ,("CWD",  (forceLogin cmd_cwd,   help_cwd))
-    ,("CDUP", (forceLogin cmd_cdup,  help_cdup))
-    ,("TYPE", (forceLogin cmd_type,  help_type))
-    ,("NOOP", (forceLogin cmd_noop,  help_noop))
-    ,("RNFR", (forceLogin cmd_rnfr,  help_rnfr))
-    ,("RNTO", (forceLogin cmd_rnto,  help_rnto))
-    ,("DELE", (forceLogin cmd_dele,  help_dele))
-    ,("RMD",  (forceLogin cmd_rmd,   help_rmd))
-    ,("MKD",  (forceLogin cmd_mkd,   help_mkd))
-    ,("PWD",  (forceLogin cmd_pwd,   help_pwd))
-    ,("MODE", (forceLogin cmd_mode,  help_mode))
-    ,("STRU", (forceLogin cmd_stru,  help_stru))
-    ,("PASV", (forceLogin cmd_pasv,  help_pasv))
-    ,("PORT", (forceLogin cmd_port,  help_port))
-    ,("RETR", (forceLogin cmd_retr,  help_retr))
-    ,("STOR", (forceLogin cmd_stor,  help_stor))
-    ,("STAT", (forceLogin cmd_stat,  help_stat))
-    ,("SYST", (forceLogin cmd_syst,  help_syst))
-    ,("NLST", (forceLogin cmd_nlst,  help_nlst))
-    ,("LIST", (forceLogin cmd_list,  help_list))
+    [(Command "HELP" (cmd_help,             help_help))
+    ,(Command "QUIT" (cmd_quit,             help_quit))
+    ,(Command "USER" (cmd_user,             help_user))
+    ,(Command "PASS" (cmd_pass,             help_pass))
+    ,(Command "CWD"  (forceLogin cmd_cwd,   help_cwd))
+    ,(Command "CDUP" (forceLogin cmd_cdup,  help_cdup))
+    ,(Command "TYPE" (forceLogin cmd_type,  help_type))
+    ,(Command "NOOP" (forceLogin cmd_noop,  help_noop))
+    ,(Command "RNFR" (forceLogin cmd_rnfr,  help_rnfr))
+    ,(Command "RNTO" (forceLogin cmd_rnto,  help_rnto))
+    ,(Command "DELE" (forceLogin cmd_dele,  help_dele))
+    ,(Command "RMD"  (forceLogin cmd_rmd,   help_rmd))
+    ,(Command "MKD"  (forceLogin cmd_mkd,   help_mkd))
+    ,(Command "PWD"  (forceLogin cmd_pwd,   help_pwd))
+    ,(Command "MODE" (forceLogin cmd_mode,  help_mode))
+    ,(Command "STRU" (forceLogin cmd_stru,  help_stru))
+    ,(Command "PASV" (forceLogin cmd_pasv,  help_pasv))
+    ,(Command "PORT" (forceLogin cmd_port,  help_port))
+    ,(Command "RETR" (forceLogin cmd_retr,  help_retr))
+    ,(Command "STOR" (forceLogin cmd_stor,  help_stor))
+    ,(Command "STAT" (forceLogin cmd_stat,  help_stat))
+    ,(Command "SYST" (forceLogin cmd_syst,  help_syst))
+    ,(Command "NLST" (forceLogin cmd_nlst,  help_nlst))
+    ,(Command "LIST" (forceLogin cmd_list,  help_list))
     ]
 
 commandLoop :: FTPServer -> IO ()
@@ -221,15 +221,17 @@ commandLoop h@(FTPServer fh _ _) =
                                       " Couldn't parse command: " ++ (show err)
                                     return True
                      Right (cmd, args) -> 
-                         case lookup cmd commands of
+                         case lookupC cmd commands of
                             Nothing -> do sendReply h 502 $
                                            "Unrecognized command " ++ cmd
                                           return True
-                            Just hdlr -> (fst hdlr) h args
+                            Just (Command _ hdlr) -> (fst hdlr) h args
                )
               if continue
                  then commandLoop h
                  else return ()
+
+lookupC cmd cl = find (\(Command x _) -> x == cmd) cl
 
 help_quit =
     ("Terminate the session",
@@ -626,7 +628,7 @@ cmd_help h@(FTPServer _ _ state) args =
           ,""
           ,""
           ,"I know of the following commands:"
-          ,concatMap (\ (name, (_, (summary, _))) -> printf "%-10s %s\n" name summary)
+          ,concatMap (\ (Command name (_, (summary, _))) -> printf "%-10s %s\n" name summary)
               (sort commands)
           ,""
           ,"You may type \"HELP command\" for more help on a specific command."
@@ -637,14 +639,14 @@ cmd_help h@(FTPServer _ _ state) args =
                    sendReply h 214 (genericreply sastr)
                    return True
            else let newargs = map toUpper args
-                    in case lookup newargs commands of
+                    in case lookupC newargs commands of
                          Nothing -> do 
                                     sendReply h 214 $ "No help for \"" ++ newargs
                                       ++ "\" is available.\nPlese send HELP"
                                       ++ " without arguments for a list of\n"
                                       ++ "valid commands."
                                     return True
-                         Just (_, (summary, detail)) ->
+                         Just (Command _ (_, (summary, detail))) ->
                              do sendReply h 214 $ newargs ++ ": " ++ summary ++ 
                                                "\n\n" ++ detail
                                 return True
