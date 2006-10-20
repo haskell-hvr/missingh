@@ -126,18 +126,6 @@ Copyright/License for all Wash modules:
   POSSIBILITY OF SUCH DAMAGE. 
 
 ----------------------------------------------------
-Portions of the MissingH.Printf.* modules come from Ian Lynagh's
-Template Haskell Printf 0.1.0 module at
-http://web.comlab.ox.ac.uk/oucl/work/ian.lynagh/Printf/.  That module
-is Copyright (c) 2003 Ian Lynagh and is licensed under the GNU LGPL 2.1.
-Debian GNU/Linux users may find the GNU LGPL 2.1 at
-/usr/share/common-licenses/LGPL-2.1.  Alternatively, you may find it
-at 3rd-party-licenses/LGPL-2.1 in the source distribution.
-
-Pursuant to the terms of the LGPL, you may consider this code to fall
-under the GPL as part of the whole MissingH work.
-
-----------------------------------------------------
 Portions if MissingH.Path come from Volker Wysk's HsShellScript
 library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
 and is licensed under the GNU LGPL 2.1
