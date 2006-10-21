@@ -27,7 +27,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Tools for tracking the status of a long operation.
 
-Written by John Goerzen, jgoerzen\@complete.org -}
+Written by John Goerzen, jgoerzen\@complete.org 
+
+See also "MissingH.StatusBar" -}
 
 module MissingH.ProgressTracker (
                                  -- * Introduction

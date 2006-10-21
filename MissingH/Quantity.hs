@@ -49,12 +49,14 @@ data SizeOpts = SizeOpts { base :: Int, -- ^ The base from which calculations ar
                            
 {- | Predefined definitions for byte measurement in groups of 1024, from 0 to
 2**80 -}
+binaryOpts :: SizeOpts
 binaryOpts = SizeOpts {base = 2,
                        firstPower = 0,
                        suffixes = " KMGTPEZY",
                        powerIncr = 10}
 
 {- | Predefined definitions for SI measurement, from 10**-24 to 10**24. -}
+siOpts :: SizeOpts
 siOpts = SizeOpts {base = 10,
                    firstPower = -24,
                    suffixes = "yzafpnum kMGTPEZY",
