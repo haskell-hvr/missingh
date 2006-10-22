@@ -29,8 +29,9 @@ Tools for rendering sizes
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.Quantity (quantifyNum,
+module MissingH.Quantity (
                           renderNum,
+                          quantifyNum,
                           SizeOpts(..),
                           binaryOpts,
                           siOpts
@@ -88,6 +89,34 @@ quantifyNum opts inpnumber
           retnum = number / ((fromIntegral (base opts) ** (fromIntegral usedexp)))
           (posres, possuf) = quantifyNum opts (inpnumber * (-1))
 
+{- | Render a number into a string, based on the given quantities.  This is
+useful for displaying quantities in terms of bytes or in SI units.  Give this
+function the 'SizeOpts' for the desired output, and a precision (number of
+digits to the right of the decimal point), and you get a string output.
+
+Here are some examples:
+
+> MissingH.Quantity> renderNum binaryOpts 0 1048576
+> "1M"
+> MissingH.Quantity> renderNum binaryOpts 2 10485760
+> "10.00M"
+> MissingH.Quantity> renderNum binaryOpts 3 1048576
+> "1.000M"
+> MissingH.Quantity> renderNum binaryOpts 3 1500000
+> "1.431M"
+> MissingH.Quantity> renderNum binaryOpts 2 (1500 ** 3)
+> "3.14G"
+
+> MissingH.Quantity> renderNum siOpts 2 1024
+> "1.02k"
+> MissingH.Quantity> renderNum siOpts 2 1048576
+> "1.05M"
+> MissingH.Quantity> renderNum siOpts 2 0.001
+> "1.00m"
+> MissingH.Quantity> renderNum siOpts 2 0.0001
+> "100.00u"
+
+If you want more control over the output, see 'quantifyNum'. -}
 renderNum :: (Ord a, Real a) => 
              SizeOpts
           -> Int                -- ^ Precision of the result
