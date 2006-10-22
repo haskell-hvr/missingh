@@ -1,3 +1,10 @@
+missingh (0.16.1) unstable; urgency=low
+
+  * Documented Quantity.hs
+  * Fixed missing libghc6-*-dev deps from GHC 6.6.  Closes: #394580.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sat, 21 Oct 2006 19:51:08 -0500
+
 missingh (0.16.0) unstable; urgency=low
 
   * NEW: MissingH.Quantity that is used to render numbers as binary
