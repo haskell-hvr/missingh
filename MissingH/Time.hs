@@ -37,7 +37,8 @@ module MissingH.Time(
                      timeDiffToSecs,
                      epoch,
                      epochToClockTime,
-                     clockTimeToEpoch
+                     clockTimeToEpoch,
+                     renderSecs, renderTD
                     )
 where
 import System.Time
@@ -116,3 +117,27 @@ System.Posix.Types.  The inverse of 'epochToClockTime'.
 Fractions of a second are not preserved by this function. -}
 clockTimeToEpoch :: Num a => ClockTime -> a
 clockTimeToEpoch (TOD sec _) = fromInteger sec
+
+{- | Render a number of seconds as a human-readable amount.  Shows the two
+most significant places.  For instance:
+
+>renderSecs 121 = "2m1s"
+
+See also 'renderTD' for a function that works on a TimeDiff.
+-}
+renderSecs :: Integer -> String
+renderSecs i = renderTD $ diffClockTimes (TOD i 0) (TOD 0 0)
+
+{- | Like 'renderSecs', but takes a TimeDiff instead of an integer second
+count. -}
+renderTD :: TimeDiff -> String
+renderTD itd =
+    case workinglist of
+      [] -> "0s"
+      _ -> concat . map (\(q, s) -> show q ++ [s]) $ workinglist
+    where td = normalizeTimeDiff itd
+          suffixlist = "yMdhms"
+          quantlist = (\(TimeDiff y mo d h m s _) -> [y, mo, d, h, m, s]) td
+          zippedlist = zip quantlist suffixlist
+          -- Drop all leading elements that are 0, then take at most 2
+          workinglist = take 2 . dropWhile (\(q, _) -> q == 0) $ zippedlist
