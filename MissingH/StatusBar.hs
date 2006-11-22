@@ -36,6 +36,7 @@ module MissingH.StatusBar (
 where
 import MissingH.ProgressTracker
 import Control.Concurrent.MVar
+import MissingH.Str
 
 data StatusBar = 
     StatusBar {masterP :: ProgressTracker,
@@ -43,5 +44,36 @@ data StatusBar =
                width :: Int,
                renderer :: Integer -> String}
 
-newStatus :: ProgressTracker -> Int -> (Integer -> String) -> IO StatusBar
-newStatus = 
+type Status = MVar StatusBar
+
+{- | Set up a new status bar. -}
+newStatus :: ProgressTracker    -- ^ The top-level 'ProgressTracker'
+          -> Int                -- ^ Width of the terminal -- usually 80
+          -> (Integer -> String)-- ^ A function to render sizes
+          -> IO Status
+newStatus tracker w rfunc = 
+    newMVar $ StatusBar {masterP = tracker, components = [],
+                         width = w, renderer = rfunc}
+
+{- | Render the current status. -}
+renderStatus :: Status -> IO String
+renderStatus r = withMVar r $ \status ->
+    do overallpct <- renderpct (masterP status)
+       components <- mapM rendercomponent (renderer status) (components status)
+       overall <- renderoverall (renderer status) (masterP status)
+    where renderpct pt = 
+              withStatus pt renderpctpts
+          renderpctpts pts = 
+                  if (totalUnits pts == 0)
+                     then return "0%"
+                     else return $ show (((completedUnits pts) * 100) `div` (totalUnits pts)) ++ "%"
+          rendercomponent rfunc pt = withStatus pt $ \pts ->
+              return $ "[" ++ trackerName pt ++ " " ++
+                     rfunc (completedUnits pts) ++ "/" ++
+                     rfunc (totalUnits pts) ++ " " ++
+                     renderpctpts pts ++ "]"
+          renderoverall rfunc pt = withStatus pt $ \pts ->
+              return $ " " ++ (renderer . getSpeed) pts ++ "/s " ++
+                     
+
+-- need to figure a way to render the timediff
