@@ -41,6 +41,8 @@ import Control.Monad(when)
 import MissingH.Str
 import MissingH.Time
 import MissingH.Quantity
+import System.IO
+import Control.Monad(filterM)
 
 data ProgressMeterR = 
     ProgressMeterR {masterP :: Progress,
@@ -76,6 +78,18 @@ newMeter tracker w rfunc =
 setComponents :: ProgressMeter -> [Progress] -> IO ()
 setComponents meter componentlist = modifyMVar_ meter (\m -> return $ m {components = componentlist})
 
+{- | Add a new component to the list of components. -}
+addComponent :: ProgressMeter -> Progress -> IO ()
+addComponent meter component = 
+    modifyMVar_ meter (\m -> return $ m {components = component : components m})
+
+{- | Remove a component by name. -}
+removeComponent :: ProgressMeter -> String -> IO ()
+removeComponent meter componentname = modifyMVar_ meter $ \m ->
+   do newc <- filterM (\x -> withStatus x (\y -> return $ trackerName y /= componentname))
+              (components m)
+      return $ m {components = newc}
+
 {- | Adjusts the width of this 'ProgressMeter'. -}
 setWidth :: ProgressMeter -> Int -> IO ()
 setWidth meter w = modifyMVar_ meter (\m -> return $ m {width = w})
@@ -87,22 +101,26 @@ displayMeter :: ProgressMeter -> IO ()
 displayMeter r = withMVar r $ \meter ->
     do s <- renderMeterR meter
        putStr ("\r" ++ s)
+       hFlush stdout
        -- By placing this whole thing under withMVar, we can effectively
        -- lock the IO and prevent IO from stomping on each other.
 
 {- | Clears the meter -- outputs CR, spaces equal to the width - 1,
 then another CR. -}
 clearMeter :: ProgressMeter -> IO ()
-clearMeter pm = withMVar pm $ \m -> putStr (clearmeterstr m)
+clearMeter pm = withMVar pm $ \m -> 
+                   do putStr (clearmeterstr m)
+                      hFlush stdout
 
 {- | Clears the meter, writes the given string, then restores the meter. 
 The string is assumed to contain a trailing newline. -}
 writeMeterString :: ProgressMeter -> String -> IO ()
 writeMeterString pm msg = withMVar pm $ \meter ->
-                          do putStr (clearmeterstr meter)
+                          do s <- renderMeterR meter
+                             putStr (clearmeterstr meter)
                              putStr msg
-                             s <- renderMeterR meter
-                             putStr ("\r" ++ s)
+                             putStr s
+                             hFlush stdout
 
 clearmeterstr m = "\r" ++ replicate (width m - 1) ' ' ++ "\r"
 
