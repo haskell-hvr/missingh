@@ -84,9 +84,11 @@ setWidth meter w = modifyMVar_ meter (\m -> return $ m {width = w})
 
 This function will output CR, then the meter. -}
 displayMeter :: ProgressMeter -> IO ()
-displayMeter r = 
-    do s <- renderMeter r
+displayMeter r = withMVar r $ \meter ->
+    do s <- renderMeterR meter
        putStr ("\r" ++ s)
+       -- By placing this whole thing under withMVar, we can effectively
+       -- lock the IO and prevent IO from stomping on each other.
 
 {- | Clears the meter -- outputs CR, spaces equal to the width - 1,
 then another CR. -}
@@ -126,7 +128,10 @@ killAutoDisplayMeter pm t =
 
 {- | Render the current status. -}
 renderMeter :: ProgressMeter -> IO String
-renderMeter r = withMVar r $ \meter ->
+renderMeter r = withMVar r $ renderMeterR
+
+renderMeterR :: ProgressMeterR -> IO String
+renerMeterR meter =
     do overallpct <- renderpct (masterP meter)
        components <- mapM (rendercomponent (renderer meter))
                      (components meter)
