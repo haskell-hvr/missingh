@@ -93,8 +93,19 @@ displayMeter r = withMVar r $ \meter ->
 {- | Clears the meter -- outputs CR, spaces equal to the width - 1,
 then another CR. -}
 clearMeter :: ProgressMeter -> IO ()
-clearMeter pm = withMVar pm $ \m ->
-                putStr $ "\r" ++ replicate (width m - 1) ' ' ++ "\r"
+clearMeter pm = withMVar pm $ \m -> putStr (clearmeterstr m)
+
+{- | Clears the meter, writes the given string, then restores the meter. 
+The string is assumed to contain a trailing newline. -}
+writeMeterString :: ProgressMeter -> String -> IO ()
+writeMeterString pm msg = withMVar pm $ \meter ->
+                          do putStr (clearmeterstr meter)
+                             putStr msg
+                             s <- renderMeterR meter
+                             putStr ("\r" ++ s)
+
+clearmeterstr m = "\r" ++ replicate (width m - 1) ' ' ++ "\r"
+
 
 {- | Starts a thread that updates the meter every n seconds by calling
 the specified function.  Note: 'displayMeter' is an ideal function here.
@@ -131,7 +142,7 @@ renderMeter :: ProgressMeter -> IO String
 renderMeter r = withMVar r $ renderMeterR
 
 renderMeterR :: ProgressMeterR -> IO String
-renerMeterR meter =
+renderMeterR meter =
     do overallpct <- renderpct (masterP meter)
        components <- mapM (rendercomponent (renderer meter))
                      (components meter)
