@@ -30,8 +30,8 @@ as a layer atop "MissingH.ProgressTracker".
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.ProgressMeter (
-                          )
+module MissingH.ProgressMeter 
+
 
 where
 import MissingH.ProgressTracker
@@ -54,8 +54,11 @@ type ProgressMeter = MVar ProgressMeterR
 {- | Set up a new status bar using defaults:
 
 * The given tracker
+
 * Width 80
+
 * MissingH.Quantity.renderNum binaryOpts 0
+
 -}
 simpleNewMeter :: Progress -> IO ProgressMeter
 simpleNewMeter pt = newMeter pt 80 (renderNum binaryOpts 0)
@@ -72,6 +75,10 @@ newMeter tracker w rfunc =
 {- | Adjust the list of components of this 'ProgressMeter'. -}
 setComponents :: ProgressMeter -> [Progress] -> IO ()
 setComponents meter componentlist = modifyMVar_ meter (\m -> return $ m {components = componentlist})
+
+{- | Adjusts the width of this 'ProgressMeter'. -}
+setWidth :: ProgressMeter -> Int -> IO ()
+setWidth meter w = modifyMVar_ meter (\m -> return $ m {width = w})
 
 {- | Like renderMeter, but prints it to the screen instead of returning it. -}
 displayMeter :: ProgressMeter -> IO ()
