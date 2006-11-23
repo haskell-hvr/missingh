@@ -413,7 +413,7 @@ to do so will lead to resource leakage (zombie processes).
 This function does nothing with signals.  That too is up to you.
 
 Logs as MissingH.Cmd.forkRawSystem -}
-forkRawSystem :: FilePath -> [String] -> IO ProcessStatus
+forkRawSystem :: FilePath -> [String] -> IO ProcessID
 forkRawSystem program args =
     do debugM (logbase ++ ".forkRawSystem")
                ("Running: " ++ program ++ " " ++ (show args))
