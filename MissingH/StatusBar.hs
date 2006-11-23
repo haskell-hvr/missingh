@@ -66,7 +66,10 @@ renderStatus r = withMVar r $ \status ->
                             x -> x ++ " "
        rightpart <- renderoverall (renderer status) (masterP status)
        let leftpart = overallpct ++ componentstr
-       let padwith = (width status) - 1 - (length leftpart) - (length rightpart)
+       let padwidth = (width status) - 1 - (length leftpart) - (length rightpart)
+       if padwidth < 1
+          then return $ leftpart ++ rightpart
+          else return $ leftpart ++ replicate padwidth ' ' ++ rightpart
        
     where renderpct pt = 
               withStatus pt renderpctpts
