@@ -37,6 +37,7 @@ where
 import MissingH.ProgressTracker
 import Control.Concurrent.MVar
 import MissingH.Str
+import MissingH.Time
 
 data StatusBar = 
     StatusBar {masterP :: ProgressTracker,
@@ -60,20 +61,25 @@ renderStatus :: Status -> IO String
 renderStatus r = withMVar r $ \status ->
     do overallpct <- renderpct (masterP status)
        components <- mapM rendercomponent (renderer status) (components status)
-       overall <- renderoverall (renderer status) (masterP status)
+       let componentstr = case join " " components of
+                            [] -> ''
+                            x -> x ++ " "
+       rightpart <- renderoverall (renderer status) (masterP status)
+       let leftpart = overallpct ++ componentstr
+       let padwith = (width status) - 1 - (length leftpart) - (length rightpart)
+       
     where renderpct pt = 
               withStatus pt renderpctpts
           renderpctpts pts = 
                   if (totalUnits pts == 0)
-                     then return "0%"
-                     else return $ show (((completedUnits pts) * 100) `div` (totalUnits pts)) ++ "%"
+                     then return "0% "
+                     else return $ sehow (((completedUnits pts) * 100) `div` (totalUnits pts)) ++ "% "
           rendercomponent rfunc pt = withStatus pt $ \pts ->
               return $ "[" ++ trackerName pt ++ " " ++
                      rfunc (completedUnits pts) ++ "/" ++
                      rfunc (totalUnits pts) ++ " " ++
                      renderpctpts pts ++ "]"
           renderoverall rfunc pt = withStatus pt $ \pts ->
-              return $ " " ++ (renderer . getSpeed) pts ++ "/s " ++
-                     
+              return $ (renderer . getSpeed) pts ++ "/s " ++
+                     (renderSecs . getETR $ pts)
 
--- need to figure a way to render the timediff
