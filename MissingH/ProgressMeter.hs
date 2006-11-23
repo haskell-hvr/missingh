@@ -92,7 +92,7 @@ displayMeter r =
 then another CR. -}
 clearMeter :: ProgressMeter -> IO ()
 clearMeter pm = withMVar pm $ \m ->
-                putStr $ "\r" ++ replicate (width m - 1) " " ++ "\r"
+                putStr $ "\r" ++ replicate (width m - 1) ' ' ++ "\r"
 
 {- | Starts a thread that updates the meter every n seconds by calling
 the specified function.  Note: 'displayMeter' is an ideal function here.
