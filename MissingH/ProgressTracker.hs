@@ -29,7 +29,7 @@ Tools for tracking the status of a long operation.
 
 Written by John Goerzen, jgoerzen\@complete.org 
 
-See also "MissingH.StatusBar" -}
+See also "MissingH.ProgressMeter" -}
 
 module MissingH.ProgressTracker (
                                  -- * Introduction

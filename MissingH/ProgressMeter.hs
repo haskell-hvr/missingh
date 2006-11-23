@@ -30,7 +30,7 @@ as a layer atop "MissingH.ProgressTracker".
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.StatusBar (
+module MissingH.ProgressMeter (
                           )
 
 where
@@ -39,13 +39,13 @@ import Control.Concurrent.MVar
 import MissingH.Str
 import MissingH.Time
 
-data StatusBar = 
-    StatusBar {masterP :: ProgressTracker,
+data ProgressMeterR = 
+    ProgressMeterR {masterP :: ProgressTracker,
                components :: [ProgressTracker],
                width :: Int,
                renderer :: Integer -> String}
 
-type Status = MVar StatusBar
+type ProgressMeter = MVar ProgressMeterR
 
 {- | Set up a new status bar. -}
 newStatus :: ProgressTracker    -- ^ The top-level 'ProgressTracker'
@@ -53,12 +53,12 @@ newStatus :: ProgressTracker    -- ^ The top-level 'ProgressTracker'
           -> (Integer -> String)-- ^ A function to render sizes
           -> IO Status
 newStatus tracker w rfunc = 
-    newMVar $ StatusBar {masterP = tracker, components = [],
+    newMVar $ ProgressMeterR {masterP = tracker, components = [],
                          width = w, renderer = rfunc}
 
 {- | Render the current status. -}
-renderStatus :: Status -> IO String
-renderStatus r = withMVar r $ \status ->
+renderMeter :: Status -> IO String
+renderMeter r = withMVar r $ \status ->
     do overallpct <- renderpct (masterP status)
        components <- mapM rendercomponent (renderer status) (components status)
        let componentstr = case join " " components of
