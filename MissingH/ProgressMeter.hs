@@ -80,11 +80,19 @@ setComponents meter componentlist = modifyMVar_ meter (\m -> return $ m {compone
 setWidth :: ProgressMeter -> Int -> IO ()
 setWidth meter w = modifyMVar_ meter (\m -> return $ m {width = w})
 
-{- | Like renderMeter, but prints it to the screen instead of returning it. -}
+{- | Like renderMeter, but prints it to the screen instead of returning it. 
+
+This function will output CR, then the meter. -}
 displayMeter :: ProgressMeter -> IO ()
 displayMeter r = 
     do s <- renderMeter r
        putStr ("\r" ++ s)
+
+{- | Clears the meter -- outputs CR, spaces equal to the width - 1,
+then another CR. -}
+clearMeter :: ProgressMeter -> IO ()
+clearMeter pm = withMVar pm $ \m ->
+                putStr $ "\r" ++ replicate (width m - 1) " " ++ "\r"
 
 {- | Starts a thread that updates the meter every n seconds by calling
 the specified function.  Note: 'displayMeter' is an ideal function here.
@@ -109,7 +117,9 @@ autoDisplayMeter pm delay displayfunc =
                                   then return True
                                   else return False
 
-{- | Stops the specified meter from displaying. -}
+{- | Stops the specified meter from displaying.
+
+You should probably call 'clearMeter' after a call to this. -}
 killAutoDisplayMeter :: ProgressMeter -> ThreadId -> IO ()
 killAutoDisplayMeter pm t = 
     modifyMVar_ pm (\p -> return $ p {autoDisplayers = filter (/= t) (autoDisplayers p)})
