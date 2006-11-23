@@ -36,6 +36,8 @@ module MissingH.ProgressMeter (
 where
 import MissingH.ProgressTracker
 import Control.Concurrent.MVar
+import Control.Concurrent
+import Control.Monad(when)
 import MissingH.Str
 import MissingH.Time
 import MissingH.Quantity
@@ -44,7 +46,8 @@ data ProgressMeterR =
     ProgressMeterR {masterP :: Progress,
                     components :: [Progress],
                     width :: Int,
-                    renderer :: Integer -> String}
+                    renderer :: Integer -> String,
+                    autoDisplayers :: [ThreadId]}
 
 type ProgressMeter = MVar ProgressMeterR
 
@@ -64,11 +67,45 @@ newMeter :: Progress           -- ^ The top-level 'Progress'
           -> IO ProgressMeter
 newMeter tracker w rfunc = 
     newMVar $ ProgressMeterR {masterP = tracker, components = [],
-                         width = w, renderer = rfunc}
+                         width = w, renderer = rfunc, autoDisplayers = []}
 
 {- | Adjust the list of components of this 'ProgressMeter'. -}
 setComponents :: ProgressMeter -> [Progress] -> IO ()
 setComponents meter componentlist = modifyMVar_ meter (\m -> return $ m {components = componentlist})
+
+{- | Like renderMeter, but prints it to the screen instead of returning it. -}
+displayMeter :: ProgressMeter -> IO ()
+displayMeter r = 
+    do s <- renderMeter r
+       putStr ("\r" ++ s)
+
+{- | Starts a thread that updates the meter every n seconds by calling
+the specified function.  Note: 'displayMeter' is an ideal function here.
+
+Save this threadID and use it later to call 'stopAutoDisplayMeter'. -}
+autoDisplayMeter :: ProgressMeter -> Int -> (ProgressMeter -> IO ()) -> IO ThreadId
+autoDisplayMeter pm delay displayfunc =
+    do thread <- forkIO workerthread
+       modifyMVar_ pm (\p -> return $ p {autoDisplayers = thread : autoDisplayers p})
+       return thread
+    where workerthread = do tid <- myThreadId
+                            -- Help fix a race condition so that the above
+                            -- modifyMVar can run before a check ever does
+                            yield
+                            loop tid
+          loop tid = do displayMeter pm
+                        threadDelay (delay * 1000000)
+                        c <- doIContinue tid
+                        when c (loop tid)
+          doIContinue tid = withMVar pm $ \p ->
+                               if tid `elem` autoDisplayers p
+                                  then return True
+                                  else return False
+
+{- | Stops the specified meter from displaying. -}
+killAutoDisplayMeter :: ProgressMeter -> ThreadId -> IO ()
+killAutoDisplayMeter pm t = 
+    modifyMVar_ pm (\p -> return $ p {autoDisplayers = filter (/= t) (autoDisplayers p)})
 
 {- | Render the current status. -}
 renderMeter :: ProgressMeter -> IO String
