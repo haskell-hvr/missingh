@@ -80,6 +80,7 @@ module MissingH.Cmd(-- * High-Level Tools
                     forceSuccess,
 #ifndef __HUGS__
                     posixRawSystem,
+                    forkRawSystem,
                     -- ** Piping with lazy strings
                     pipeFrom,
                     pipeLinesFrom,
@@ -398,6 +399,28 @@ posixRawSystem program args =
               do installHandler sigINT oldint Nothing
                  installHandler sigQUIT oldquit Nothing
                  setSignalMask oldset
+
+#endif
+#endif
+
+#ifndef mingw32_HOST_OS
+#ifndef __HUGS__
+{- | Invokes the specified command in a subprocess, without waiting for
+the result.  Returns the PID of the subprocess -- it is YOUR responsibility
+to use getProcessStatus or getAnyProcessStatus on that at some point.  Failure
+to do so will lead to resource leakage (zombie processes).
+
+This function does nothing with signals.  That too is up to you.
+
+Logs as MissingH.Cmd.forkRawSystem -}
+forkRawSystem :: FilePath -> [String] -> IO ProcessStatus
+forkRawSystem program args =
+    do debugM (logbase ++ ".forkRawSystem")
+               ("Running: " ++ program ++ " " ++ (show args))
+       forkProcess childaction
+
+    where childaction =
+                 executeFile program True args Nothing 
 
 #endif
 #endif
