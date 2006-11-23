@@ -140,11 +140,11 @@ renderMeter r = withMVar r $ \meter ->
           rendercomponent rfunc pt = withStatus pt $ \pts ->
               do pct <- renderpctpts pts
                  return $ "[" ++ trackerName pts ++ " " ++
-                     rfunc (completedUnits pts) ++ "/" ++
-                     rfunc (totalUnits pts) ++ " " ++ pct ++ "]"
+                     rfunc (completedUnits pts) ++ "B/" ++
+                     rfunc (totalUnits pts) ++ "B " ++ pct ++ "]"
           renderoverall rfunc pt = withStatus pt $ \pts ->
               do etr <- getETR pts
                  speed <- getSpeed pts
-                 return $ rfunc (floor speed) ++ "/s " ++ renderSecs etr
+                 return $ rfunc (floor speed) ++ "B/s " ++ renderSecs etr
 
 
