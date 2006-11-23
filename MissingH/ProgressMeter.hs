@@ -101,6 +101,6 @@ renderMeter r = withMVar r $ \meter ->
           renderoverall rfunc pt = withStatus pt $ \pts ->
               do etr <- getETR pts
                  speed <- getSpeed pts
-                 return $ rfunc speed ++ "/s " ++ renderSecs etr
+                 return $ rfunc (floor speed) ++ "/s " ++ renderSecs etr
 
 
