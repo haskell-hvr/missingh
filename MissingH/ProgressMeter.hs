@@ -127,7 +127,7 @@ renderMeter r = withMVar r $ \meter ->
        let leftpart = overallpct ++ componentstr
        let padwidth = (width meter) - 1 - (length leftpart) - (length rightpart)
        if padwidth < 1
-          then return $ leftpart ++ rightpart
+          then return $ take (width meter - 1) $ leftpart ++ rightpart
           else return $ leftpart ++ replicate padwidth ' ' ++ rightpart
        
     where renderpct pt = 
