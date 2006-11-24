@@ -188,14 +188,14 @@ renderMeterR meter =
           rendercomponent :: (Integer -> String) -> Progress -> IO String
           rendercomponent rfunc pt = withStatus pt $ \pts ->
               do pct <- renderpctpts pts
-                 let u = unit pts
+                 let u = unit meter
                  return $ "[" ++ trackerName pts ++ " " ++
                      rfunc (completedUnits pts) ++ u ++ "/" ++
                      rfunc (totalUnits pts) ++ u ++ " " ++ pct ++ "]"
           renderoverall rfunc pt = withStatus pt $ \pts ->
               do etr <- getETR pts
                  speed <- getSpeed pts
-                 return $ rfunc (floor speed) ++ (unit pts) ++ 
+                 return $ rfunc (floor speed) ++ (unit meter) ++ 
                             "/s " ++ renderSecs etr
 
 
