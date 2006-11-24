@@ -500,6 +500,31 @@ pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
        -> IO ()                         -- ^ Action to run in child before execing (if you don't need something, set this to @return ()@) -- IGNORED IN HUGS
        -> IO a
 pOpen3 pin pout perr fp args func childfunc = 
+    do pid <- pOpen3Raw pin pout perr fp args childfunc
+       retval <- func $! pid
+       let rv = seq retval retval
+       forceSuccess (PipeHandle (seq retval pid) fp args "pOpen3")
+       return rv
+#endif
+#endif
+
+#ifndef mingw32_HOST_OS
+#ifndef __HUGS__
+{- | Runs a command, redirecting things to pipes. 
+
+Not available on Windows.
+
+Returns immediately with the PID of the child.  Using 'waitProcess' on it
+is YOUR responsibility!
+-}
+pOpen3Raw :: Maybe Fd                      -- ^ Send stdin to this fd
+       -> Maybe Fd                      -- ^ Get stdout from this fd
+       -> Maybe Fd                      -- ^ Get stderr from this fd
+       -> FilePath                      -- ^ Command to run
+       -> [String]                      -- ^ Command args
+       -> IO ()                         -- ^ Action to run in child before execing (if you don't need something, set this to @return ()@) -- IGNORED IN HUGS
+       -> IO ProcessID
+pOpen3Raw pin pout perr fp args childfunc =
     let mayberedir Nothing _ = return ()
         mayberedir (Just fromfd) tofd = do
                                         dupTo fromfd tofd
@@ -527,12 +552,11 @@ pOpen3 pin pout perr fp args func childfunc =
         pid <- case p of
                 Right x -> return x
                 Left e -> fail ("Error in fork: " ++ (show e))
-        retval <- func $! pid
-        let rv = seq retval retval
-        forceSuccess (PipeHandle (seq retval pid) fp args "pOpen3")
-        return rv
+        return pid
+
 #endif
 #endif
+
 
 showCmd :: FilePath -> [String] -> String
 showCmd fp args =
