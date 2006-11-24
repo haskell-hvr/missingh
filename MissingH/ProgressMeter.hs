@@ -173,7 +173,7 @@ renderMeterR meter =
                             [] -> ""
                             x -> x ++ " "
        rightpart <- renderoverall (renderer meter) (masterP meter)
-       let leftpart = overallpct ++ componentstr
+       let leftpart = overallpct ++ " " ++ componentstr
        let padwidth = (width meter) - 1 - (length leftpart) - (length rightpart)
        if padwidth < 1
           then return $ take (width meter - 1) $ leftpart ++ rightpart
@@ -183,8 +183,8 @@ renderMeterR meter =
               withStatus pt renderpctpts
           renderpctpts pts = 
                   if (totalUnits pts == 0)
-                     then return "0% "
-                     else return $ show (((completedUnits pts) * 100) `div` (totalUnits pts)) ++ "% "
+                     then return "0%"
+                     else return $ show (((completedUnits pts) * 100) `div` (totalUnits pts)) ++ "%"
           rendercomponent :: (Integer -> String) -> Progress -> IO String
           rendercomponent rfunc pt = withStatus pt $ \pts ->
               do pct <- renderpctpts pts
