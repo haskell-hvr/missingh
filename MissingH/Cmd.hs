@@ -490,7 +490,11 @@ pOpen pm fp args func =
 #ifndef __HUGS__
 {- | Runs a command, redirecting things to pipes. 
 
-Not available on Windows.-}
+Not available on Windows.
+
+Note that you may not use the same fd on more than one item.  If you
+want to redirect stdout and stderr, dup it first.
+-}
 pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
        -> Maybe Fd                      -- ^ Get stdout from this fd
        -> Maybe Fd                      -- ^ Get stderr from this fd
@@ -516,6 +520,9 @@ Not available on Windows.
 
 Returns immediately with the PID of the child.  Using 'waitProcess' on it
 is YOUR responsibility!
+
+Note that you may not use the same fd on more than one item.  If you
+want to redirect stdout and stderr, dup it first.
 -}
 pOpen3Raw :: Maybe Fd                      -- ^ Send stdin to this fd
        -> Maybe Fd                      -- ^ Get stdout from this fd
