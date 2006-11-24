@@ -48,6 +48,7 @@ data ProgressMeterR =
     ProgressMeterR {masterP :: Progress,
                     components :: [Progress],
                     width :: Int,
+                    unit :: String,
                     renderer :: Integer -> String,
                     autoDisplayers :: [ThreadId]}
 
@@ -61,18 +62,22 @@ type ProgressMeter = MVar ProgressMeterR
 
 * MissingH.Quantity.renderNum binaryOpts 1
 
+* Unit inticator @"B"@
+
 -}
 simpleNewMeter :: Progress -> IO ProgressMeter
-simpleNewMeter pt = newMeter pt 80 (renderNum binaryOpts 1)
+simpleNewMeter pt = newMeter pt "B" 80 (renderNum binaryOpts 1)
 
 {- | Set up a new status bar. -}
 newMeter :: Progress           -- ^ The top-level 'Progress'
+         -> String              -- ^ Unit indicator string
           -> Int                -- ^ Width of the terminal -- usually 80
           -> (Integer -> String)-- ^ A function to render sizes
           -> IO ProgressMeter
-newMeter tracker w rfunc = 
+newMeter tracker u w rfunc = 
     newMVar $ ProgressMeterR {masterP = tracker, components = [],
-                         width = w, renderer = rfunc, autoDisplayers = []}
+                         width = w, renderer = rfunc, autoDisplayers = [],
+                         unit = u}
 
 {- | Adjust the list of components of this 'ProgressMeter'. -}
 setComponents :: ProgressMeter -> [Progress] -> IO ()
@@ -183,12 +188,14 @@ renderMeterR meter =
           rendercomponent :: (Integer -> String) -> Progress -> IO String
           rendercomponent rfunc pt = withStatus pt $ \pts ->
               do pct <- renderpctpts pts
+                 let u = unit pts
                  return $ "[" ++ trackerName pts ++ " " ++
-                     rfunc (completedUnits pts) ++ "B/" ++
-                     rfunc (totalUnits pts) ++ "B " ++ pct ++ "]"
+                     rfunc (completedUnits pts) ++ u ++ "/" ++
+                     rfunc (totalUnits pts) ++ u ++ " " ++ pct ++ "]"
           renderoverall rfunc pt = withStatus pt $ \pts ->
               do etr <- getETR pts
                  speed <- getSpeed pts
-                 return $ rfunc (floor speed) ++ "B/s " ++ renderSecs etr
+                 return $ rfunc (floor speed) ++ (unit pts) ++ 
+                            "/s " ++ renderSecs etr
 
 
