@@ -59,11 +59,11 @@ type ProgressMeter = MVar ProgressMeterR
 
 * Width 80
 
-* MissingH.Quantity.renderNum binaryOpts 0
+* MissingH.Quantity.renderNum binaryOpts 1
 
 -}
 simpleNewMeter :: Progress -> IO ProgressMeter
-simpleNewMeter pt = newMeter pt 80 (renderNum binaryOpts 0)
+simpleNewMeter pt = newMeter pt 80 (renderNum binaryOpts 1)
 
 {- | Set up a new status bar. -}
 newMeter :: Progress           -- ^ The top-level 'Progress'
