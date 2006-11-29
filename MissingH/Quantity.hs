@@ -141,6 +141,16 @@ in the list will be evaluated for the suffix.  The same suffix and scale will
 be used for the remaining items in the list.  See 'renderNum' for more
 examples.
 
+Also, unlike 'renderNum', the %f instead of %g printf format is used so that
+\"scientific\" notation is avoided in the output.
+
+Examples:
+
+> *MissingH.Quantity> renderNums binaryOpts 3 [1500000, 10240, 104857600]
+> ["1.431M","0.010M","100.000M"]
+> *MissingH.Quantity> renderNums binaryOpts 3 [1500, 10240, 104857600]
+> ["1.465K","10.000K","102400.000K"]
+
 -}
 renderNums :: (Ord a, Real a) =>
               SizeOpts
@@ -150,6 +160,6 @@ renderNums :: (Ord a, Real a) =>
 renderNums opts prec numbers =
     map printit convnums
     where printit num =
-              (printf ("%." ++ show prec ++ "g") num) ++ [suffix]
+              (printf ("%." ++ show prec ++ "f") num) ++ [suffix]
           (convnums, suffix) = 
               (quantifyNums opts numbers)::([Double], Char)
