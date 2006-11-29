@@ -1,3 +1,21 @@
+missingh (0.16.3) unstable; urgency=low
+
+  * New version
+  * New module MissingH.ProgressTracker which tracks the progress
+    of long-running tasks.  It can also give estimated time to completion
+    and overall speed statistics, as well as support dividing a task
+    into many subtasks.
+  * New module MissingH.ProgressMeter which displays one or more
+    ProgressTrackers as a status bar on a console.
+  * New module MissingH.Quantity which renders numbers according
+    to a quantification system such as SI or binary
+  * New functions forkRawSystem and pOpen3Raw in MissingH.Cmd.  Instead
+    of taking functions to run as actions, instead returns the PID
+    of the child process and leaves it up to the programmer to properly
+    handle the result.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 28 Nov 2006 12:52:08 -0600
+
 missingh (0.16.2) unstable; urgency=low
 
   * Documented Quantity.hs
