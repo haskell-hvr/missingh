@@ -31,7 +31,9 @@ Written by John Goerzen, jgoerzen\@complete.org -}
 
 module MissingH.Quantity (
                           renderNum,
+                          renderNums,
                           quantifyNum,
+                          quantifyNums,
                           SizeOpts(..),
                           binaryOpts,
                           siOpts
