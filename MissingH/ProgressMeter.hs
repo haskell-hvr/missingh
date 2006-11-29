@@ -30,10 +30,25 @@ as a layer atop "MissingH.ProgressTracker".
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.ProgressMeter 
+module MissingH.ProgressMeter (-- * Types
+                               ProgressMeter,
+                               -- * Creation and Configuration
+                               simpleNewMeter,
+                               newMeter,
+                               setComponents,
+                               addComponent,
+                               removeComponent,
+                               setWidth,
+                               
+                               -- * Rendering and Output
+                               renderMeter,
+                               displayMeter,
+                               clearMeter,
+                               writeMeterString,
+                               autoDisplayMeter,
+                               killAutoDisplayMeter
+                               ) where
 
-
-where
 import MissingH.ProgressTracker
 import Control.Concurrent.MVar
 import Control.Concurrent
@@ -44,13 +59,15 @@ import MissingH.Quantity
 import System.IO
 import Control.Monad(filterM)
 
+{- | The main data type for the progress meter. -}
 data ProgressMeterR = 
-    ProgressMeterR {masterP :: Progress,
-                    components :: [Progress],
-                    width :: Int,
-                    unit :: String,
-                    renderer :: Integer -> String,
-                    autoDisplayers :: [ThreadId]}
+    ProgressMeterR {masterP :: Progress, -- ^ The master 'Progress' object for overall status
+                    components :: [Progress], -- ^ Individual component statuses
+                    width :: Int, -- ^ Width of the meter
+                    unit :: String, -- ^ Units of display
+                    renderer :: Integer -> String, -- ^ Function to render
+                    autoDisplayers :: [ThreadId] -- ^ Auto-updating display
+                   }
 
 type ProgressMeter = MVar ProgressMeterR
 
