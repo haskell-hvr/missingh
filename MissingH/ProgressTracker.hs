@@ -85,6 +85,9 @@ automatically.
 Finally, you can register callbacks.  Callbacks are functions that are called
 whenever the status of a tracker changes.  They'll be passed the old and new
 status and are intended to do things like update on-screen status displays.
+
+The cousin module 'MissingH.ProgressMeter' can be used to nicely render
+these trackers on a console.
 -}
 
 {- $examples
