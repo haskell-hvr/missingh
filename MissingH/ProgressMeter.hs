@@ -172,7 +172,7 @@ autoDisplayMeter pm delay displayfunc =
                             -- modifyMVar can run before a check ever does
                             yield
                             loop tid
-          loop tid = do displayMeter pm
+          loop tid = do displayfunc pm
                         threadDelay (delay * 1000000)
                         c <- doIContinue tid
                         when c (loop tid)
