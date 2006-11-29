@@ -14,7 +14,7 @@ missingh (0.16.3) unstable; urgency=low
     of the child process and leaves it up to the programmer to properly
     handle the result.
 
- -- John Goerzen <jgoerzen@complete.org>  Tue, 28 Nov 2006 12:52:08 -0600
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 28 Nov 2006 05:52:08 -0600
 
 missingh (0.16.2) unstable; urgency=low
 
