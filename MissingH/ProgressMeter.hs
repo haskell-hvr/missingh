@@ -118,40 +118,51 @@ setWidth meter w = modifyMVar_ meter (\m -> return $ m {width = w})
 
 {- | Like renderMeter, but prints it to the screen instead of returning it. 
 
-This function will output CR, then the meter. -}
-displayMeter :: ProgressMeter -> IO ()
-displayMeter r = withMVar r $ \meter ->
+This function will output CR, then the meter. 
+
+Pass stdout as the handle for regular display to the screen. -}
+displayMeter :: Handle -> ProgressMeter -> IO ()
+displayMeter h r = withMVar r $ \meter ->
     do s <- renderMeterR meter
-       putStr ("\r" ++ s)
-       hFlush stdout
+       hPutStr h ("\r" ++ s)
+       hFlush h
        -- By placing this whole thing under withMVar, we can effectively
        -- lock the IO and prevent IO from stomping on each other.
 
 {- | Clears the meter -- outputs CR, spaces equal to the width - 1,
-then another CR. -}
-clearMeter :: ProgressMeter -> IO ()
-clearMeter pm = withMVar pm $ \m -> 
-                   do putStr (clearmeterstr m)
-                      hFlush stdout
+then another CR. 
+
+Pass stdout as the handle for regular display to the screen. -}
+clearMeter :: Handle -> ProgressMeter -> IO ()
+clearMeter h pm = withMVar pm $ \m -> 
+                     do hPutStr h (clearmeterstr m)
+                        hFlush h
 
 {- | Clears the meter, writes the given string, then restores the meter. 
-The string is assumed to contain a trailing newline. -}
-writeMeterString :: ProgressMeter -> String -> IO ()
-writeMeterString pm msg = withMVar pm $ \meter ->
-                          do s <- renderMeterR meter
-                             putStr (clearmeterstr meter)
-                             putStr msg
-                             putStr s
-                             hFlush stdout
+The string is assumed to contain a trailing newline.
+
+Pass stdout as the handle for regular display to the screen. -}
+writeMeterString :: Handle -> ProgressMeter -> String -> IO ()
+writeMeterString h pm msg = withMVar pm $ \meter ->
+                            do s <- renderMeterR meter
+                               hPutStr h (clearmeterstr meter)
+                               hPutStr h msg
+                               hPutStr h s
+                               hFlush h
 
 clearmeterstr m = "\r" ++ replicate (width m - 1) ' ' ++ "\r"
 
 
 {- | Starts a thread that updates the meter every n seconds by calling
-the specified function.  Note: 'displayMeter' is an ideal function here.
+the specified function.  Note: @displayMeter stdout@ 
+is an ideal function here.
 
-Save this threadID and use it later to call 'stopAutoDisplayMeter'. -}
-autoDisplayMeter :: ProgressMeter -> Int -> (ProgressMeter -> IO ()) -> IO ThreadId
+Save this threadID and use it later to call 'stopAutoDisplayMeter'.
+-}
+autoDisplayMeter :: ProgressMeter -- ^ The meter to display
+                 -> Int         -- ^ Update interval in seconds
+                 -> (ProgressMeter -> IO ()) -- ^ Function to display it
+                 -> IO ThreadId -- ^ Resulting thread id
 autoDisplayMeter pm delay displayfunc =
     do thread <- forkIO workerthread
        modifyMVar_ pm (\p -> return $ p {autoDisplayers = thread : autoDisplayers p})
