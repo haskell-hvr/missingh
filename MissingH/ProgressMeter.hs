@@ -65,7 +65,7 @@ data ProgressMeterR =
                     components :: [Progress], -- ^ Individual component statuses
                     width :: Int, -- ^ Width of the meter
                     unit :: String, -- ^ Units of display
-                    renderer :: Integer -> String, -- ^ Function to render
+                    renderer :: [Integer] -> [String], -- ^ Function to render numbers
                     autoDisplayers :: [ThreadId] -- ^ Auto-updating display
                    }
 
@@ -77,19 +77,19 @@ type ProgressMeter = MVar ProgressMeterR
 
 * Width 80
 
-* MissingH.Quantity.renderNum binaryOpts 1
+* MissingH.Quantity.renderNums binaryOpts 1
 
 * Unit inticator @"B"@
 
 -}
 simpleNewMeter :: Progress -> IO ProgressMeter
-simpleNewMeter pt = newMeter pt "B" 80 (renderNum binaryOpts 1)
+simpleNewMeter pt = newMeter pt "B" 80 (renderNums binaryOpts 1)
 
 {- | Set up a new status bar. -}
 newMeter :: Progress           -- ^ The top-level 'Progress'
          -> String              -- ^ Unit indicator string
           -> Int                -- ^ Width of the terminal -- usually 80
-          -> (Integer -> String)-- ^ A function to render sizes
+          -> ([Integer] -> [String])-- ^ A function to render sizes
           -> IO ProgressMeter
 newMeter tracker u w rfunc = 
     newMVar $ ProgressMeterR {masterP = tracker, components = [],
@@ -213,17 +213,18 @@ renderMeterR meter =
                   if (totalUnits pts == 0)
                      then return "0%"
                      else return $ show (((completedUnits pts) * 100) `div` (totalUnits pts)) ++ "%"
-          rendercomponent :: (Integer -> String) -> Progress -> IO String
+          rendercomponent :: ([Integer] -> [String]) -> Progress -> IO String
           rendercomponent rfunc pt = withStatus pt $ \pts ->
               do pct <- renderpctpts pts
                  let u = unit meter
+                 let renders = rfunc [totalUnits pts, completedUnits pts]
                  return $ "[" ++ trackerName pts ++ " " ++
-                     rfunc (completedUnits pts) ++ u ++ "/" ++
-                     rfunc (totalUnits pts) ++ u ++ " " ++ pct ++ "]"
+                     (renders !! 1) ++ u ++ "/" ++
+                     head renders ++ u ++ " " ++ pct ++ "]"
           renderoverall rfunc pt = withStatus pt $ \pts ->
               do etr <- getETR pts
                  speed <- getSpeed pts
-                 return $ rfunc (floor speed) ++ (unit meter) ++ 
+                 return $ head (rfunc [floor speed]) ++ (unit meter) ++ 
                             "/s " ++ renderSecs etr
 
 
