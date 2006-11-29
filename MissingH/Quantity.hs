@@ -66,17 +66,26 @@ siOpts = SizeOpts {base = 10,
 {- | Takes a number and returns a new (quantity, suffix) combination.
 The space character is used as the suffix for items around 0. -}
 quantifyNum :: (Ord a, Real a, Floating b, Ord b) => SizeOpts -> a -> (b, Char)
-quantifyNum opts 0 = (0, snd $ quantifyNum opts 1)
-quantifyNum opts inpnumber 
-    | inpnumber < 0 = 
-        (posres * (-1), possuf)
-    | otherwise = (retnum, suffix)
-    where number = fromRational . toRational $ inpnumber
+quantifyNum opts n = (\(x, s) -> (head x, s)) $ quantifyNums opts [n]
+
+{- | Like 'quantifyNum', but takes a list of numbers.  The first number in
+the list will be evaluated for the suffix.  The same suffix and scale will
+be used for the remaining items in the list.  Please see 'renderNums' for
+an example of how this works.
+
+It is invalid to use this function on an empty list. -}
+quantifyNums :: (Ord a, Real a, Floating b, Ord b) => SizeOpts -> [a] -> ([b], Char)
+quantifyNums _ [] = error "Attempt to use quantifyNums on an empty list"
+quantifyNums opts (headnum:xs) =
+    (map (\n -> procnum n) (headnum:xs), suffix)
+    where number = case fromRational . toRational $ headnum of
+                     0 -> 1
+                     x -> x
           incrList = map idx2pwr [0..length (suffixes opts) - 1]
           incrIdxList = zip incrList [0..]
           idx2pwr i = i * powerIncr opts + firstPower opts
           finderfunc (x, _) = (fromIntegral $ base opts) ** (fromIntegral x) 
-                              <= number
+                              <= (abs number)
           -- Find the largest item that does not exceed the number given.
           -- If the number is larger than the larger item in the list,
           -- that's fine; we'll just write it in terms of what we have.
@@ -86,8 +95,9 @@ quantifyNum opts inpnumber
                   Just x -> x
                   Nothing -> head incrIdxList -- If not found, it's smaller than the first
           suffix = (suffixes opts !! (fromIntegral expidx))
-          retnum = number / ((fromIntegral (base opts) ** (fromIntegral usedexp)))
-          (posres, possuf) = quantifyNum opts (inpnumber * (-1))
+          procnum n = (fromRational . toRational $ n) /
+                      ((fromIntegral (base opts) ** (fromIntegral usedexp)))
+          --(posres, possuf) = quantifyNum opts (headnum * (-1))
 
 {- | Render a number into a string, based on the given quantities.  This is
 useful for displaying quantities in terms of bytes or in SI units.  Give this
@@ -125,3 +135,21 @@ renderNum :: (Ord a, Real a) =>
 renderNum opts prec number =
     (printf ("%." ++ show prec ++ "g") num) ++ [suffix]
     where (num, suffix) = (quantifyNum opts number)::(Double, Char)
+
+{- | Like 'renderNum', but operates on a list of numbers.  The first number
+in the list will be evaluated for the suffix.  The same suffix and scale will
+be used for the remaining items in the list.  See 'renderNum' for more
+examples.
+
+-}
+renderNums :: (Ord a, Real a) =>
+              SizeOpts
+           -> Int               -- ^ Prevision of the result
+           -> [a]               -- ^ The numbers to examine
+           -> [String]          -- ^ Result
+renderNums opts prec numbers =
+    map printit convnums
+    where printit num =
+              (printf ("%." ++ show prec ++ "g") num) ++ [suffix]
+          (convnums, suffix) = 
+              (quantifyNums opts numbers)::([Double], Char)
