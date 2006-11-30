@@ -84,8 +84,8 @@ Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
 Extensions: ExistentialQuantification, OverlappingInstances, 
    UndecidableInstances, CPP
 Build-Depends: network, parsec, base,
-               unix,
                haskell98, mtl, HUnit, regex-compat, QuickCheck
+-- Cabal will automatically add unix here on non-Windows platforms
 GHC-Options: -O2
 
 Executable: runtests

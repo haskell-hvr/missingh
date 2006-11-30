@@ -37,8 +37,8 @@ hugsbuild: setup
 	./setup configure --hugs
 	./setup build
 
-setup: Setup.lhs MissingH.cabal
-	ghc -package Cabal Setup.lhs -o setup
+setup: Setup.hs MissingH.cabal
+	ghc -package Cabal Setup.hs -o setup
 
 doctmp/%.hs: %.lhs doctmp
 	mkdir -p `dirname $@`
