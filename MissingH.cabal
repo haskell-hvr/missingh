@@ -89,10 +89,8 @@ Build-Depends: network, parsec, base,
 GHC-Options: -O2
 
 Executable: runtests
-Buildable: True
+Buildable: False
 Main-Is: runtests.hs
 HS-Source-Dirs: testsrc, .
--- The hook will automatically add the Exposed-Modules from above
--- to Other-Modules here.
 Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP
