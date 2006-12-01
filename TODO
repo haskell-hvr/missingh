@@ -4,9 +4,6 @@ Test forceEitherMsg
 
 Cmd: pOpenBoth -- read and write, use forkIO for one of them
 
-Printf:
- make %H work 
-
 tests for new Parsec stuff
 
 HVFStest:
@@ -34,19 +31,3 @@ from Test.QuickCheck. That module has the license:
 If this is problematic, let me know, and I can rewrite it.
 
 j.
-
------------------------------------------------------
-
-Examples for progress tracker:
-
-49% [4 Packages 2113759/4413kB 47%]                                 147kB/s 15s
-50% [4 Packages bzip2 0] [8 Packages 5725/4413kB 0%]                146kB/s 30s
-0% [1 linux-kernel-headers 70626/1829kB 3%] [2 libgpod-common 28654/59.7kB 48%]
-Get:3 http://www.debian-multimedia.org sid/main libgpod0 0.4.0-0.0 [74.9kB]
-Get:4 http://www.debian-multimedia.org sid/main gtkpod-aac 0.99.8-0.0 [541kB]
-0% [1 linux-kernel-headers 1097258/1829kB 59%] [4 gtkpod-aac 272853/541kB 50%]
-0% [6 libc6-dev 1910037/2716kB 70%] [5 mplayer 694862/4709kB 14%]
-1% [8 libc6 128709/4700kB 2%] [5 mplayer 1311710/4709kB 27%]     153kB/s 58m42s
-Get:16 http://http.us.debian.org unstable/main login 1:4.0.18.1-3 [798kB]
-5% [16 login 440/798kB 0%] [13 libmyth-0.20 5053/7682kB 0%] 351kB/s 12m7s
-
