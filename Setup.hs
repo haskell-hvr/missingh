@@ -9,7 +9,6 @@ import Data.Maybe
 import System.Cmd
 
 missingHooks = defaultUserHooks {confHook = customConfHook}
-                                }
 
 customConfHook descrip flags =
     let mydescrip = case System.Info.os of
