@@ -2,9 +2,11 @@
 
 import Distribution.Simple
 import Distribution.PackageDescription
+import Distribution.Simple.LocalBuildInfo
 import Distribution.Version
 import System.Info
 import Data.Maybe
+import System.Cmd
 
 missingHooks = defaultUserHooks {confHook = customConfHook}
                                 }
