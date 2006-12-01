@@ -1,4 +1,4 @@
-ghc -package Cabal Setup.lhs -o setup.exe
+ghc -package Cabal Setup.hs -o setup.exe
 setup configure
 setup build
 
