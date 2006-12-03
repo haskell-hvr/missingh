@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Network.FTP.Parsertest(tests) where
 import Test.HUnit
-import MissingH.Network.FTP.ParserClient
+import Network.FTP.Client.Parser
 import Test.HUnit.Utils
 import Network.Socket
 

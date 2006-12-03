@@ -80,7 +80,7 @@ module MissingH.Network.FTP.Server(
                                   )
 where
 import MissingH.Network.FTP.ParserServer
-import MissingH.Network.FTP.ParserClient
+import Network.FTP.Client.Parser
 import Network.BSD
 import Network.Socket
 import qualified Network

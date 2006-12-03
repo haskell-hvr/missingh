@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Network.FTP.ParserClient
+   Module     : Network.FTP.Client.Parser
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -33,7 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Network.FTP.ParserClient(parseReply, parseGoodReply,
+module Network.FTP.Client.Parser(parseReply, parseGoodReply,
                                          toPortString, fromPortString,
                                          debugParseGoodReply,
                                          respToSockAddr,
@@ -61,7 +61,7 @@ type FTPResult = (Int, [String])
 -- import Control.Exception(Exception(PatternMatchFail), throw)
 
 logit :: String -> IO ()
-logit m = debugM "MissingH.Network.FTP.ParserClient" ("FTP received: " ++ m)
+logit m = debugM "Network.FTP.Client.Parser" ("FTP received: " ++ m)
 
 ----------------------------------------------------------------------
 -- Utilities

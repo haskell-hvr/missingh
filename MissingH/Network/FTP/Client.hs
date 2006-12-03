@@ -168,7 +168,7 @@ commands themselves./
 This will be fairly rare.  Just be aware of this.
 
 This module logs messages under @MissingH.Network.FTP.Client@ for outgoing
-traffic and @MissingH.Network.FTP.ParserClient@ for incoming traffic, all with the
+traffic and @Network.FTP.Client.Parser@ for incoming traffic, all with the
 'System.Log.DEBUG' priority, so by default, no log messages are seen.
 The 'enableFTPDebugging' function will adjust the priorities of these
 two handlers so debug messages are seen.  Only control channel conversations
@@ -221,7 +221,7 @@ module MissingH.Network.FTP.Client(-- * Establishing\/Removing connections
                                    retrlines, storlines
                        )
 where
-import MissingH.Network.FTP.ParserClient
+import Network.FTP.Client.Parser
 import Network.BSD
 import Network.Socket
 import System.IO.Binary
@@ -254,7 +254,7 @@ easyConnectFTP h = do x <- connectFTP h 21
                       return (fst x)
 
 {- | Enable logging of FTP messages through 'System.Log.Logger'.
-This sets the log levels of @MissingH.Network.FTP.ParserClient@ and
+This sets the log levels of @Network.FTP.Client.Parser@ and
 @MissingH.Network.FTP.Client@ to DEBUG.  By default, this means that
 full protocol dumps will be sent to stderr.
 
@@ -263,7 +263,7 @@ The effect is global and persists until changed.
 enableFTPDebugging :: IO ()
 enableFTPDebugging = 
     do
-    updateGlobalLogger "MissingH.Network.FTP.ParserClient" (setLevel DEBUG)
+    updateGlobalLogger "Network.FTP.Client.Parser" (setLevel DEBUG)
     updateGlobalLogger "MissingH.Network.FTP.Client" (setLevel DEBUG)
 
 {- | Connect to remote FTP server and read the welcome. -}
