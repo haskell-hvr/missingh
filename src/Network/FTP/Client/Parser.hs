@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Portability: systems with networking
 
 This module provides a parser that is used internally by
-"MissingH.Network.FTP.Client".  You almost certainly do not want to use
-this module directly.  Use "MissingH.Network.FTP.Client" instead.
+"Network.FTP.Client".  You almost certainly do not want to use
+this module directly.  Use "Network.FTP.Client" instead.
 
 Written by John Goerzen, jgoerzen\@complete.org
 

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Network.FTP.Client
+   Module     : Network.FTP.Client
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -38,7 +38,7 @@ session with ghci:
 (This would be similar in a "do" block.  You could also save it to a file and
 run that with Hugs.)
 
-> Prelude> :l MissingH.Network.FTP.Client
+> Prelude> :l Network.FTP.Client
 > ...
 
 The above loads the module.
@@ -46,16 +46,16 @@ The above loads the module.
 Next, we enable the debugging.  This will turn on all the @FTP sent@ and
 @FTP received@ messages you'll see.
 
-> Prelude MissingH.Network.FTP.Client> enableFTPDebugging
+> Prelude Network.FTP.Client> enableFTPDebugging
 
 Now, connect to the server on @ftp.kernel.org@.
 
-> *MissingH.Network.FTP.Client> h <- easyConnectFTP "ftp.kernel.org"
+> *Network.FTP.Client> h <- easyConnectFTP "ftp.kernel.org"
 > FTP received: 220 Welcome to ftp.kernel.org.
 
 And log in anonymously.
 
-> *MissingH.Network.FTP.Client> loginAnon h
+> *Network.FTP.Client> loginAnon h
 > FTP sent: USER anonymous
 > FTP received: 331 Please specify the password.
 > FTP sent: PASS anonymous@
@@ -64,7 +64,7 @@ And log in anonymously.
 
 Change the directory...
 
-> Prelude MissingH.Network.FTP.Client> cwd h "/pub/linux/kernel/Historic"
+> Prelude Network.FTP.Client> cwd h "/pub/linux/kernel/Historic"
 > FTP sent: CWD /pub/linux/kernel/Historic
 > FTP received: 250 Directory successfully changed.
 
@@ -72,7 +72,7 @@ Let's look at the directory. 'nlst' returns a list of strings, each string
 corresponding to a filename.  Here, @putStrLn . unlines@ will simply
 print them out, one per line.
 
-> Prelude MissingH.Network.FTP.Client> nlst h Nothing >>= putStrLn . unlines
+> Prelude Network.FTP.Client> nlst h Nothing >>= putStrLn . unlines
 > FTP sent: TYPE A
 > FTP received: 200 Switching to ASCII mode.
 > FTP sent: PASV
@@ -92,7 +92,7 @@ Let's try downloading something and print it to the screen.  Again, we use
 @putStrLn@.  We use @fst@ here because 'getbinary' returns a tuple consisting
 of a string representing the data and a 'FTPResult' code.
 
-> Prelude MissingH.Network.FTP.Client> getbinary h "linux-0.01.tar.gz.sign" >>= putStrLn . fst
+> Prelude Network.FTP.Client> getbinary h "linux-0.01.tar.gz.sign" >>= putStrLn . fst
 > FTP sent: TYPE I
 > FTP received: 200 Switching to Binary mode.
 > FTP sent: PASV
@@ -111,7 +111,7 @@ of a string representing the data and a 'FTPResult' code.
 
 Here's an example showing you what the result code looks like.
 
-> Prelude MissingH.Network.FTP.Client> getbinary h "linux-0.01.tar.gz.sign" >>= print . snd
+> Prelude Network.FTP.Client> getbinary h "linux-0.01.tar.gz.sign" >>= print . snd
 > ...
 > (226,["File send OK."])
 
@@ -120,7 +120,7 @@ the server.  The second component is a list of message lines from the server.
 
 Now, let's get a more detailed directory listing:
 
-> Prelude MissingH.Network.FTP.Client> dir h Nothing >>= putStrLn . unlines
+> Prelude Network.FTP.Client> dir h Nothing >>= putStrLn . unlines
 > ...
 > -r--r--r--    1 536      536         63362 Oct 30  1993 linux-0.01.tar.bz2
 > -r--r--r--    1 536      536           248 Oct 30  1993 linux-0.01.tar.bz2.sign
@@ -133,7 +133,7 @@ Now, let's get a more detailed directory listing:
 
 And finally, log out:
 
-> Prelude MissingH.Network.FTP.Client> quit h
+> Prelude Network.FTP.Client> quit h
 > FTP sent: QUIT
 > FTP received: 221 Goodbye.
 
@@ -167,7 +167,7 @@ commands themselves./
 
 This will be fairly rare.  Just be aware of this.
 
-This module logs messages under @MissingH.Network.FTP.Client@ for outgoing
+This module logs messages under @Network.FTP.Client@ for outgoing
 traffic and @Network.FTP.Client.Parser@ for incoming traffic, all with the
 'System.Log.DEBUG' priority, so by default, no log messages are seen.
 The 'enableFTPDebugging' function will adjust the priorities of these
@@ -198,7 +198,7 @@ Useful standards:
 
 -}
 
-module MissingH.Network.FTP.Client(-- * Establishing\/Removing connections
+module Network.FTP.Client(-- * Establishing\/Removing connections
                                    easyConnectFTP, connectFTP,
                                    loginAnon, login, quit, 
                                    -- * Configuration
@@ -241,7 +241,7 @@ getresp h = do
             debugParseGoodReply c
 
 
-logsend m = debugM "MissingH.Network.FTP.Client" ("FTP sent: " ++ m)
+logsend m = debugM "Network.FTP.Client" ("FTP sent: " ++ m)
 sendcmd h c = do logsend c
                  hPutStr (writeh h) (c ++ "\r\n")
                  getresp h
@@ -255,7 +255,7 @@ easyConnectFTP h = do x <- connectFTP h 21
 
 {- | Enable logging of FTP messages through 'System.Log.Logger'.
 This sets the log levels of @Network.FTP.Client.Parser@ and
-@MissingH.Network.FTP.Client@ to DEBUG.  By default, this means that
+@Network.FTP.Client@ to DEBUG.  By default, this means that
 full protocol dumps will be sent to stderr.
 
 The effect is global and persists until changed.
@@ -264,7 +264,7 @@ enableFTPDebugging :: IO ()
 enableFTPDebugging = 
     do
     updateGlobalLogger "Network.FTP.Client.Parser" (setLevel DEBUG)
-    updateGlobalLogger "MissingH.Network.FTP.Client" (setLevel DEBUG)
+    updateGlobalLogger "Network.FTP.Client" (setLevel DEBUG)
 
 {- | Connect to remote FTP server and read the welcome. -}
 connectFTP :: Network.HostName -> PortNumber -> IO (FTPConnection, FTPResult)
