@@ -1,4 +1,4 @@
-module MissingH.Wash.Mail.MailParser where
+module Network.Email.Message.Parser where
 
 -- see RFC 2822
 -- TODO: check against their definition of token
