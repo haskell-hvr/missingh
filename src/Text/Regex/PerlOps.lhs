@@ -41,7 +41,7 @@ escape characters.
 {-# OPTIONS -fglasgow-exts #-}
 {- | Documentation for this module can be found in the doc directory in the MissingH distribution. | -}
 
-module MissingH.Regex.Pesco
+module Text.Regex.PerlOps
     (  Regex (match)       -- type class
     ,  Match (..)          -- data type
     ,  Subst               -- type class

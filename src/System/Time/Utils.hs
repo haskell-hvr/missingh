@@ -141,3 +141,4 @@ renderTD itd =
           zippedlist = zip quantlist suffixlist
           -- Drop all leading elements that are 0, then take at most 2
           workinglist = take 2 . dropWhile (\(q, _) -> q == 0) $ zippedlist
+

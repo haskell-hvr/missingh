@@ -17,8 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : Network.Utils.SocketServer
-   Copyright  : Copyright (C) 2004 John Goerzen
+   Module     : Network.SocketServer
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -36,7 +36,7 @@ This module is presently under-documented.  For an example of usage, please
 see the description of "Network.FTP.Server".
 -}
 
-module Network.Utils.SocketServer(-- * Generic Options and Types
+module Network.SocketServer(-- * Generic Options and Types
                                      InetServerOptions(..),
                                      simpleTCPOptions,
                                      SocketServer(..),

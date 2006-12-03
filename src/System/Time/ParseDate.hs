@@ -1,5 +1,5 @@
 {- |
-   Module      : System.Time.Utils.ParseDate
+   Module      : System.Time.ParseDate
    Copyright   : (c) by Björn Bringert
    License     : GPL2
 
@@ -9,7 +9,7 @@
 
 Utility for parsing dates.
 -}
-module System.Time.Utils.ParseDate (parseCalendarTime) where
+module System.Time.ParseDate (parseCalendarTime) where
 
 import Control.Monad
 import Data.Char (isSpace)
