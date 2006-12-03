@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.ConfigParser.Lexer
+   Module     : Data.ConfigFile.Lexer
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -25,12 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Lexer support for "MissingH.ConfigParser".  This module is not intended to be
+Lexer support for "Data.ConfigFile".  This module is not intended to be
 used directly by your programs.
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
-module MissingH.ConfigParser.Lexer 
+module Data.ConfigFile.Lexer 
 (
        -- -- * Temporary for testing
        --comment_chars, eol, optionsep, whitespace_chars, comment_line,

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.ConfigParser.Types
+   Module     : Data.ConfigFile.Types
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -25,13 +25,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Internal types for "MissingH.ConfigParser".  This module is not intended to be
+Internal types for "Data.ConfigFile".  This module is not intended to be
 used directly by your programs.
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.ConfigParser.Types (
+module Data.ConfigFile.Types (
                                     CPOptions, CPData, 
                                     CPErrorData(..), CPError, {-CPResult,-}
                                     ConfigParser(..),
@@ -58,10 +58,10 @@ type CPOptions = Map.Map OptionSpec String
 {- | The main data storage type (storage of sections).
 
 PLEASE NOTE: This type is exported only for use by other modules under
-MissingH.ConfigParser.  You should NEVER access the FiniteMap in a ConfigParser
+Data.ConfigFile.  You should NEVER access the FiniteMap in a ConfigParser
 directly.  This type may change in future releases of MissingH, which could
 break your programs.  Please retrict yourself to the interface in
-'MissingH.ConfigParser'.
+'Data.ConfigFile'.
  -}
 type CPData = Map.Map SectionSpec CPOptions
 
@@ -71,7 +71,7 @@ data CPErrorData = ParseError String        -- ^ Parse error
                  | NoSection SectionSpec    -- ^ The section does not exist
                  | NoOption OptionSpec      -- ^ The option does not exist
                  | OtherProblem String      -- ^ Miscellaneous error
-                 | InterpolationError String -- ^ Raised by 'MissingH.ConfigParser.interpolatingAccess' if a request was made for a non-existant option
+                 | InterpolationError String -- ^ Raised by 'Data.ConfigFile.interpolatingAccess' if a request was made for a non-existant option
                    deriving (Eq, Ord, Show)
 
 {- | Indicates an error occurred.  The String is an explanation of the location
@@ -89,7 +89,7 @@ an error, while a Right value indicates success.
 type CPResult a = MonadError CPError m => m a
 -}
 
-{- | This is the main record that is used by 'MissingH.ConfigParser'.
+{- | This is the main record that is used by 'Data.ConfigFile'.
 -}
 data ConfigParser = ConfigParser 
     { -- | The data itself

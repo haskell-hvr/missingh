@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.ConfigParser
+   Module     : Data.ConfigFile
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -31,7 +31,7 @@ Copyright (c) 2004-2006 John Goerzen, jgoerzen\@complete.org
 
 This module contains extensive documentation.  Please scroll down to the Introduction section to continue reading.
 -}
-module MissingH.ConfigParser
+module Data.ConfigFile
     (
      -- * Introduction
      -- $introduction
@@ -103,8 +103,8 @@ module MissingH.ConfigParser
 
 
 ) where
-import MissingH.ConfigParser.Types
-import MissingH.ConfigParser.Parser
+import Data.ConfigFile.Types
+import Data.ConfigFile.Parser
 import MissingH.Map
 import MissingH.Either
 import MissingH.Str
@@ -123,7 +123,7 @@ import Text.ParserCombinators.Parsec(parse)
 -- Basic types / default values
 ----------------------------------------------------------------------
 
-{- | The default empty 'MissingH.ConfigParser' object.
+{- | The default empty 'Data.ConfigFile' object.
 
 The content contains only an empty mandatory @DEFAULT@ section.
 
@@ -790,7 +790,7 @@ Using Haskell's monad transformers, you can run it in the combined
 Error\/IO monad.  That is, you will get an IO result back.  Here is a full
 standalone example of doing that:
 
->import MissingH.ConfigParser
+>import Data.ConfigFile
 >import Control.Monad.Error
 >
 >main = do

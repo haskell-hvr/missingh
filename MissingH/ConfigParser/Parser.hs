@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.ConfigParser.Parser
+   Module     : Data.ConfigFile.Parser
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -25,12 +25,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Parser support for "MissingH.ConfigParser".  This module is not intended to be
+Parser support for "Data.ConfigFile".  This module is not intended to be
 used directly by your programs.
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
-module MissingH.ConfigParser.Parser
+module Data.ConfigFile.Parser
 (
  parse_string, parse_file, parse_handle, interpmain, ParseOutput
        --satisfyG,
@@ -39,10 +39,10 @@ module MissingH.ConfigParser.Parser
 import Text.ParserCombinators.Parsec
 import Control.Monad.Error(throwError, MonadError)
 import MissingH.Str
-import MissingH.ConfigParser.Lexer
+import Data.ConfigFile.Lexer
 import System.IO(Handle, hGetContents)
 import MissingH.Parsec
-import MissingH.ConfigParser.Types
+import Data.ConfigFile.Types
 
 ----------------------------------------------------------------------
 -- Exported funcs
