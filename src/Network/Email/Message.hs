@@ -1,4 +1,4 @@
-module MissingH.Wash.Mail.Message where
+module Network.Email.Message where
 
 import Network.Email.Message.HeaderField
 

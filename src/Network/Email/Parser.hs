@@ -37,23 +37,23 @@ import Language.RFC2234.Parse(crlf)
 import Language.RFC2822.Parse hiding (Message)
 import Network.Email.Message.Parser(RawMessage(..), digestMessage)
 import Network.Email.Message.HeaderField(Header(..))
-import qualified MissingH.Wash.Mail.Message
+import qualified Network.Email.Message
 import Text.ParserCombinators.Parsec
 import Control.Monad.Error
 import Text.ParserCombinators.Parsec.Error
 import Text.ParserCombinators.Parsec.Pos(newPos)
 import Data.String
 
-{- | Given a 'MissingH.Wash.Mail.Message.Message' object, \"flatten\"
+{- | Given a 'Network.Email.Message.Message' object, \"flatten\"
 it into a simple, non-hierarchical list of its component single parts.
 
 Data associated with a multipart will be lost, but each single child component
 of the multipart will be preserved.
 -}
-flattenMessage :: MissingH.Wash.Mail.Message.Message -> 
-                  [MissingH.Wash.Mail.Message.Message]
+flattenMessage :: Network.Email.Message.Message -> 
+                  [Network.Email.Message.Message]
 flattenMessage x =
     case x of
-       y@(MissingH.Wash.Mail.Message.Singlepart {}) -> [y]
-       y@(MissingH.Wash.Mail.Message.Multipart {}) ->
-           concatMap flattenMessage (MissingH.Wash.Mail.Message.getParts y)
+       y@(Network.Email.Message.Singlepart {}) -> [y]
+       y@(Network.Email.Message.Multipart {}) ->
+           concatMap flattenMessage (Network.Email.Message.getParts y)

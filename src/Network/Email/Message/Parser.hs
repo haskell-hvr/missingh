@@ -12,7 +12,7 @@ import qualified MissingH.Wash.Utility.Base64 as Base64
 import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
 import qualified MissingH.Wash.Utility.RFC2047 as RFC2047
 import MissingH.Wash.Utility.RFC2047 (p_token)
-import MissingH.Wash.Mail.Message
+import Network.Email.Message
 import Network.Email.Message.HeaderField
 
 parseMessageFromFile :: FilePath -> IO (Either ParseError RawMessage)
