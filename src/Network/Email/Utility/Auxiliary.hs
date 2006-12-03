@@ -4,7 +4,7 @@ import IO
 import System
 import Directory
 import Network.Email.Utility.FileNames
-import qualified MissingH.Wash.Utility.Shell as Shell
+import qualified Network.Email.Utility.Shell as Shell
 
 protectedGetEnv :: String -> String -> IO String
 protectedGetEnv var deflt =
