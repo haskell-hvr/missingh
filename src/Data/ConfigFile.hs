@@ -106,7 +106,7 @@ module Data.ConfigFile
 import Data.ConfigFile.Types
 import Data.ConfigFile.Parser
 import MissingH.Map
-import MissingH.Either
+import Data.Either.Utils
 import MissingH.Str
 import qualified Data.Map as Map
 import Data.List
@@ -718,9 +718,9 @@ more detail.
 
 Some people find it annoying to have to deal with errors manually.
 You can transform errors into exceptions in your code by using 
-'MissingH.Either.forceEither'.  Here's an example of this style of programming:
+'Data.Either.Utils.forceEither'.  Here's an example of this style of programming:
 
-> import MissingH.Either
+> import Data.Either.Utils
 > do
 >    val <- readfile emptyCP "/etc/foo.cfg"
 >    let cp = forceEither val

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module ConfigParser.Maintest(tests) where
 import Test.HUnit
 import Data.ConfigFile
-import MissingH.Either
+import Data.Either.Utils
 import MissingH.IO.PlafCompat(nullFileName)
 import MissingH.HUnit
 import Control.Exception

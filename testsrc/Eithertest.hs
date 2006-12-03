@@ -1,4 +1,4 @@
-{- arch-tag: MissingH.Either tests
+{- arch-tag: Data.Either.Utils tests
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Eithertest(tests) where
 import Test.HUnit
-import MissingH.Either
+import Data.Either.Utils
 import MissingH.HUnit
 import Control.Exception
 

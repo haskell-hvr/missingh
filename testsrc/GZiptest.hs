@@ -23,7 +23,7 @@ import MissingH.Path.FilePath
 import Data.Compression.Inflate
 import MissingH.IO.Binary
 import System.IO
-import MissingH.Either
+import Data.Either.Utils
 import Data.List
 
 mf fn exp conf = TestLabel fn $ TestCase $
@@ -34,7 +34,7 @@ mf fn exp conf = TestLabel fn $ TestCase $
 {-
 import MissingH.FileArchive.GZip
 import System.IO
-import MissingH.Either
+import Data.Either.Utils
 
 main = do
        c <- hGetContents stdin

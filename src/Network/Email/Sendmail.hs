@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Email.Sendmail
+   Module     : Network.Email.Sendmail
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -34,10 +34,10 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 #ifdef mingw32_HOST_OS
-module MissingH.Email.Sendmail
+module Network.Email.Sendmail
 where
 #else
-module MissingH.Email.Sendmail(sendmail)
+module Network.Email.Sendmail(sendmail)
 where
 
 import System.Cmd.Utils

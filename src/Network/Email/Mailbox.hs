@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Email.Mailbox
+   Module     : Network.Email.Mailbox
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,7 +30,7 @@ General support for e-mail mailboxes
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Email.Mailbox(Flag(..), Flags, Message,
+module Network.Email.Mailbox(Flag(..), Flags, Message,
                               MailboxReader(..),
                               MailboxWriter(..))
 where

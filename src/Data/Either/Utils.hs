@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Either
+   Module     : Data.Either.Utils
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -29,7 +29,7 @@ Utilities for working with the Either data type
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
-module MissingH.Either
+module Data.Either.Utils
     (
      maybeToEither,
      forceEither,

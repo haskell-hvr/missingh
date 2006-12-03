@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Email.Parser
+   Module     : Network.Email.Parser
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,7 +30,7 @@ Parses an e-mail message
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Email.Parser(flattenMessage)
+module Network.Email.Parser(flattenMessage)
 where
 
 import MissingH.Hsemail.Rfc2234(crlf)
