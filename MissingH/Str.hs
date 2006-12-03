@@ -35,14 +35,14 @@ module MissingH.Str
                         strip, lstrip, rstrip,
                         -- * Tests
                         -- | Note: These functions are aliases for functions
-                        -- in "MissingH.List".
+                        -- in "Data.List.Utils".
                         startswith, endswith,
                         -- * Conversions
                         -- | Note: Some of these functions are aliases for functions
-                        -- in "MissingH.List".
+                        -- in "Data.List.Utils".
                         join, split, splitWs, splitRe, replace, subRe, escapeRe
                        ) where
-import MissingH.List(startswith, endswith, join, split, replace)
+import Data.List.Utils(startswith, endswith, join, split, replace)
 import Data.Char
 import Text.Regex
 

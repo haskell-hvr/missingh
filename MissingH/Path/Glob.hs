@@ -32,7 +32,7 @@ in "MissingH.Path.WildMatch".
 -}
 
 module MissingH.Path.Glob(glob, vGlob) where
-import MissingH.List
+import Data.List.Utils
 import System.IO
 import System.IO.HVFS
 import MissingH.Path.FilePath

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Logging
+   Module     : System.Log
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -34,13 +34,13 @@ This module defines basic types used for logging.
 /This API is new and in a state of flux./
 
 Extensive documentation is available in
-"MissingH.Logging.Logger".
+"System.Log.Logger".
 
 -}
 
 
 
-module MissingH.Logging(-- * Types
+module System.Log(-- * Types
                         Priority(..),
                         LogRecord
 )

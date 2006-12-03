@@ -33,7 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 Please note: Most of this module is not compatible with Hugs.
 
-Command lines executed will be logged using "MissingH.Logging.Logger" at the
+Command lines executed will be logged using "System.Log.Logger" at the
 DEBUG level.  Failure messages will be logged at the WARNING level in addition
 to being raised as an exception.  Both are logged under
 \"System.Cmd.Utils.funcname\" -- for instance,
@@ -43,8 +43,8 @@ globally, you can simply run:
 > updateGlobalLogger "System.Cmd.Utils.safeSystem"
 >                     (setLevel CRITICAL)
 
-See also: 'MissingH.Logging.Logger.updateGlobalLogger',
-"MissingH.Logging.Logger".
+See also: 'System.Log.Logger.updateGlobalLogger',
+"System.Log.Logger".
 
 It is possible to set up pipelines with these utilities.  Example:
 
@@ -106,7 +106,7 @@ where
 
 import System.Exit
 import System.Cmd
-import MissingH.Logging.Logger
+import System.Log.Logger
 #ifndef mingw32_HOST_OS
 import System.Posix.IO
 import System.Posix.Process

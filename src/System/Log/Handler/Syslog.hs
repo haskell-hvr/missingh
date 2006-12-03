@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Logging.Handler.Syslog
+   Module     : System.Log.Handler.Syslog
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -41,11 +41,11 @@ or remote machine using the Syslog protocol.
 You can create a new Syslog 'LogHandler' by calling 'openlog'.
 
 More information on the Haskell Logging Framework can be found at
-"MissingH.Logging.Logger".  This module can also be used outside
+"System.Log.Logger".  This module can also be used outside
 of the rest of that framework for those interested in that.
 -}
 
-module MissingH.Logging.Handler.Syslog(
+module System.Log.Handler.Syslog(
                                        -- * Handler Initialization
                                        openlog,
                                        -- * Advanced handler initialization
@@ -59,8 +59,8 @@ module MissingH.Logging.Handler.Syslog(
                                        Option(..)
                                        ) where
 
-import MissingH.Logging
-import MissingH.Logging.Handler
+import System.Log
+import System.Log.Handler
 import Data.Bits
 import Network.Socket
 import Network.BSD
@@ -148,7 +148,7 @@ data SyslogHandler = SyslogHandler {options :: [Option],
                                     priority :: Priority}
 
 {- | Initialize the Syslog system using the local system's default interface,
-\/dev\/log.  Will return a new 'MissingH.Logging.Handler.LogHandler'.
+\/dev\/log.  Will return a new 'System.Log.Handler.LogHandler'.
 
 On Windows, instead of using \/dev\/log, this will attempt to send
 UDP messages to something listening on the syslog port (514) on localhost.

@@ -151,12 +151,12 @@ or make sure you consume the 'nlst' data first.
 Here is a partial list of commands effected: 'nlst', 'dir', 'getbinary',
 'getlines', 'downloadbinary'.
 
-The 'MissingH.List.seqList' function could be quite helpful here.  For instance:
+The 'Data.List.Utils.seqList' function could be quite helpful here.  For instance:
 
 > x <- nlst h Nothing
 > map (\fn -> ...download files from FTP... ) (seqList x)
 
-If you omit the call to 'MissingH.List.seqList', commands to download files
+If you omit the call to 'Data.List.Utils.seqList', commands to download files
 will be issued before the entire directory listing is read.  FTP cannot handle
 this.
 
@@ -169,7 +169,7 @@ This will be fairly rare.  Just be aware of this.
 
 This module logs messages under @MissingH.Network.FTP.Client@ for outgoing
 traffic and @MissingH.Network.FTP.ParserClient@ for incoming traffic, all with the
-'MissingH.Logging.DEBUG' priority, so by default, no log messages are seen.
+'System.Log.DEBUG' priority, so by default, no log messages are seen.
 The 'enableFTPDebugging' function will adjust the priorities of these
 two handlers so debug messages are seen.  Only control channel conversations
 are logged.  Data channel conversations are never logged.
@@ -228,7 +228,7 @@ import System.IO.Binary
 import qualified Network
 import System.IO
 import System.IO.Unsafe
-import MissingH.Logging.Logger
+import System.Log.Logger
 import MissingH.Network
 import MissingH.Str
 data FTPConnection = FTPConnection {readh :: IO String,
@@ -253,7 +253,7 @@ easyConnectFTP :: Network.HostName -> IO FTPConnection
 easyConnectFTP h = do x <- connectFTP h 21
                       return (fst x)
 
-{- | Enable logging of FTP messages through 'MissingH.Logging.Logger'.
+{- | Enable logging of FTP messages through 'System.Log.Logger'.
 This sets the log levels of @MissingH.Network.FTP.ParserClient@ and
 @MissingH.Network.FTP.Client@ to DEBUG.  By default, this means that
 full protocol dumps will be sent to stderr.

@@ -42,7 +42,7 @@ module MissingH.Path(-- * Name processing
                     )
 where
 import Data.List
-import MissingH.List
+import Data.List.Utils
 #ifndef mingw32_HOST_OS
 import System.Posix.Files
 import System.Posix.Directory (createDirectory)

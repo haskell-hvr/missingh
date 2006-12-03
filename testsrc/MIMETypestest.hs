@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module MIMETypestest(tests) where
 import Test.HUnit
 import Data.List
-import MissingH.MIMETypes
+import Data.MIME.Types
 
 test_readMIMETypes =
     let omtd = readMIMETypes defaultmtd True "testsrc/mime.types.test"

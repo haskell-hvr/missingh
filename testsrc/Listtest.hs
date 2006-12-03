@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Listtest(tests) where
 import Test.HUnit
-import MissingH.List
+import Data.List.Utils
 import Data.List
 import Test.HUnit
 import Test.QuickCheck as QC

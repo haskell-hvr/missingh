@@ -43,7 +43,7 @@ import Prelude hiding (lookup)
 import System.IO
 import Data.HashTable
 import Control.Exception
-import MissingH.List(strFromAL, strToAL)
+import Data.List.Utils(strFromAL, strToAL)
 
 {- | The main class for items implementing this interface.
 
@@ -148,13 +148,13 @@ mapA :: AnyDBM a => a -> ((String, String) -> IO b) -> IO [b]
 mapA h func = do l <- toListA h
                  mapM func l
 
-{- | Similar to 'MissingH.List.strToAL' -- load a string representation
+{- | Similar to 'Data.List.Utils.strToAL' -- load a string representation
 into the AnyDBM.  You must supply an existing AnyDBM object;
 the items loaded from the string will be added to it. -}
 strToA :: AnyDBM a => a -> String -> IO ()
 strToA h s = insertListA h (strToAL s)
 
-{- | Similar to 'MissingH.List.strFromAL' -- get a string representation of
+{- | Similar to 'Data.List.Utils.strFromAL' -- get a string representation of
 the entire AnyDBM. -}
 strFromA :: AnyDBM a => a -> IO String
 strFromA h = do l <- toListA h 

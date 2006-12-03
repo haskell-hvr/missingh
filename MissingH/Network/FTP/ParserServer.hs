@@ -40,10 +40,10 @@ where
 import MissingH.Network.FTP.ParserClient
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
-import MissingH.List
+import Data.List.Utils
 import Data.Bits.Utils
 import MissingH.Str
-import MissingH.Logging.Logger
+import System.Log.Logger
 import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
 import System.IO(Handle, hGetContents)
 import System.IO(hGetLine)

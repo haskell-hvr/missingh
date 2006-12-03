@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Maybe
+   Module     : Data.Maybe.Utils
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -29,7 +29,7 @@ Utilities for working with the Either data type
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
-module MissingH.Maybe
+module Data.Maybe.Utils
     (
      forceMaybe, forceMaybeMsg
 ) where

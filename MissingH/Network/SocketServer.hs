@@ -59,7 +59,7 @@ import Network.BSD
 import MissingH.Network
 import Control.Concurrent
 import System.IO
-import qualified MissingH.Logging.Logger
+import qualified System.Log.Logger
 
 {- | Options for your server. -}
 data InetServerOptions  = InetServerOptions {listenQueueSize :: Int,
@@ -152,24 +152,24 @@ serveTCPforever options func =
 ----------------------------------------------------------------------
 
 {- | Log each incoming connection using the interface in
-"MissingH.Logging.Logger".
+"System.Log.Logger".
 
 Log when the incoming connection disconnects.
 
 Also, log any failures that may occur in the child handler. -}
 
 loggingHandler :: String                -- ^ Name of logger to use
-               -> MissingH.Logging.Logger.Priority -- ^ Priority of logged messages
+               -> System.Log.Logger.Priority -- ^ Priority of logged messages
                -> HandlerT              -- ^ Handler to call after logging
                -> HandlerT              -- ^ Resulting handler
 loggingHandler hname prio nexth socket r_sockaddr l_sockaddr = 
     do sockStr <- showSockAddr r_sockaddr
-       MissingH.Logging.Logger.logM hname prio 
+       System.Log.Logger.logM hname prio 
                    ("Received connection from " ++ sockStr)
-       MissingH.Logging.Logger.traplogging hname 
-               MissingH.Logging.Logger.WARNING "" (nexth socket r_sockaddr 
+       System.Log.Logger.traplogging hname 
+               System.Log.Logger.WARNING "" (nexth socket r_sockaddr 
                                                    l_sockaddr)
-       MissingH.Logging.Logger.logM hname prio
+       System.Log.Logger.logM hname prio
                    ("Connection " ++ sockStr ++ " disconnected")
        
 

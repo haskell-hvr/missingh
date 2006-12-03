@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Logging.Handler
+   Module     : System.Log.Handler
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -27,19 +27,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Definition of log handler support
 
-For some handlers, check out "MissingH.Logging.Handler.Simple" and
-"MissingH.Logging.Handler.Syslog".
+For some handlers, check out "System.Log.Handler.Simple" and
+"System.Log.Handler.Syslog".
 
-Please see "MissingH.Logging.Logger" for extensive documentation on the
+Please see "System.Log.Logger" for extensive documentation on the
 logging system.
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Logging.Handler(-- * Basic Types
+module System.Log.Handler(-- * Basic Types
                                 LogHandler(..)
                                ) where
-import MissingH.Logging
+import System.Log
 import IO
 
 {- | All log handlers should adhere to this. -}

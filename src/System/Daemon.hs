@@ -33,7 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 Please note: Most of this module is not compatible with Hugs.
 
 Messages from this module are logged under @System.Daemon@.  See
-'MissingH.Logging.Logger' for details.
+'System.Log.Logger' for details.
 
 Based on background
 from <http://www.erlenstar.demon.co.uk/unix/faq_2.html#SEC16> and
@@ -54,7 +54,7 @@ where
 import System.Posix.Process
 import System.Posix.IO
 import System.Directory
-import MissingH.Logging.Logger
+import System.Log.Logger
 import System.Exit
 
 

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.List
+   Module     : Data.List.Utils
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,7 +30,7 @@ This module provides various helpful utilities for dealing with lists.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.List(-- * Merging
+module Data.List.Utils(-- * Merging
                      merge, mergeBy,
                      -- * Tests
                      startswith, endswith, contains, hasAny,
@@ -313,8 +313,8 @@ strToAL inp =
             case reads line of
                [(key, remainder)] -> case remainder of
                      ',':valstr -> (key, read valstr)
-                     _ -> error "MissingH.List.strToAL: Parse error on value"
-               _ -> error "MissingH.List.strToAL: Parse error on key"
+                     _ -> error "Data.List.Utils.strToAL: Parse error on value"
+               _ -> error "Data.List.Utils.strToAL: Parse error on key"
         in map worker (lines inp)
 
 

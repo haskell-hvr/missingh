@@ -44,7 +44,7 @@ as a filesystem.  It does this by using the
 
 In addition, basic networking and multitasking configuration is handled
 via "MissingH.Network.SocketServer" and logging via 
-"MissingH.Logging.Logger".
+"System.Log.Logger".
 
 This module is believed to be secure, but it not believed to be robust enough
 for use on a public FTP server.  In particular, it may be vulnerable to denial
@@ -57,7 +57,7 @@ in a read-only manner:
 
 >import MissingH.Network.FTP.Server
 >import MissingH.Network.SocketServer
->import MissingH.Logging.Logger
+>import System.Log.Logger
 >import System.IO.HVFS
 >import System.IO.HVFS.Combinators
 >
@@ -86,7 +86,7 @@ import Network.Socket
 import qualified Network
 import System.IO
 import System.IO.Error
-import MissingH.Logging.Logger
+import System.Log.Logger
 import MissingH.Network
 import MissingH.Network.SocketServer
 import MissingH.Str

@@ -105,7 +105,7 @@ module Data.ConfigFile
 ) where
 import Data.ConfigFile.Types
 import Data.ConfigFile.Parser
-import MissingH.Map
+import Data.Map.Utils
 import Data.Either.Utils
 import MissingH.Str
 import qualified Data.Map as Map

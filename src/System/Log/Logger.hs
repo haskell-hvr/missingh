@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Logging.Logger
+   Module     : System.Log.Logger
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -78,7 +78,7 @@ that 'Logger's do.  They act just like the 'Priority' value in the
 under no circumstances will a mere 'DEBUG' message show up in your syslog.
 
 There are three built-in handlers given in two built-in modules:
-"MissingH.Logging.Handler.Simple" and "MissingH.Logging.Handler.Syslog".
+"System.Log.Handler.Simple" and "System.Log.Handler.Syslog".
 
 There is a special logger known as the /root logger/ that sits at the top
 of the logger hierarchy.  It is always present, and handlers attached
@@ -87,8 +87,8 @@ it or 'rootLoggerName' to work with it by name.
 
 Here's an example to illustrate some of these concepts:
 
-> import MissingH.Logging.Logger
-> import MissingH.Logging.Handler.Syslog
+> import System.Log.Logger
+> import System.Log.Handler.Syslog
 > 
 > -- By default, all messages of level WARNING and above are sent to stderr.
 > -- Everything else is ignored.
@@ -126,10 +126,10 @@ Here's an example to illustrate some of these concepts:
 
 -}
 
-module MissingH.Logging.Logger(
+module System.Log.Logger(
                                -- * Basic Types
                                Logger,
-                               -- ** Re-Exported from MissingH.Logging
+                               -- ** Re-Exported from System.Log
                                Priority(..),
                                -- * Logging Messages
                                -- ** Basic
@@ -172,10 +172,10 @@ logger hierarchy. -}
                                updateGlobalLogger
                                ) where
 import MissingH.Str
-import MissingH.Logging
-import MissingH.Logging.Handler(LogHandler)
-import qualified MissingH.Logging.Handler(handle)
-import MissingH.Logging.Handler.Simple
+import System.Log
+import System.Log.Handler(LogHandler)
+import qualified System.Log.Handler(handle)
+import System.Log.Handler.Simple
 import IO
 import System.IO.Unsafe
 import Control.Concurrent.MVar
@@ -386,7 +386,7 @@ handle l (pri, msg) =
 callHandler :: LogRecord -> String -> HandlerT -> IO ()
 callHandler lr loggername ht =
     case ht of
-            HandlerT x -> MissingH.Logging.Handler.handle x lr loggername
+            HandlerT x -> System.Log.Handler.handle x lr loggername
 
 -- | Generate IO actions for the handlers.
 handlerActions :: [HandlerT] -> LogRecord -> String -> [IO ()]

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Logging.Handler.Simple
+   Module     : System.Log.Handler.Simple
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,12 +30,12 @@ Simple log handlers
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Logging.Handler.Simple(streamHandler, fileHandler,
+module System.Log.Handler.Simple(streamHandler, fileHandler,
                                       verboseStreamHandler)
     where
 
-import MissingH.Logging
-import MissingH.Logging.Handler
+import System.Log
+import System.Log.Handler
 import IO
 import Control.Concurrent.MVar
 
