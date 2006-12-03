@@ -7,7 +7,7 @@ import Directory
 import Network.Email.Utility.Auxiliary
 import List
 import Monad
-import MissingH.Wash.Utility.Locking
+import System.IO.Locking
 
 registryDir = "/tmp/Unique/"
 

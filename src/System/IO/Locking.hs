@@ -1,4 +1,4 @@
-module MissingH.Wash.Utility.Locking (obtainLock, releaseLock) where
+module System.IO.Locking (obtainLock, releaseLock) where
 
 import Network.Email.Utility.Auxiliary
 import Directory
