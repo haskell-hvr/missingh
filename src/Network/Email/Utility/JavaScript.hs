@@ -1,5 +1,5 @@
 -- © 2003 Peter Thiemann
-module MissingH.Wash.Utility.JavaScript where
+module Network.Email.Utility.JavaScript where
 
 import Char
 
