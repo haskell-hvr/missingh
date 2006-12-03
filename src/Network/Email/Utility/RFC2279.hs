@@ -10,7 +10,7 @@
   0020 0000-03FF FFFF   111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
   0400 0000-7FFF FFFF   1111110x 10xxxxxx ... 10xxxxxx
 -}
-module MissingH.Wash.Utility.RFC2279 (encode, decode) where
+module Network.Email.Utility.RFC2279 (encode, decode) where
 
 import Char
 
