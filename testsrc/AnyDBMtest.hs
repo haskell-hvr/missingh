@@ -26,7 +26,7 @@ import Database.AnyDBM.StringDBM
 import Database.AnyDBM.MapDBM
 import System.Directory
 import System.IO.HVFS.Utils
-import System.Path.FilePath
+import System.FilePath
 import Data.HashTable
 import Data.List(sort)
 import Control.Exception(finally)
@@ -106,10 +106,10 @@ test_hashtable = generic_test (return ())
 test_mapdbm = generic_test (return ())
                   (\_ -> newMapDBM)
 test_stringdbm = generic_persist_test (return SystemFS)
-                   (\f -> openStringVDBM f (joinPaths "testtmp" "StringDBM") ReadWriteMode)
+                   (\f -> openStringVDBM f (joinPath ["testtmp", "StringDBM"]) ReadWriteMode)
                  ++
                  generic_test (return SystemFS)
-                   (\f -> openStringVDBM f (joinPaths "testtmp" "StringDBM") ReadWriteMode)
+                   (\f -> openStringVDBM f (joinPath ["testtmp", "StringDBM"]) ReadWriteMode)
 
 tests = TestList [TestLabel "HashTable" (TestList test_hashtable),
                   TestLabel "StringDBM" (TestList test_stringdbm),

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module GZiptest(tests) where
 import Test.HUnit
 import System.FileArchive.GZip
-import System.Path.FilePath
+import System.FilePath
 import Data.Compression.Inflate
 import System.IO.Binary
 import System.IO
@@ -28,7 +28,7 @@ import Data.List
 
 mf fn exp conf = TestLabel fn $ TestCase $
                      do c <- readBinaryFile $
-                          joinPaths "testsrc" $ joinPaths "gzfiles" fn
+                          joinPath ["testsrc", "gzfiles", fn]
                         assertEqual "" exp (conf c)
 
 {-
