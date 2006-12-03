@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Portability: portable
 
 Tool for maintaining a status bar, supporting multiple simultaneous tasks,
-as a layer atop "MissingH.ProgressTracker".
+as a layer atop "Data.Progress.Tracker".
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
@@ -49,7 +49,7 @@ module Data.Progress.Meter (-- * Types
                                killAutoDisplayMeter
                                ) where
 
-import MissingH.ProgressTracker
+import Data.Progress.Tracker
 import Control.Concurrent.MVar
 import Control.Concurrent
 import Control.Monad(when)

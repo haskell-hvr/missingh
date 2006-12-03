@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.ProgressTracker
+   Module     : Data.Progress.Tracker
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -31,7 +31,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 See also "Data.Progress.Meter" -}
 
-module MissingH.ProgressTracker (
+module Data.Progress.Tracker (
                                  -- * Introduction
                                  -- $introduction
                                  -- ** Examples
