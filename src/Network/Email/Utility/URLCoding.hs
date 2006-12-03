@@ -1,6 +1,6 @@
 -- © 2001, 2002 Peter Thiemann
 -- |Implements coding of non-alphanumeric characters in URLs and CGI-requests.
-module MissingH.Wash.Utility.URLCoding (encode, decode) where
+module Network.Email.Utility.URLCoding (encode, decode) where
 
 import Char
 import Network.Email.Utility.Hex
