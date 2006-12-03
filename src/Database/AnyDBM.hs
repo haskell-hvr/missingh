@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.AnyDBM
+   Module     : Database.AnyDBM
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -32,7 +32,7 @@ hash-like items with String -> String mappings.  It can be used for in-memory
 or on-disk items.
 
 -}
-module MissingH.AnyDBM (-- * The AnyDBM class
+module Database.AnyDBM (-- * The AnyDBM class
                         AnyDBM(..),
                         -- * AnyDBM utilities
                         mapA,

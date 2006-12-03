@@ -77,9 +77,9 @@ Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
     MissingH.Wash.Utility.SimpleParser,
     MissingH.Wash.Utility.URLCoding,
     MissingH.Wash.Utility.Unique,
-  MissingH.AnyDBM,
-    MissingH.AnyDBM.MapDBM,
-    MissingH.AnyDBM.StringDBM,
+  Database.AnyDBM,
+    Database.AnyDBM.MapDBM,
+    Database.AnyDBM.StringDBM,
   MissingH.GetOpt
 Extensions: ExistentialQuantification, OverlappingInstances, 
    UndecidableInstances, CPP

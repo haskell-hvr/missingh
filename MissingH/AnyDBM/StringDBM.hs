@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.AnyDBM.StringDBM
+   Module     : Database.AnyDBM.StringDBM
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -27,20 +27,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Written by John Goerzen, jgoerzen\@complete.org
 
-This 'MissingH.AnyDBM.AnyDBM' implementation is very simple.  It can store
+This 'Database.AnyDBM.AnyDBM' implementation is very simple.  It can store
 data on-disk in a persistent fashion, using a very simple String
 representation.  While the file is open, an in-memory cache is maintained.
 The data is written out during a call to 'flush' or 'close'.
 -}
 
-module MissingH.AnyDBM.StringDBM (StringDBM,
+module Database.AnyDBM.StringDBM (StringDBM,
                                   openStringDBM,
                                   openStringVDBM,
                                   SystemFS(..),
                                   IOMode(..)
                                  )
 where
-import MissingH.AnyDBM
+import Database.AnyDBM
 import System.IO
 import MissingH.IO.HVFS
 import MissingH.IO.HVIO

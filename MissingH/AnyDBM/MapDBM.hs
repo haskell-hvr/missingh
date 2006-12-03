@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.AnyDBM.MapDBM
+   Module     : Database.AnyDBM.MapDBM
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -27,16 +27,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Written by John Goerzen, jgoerzen\@complete.org
 
-Support for working with Maps through the "MissingH.AnyDBM" framework.
+Support for working with Maps through the "Database.AnyDBM" framework.
 -}
 
-module MissingH.AnyDBM.MapDBM (MapDBM,
+module Database.AnyDBM.MapDBM (MapDBM,
                                newMapDBM,
                                setMapDBM,
                                getMapDBM
                                     )
 where
-import MissingH.AnyDBM
+import Database.AnyDBM
 import Data.Map as Map
 import Control.Concurrent.MVar
 

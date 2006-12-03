@@ -21,9 +21,9 @@ import Test.HUnit
 import MissingH.List
 import MissingH.IO.HVFS
 import MissingH.IO.HVFS.InstanceHelpers
-import MissingH.AnyDBM
-import MissingH.AnyDBM.StringDBM
-import MissingH.AnyDBM.MapDBM
+import Database.AnyDBM
+import Database.AnyDBM.StringDBM
+import Database.AnyDBM.MapDBM
 import System.Directory
 import MissingH.IO.HVFS.Utils
 import MissingH.Path.FilePath
