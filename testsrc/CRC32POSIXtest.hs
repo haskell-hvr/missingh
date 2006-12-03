@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module CRC32POSIXtest(tests) where
 import Test.HUnit
-import MissingH.Checksum.CRC32.Posix
+import Data.Hash.CRC32.Posix
 
 test_crc32 =
     let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" exp (crc32 inp) in

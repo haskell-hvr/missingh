@@ -17,7 +17,7 @@
 -- 	$Id: crc32.hs,v 1.2 2003/03/24 00:08:55 eris Exp $	
 
 {- |
-   Module     : MissingH.Checksum.CRC32.Posix
+   Module     : Data.Hash.CRC32.Posix
    Copyright  : Copyright (C) 2002 HardCore SoftWare, Doug Hoyte
    License    : GNU GPL
 
@@ -38,7 +38,7 @@ Modified December, 2004 by John Goerzen:
  * Updated things that didn't compile any more
 -}
 
-module MissingH.Checksum.CRC32.Posix where
+module Data.Hash.CRC32.Posix where
 
 import Data.Array
 import Data.Bits

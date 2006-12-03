@@ -137,7 +137,7 @@ at 3rd-party-licenses/LGPL-2.1 in the source distribution.
 Pursuant to the terms of the LGPL, you may consider this code to fall
 under the GPL as part of the whole MissingH work.
 ----------------------------------------------------
-MissingH.Checksum.CRC32.Posix is
+Data.Hash.CRC32.Posix is
 (C) 2002 HardCore SoftWare, Doug Hoyte
 and is "distributed under the terms of the GNU GPL."  This license is
 the same as the main license for MissingH.
