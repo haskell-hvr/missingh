@@ -1,5 +1,5 @@
 -- © 2001 Peter Thiemann
-module MissingH.Wash.Utility.Unique (inventStdKey, inventKey, inventFilePath) where
+module Network.Email.Utility.Unique (inventStdKey, inventKey, inventFilePath) where
 
 import Random
 import IO
