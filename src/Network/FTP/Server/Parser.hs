@@ -39,7 +39,7 @@ module Network.FTP.Server.Parser(
 where
 import Network.FTP.Client.Parser
 import Text.ParserCombinators.Parsec
-import MissingH.Parsec
+import Text.ParserCombinators.Parsec.Utils
 import Data.List.Utils
 import Data.Bits.Utils
 import MissingH.Str

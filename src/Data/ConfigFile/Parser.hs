@@ -41,7 +41,7 @@ import Control.Monad.Error(throwError, MonadError)
 import MissingH.Str
 import Data.ConfigFile.Lexer
 import System.IO(Handle, hGetContents)
-import MissingH.Parsec
+import Text.ParserCombinators.Parsec.Utils
 import Data.ConfigFile.Types
 
 ----------------------------------------------------------------------

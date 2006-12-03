@@ -46,7 +46,7 @@ module Network.FTP.Client.Parser(parseReply, parseGoodReply,
 where
 
 import Text.ParserCombinators.Parsec
-import MissingH.Parsec
+import Text.ParserCombinators.Parsec.Utils
 import Data.List.Utils
 import Data.Bits.Utils
 import MissingH.Str

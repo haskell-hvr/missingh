@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Parsec
+   Module     : Text.ParserCombinators.Parsec.Utils
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -29,7 +29,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Parsec(-- * Generalized Utilities
+module Text.ParserCombinators.Parsec.Utils(-- * Generalized Utilities
                        -- | These functions are generalized versions of
                        -- ones you might see in the Char parser.
                        GeneralizedToken, GeneralizedTokenParser,

@@ -7,7 +7,7 @@ Stability: Beta
 Copyright: Copyright (c) 2004-2006 John Goerzen
 Exposed-Modules: MissingH.Str, System.IO, System.IO.Binary, Data.List.Utils,
   System.Daemon,
-  MissingH.Parsec,
+  Text.ParserCombinators.Parsec.Utils,
   Test.HUnit.Utils,
   Network.Email.Mailbox,
   System.Log, System.Log.Handler,

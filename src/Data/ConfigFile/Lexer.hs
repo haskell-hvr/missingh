@@ -41,7 +41,7 @@ module Data.ConfigFile.Lexer
 ) where
 
 import Text.ParserCombinators.Parsec
-import MissingH.Parsec
+import Text.ParserCombinators.Parsec.Utils
 
 data CPTok = IGNOREDATA
            | NEWSECTION String
