@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Str.CSVtest(tests) where
 import Test.HUnit
-import MissingH.Str.CSV
+import Data.String.CSV
 import Text.ParserCombinators.Parsec
 
 test_csv =

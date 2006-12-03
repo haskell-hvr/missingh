@@ -40,7 +40,7 @@ where
 import System.Cmd
 import System.Debian.ControlParser
 import System.Cmd.Utils
-import MissingH.Str
+import Data.String
 import System.IO.Unsafe
 import System.Exit
 

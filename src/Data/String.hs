@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Str
+   Module     : Data.String
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,7 +30,7 @@ This module provides various helpful utilities for dealing with strings.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Str
+module Data.String
                        (-- * Whitespace Removal
                         strip, lstrip, rstrip,
                         -- * Tests

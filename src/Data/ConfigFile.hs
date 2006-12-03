@@ -107,7 +107,7 @@ import Data.ConfigFile.Types
 import Data.ConfigFile.Parser
 import Data.Map.Utils
 import Data.Either.Utils
-import MissingH.Str
+import Data.String
 import qualified Data.Map as Map
 import Data.List
 import System.IO(Handle)

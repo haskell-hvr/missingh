@@ -42,7 +42,7 @@ import Text.ParserCombinators.Parsec
 import Control.Monad.Error
 import Text.ParserCombinators.Parsec.Error
 import Text.ParserCombinators.Parsec.Pos(newPos)
-import MissingH.Str
+import Data.String
 
 {- | Given a 'MissingH.Wash.Mail.Message.Message' object, \"flatten\"
 it into a simple, non-hierarchical list of its component single parts.

@@ -53,7 +53,7 @@ import Data.Progress.Tracker
 import Control.Concurrent.MVar
 import Control.Concurrent
 import Control.Monad(when)
-import MissingH.Str
+import Data.String
 import MissingH.Time
 import Data.Quantity
 import System.IO

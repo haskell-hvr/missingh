@@ -42,7 +42,7 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Utils
 import Data.List.Utils
 import Data.Bits.Utils
-import MissingH.Str
+import Data.String
 import System.Log.Logger
 import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
 import System.IO(Handle, hGetContents)

@@ -38,7 +38,7 @@ module Data.ConfigFile.Parser
 ) where
 import Text.ParserCombinators.Parsec
 import Control.Monad.Error(throwError, MonadError)
-import MissingH.Str
+import Data.String
 import Data.ConfigFile.Lexer
 import System.IO(Handle, hGetContents)
 import Text.ParserCombinators.Parsec.Utils

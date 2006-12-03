@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Str.CSV
+   Module     : Data.String.CSV
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,7 +30,7 @@ Haskell Parsec parsers for comma-separated value (CSV) files.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Str.CSV(csvFile, genCsvFile) where
+module Data.String.CSV(csvFile, genCsvFile) where
 import Text.ParserCombinators.Parsec
 import Data.List
 
@@ -73,7 +73,7 @@ Here are some examples:
 To parse a String, you might use:
 
 >import Text.ParserCombinators.Parsec
->import MissingH.Str.CSV
+>import Data.String.CSV
 >....
 >parse csvFile "" mystring
 

@@ -44,6 +44,6 @@ do
         sed -i "s,`sedname ${OLDNAME}`,${NEWNAME},g" $FILE
 done
 
-darcs record -am "Renamed ${OLDNAME} to ${NEWNAME}, refs #1"
+darcs record -am "Renamed ${OLDNAME} to ${NEWNAME}"
            
 

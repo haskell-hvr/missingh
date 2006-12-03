@@ -34,7 +34,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 module System.Debian.ControlParser(control, depPart)
     where
 import Text.ParserCombinators.Parsec
-import MissingH.Str
+import Data.String
 
 eol = (try (string "\r\n"))
       <|> string "\n" <?> "EOL"

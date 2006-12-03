@@ -5,7 +5,7 @@ License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Beta
 Copyright: Copyright (c) 2004-2006 John Goerzen
-Exposed-Modules: MissingH.Str, System.IO, System.IO.Binary, Data.List.Utils,
+Exposed-Modules: Data.String, System.IO, System.IO.Binary, Data.List.Utils,
   System.Daemon,
   Text.ParserCombinators.Parsec.Utils,
   Test.HUnit.Utils,
@@ -18,7 +18,7 @@ Exposed-Modules: MissingH.Str, System.IO, System.IO.Binary, Data.List.Utils,
   Language.RFC2234.Parse, Language.RFC2821.Parse, 
     Language.RFC2822.Parse,
   MissingH.Regex.Pesco,
-    MissingH.Str.CSV,
+    Data.String.CSV,
   System.Cmd.Utils,
   Data.Progress.Tracker,
   Data.Progress.Meter,

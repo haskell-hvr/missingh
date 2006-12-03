@@ -171,7 +171,7 @@ logger hierarchy. -}
                                saveGlobalLogger,
                                updateGlobalLogger
                                ) where
-import MissingH.Str
+import Data.String
 import System.Log
 import System.Log.Handler(LogHandler)
 import qualified System.Log.Handler(handle)

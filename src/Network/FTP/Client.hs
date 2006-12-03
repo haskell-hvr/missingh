@@ -230,7 +230,7 @@ import System.IO
 import System.IO.Unsafe
 import System.Log.Logger
 import Network.Utils
-import MissingH.Str
+import Data.String
 data FTPConnection = FTPConnection {readh :: IO String,
                                     writeh :: Handle,
                                     socket_internal :: Socket,
