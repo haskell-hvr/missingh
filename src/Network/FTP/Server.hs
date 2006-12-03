@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Network.FTP.Server
+   Module     : Network.FTP.Server
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -55,7 +55,7 @@ Your patches would also be welcomed.
 Here is an example server that serves up the entire local filesystem
 in a read-only manner:
 
->import MissingH.Network.FTP.Server
+>import Network.FTP.Server
 >import MissingH.Network.SocketServer
 >import System.Log.Logger
 >import System.IO.HVFS
@@ -63,7 +63,7 @@ in a read-only manner:
 >
 >main = do
 >       updateGlobalLogger "" (setLevel DEBUG)
->       updateGlobalLogger "MissingH.Network.FTP.Server" (setLevel DEBUG)
+>       updateGlobalLogger "Network.FTP.Server" (setLevel DEBUG)
 >       let opts = (simpleTCPOptions 12345) {reuse = True}
 >       serveTCPforever opts $
 >            threadedHandler $
@@ -75,7 +75,7 @@ Hint: if you wantto serve up only part of a filesystem, see
 'System.IO.HVFS.Combinators.newHVFSChroot'.
 -}
 
-module MissingH.Network.FTP.Server(
+module Network.FTP.Server(
                                    anonFtpHandler
                                   )
 where
@@ -121,7 +121,7 @@ data FTPState = FTPState
 data FTPServer = forall a. HVFSOpenable a => FTPServer Handle a FTPState
 
 s_crlf = "\r\n"
-logname = "MissingH.Network.FTP.Server"
+logname = "Network.FTP.Server"
 ftpPutStrLn :: FTPServer -> String -> IO ()
 ftpPutStrLn (FTPServer h _ _) text =
     do hPutStr h (text ++ s_crlf)
@@ -153,7 +153,7 @@ anonFtpHandler f h saremote salocal =
              let s = serv (FTPState {auth = authr, datatype = typer,
                                     rename = renamer, datachan = chanr,
                                     local = salocal, remote = saremote})
-             sendReply s 220 "Welcome to MissingH.Network.FTP.Server."
+             sendReply s 220 "Welcome to Network.FTP.Server."
              commandLoop s
 
 type CommandHandler = FTPServer -> String -> IO Bool
@@ -622,7 +622,7 @@ cmd_help h@(FTPServer _ _ state) args =
           [" --- General Help Response ---"
           ,""
           ,"Welcome to the FTP server, " ++ addr ++ "."
-          ,"This server is implemented as the MissingH.Network.FTP.Server"
+          ,"This server is implemented as the Network.FTP.Server"
           ,"component of the MissingH library.  The MissingH library"
           ,"is available from http://quux.org/devel/missingh."
           ,""
