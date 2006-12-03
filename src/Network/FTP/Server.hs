@@ -43,7 +43,7 @@ as a filesystem.  It does this by using the
 "System.IO.HVFS" and "System.IO.HVIO" modules.
 
 In addition, basic networking and multitasking configuration is handled
-via "Network.Utils.SocketServer" and logging via 
+via "Network.SocketServer" and logging via 
 "System.Log.Logger".
 
 This module is believed to be secure, but it not believed to be robust enough
@@ -56,7 +56,7 @@ Here is an example server that serves up the entire local filesystem
 in a read-only manner:
 
 >import Network.FTP.Server
->import Network.Utils.SocketServer
+>import Network.SocketServer
 >import System.Log.Logger
 >import System.IO.HVFS
 >import System.IO.HVFS.Combinators
@@ -88,7 +88,7 @@ import System.IO
 import System.IO.Error
 import System.Log.Logger
 import Network.Utils
-import Network.Utils.SocketServer
+import Network.SocketServer
 import Data.String
 import System.IO.HVIO
 import System.IO.HVFS
@@ -139,7 +139,7 @@ sendReply h codei text =
         writethis (map (rstrip) (lines text))
 
 {- | Main FTP handler; pass the result of applying this to one argument to 
-'Network.Utils.SocketServer.handleHandler' -}
+'Network.SocketServer.handleHandler' -}
 
 anonFtpHandler :: forall a. HVFSOpenable a => a -> Handle -> SockAddr -> SockAddr -> IO ()
 anonFtpHandler f h saremote salocal =
