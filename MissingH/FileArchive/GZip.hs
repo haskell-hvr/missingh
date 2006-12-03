@@ -55,7 +55,7 @@ import Data.Bits
 import Control.Monad.Error
 import Data.Char
 import Data.Word
-import MissingH.Bits
+import Data.Bits.Utils
 import System.IO
 
 data GZipError = CRCError               -- ^ CRC-32 check failed

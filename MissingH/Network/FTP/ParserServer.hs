@@ -41,7 +41,7 @@ import MissingH.Network.FTP.ParserClient
 import Text.ParserCombinators.Parsec
 import MissingH.Parsec
 import MissingH.List
-import MissingH.Bits
+import Data.Bits.Utils
 import MissingH.Str
 import MissingH.Logging.Logger
 import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
