@@ -35,7 +35,7 @@ Copyright (c) 2005-2006 John Goerzen, jgoerzen\@complete.org
 module MissingH.IO.StatCompat 
 where
 import System.Posix.Types
-import MissingH.IO.PosixConsts
+import System.IO.PosixConsts
 #ifndef mingw32_HOST_OS
 import System.Posix.Files(intersectFileModes)
 #endif

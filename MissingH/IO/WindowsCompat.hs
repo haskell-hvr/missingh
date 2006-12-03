@@ -51,7 +51,7 @@ Common usage might be like this:
 >#endif
 
 Or, to avoid having to use CPP and make things even easier, just import
-"MissingH.IO.PlafCompat", which essentially does the above.
+"System.IO.PlafCompat", which essentially does the above.
 
 -}
 
@@ -65,7 +65,7 @@ where
 import System.Posix.Types
 import Data.Bits
 import MissingH.IO.StatCompat
-import MissingH.IO.PosixConsts
+import System.IO.PosixConsts
 import MissingH.Time
 import System.Directory
 

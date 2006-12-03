@@ -40,7 +40,7 @@ This is a modular FTP server implementation in pure Haskell.  It is highly
 adaptable to many different tasks, and can serve up not only real files
 and directories, but also virtually any data structure you could represent
 as a filesystem.  It does this by using the
-"MissingH.IO.HVFS" and "MissingH.IO.HVIO" modules.
+"System.IO.HVFS" and "System.IO.HVIO" modules.
 
 In addition, basic networking and multitasking configuration is handled
 via "MissingH.Network.SocketServer" and logging via 
@@ -58,8 +58,8 @@ in a read-only manner:
 >import MissingH.Network.FTP.Server
 >import MissingH.Network.SocketServer
 >import MissingH.Logging.Logger
->import MissingH.IO.HVFS
->import MissingH.IO.HVFS.Combinators
+>import System.IO.HVFS
+>import System.IO.HVFS.Combinators
 >
 >main = do
 >       updateGlobalLogger "" (setLevel DEBUG)
@@ -72,7 +72,7 @@ in a read-only manner:
 >            anonFtpHandler (HVFSReadOnly SystemFS)
 
 Hint: if you wantto serve up only part of a filesystem, see
-'MissingH.IO.HVFS.Combinators.newHVFSChroot'.
+'System.IO.HVFS.Combinators.newHVFSChroot'.
 -}
 
 module MissingH.Network.FTP.Server(
@@ -90,10 +90,10 @@ import MissingH.Logging.Logger
 import MissingH.Network
 import MissingH.Network.SocketServer
 import MissingH.Str
-import MissingH.IO.HVIO
-import MissingH.IO.HVFS
-import MissingH.IO.HVFS.InstanceHelpers
-import MissingH.IO.HVFS.Utils
+import System.IO.HVIO
+import System.IO.HVFS
+import System.IO.HVFS.InstanceHelpers
+import System.IO.HVFS.Utils
 import Text.Printf
 import Data.Char
 import Data.IORef

@@ -1,6 +1,6 @@
 {-# OPTIONS -fglasgow-exts #-}
 {- |
-   Module      :  MissingH.IO.BlockIO
+   Module      :  System.IO.BlockIO
    Copyright   :  (c) 2005-02-10 by Peter Simons
    License     :  GPL2
 
@@ -14,7 +14,7 @@
    But it does it /fast/.
 -}
 
-module MissingH.IO.BlockIO where
+module System.IO.BlockIO where
 
 import Prelude hiding ( catch, rem )
 import Control.Exception

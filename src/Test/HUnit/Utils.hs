@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.HUnit
+   Module     : Test.HUnit.Utils
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -32,7 +32,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 
 
-module MissingH.HUnit(assertRaises, mapassertEqual, qccheck, qctest) where
+module Test.HUnit.Utils(assertRaises, mapassertEqual, qccheck, qctest) where
 import Test.HUnit
 import Test.QuickCheck as QC
 import qualified Control.Exception

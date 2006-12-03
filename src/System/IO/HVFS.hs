@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.HVFS
+   Module     : System.IO.HVFS
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -44,13 +44,13 @@ you can just use 'SystemFS'.
 The "MissingH.HVFS.IO.InstanceHelpers" module contains some code to help
 you make your own HVFS instances.
 
-The 'HVFSOpenable' class works together with the "MissingH.IO.HVIO" module
+The 'HVFSOpenable' class works together with the "System.IO.HVIO" module
 to provide a complete virtual filesystem and I\/O model that allows you
 to open up virtual filesystem files and act upon them in a manner similar
 to standard Handles.
 -}
 
-module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
+module System.IO.HVFS(-- * Implementation Classes \/ Types
                         HVFS(..), HVFSStat(..), 
                         HVFSOpenable(..), HVFSOpenEncap(..),HVFSStatEncap(..),
                         withStat, withOpen,
@@ -62,11 +62,11 @@ module MissingH.IO.HVFS(-- * Implementation Classes \/ Types
                     )
 where
 
-import MissingH.IO.HVIO
+import System.IO.HVIO
 import MissingH.Time
 import System.IO
 import System.IO.Error
-import MissingH.IO.PlafCompat
+import System.IO.PlafCompat
 import System.Posix.Types
 import System.Time
 import System.Directory

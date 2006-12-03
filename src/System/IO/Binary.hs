@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.Binary
+   Module     : System.IO.Binary
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -33,7 +33,7 @@ or lists of Word8.  The BinaryConvertible class provides this abstraction.
 
 Wherever you see HVIO, you can transparently substite a regular Handle.
 This module can work with any HVIO object, however.  See
-"MissingH.IO.HVIO" for more details.
+"System.IO.HVIO" for more details.
 
 Versions of MissingH prior 0.11.6 lacked the 'BinaryConvertible' class
 and worked only with Strings and Handles.
@@ -55,12 +55,12 @@ is the support status:
 
 Non-binary functions may be found in "MissingH.IO".
 
-See also: "MissingH.IO.BlockIO"
+See also: "System.IO.BlockIO"
 
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IO.Binary(
+module System.IO.Binary(
                        -- * Support for different types of blocks
                        BinaryConvertible(..),
                        -- * Entire File\/Handle Utilities
@@ -89,8 +89,8 @@ import Foreign.Marshal.Array
 import Data.Word
 import System.IO.Unsafe
 import System.IO
-import MissingH.IO.HVIO
-import MissingH.IO.HVFS
+import System.IO.HVIO
+import System.IO.HVFS
 
 {- | Provides support for handling binary blocks with convenient
 types.
@@ -148,7 +148,7 @@ semantice are the same as with 'hGetBuf'; namely, the empty string
 is returned with EOF is reached, and any given read may read fewer
 bytes than the given length.
 
-(Actually, it's a wrapper around 'MissingH.IO.HVIO.vGetBuf') -}
+(Actually, it's a wrapper around 'System.IO.HVIO.vGetBuf') -}
 hGetBufStr :: (HVIO a, BinaryConvertible b) => a -> Int -> IO [b]
 hGetBufStr f count = fromBuf count (\buf -> vGetBuf f buf count)
 

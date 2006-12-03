@@ -42,8 +42,8 @@ module Database.AnyDBM.StringDBM (StringDBM,
 where
 import Database.AnyDBM
 import System.IO
-import MissingH.IO.HVFS
-import MissingH.IO.HVIO
+import System.IO.HVFS
+import System.IO.HVIO
 import Data.HashTable
 import Control.Concurrent.MVar
 

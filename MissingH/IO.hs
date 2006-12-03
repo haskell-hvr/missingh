@@ -49,7 +49,7 @@ module MissingH.IO(-- * Entire File Handle Utilities
 import System.IO.Unsafe
 import System.IO
 import Data.List
-import MissingH.IO.HVIO
+import System.IO.HVIO
 
 {- | Given a list of strings, output a line containing each item, adding
 newlines as appropriate.  The list is not expected to have newlines already.

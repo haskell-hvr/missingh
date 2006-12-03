@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.HVFS.Utils
+   Module     : System.IO.HVFS.Utils
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -35,7 +35,7 @@ To operate on your system's main filesystem, just pass SystemFS as the
 first parameter to these functions.
 -}
 
-module MissingH.IO.HVFS.Utils (recurseDir,
+module System.IO.HVFS.Utils (recurseDir,
                                recurseDirStat,
                                recursiveRemove,
                                lsl,
@@ -43,9 +43,9 @@ module MissingH.IO.HVFS.Utils (recurseDir,
                               )
 where
 
-import MissingH.IO.HVFS
+import System.IO.HVFS
 import MissingH.Time
-import MissingH.IO.PlafCompat
+import System.IO.PlafCompat
 import Text.Printf
 import System.Time
 import System.Locale

@@ -224,7 +224,7 @@ where
 import MissingH.Network.FTP.ParserClient
 import Network.BSD
 import Network.Socket
-import MissingH.IO.Binary
+import System.IO.Binary
 import qualified Network
 import System.IO
 import System.IO.Unsafe

@@ -34,7 +34,7 @@ in "MissingH.Path.WildMatch".
 module MissingH.Path.Glob(glob, vGlob) where
 import MissingH.List
 import System.IO
-import MissingH.IO.HVFS
+import System.IO.HVFS
 import MissingH.Path.FilePath
 import Control.Exception
 import MissingH.Path.WildMatch

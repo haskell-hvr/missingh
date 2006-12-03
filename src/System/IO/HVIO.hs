@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.HVIO
+   Module     : System.IO.HVIO
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -106,11 +106,11 @@ pipes cannot be used across a fork().  Also unlike Unix pipes, these pipes
 are portable and interact well with Haskell threads.  A new pipe can be created
 with a call to 'newHVIOPipe'.
 
-Together with "MissingH.IO.HVFS", this module is part of a complete
+Together with "System.IO.HVFS", this module is part of a complete
 virtual filesystem solution.
 -}
 
-module MissingH.IO.HVIO(-- * Implementation Classes
+module System.IO.HVIO(-- * Implementation Classes
                      HVIO(..), 
                      -- * Standard HVIO Implementations
 

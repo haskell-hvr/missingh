@@ -20,8 +20,8 @@ module ConfigParser.Maintest(tests) where
 import Test.HUnit
 import Data.ConfigFile
 import Data.Either.Utils
-import MissingH.IO.PlafCompat(nullFileName)
-import MissingH.HUnit
+import System.IO.PlafCompat(nullFileName)
+import Test.HUnit.Utils
 import Control.Exception
 import System.IO
 

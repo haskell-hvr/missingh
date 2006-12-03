@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.HVFS.Combinators
+   Module     : System.IO.HVFS.Combinators
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -32,16 +32,16 @@ Copyright (c) 2004-2005 John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.IO.HVFS.Combinators(
+module System.IO.HVFS.Combinators(
                                     -- * Restrictions
                                     HVFSReadOnly(..),
                                     HVFSChroot, newHVFSChroot
                                    )
 where
 
-import MissingH.IO.HVFS
-import MissingH.IO.HVIO
-import MissingH.IO.HVFS.InstanceHelpers
+import System.IO.HVFS
+import System.IO.HVIO
+import System.IO.HVFS.InstanceHelpers
 import System.IO
 import System.IO.Error
 #ifndef mingw32_HOST_OS

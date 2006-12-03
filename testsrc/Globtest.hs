@@ -21,8 +21,8 @@ module Globtest(tests) where
 import Test.HUnit
 import MissingH.Path.Glob
 import MissingH.Path
-import MissingH.HUnit
-import MissingH.IO.HVFS
+import Test.HUnit.Utils
+import System.IO.HVFS
 import System.Posix.Directory
 import System.Posix.Files
 import Control.Exception

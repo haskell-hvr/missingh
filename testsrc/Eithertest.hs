@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Eithertest(tests) where
 import Test.HUnit
 import Data.Either.Utils
-import MissingH.HUnit
+import Test.HUnit.Utils
 import Control.Exception
 
 test_maybeToEither =

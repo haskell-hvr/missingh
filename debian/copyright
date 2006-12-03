@@ -72,7 +72,7 @@ John Goerzen has made these modifications:
    MissingH and have been removed.
 
 ----------------------------------------------------
-The MissingH.IO.BlockIO module is from blockio 2005-02-14 at
+The System.IO.BlockIO module is from blockio 2005-02-14 at
 http://cryp.to/blockio/.
 
 Copyright/License:

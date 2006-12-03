@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.PlafCompat
+   Module     : System.IO.PlafCompat
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -34,7 +34,7 @@ The result should be roughly the same set of defined variables and types.
 
 -}
 
-module MissingH.IO.PlafCompat
+module System.IO.PlafCompat
     (nullFileName,
 #ifdef mingw32_HOST_OS
      module MissingH.IO.WindowsCompat,

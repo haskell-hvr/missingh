@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.HVFS.InstanceHelpers
+   Module     : System.IO.HVFS.InstanceHelpers
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -26,12 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Portability: portable
 
 Utilities for creating instances of the items defined in
-"MissingH.IO.HVFS".
+"System.IO.HVFS".
 
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
+module System.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                         SimpleStat(..),
                                         -- * HVFS objects & types
                                         -- ** MemoryVFS
@@ -44,7 +44,7 @@ module MissingH.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                         getFullSlice
                                        )
 where
-import MissingH.IO.HVFS
+import System.IO.HVFS
 import Data.IORef
 import Data.List
 import MissingH.Path
@@ -52,9 +52,9 @@ import MissingH.Path.NameManip
 import Control.Monad.Error
 import System.IO.Error
 import System.IO
-import MissingH.IO.HVIO
+import System.IO.HVIO
 
-{- | A simple "MissingH.IO.HVFS.HVFSStat" 
+{- | A simple "System.IO.HVFS.HVFSStat" 
 class that assumes that everything is either a file
 or a directory. -}
 data SimpleStat = SimpleStat {

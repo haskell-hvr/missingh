@@ -21,7 +21,7 @@ import Test.HUnit
 import MissingH.FileArchive.GZip
 import MissingH.Path.FilePath
 import Data.Compression.Inflate
-import MissingH.IO.Binary
+import System.IO.Binary
 import System.IO
 import Data.Either.Utils
 import Data.List
