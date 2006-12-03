@@ -81,7 +81,7 @@ Exposed-Modules: Data.String, System.IO, System.IO.Binary, Data.List.Utils,
 Extensions: ExistentialQuantification, OverlappingInstances, 
    UndecidableInstances, CPP
 Build-Depends: network, parsec, base,
-               haskell98, mtl, HUnit, regex-compat, QuickCheck
+               haskell98, mtl, HUnit, regex-compat, QuickCheck, FilePath
 -- Cabal will automatically add unix here on non-Windows platforms
 GHC-Options: -O2
 

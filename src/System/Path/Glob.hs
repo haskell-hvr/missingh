@@ -35,7 +35,7 @@ module System.Path.Glob(glob, vGlob) where
 import Data.List.Utils
 import System.IO
 import System.IO.HVFS
-import System.Path.FilePath
+import System.FilePath
 import Control.Exception
 import System.Path.WildMatch
 
