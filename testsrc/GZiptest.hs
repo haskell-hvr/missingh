@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module GZiptest(tests) where
 import Test.HUnit
-import MissingH.FileArchive.GZip
+import System.FileArchive.GZip
 import System.Path.FilePath
 import Data.Compression.Inflate
 import System.IO.Binary
@@ -32,7 +32,7 @@ mf fn exp conf = TestLabel fn $ TestCase $
                         assertEqual "" exp (conf c)
 
 {-
-import MissingH.FileArchive.GZip
+import System.FileArchive.GZip
 import System.IO
 import Data.Either.Utils
 

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.FileArchive.GZip
+   Module     : System.FileArchive.GZip
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -31,7 +31,7 @@ Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 
 The GZip format is described in RFC1952.
 -}
-module MissingH.FileArchive.GZip (
+module System.FileArchive.GZip (
                                   -- * GZip Files
                                   -- $gzipfiles
 
