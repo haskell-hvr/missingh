@@ -1,5 +1,5 @@
 -- © 2001, 2002 Peter Thiemann
-module MissingH.Wash.Mail.MIME where
+module Network.Email.Message.MIME where
 -- RFC 2045
 -- RFC 2046
 
