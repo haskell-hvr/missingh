@@ -19,7 +19,7 @@ sedname () {
 }
 
 OLDFN=$(mod2fn "${OLDNAME}")
-NEWFN=$(mod2fn "${NEWNAME}")
+NEWFN=src/$(mod2fn "${NEWNAME}")
 NEWDIR=$(mod2destdir "${NEWNAME}")
 echo "Old module name:     ${OLDNAME}"
 echo "New module name:     ${NEWNAME}"
@@ -28,8 +28,8 @@ echo "New module file:     ${NEWFN}"
 echo "New module dir:      ${NEWDIR}"
 
 mkdir -p ${NEWDIR}
+darcs add --recursive src || true
 darcs mv ${OLDFN} ${NEWFN}
-darcs add --recursive src
 
 for FILE in \
         MissingH.cabal \
