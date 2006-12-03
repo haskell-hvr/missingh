@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Checksum.CRC32.GZip
+   Module     : Data.Hash.CRC32.GZip
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or later
 
@@ -32,7 +32,7 @@ RFC1952.
 Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Checksum.CRC32.GZip where
+module Data.Hash.CRC32.GZip where
 
 import Data.Array
 import Data.Bits

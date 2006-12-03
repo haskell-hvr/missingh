@@ -49,7 +49,7 @@ module MissingH.FileArchive.GZip (
 where
 
 import MissingH.Compression.Inflate
-import MissingH.Checksum.CRC32.GZip
+import Data.Hash.CRC32.GZip
 import Data.List
 import Data.Bits
 import Control.Monad.Error
@@ -276,7 +276,7 @@ filename and comments.
 
 The 'Footer' contains a GZip CRC32 checksum over the decompressed data as
 well as a 32-bit length of the decompressed data.  The module
-'MissingH.Checksum.CRC32.GZip' is used to validate stored CRC32 values.
+'Data.Hash.CRC32.GZip' is used to validate stored CRC32 values.
 
 The vast majority of GZip files contain only one 'Section'.  Standard tools
 that work with GZip files create single-section files by default.

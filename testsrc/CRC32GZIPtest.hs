@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module CRC32GZIPtest(tests) where
 import Test.HUnit
-import MissingH.Checksum.CRC32.GZip
+import Data.Hash.CRC32.GZip
 
 test_crcgzip =
     let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" exp (calc_crc32 inp) in
