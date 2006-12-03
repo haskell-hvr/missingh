@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Network.SocketServer
+   Module     : Network.Utils.SocketServer
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -36,7 +36,7 @@ This module is presently under-documented.  For an example of usage, please
 see the description of "Network.FTP.Server".
 -}
 
-module MissingH.Network.SocketServer(-- * Generic Options and Types
+module Network.Utils.SocketServer(-- * Generic Options and Types
                                      InetServerOptions(..),
                                      simpleTCPOptions,
                                      SocketServer(..),
@@ -56,7 +56,7 @@ module MissingH.Network.SocketServer(-- * Generic Options and Types
 where
 import Network.Socket
 import Network.BSD
-import MissingH.Network
+import Network.Utils
 import Control.Concurrent
 import System.IO
 import qualified System.Log.Logger

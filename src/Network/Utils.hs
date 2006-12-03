@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Network
+   Module     : Network.Utils
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -31,7 +31,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Network(niceSocketsDo, connectTCP, connectTCPAddr,
+module Network.Utils(niceSocketsDo, connectTCP, connectTCPAddr,
                         listenTCPAddr, showSockAddr
                        )
 where

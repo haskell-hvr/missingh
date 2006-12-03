@@ -1,4 +1,4 @@
-{- arch-tag: MissingH.Network.FTP.Parser tests main file
+{- arch-tag: Network.Utils.FTP.Parser tests main file
 Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
