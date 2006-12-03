@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Timetest(tests) where
 import Test.HUnit
-import MissingH.Time
+import System.Time.Utils
 import System.Time
 
 base =CalendarTime {ctYear = 2005, ctMonth = January, ctDay = 21,

@@ -54,7 +54,7 @@ import Control.Concurrent.MVar
 import Control.Concurrent
 import Control.Monad(when)
 import Data.String
-import MissingH.Time
+import System.Time.Utils
 import Data.Quantity
 import System.IO
 import Control.Monad(filterM)

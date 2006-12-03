@@ -44,7 +44,7 @@ module System.IO.HVFS.Utils (recurseDir,
 where
 
 import System.IO.HVFS
-import MissingH.Time
+import System.Time.Utils
 import System.IO.PlafCompat
 import Text.Printf
 import System.Time

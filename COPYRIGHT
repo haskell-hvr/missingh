@@ -174,7 +174,7 @@ The code was obtained from
 http://web.comlab.ox.ac.uk/oucl/work/ian.lynagh/md5/
 
 ----------------------------------------------------
-MissingH.Time.ParseDate is from 
+System.Time.Utils.ParseDate is from 
 http://www.dtek.chalmers.se/~d00bring/projects.html
 
 Copyright (c) Björn Bringert

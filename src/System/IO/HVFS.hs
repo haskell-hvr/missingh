@@ -63,7 +63,7 @@ module System.IO.HVFS(-- * Implementation Classes \/ Types
 where
 
 import System.IO.HVIO
-import MissingH.Time
+import System.Time.Utils
 import System.IO
 import System.IO.Error
 import System.IO.PlafCompat
@@ -88,7 +88,7 @@ Here is an example from the HVFS source:
 >       do s <- vGetFileStatus fs fp
 >          return $ epochToClockTime (withStat s vModificationTime)
 
-See 'MissingH.Time.epochToClockTime' for more information.
+See 'System.Time.Utils.epochToClockTime' for more information.
 -}
 withStat :: forall b. HVFSStatEncap -> (forall a. HVFSStat a => a -> b) -> b
 withStat s f =
