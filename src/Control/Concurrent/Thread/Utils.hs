@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Threads
+   Module     : Control.Concurrent.Thread.Utils
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,7 +30,7 @@ This module provides various helpful utilities for dealing with threads.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Threads(-- * I\/O utilities
+module Control.Concurrent.Thread.Utils(-- * I\/O utilities
                         runInThread
                        )
 where

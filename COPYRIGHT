@@ -56,7 +56,7 @@ I (John Goerzen) have made these modifications:
  * One GHC 6.4 compatibility issue was fixed.
 
 ----------------------------------------------------
-The MissingH.Threads.Child and MissingH.Threads.Timeout modules are from
+The Control.Concurrent.Thread.Utils.Child and Control.Concurrent.Thread.Utils.Timeout modules are from
 child-2005-02-14 at http://cryp.to/blockio/.
 
 Copyright/License:
