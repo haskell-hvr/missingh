@@ -1,4 +1,4 @@
-module MissingH.Wash.Utility.QuotedPrintable 
+module Network.Email.Message.QuotedPrintable 
        (encode, encode', decode
        -- deprecated: encode_quoted, encode_quoted', decode_quoted
        ) where

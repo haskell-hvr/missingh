@@ -4,7 +4,7 @@ import Char
 import List
 
 import qualified Data.Codec.Base64 as Base64
-import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
+import qualified Network.Email.Message.QuotedPrintable as QuotedPrintable
 import Network.Email.Utility.Hex
 import Text.ParserCombinators.Parsec
 
