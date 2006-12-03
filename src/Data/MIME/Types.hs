@@ -49,7 +49,7 @@ import qualified System.Directory
 import Monad
 import System.IO
 import System.IO.Error
-import System.IO
+import System.IO.Utils
 import System.Path
 import Data.Map.Utils
 import Data.Char

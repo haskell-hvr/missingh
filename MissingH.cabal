@@ -6,7 +6,7 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Beta
 Copyright: Copyright (c) 2004-2006 John Goerzen
 Hs-Source-Dirs: src
-Exposed-Modules: Data.String, System.IO, System.IO.Binary, Data.List.Utils,
+Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils,
   System.Daemon,
   Text.ParserCombinators.Parsec.Utils,
   Test.HUnit.Utils,

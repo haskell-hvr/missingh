@@ -17,8 +17,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : System.IO
-   Copyright  : Copyright (C) 2004-2005 John Goerzen
+   Module     : System.IO.Utils
+   Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 asdf.
 -}
 
-module System.IO(-- * Entire File Handle Utilities
+module System.IO.Utils(-- * Entire File Handle Utilities
                        -- ** Opened Handle Data Copying
                        hCopy, hCopyProgress, hLineCopy, lineCopy,
                        -- ** Disk File Data Copying
