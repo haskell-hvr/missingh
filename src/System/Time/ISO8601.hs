@@ -1,5 +1,5 @@
 -- © 2002 Peter Thiemann
-module MissingH.Wash.Utility.ISO8601 where
+module System.Time.ISO8601 where
 
 import Char
 import Monad
