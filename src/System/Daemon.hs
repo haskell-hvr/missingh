@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Daemon
+   Module     : System.Daemon
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -32,7 +32,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 Please note: Most of this module is not compatible with Hugs.
 
-Messages from this module are logged under @MissingH.Daemon@.  See
+Messages from this module are logged under @System.Daemon@.  See
 'MissingH.Logging.Logger' for details.
 
 Based on background
@@ -42,7 +42,7 @@ from <http://www.erlenstar.demon.co.uk/unix/faq_2.html#SEC16> and
 This module is not available on Windows.
 -}
 
-module MissingH.Daemon (
+module System.Daemon (
 
 #ifndef mingw32_HOST_OS
         detachDaemon
@@ -58,7 +58,7 @@ import MissingH.Logging.Logger
 import System.Exit
 
 
-trap = traplogging "MissingH.Daemon" ERROR "detachDaemon"
+trap = traplogging "System.Daemon" ERROR "detachDaemon"
 
 {- | Detach the process from a controlling terminal and run it in the
 background, handling it with standard Unix deamon semantics.

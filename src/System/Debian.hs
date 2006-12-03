@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Debian
+   Module     : System.Debian
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -31,14 +31,14 @@ files and programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Debian (-- * Control or Similar File Utilities
+module System.Debian (-- * Control or Similar File Utilities
                         ControlFile,
                         -- * Version Number Utilities
                         DebVersion, compareDebVersion, checkDebVersion
                        )
 where
 import System.Cmd
-import MissingH.Debian.ControlParser
+import System.Debian.ControlParser
 import System.Cmd.Utils
 import MissingH.Str
 import System.IO.Unsafe

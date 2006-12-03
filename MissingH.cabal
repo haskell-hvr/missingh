@@ -6,7 +6,7 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Beta
 Copyright: Copyright (c) 2004-2006 John Goerzen
 Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
-  MissingH.Daemon,
+  System.Daemon,
   MissingH.Parsec,
   MissingH.HUnit,
   MissingH.Email.Mailbox,
@@ -52,7 +52,7 @@ Exposed-Modules: MissingH.Str, MissingH.IO, MissingH.IO.Binary, MissingH.List,
   MissingH.IO.HVIO, MissingH.IO.StatCompat, MissingH.IO.WindowsCompat,
     MissingH.IO.PlafCompat, MissingH.IO.PosixConsts,
   MissingH.Email.Parser,
-  MissingH.Debian, MissingH.Debian.ControlParser,
+  System.Debian, System.Debian.ControlParser,
   MissingH.MIMETypes,
   MissingH.Wash.Mail.Email,
     MissingH.Wash.Mail.EmailConfig,

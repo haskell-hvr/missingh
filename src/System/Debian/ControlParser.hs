@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Debian.ControlParser
+   Module     : System.Debian.ControlParser
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -31,7 +31,7 @@ files and programs.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Debian.ControlParser(control, depPart)
+module System.Debian.ControlParser(control, depPart)
     where
 import Text.ParserCombinators.Parsec
 import MissingH.Str
