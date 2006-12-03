@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : System.IO.PosixConsts
+   Module     : System.IO.Posix.Consts
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -31,7 +31,7 @@ by default.
 
 -}
 
-module System.IO.PosixConsts where
+module System.IO.Posix.Consts where
 import System.Posix.Types
 
 blockSpecialMode :: FileMode
