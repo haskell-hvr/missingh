@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Cmd
+   Module     : System.Cmd.Utils
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -36,11 +36,11 @@ Please note: Most of this module is not compatible with Hugs.
 Command lines executed will be logged using "MissingH.Logging.Logger" at the
 DEBUG level.  Failure messages will be logged at the WARNING level in addition
 to being raised as an exception.  Both are logged under
-\"MissingH.Cmd.funcname\" -- for instance,
-\"MissingH.Cmd.safeSystem\".  If you wish to suppress these messages
+\"System.Cmd.Utils.funcname\" -- for instance,
+\"System.Cmd.Utils.safeSystem\".  If you wish to suppress these messages
 globally, you can simply run:
 
-> updateGlobalLogger "MissingH.Cmd.safeSystem"
+> updateGlobalLogger "System.Cmd.Utils.safeSystem"
 >                     (setLevel CRITICAL)
 
 See also: 'MissingH.Logging.Logger.updateGlobalLogger',
@@ -73,7 +73,7 @@ Most of this module will be incompatible with Windows.
 -}
 
 
-module MissingH.Cmd(-- * High-Level Tools
+module System.Cmd.Utils(-- * High-Level Tools
                     PipeHandle(..),
                     safeSystem,
 #ifndef mingw32_HOST_OS
@@ -122,7 +122,7 @@ import qualified System.Posix.Signals
 
 data PipeMode = ReadFromPipe | WriteToPipe
 
-logbase = "MissingH.Cmd"
+logbase = "System.Cmd.Utils"
 
 {- | Return value from 'pipeFrom', 'pipeLinesFrom', 'pipeTo', or
 'pipeBoth'.  Contains both a ProcessID and the original command that was
@@ -370,7 +370,7 @@ on POSIX platforms.
 Like system(3), this command ignores SIGINT and SIGQUIT and blocks SIGCHLD
 during its execution.
 
-Logs as MissingH.Cmd.posixRawSystem -}
+Logs as System.Cmd.Utils.posixRawSystem -}
 posixRawSystem :: FilePath -> [String] -> IO ProcessStatus
 posixRawSystem program args =
     do debugM (logbase ++ ".posixRawSystem")
@@ -412,7 +412,7 @@ to do so will lead to resource leakage (zombie processes).
 
 This function does nothing with signals.  That too is up to you.
 
-Logs as MissingH.Cmd.forkRawSystem -}
+Logs as System.Cmd.Utils.forkRawSystem -}
 forkRawSystem :: FilePath -> [String] -> IO ProcessID
 forkRawSystem program args =
     do debugM (logbase ++ ".forkRawSystem")

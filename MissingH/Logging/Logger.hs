@@ -234,7 +234,7 @@ logTree =
 {- | Given a name, return all components of it, starting from the root.
 Example return value: 
 
->["", "MissingH", "MissingH.Cmd", "MissingH.Cmd.pOpen"]
+>["", "MissingH", "System.Cmd.Utils", "System.Cmd.Utils.pOpen"]
 
 -}
 componentsOfName :: String -> [String]

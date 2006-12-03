@@ -40,7 +40,7 @@ where
 module MissingH.Email.Sendmail(sendmail)
 where
 
-import MissingH.Cmd
+import System.Cmd.Utils
 import System.Directory
 import System.IO
 import System.IO.Error
@@ -76,11 +76,11 @@ and transmits it using the system's MTA, sendmail.
 If @sendmail@ is on the @PATH@, it will be used; otherwise, a list of system
 default locations will be searched.
 
-A failure will be logged, since this function uses 'MissingH.Cmd.safeSystem'
+A failure will be logged, since this function uses 'System.Cmd.Utils.safeSystem'
 internally.
 
 This function will first try @sendmail@.  If it does not exist, an error is
-logged under @MissingH.Cmd.pOpen3@ and various default @sendmail@ locations
+logged under @System.Cmd.Utils.pOpen3@ and various default @sendmail@ locations
 are tried.  If that still fails, an error is logged and an exception raised.
 
  -}

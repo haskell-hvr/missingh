@@ -39,7 +39,7 @@ module MissingH.Debian (-- * Control or Similar File Utilities
 where
 import System.Cmd
 import MissingH.Debian.ControlParser
-import MissingH.Cmd
+import System.Cmd.Utils
 import MissingH.Str
 import System.IO.Unsafe
 import System.Exit
