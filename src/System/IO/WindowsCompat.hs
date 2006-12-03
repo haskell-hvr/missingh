@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.WindowsCompat
+   Module     : System.IO.WindowsCompat
    Copyright  : Copyright (C) 2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -29,13 +29,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Provides some types and related items on Windows to be compatible with
 the System.Posix.* libraries
 
-See also "MissingH.IO.StatCompat", which this module re-exports.
+See also "System.IO.StatCompat", which this module re-exports.
 
 Copyright (c) 2005 John Goerzen, jgoerzen\@complete.org
 
 On non-Windows platforms, this module does nothing.
 
-On Windows, it re-exports "MissingH.IO.StatCompat".  It also provides various
+On Windows, it re-exports "System.IO.StatCompat".  It also provides various
 file type information modes that are otherwise in "System.Posix.Types" or
 "System.Posix.Files".  It also provides
 a rudimentary implemention of getFileStatus that emulates the Posix call
@@ -45,7 +45,7 @@ Common usage might be like this:
 
 >import System.Posix.Types
 >#ifdef mingw32_HOST_OS
->import MissingH.IO.WindowsCompat
+>import System.IO.WindowsCompat
 >#else
 >import System.Posix.Files
 >#endif
@@ -55,16 +55,16 @@ Or, to avoid having to use CPP and make things even easier, just import
 
 -}
 
-module MissingH.IO.WindowsCompat
+module System.IO.WindowsCompat
 #ifndef mingw32_HOST_OS
 where
 #else
-       (module MissingH.IO.StatCompat, module MissingH.IO.WindowsCompat)
+       (module System.IO.StatCompat, module System.IO.WindowsCompat)
 where
 
 import System.Posix.Types
 import Data.Bits
-import MissingH.IO.StatCompat
+import System.IO.StatCompat
 import System.IO.PosixConsts
 import MissingH.Time
 import System.Directory

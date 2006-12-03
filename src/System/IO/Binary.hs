@@ -53,7 +53,7 @@ is the support status:
 
  * Hugs: partial (maybe complete; needs more testing)
 
-Non-binary functions may be found in "MissingH.IO".
+Non-binary functions may be found in "System.IO".
 
 See also: "System.IO.BlockIO"
 

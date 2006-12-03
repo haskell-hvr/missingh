@@ -49,7 +49,7 @@ import qualified System.Directory
 import Monad
 import System.IO
 import System.IO.Error
-import MissingH.IO
+import System.IO
 import MissingH.Path
 import MissingH.Map
 import Data.Char

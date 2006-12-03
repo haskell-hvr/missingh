@@ -99,7 +99,7 @@ import Data.Char
 import Data.IORef
 import Data.List
 import Control.Exception(finally)
-import MissingH.IO
+import System.IO
 
 data DataType = ASCII | Binary
               deriving (Eq, Show)

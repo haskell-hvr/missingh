@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 On Unix, exports System.Posix.Types and System.Posix.Files.
 
-On Windows, exports System.Posix.Types and "MissingH.IO.WindowsCompat".
+On Windows, exports System.Posix.Types and "System.IO.WindowsCompat".
 
 The result should be roughly the same set of defined variables and types.
 
@@ -37,7 +37,7 @@ The result should be roughly the same set of defined variables and types.
 module System.IO.PlafCompat
     (nullFileName,
 #ifdef mingw32_HOST_OS
-     module MissingH.IO.WindowsCompat,
+     module System.IO.WindowsCompat,
 #else
      module System.Posix.Files,
 #endif
@@ -46,7 +46,7 @@ where
 
 import System.Posix.Types
 #ifdef mingw32_HOST_OS
-import MissingH.IO.WindowsCompat
+import System.IO.WindowsCompat
 #else
 import System.Posix.Files
 #endif

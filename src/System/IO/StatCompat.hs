@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO.StatCompat
+   Module     : System.IO.StatCompat
    Copyright  : Copyright (C) 2005-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -27,12 +27,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Portability: portable
 
 Provide a stat-like structure for use in MissingH.  Especially
-useful with HVFS and on Windows.  See also "MissingH.IO.WindowsCompat".
+useful with HVFS and on Windows.  See also "System.IO.WindowsCompat".
 
 Copyright (c) 2005-2006 John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.IO.StatCompat 
+module System.IO.StatCompat 
 where
 import System.Posix.Types
 import System.IO.PosixConsts

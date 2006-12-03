@@ -5,7 +5,7 @@ License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Beta
 Copyright: Copyright (c) 2004-2006 John Goerzen
-Exposed-Modules: MissingH.Str, MissingH.IO, System.IO.Binary, MissingH.List,
+Exposed-Modules: MissingH.Str, System.IO, System.IO.Binary, MissingH.List,
   System.Daemon,
   MissingH.Parsec,
   Test.HUnit.Utils,
@@ -49,7 +49,7 @@ Exposed-Modules: MissingH.Str, MissingH.IO, System.IO.Binary, MissingH.List,
     System.IO.HVFS.Combinators,
     System.IO.HVFS.InstanceHelpers,
     System.IO.HVFS.Utils,
-  System.IO.HVIO, MissingH.IO.StatCompat, MissingH.IO.WindowsCompat,
+  System.IO.HVIO, System.IO.StatCompat, System.IO.WindowsCompat,
     System.IO.PlafCompat, System.IO.Posix.Consts,
   Network.Email.Parser,
   System.Debian, System.Debian.ControlParser,

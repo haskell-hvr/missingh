@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.IO
+   Module     : System.IO
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 asdf.
 -}
 
-module MissingH.IO(-- * Entire File Handle Utilities
+module System.IO(-- * Entire File Handle Utilities
                        -- ** Opened Handle Data Copying
                        hCopy, hCopyProgress, hLineCopy, lineCopy,
                        -- ** Disk File Data Copying
