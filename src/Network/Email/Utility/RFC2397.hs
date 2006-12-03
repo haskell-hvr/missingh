@@ -1,4 +1,4 @@
-module MissingH.Wash.Utility.RFC2397 where
+module Network.Email.Utility.RFC2397 where
 
 import MissingH.Wash.Utility.URLCoding
 import MissingH.Wash.Utility.Base64
