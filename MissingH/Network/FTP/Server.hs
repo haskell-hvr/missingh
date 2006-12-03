@@ -79,7 +79,7 @@ module MissingH.Network.FTP.Server(
                                    anonFtpHandler
                                   )
 where
-import MissingH.Network.FTP.ParserServer
+import Network.FTP.Server.Parser
 import Network.FTP.Client.Parser
 import Network.BSD
 import Network.Socket

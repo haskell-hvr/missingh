@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Network.FTP.ParserServer
+   Module     : Network.FTP.Server.Parser
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -33,7 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module MissingH.Network.FTP.ParserServer(
+module Network.FTP.Server.Parser(
                                          parseCommand
                                         )
 where
@@ -53,7 +53,7 @@ import Language.RFC2234.Parse(alpha)
 import Data.Char
 
 logit :: String -> IO ()
-logit m = debugM "MissingH.Network.FTP.ParserServer" ("FTP received: " ++ m)
+logit m = debugM "Network.FTP.Server.Parser" ("FTP received: " ++ m)
 
 ----------------------------------------------------------------------
 -- Utilities
