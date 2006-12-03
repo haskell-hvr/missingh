@@ -4,7 +4,7 @@ module MissingH.Wash.Utility.Unique (inventStdKey, inventKey, inventFilePath) wh
 import Random
 import IO
 import Directory
-import MissingH.Wash.Utility.Auxiliary
+import Network.Email.Utility.Auxiliary
 import List
 import Monad
 import MissingH.Wash.Utility.Locking

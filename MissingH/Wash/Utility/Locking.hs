@@ -1,6 +1,6 @@
 module MissingH.Wash.Utility.Locking (obtainLock, releaseLock) where
 
-import MissingH.Wash.Utility.Auxiliary
+import Network.Email.Utility.Auxiliary
 import Directory
 import IO
 import System

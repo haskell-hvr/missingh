@@ -1,4 +1,4 @@
-module MissingH.Wash.Utility.Auxiliary where
+module Network.Email.Utility.Auxiliary where
 
 import IO
 import System
