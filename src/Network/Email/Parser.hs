@@ -33,8 +33,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 module Network.Email.Parser(flattenMessage)
 where
 
-import MissingH.Hsemail.Rfc2234(crlf)
-import MissingH.Hsemail.Rfc2822 hiding (Message)
+import Language.RFC2234.Parse(crlf)
+import Language.RFC2822.Parse hiding (Message)
 import MissingH.Wash.Mail.MailParser(RawMessage(..), digestMessage)
 import MissingH.Wash.Mail.HeaderField(Header(..))
 import qualified MissingH.Wash.Mail.Message

@@ -13,7 +13,7 @@
    <http://www.faqs.org/rfcs/rfc2821.html>.
 -}
 
-module MissingH.Hsemail.Rfc2821 where
+module Language.RFC2821.Parse where
 
 import Control.Exception ( assert )
 import Control.Monad.State
@@ -22,7 +22,7 @@ import Text.ParserCombinators.Parsec.Error
 import Data.List ( intersperse )
 import Data.Char ( toLower )
 import Data.Typeable
-import MissingH.Hsemail.Rfc2234
+import Language.RFC2234.Parse
 
 ----------------------------------------------------------------------
 -- * ESMTP State Machine

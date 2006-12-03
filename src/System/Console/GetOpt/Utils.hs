@@ -30,7 +30,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 Utilities for command-line parsing, including wrappers around
 the standard System.Console.GetOpt module.
 -}
-module MissingH.GetOpt (parseCmdLine,
+module System.Console.GetOpt.Utils (parseCmdLine,
                         validateCmdLine,
                         StdOption,
                         stdRequired,

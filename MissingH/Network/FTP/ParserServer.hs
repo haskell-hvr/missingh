@@ -49,7 +49,7 @@ import System.IO(Handle, hGetContents)
 import System.IO(hGetLine)
 import Text.Regex
 import Data.Word
-import MissingH.Hsemail.Rfc2234(alpha)
+import Language.RFC2234.Parse(alpha)
 import Data.Char
 
 logit :: String -> IO ()
