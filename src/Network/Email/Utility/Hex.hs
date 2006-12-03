@@ -1,5 +1,5 @@
 -- © 2001, 2003 Peter Thiemann
-module MissingH.Wash.Utility.Hex where
+module Network.Email.Utility.Hex where
 
 import Array
 import Char

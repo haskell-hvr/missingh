@@ -3,7 +3,7 @@
 module MissingH.Wash.Utility.URLCoding (encode, decode) where
 
 import Char
-import MissingH.Wash.Utility.Hex
+import Network.Email.Utility.Hex
 
 encode, decode :: String -> String
 encode = urlEncode

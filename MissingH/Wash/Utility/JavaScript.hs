@@ -3,7 +3,7 @@ module MissingH.Wash.Utility.JavaScript where
 
 import Char
 
-import MissingH.Wash.Utility.Hex
+import Network.Email.Utility.Hex
 
 jsShow :: String -> String
 jsShow xs = '\'' : g xs

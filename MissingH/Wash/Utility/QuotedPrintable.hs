@@ -4,7 +4,7 @@ module MissingH.Wash.Utility.QuotedPrintable
        ) where
 
 import Char
-import MissingH.Wash.Utility.Hex
+import Network.Email.Utility.Hex
 
 encode, encode', decode :: String -> String
 encode = encode_quoted

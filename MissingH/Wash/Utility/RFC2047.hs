@@ -5,7 +5,7 @@ import List
 
 import qualified MissingH.Wash.Utility.Base64 as Base64
 import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
-import MissingH.Wash.Utility.Hex
+import Network.Email.Utility.Hex
 import Text.ParserCombinators.Parsec
 
 lineString =
