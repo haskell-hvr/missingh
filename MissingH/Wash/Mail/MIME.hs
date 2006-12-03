@@ -9,7 +9,7 @@ import Char
 
 import qualified MissingH.Wash.Utility.Base64 as Base64
 import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
-import MissingH.Wash.Mail.HeaderField
+import Network.Email.Message.HeaderField
 import qualified MissingH.Wash.Utility.RFC2279 as RFC2279
 -- UTF-8
 

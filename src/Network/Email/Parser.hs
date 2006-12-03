@@ -36,7 +36,7 @@ where
 import Language.RFC2234.Parse(crlf)
 import Language.RFC2822.Parse hiding (Message)
 import MissingH.Wash.Mail.MailParser(RawMessage(..), digestMessage)
-import MissingH.Wash.Mail.HeaderField(Header(..))
+import Network.Email.Message.HeaderField(Header(..))
 import qualified MissingH.Wash.Mail.Message
 import Text.ParserCombinators.Parsec
 import Control.Monad.Error

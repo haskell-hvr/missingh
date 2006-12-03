@@ -1,6 +1,6 @@
 module MissingH.Wash.Mail.Message where
 
-import MissingH.Wash.Mail.HeaderField
+import Network.Email.Message.HeaderField
 
 data Message =
      Singlepart 

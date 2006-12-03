@@ -1,4 +1,4 @@
-module MissingH.Wash.Mail.HeaderField where
+module Network.Email.Message.HeaderField where
 
 import MissingH.Wash.Utility.RFC2047
 
