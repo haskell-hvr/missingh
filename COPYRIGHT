@@ -146,7 +146,7 @@ The code was obtained from
 http://cvs.sourceforge.net/viewcvs.py/haskell-libs/libs/crypto/crc32.hs
 
 ----------------------------------------------------
-MissingH.Compression.Inflate is
+Data.Compression.Inflate is
 Copyright 2004 Ian Lynagh <igloo@earth.li>
 Licence: 3 clause BSD.
 

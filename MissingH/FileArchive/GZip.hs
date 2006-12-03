@@ -48,7 +48,7 @@ module MissingH.FileArchive.GZip (
                                  )
 where
 
-import MissingH.Compression.Inflate
+import Data.Compression.Inflate
 import Data.Hash.CRC32.GZip
 import Data.List
 import Data.Bits

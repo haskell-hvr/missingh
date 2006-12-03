@@ -20,7 +20,7 @@ module GZiptest(tests) where
 import Test.HUnit
 import MissingH.FileArchive.GZip
 import MissingH.Path.FilePath
-import MissingH.Compression.Inflate
+import Data.Compression.Inflate
 import MissingH.IO.Binary
 import System.IO
 import MissingH.Either

@@ -14,7 +14,7 @@ as described by RFC 1951.
 -}
 
 {- |
-   Module     : MissingH.Compression.Inflate
+   Module     : Data.Compression.Inflate
    Copyright  : Copyright (C) 2004 Ian Lynagh 
    License    : 3-clause BSD
 
@@ -28,7 +28,7 @@ Inflate algorithm implementation
 Copyright (C) 2004 Ian Lynagh
 -}
 
-module MissingH.Compression.Inflate (inflate_string,
+module Data.Compression.Inflate (inflate_string,
                                      inflate_string_remainder,
                                      inflate, Output, Bit,
                                     bits_to_word32) where
