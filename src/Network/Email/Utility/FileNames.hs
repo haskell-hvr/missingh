@@ -1,4 +1,4 @@
-module MissingH.Wash.Utility.FileNames where
+module Network.Email.Utility.FileNames where
 
 longestSuffix :: (a -> Bool) -> [a] -> [a]
 longestSuffix p xs =

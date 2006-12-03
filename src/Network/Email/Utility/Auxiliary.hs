@@ -3,7 +3,7 @@ module Network.Email.Utility.Auxiliary where
 import IO
 import System
 import Directory
-import MissingH.Wash.Utility.FileNames
+import Network.Email.Utility.FileNames
 import qualified MissingH.Wash.Utility.Shell as Shell
 
 protectedGetEnv :: String -> String -> IO String
