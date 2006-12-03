@@ -29,7 +29,7 @@ Tools for tracking the status of a long operation.
 
 Written by John Goerzen, jgoerzen\@complete.org 
 
-See also "MissingH.ProgressMeter" -}
+See also "Data.Progress.Meter" -}
 
 module MissingH.ProgressTracker (
                                  -- * Introduction
@@ -86,7 +86,7 @@ Finally, you can register callbacks.  Callbacks are functions that are called
 whenever the status of a tracker changes.  They'll be passed the old and new
 status and are intended to do things like update on-screen status displays.
 
-The cousin module 'MissingH.ProgressMeter' can be used to nicely render
+The cousin module 'Data.Progress.Meter' can be used to nicely render
 these trackers on a console.
 -}
 

@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.ProgressMeter
+   Module     : Data.Progress.Meter
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -30,7 +30,7 @@ as a layer atop "MissingH.ProgressTracker".
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.ProgressMeter (-- * Types
+module Data.Progress.Meter (-- * Types
                                ProgressMeter,
                                -- * Creation and Configuration
                                simpleNewMeter,
