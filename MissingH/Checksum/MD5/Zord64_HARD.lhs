@@ -1,5 +1,5 @@
 >-- #hide
-> module MissingH.Checksum.MD5.Zord64_HARD (Zord64) where
+> module Data.Hash.MD5.Zord64_HARD (Zord64) where
 
 > import Word
 > import Bits

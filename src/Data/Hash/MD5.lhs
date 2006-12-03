@@ -1,5 +1,5 @@
 >{- |
->   Module     : MissingH.Checksum.MD5
+>   Module     : Data.Hash.MD5
 >   Copyright  : Copyright (C) 2001 Ian Lynagh 
 >   License    : Either BSD or GPL
 >
@@ -12,7 +12,7 @@
 >Written by Ian Lynagh, igloo\@earth.li
 >-}
 
-> module MissingH.Checksum.MD5 (md5,  md5s,  md5i,
+> module Data.Hash.MD5 (md5,  md5s,  md5i,
 >             MD5(..), ABCD(..), Zord64, Str(..), BoolList(..), WordList(..)) where
 
 > import Char
@@ -29,7 +29,7 @@ Also need a rotate left function that actually works.
 > type Zord64 = Word64
 #else
 
-> import MissingH.Checksum.MD5.Zord64_HARD
+> import Data.Hash.MD5.Zord64_HARD
  
 > rotL :: Word32 -> Rotation -> Word32
 > rotL a s = shiftL a s .|. shiftL a (s-32)

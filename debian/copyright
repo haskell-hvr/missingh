@@ -160,7 +160,7 @@ The code was obtained from
 http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
 
 ----------------------------------------------------
-MissingH.Checksum.MD5* is
+Data.Hash.MD5* is
 Copyright 2001 Ian Lynagh <igloo@earth.li>
 Licence: GPL or 3 clause BSD
 
