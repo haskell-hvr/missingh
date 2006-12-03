@@ -55,7 +55,7 @@ import Control.Concurrent
 import Control.Monad(when)
 import MissingH.Str
 import MissingH.Time
-import MissingH.Quantity
+import Data.Quantity
 import System.IO
 import Control.Monad(filterM)
 
@@ -77,7 +77,7 @@ type ProgressMeter = MVar ProgressMeterR
 
 * Width 80
 
-* MissingH.Quantity.renderNums binaryOpts 1
+* Data.Quantity.renderNums binaryOpts 1
 
 * Unit inticator @"B"@
 

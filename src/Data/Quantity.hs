@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Quantity
+   Module     : Data.Quantity
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -29,7 +29,7 @@ Tools for rendering sizes
 
 Written by John Goerzen, jgoerzen\@complete.org -}
 
-module MissingH.Quantity (
+module Data.Quantity (
                           renderNum,
                           renderNums,
                           quantifyNum,
@@ -108,24 +108,24 @@ digits to the right of the decimal point), and you get a string output.
 
 Here are some examples:
 
-> MissingH.Quantity> renderNum binaryOpts 0 1048576
+> Data.Quantity> renderNum binaryOpts 0 1048576
 > "1M"
-> MissingH.Quantity> renderNum binaryOpts 2 10485760
+> Data.Quantity> renderNum binaryOpts 2 10485760
 > "10.00M"
-> MissingH.Quantity> renderNum binaryOpts 3 1048576
+> Data.Quantity> renderNum binaryOpts 3 1048576
 > "1.000M"
-> MissingH.Quantity> renderNum binaryOpts 3 1500000
+> Data.Quantity> renderNum binaryOpts 3 1500000
 > "1.431M"
-> MissingH.Quantity> renderNum binaryOpts 2 (1500 ** 3)
+> Data.Quantity> renderNum binaryOpts 2 (1500 ** 3)
 > "3.14G"
 
-> MissingH.Quantity> renderNum siOpts 2 1024
+> Data.Quantity> renderNum siOpts 2 1024
 > "1.02k"
-> MissingH.Quantity> renderNum siOpts 2 1048576
+> Data.Quantity> renderNum siOpts 2 1048576
 > "1.05M"
-> MissingH.Quantity> renderNum siOpts 2 0.001
+> Data.Quantity> renderNum siOpts 2 0.001
 > "1.00m"
-> MissingH.Quantity> renderNum siOpts 2 0.0001
+> Data.Quantity> renderNum siOpts 2 0.0001
 > "100.00u"
 
 If you want more control over the output, see 'quantifyNum'. -}
@@ -148,9 +148,9 @@ Also, unlike 'renderNum', the %f instead of %g printf format is used so that
 
 Examples:
 
-> *MissingH.Quantity> renderNums binaryOpts 3 [1500000, 10240, 104857600]
+> *Data.Quantity> renderNums binaryOpts 3 [1500000, 10240, 104857600]
 > ["1.431M","0.010M","100.000M"]
-> *MissingH.Quantity> renderNums binaryOpts 3 [1500, 10240, 104857600]
+> *Data.Quantity> renderNums binaryOpts 3 [1500, 10240, 104857600]
 > ["1.465K","10.000K","102400.000K"]
 
 -}
