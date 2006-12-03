@@ -33,6 +33,8 @@ darcs mv ${OLDFN} ${NEWFN}
 
 for FILE in \
         MissingH.cabal \
+        COPYRIGHT \
+        debian/copyright \
         `find src -name "*.hs"` \
         `find src -name "*.lhs"` \
         `find MissingH -name "*.hs"` \
