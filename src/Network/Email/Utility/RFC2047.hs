@@ -1,4 +1,4 @@
-module MissingH.Wash.Utility.RFC2047 where
+module Network.Email.Utility.RFC2047 where
 -- decoding of header fields
 import Char
 import List

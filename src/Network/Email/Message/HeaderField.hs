@@ -1,6 +1,6 @@
 module Network.Email.Message.HeaderField where
 
-import MissingH.Wash.Utility.RFC2047
+import Network.Email.Utility.RFC2047
 
 -- 
 newtype Header = Header (String, String)
