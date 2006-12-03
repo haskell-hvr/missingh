@@ -8,7 +8,7 @@ import Time
 import System.IO.Unsafe
 
 import Network.Email.Utility.IntToString
-import MissingH.Wash.Utility.SimpleParser
+import Network.Email.Utility.SimpleParser
 
 secondsToString seconds =
   intToString 20 seconds
