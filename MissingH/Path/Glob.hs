@@ -16,7 +16,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Path.Glob
+   Module     : System.Path.Glob
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -27,22 +27,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Functions for expanding wildcards, filenames, and pathnames.
 
 For information on the metacharacters recognized, please see the notes
-in "MissingH.Path.WildMatch".
+in "System.Path.WildMatch".
 
 -}
 
-module MissingH.Path.Glob(glob, vGlob) where
+module System.Path.Glob(glob, vGlob) where
 import Data.List.Utils
 import System.IO
 import System.IO.HVFS
-import MissingH.Path.FilePath
+import System.Path.FilePath
 import Control.Exception
-import MissingH.Path.WildMatch
+import System.Path.WildMatch
 
 hasWild = hasAny "*?["
 
 {- | Takes a pattern.  Returns a list of names that match that pattern.
-The pattern is evaluated by "MissingH.Path.WildMatch".  This function
+The pattern is evaluated by "System.Path.WildMatch".  This function
 does not perform tilde or environment variable expansion.
 
 Filenames that begin with a dot are not included in the result set unless

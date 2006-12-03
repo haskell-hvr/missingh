@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Path
+   Module     : System.Path
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -32,7 +32,7 @@ file names, directories, and related support.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module MissingH.Path(-- * Name processing
+module System.Path(-- * Name processing
                      splitExt, absNormPath, secureAbsNormPath,
                      -- * Directory Processing
                      recurseDir, recurseDirStat, recursiveRemove,
@@ -53,7 +53,7 @@ import System.Directory
 #endif
 import Control.Exception
 import System.IO
-import MissingH.Path.NameManip
+import System.Path.NameManip
 import System.IO.HVFS.Utils
 
 {- | Splits a pathname into a tuple representing the root of the name and

@@ -16,7 +16,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 {- |
-   Module     : MissingH.Path.WildMatch
+   Module     : System.Path.WildMatch
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Stability  : provisional
    Portability: portable
 
-Matching filenames with wildcards.  See also "MissingH.Path.Glob" for
+Matching filenames with wildcards.  See also "System.Path.Glob" for
 support for generating lists of files based on wildcards.
 
 Inspired by fnmatch.py, part of the Python standard library.
@@ -51,7 +51,7 @@ Please note:
 * Neither the path separator (the slash or backslash) nor the period carry
 any special meaning for the functions in this module.  That is, @*@ will
 match @\/@ in a filename.  If this is not the behavior you want, you probably
-want "MissingH.Path.Glob" instead of this module.
+want "System.Path.Glob" instead of this module.
 
 * Unlike the Unix shell, filenames that begin with a period are not ignored
 by this module.  That is, @*.txt@ will match @.test.txt@.
@@ -59,7 +59,7 @@ by this module.  That is, @*.txt@ will match @.test.txt@.
 * This module does not current permit escaping of special characters.
 -}
 
-module MissingH.Path.WildMatch (-- * Wildcard matching
+module System.Path.WildMatch (-- * Wildcard matching
                                 wildCheckCase,
                                 wildToRegex
                                )

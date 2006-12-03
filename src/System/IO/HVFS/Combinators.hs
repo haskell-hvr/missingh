@@ -50,8 +50,8 @@ import System.Posix.Files
 import System.Posix.Types
 import System.Time
 import System.Directory
-import MissingH.Path
-import MissingH.Path.NameManip
+import System.Path
+import System.Path.NameManip
 
 ----------------------------------------------------------------------
 -- Providing read-only access

@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module WildMatchtest(tests) where
 import Test.HUnit
-import MissingH.Path.WildMatch
+import System.Path.WildMatch
 import Test.HUnit.Utils
 
 test_wildCheckCase =

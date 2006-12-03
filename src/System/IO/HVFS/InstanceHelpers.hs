@@ -47,8 +47,8 @@ where
 import System.IO.HVFS
 import Data.IORef
 import Data.List
-import MissingH.Path
-import MissingH.Path.NameManip
+import System.Path
+import System.Path.NameManip
 import Control.Monad.Error
 import System.IO.Error
 import System.IO
@@ -103,7 +103,7 @@ newMemoryVFSRef r = do
                     c <- newIORef "/"
                     return (MemoryVFS {content = r, cwd = c})
 
-{- | Similar to 'MissingH.Path.NameManip' but the first element
+{- | Similar to 'System.Path.NameManip' but the first element
 won't be @\/@.
 
 >nice_slice "/" -> []

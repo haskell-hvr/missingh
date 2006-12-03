@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Globtest(tests) where
 import Test.HUnit
-import MissingH.Path.Glob
-import MissingH.Path
+import System.Path.Glob
+import System.Path
 import Test.HUnit.Utils
 import System.IO.HVFS
 import System.Posix.Directory

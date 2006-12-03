@@ -3,7 +3,7 @@
 -}
 
 {- |
-   Module     : MissingH.Path.NameManip
+   Module     : System.Path.NameManip
    Copyright  : Copyright (C) 2004 Volker Wysk
    License    : GNU LGPL, version 2.1 or above
 
@@ -16,7 +16,7 @@ Low-level path name manipulations.
 Written by Volker Wysk
 -}
 
-module MissingH.Path.NameManip where
+module System.Path.NameManip where
 
 import Data.List
 import System.Directory

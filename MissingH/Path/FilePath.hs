@@ -1,4 +1,4 @@
-module MissingH.Path.FilePath
+module System.Path.FilePath
          ( -- * File path
            FilePath
          , splitFileName

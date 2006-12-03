@@ -26,7 +26,7 @@ import Database.AnyDBM.StringDBM
 import Database.AnyDBM.MapDBM
 import System.Directory
 import System.IO.HVFS.Utils
-import MissingH.Path.FilePath
+import System.Path.FilePath
 import Data.HashTable
 import Data.List(sort)
 import Control.Exception(finally)

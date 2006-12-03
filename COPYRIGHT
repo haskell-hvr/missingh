@@ -126,7 +126,7 @@ Copyright/License for all Wash modules:
   POSSIBILITY OF SUCH DAMAGE. 
 
 ----------------------------------------------------
-Portions if MissingH.Path come from Volker Wysk's HsShellScript
+Portions if System.Path come from Volker Wysk's HsShellScript
 library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
 and is licensed under the GNU LGPL 2.1
 
@@ -200,7 +200,7 @@ TO THOSE CONCERNED ABOUT THE LAW:
            -- SMH, Creator, Programmer.
 
 ----------------------------------------------------
-MissingH.Path.FilePath was written by Isaac Jones.  It was pulled from
+System.Path.FilePath was written by Isaac Jones.  It was pulled from
 the darcs repository at
 http://www.scannedinavian.org/~lemmih/FilePath/ as of July 21, 2005.
 
