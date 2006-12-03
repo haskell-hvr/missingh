@@ -84,7 +84,7 @@ import Network.FTP.Client.Parser
 import Network.BSD
 import Network.Socket
 import qualified Network
-import System.IO
+import System.IO.Utils
 import System.IO.Error
 import System.Log.Logger
 import Network.Utils

@@ -182,6 +182,7 @@ import Control.Concurrent.MVar
 import Data.List(map)
 import qualified Data.Map as Map
 import qualified Control.Exception
+import Control.Monad.Error
 ---------------------------------------------------------------------------
 -- Basic logger types
 ---------------------------------------------------------------------------
