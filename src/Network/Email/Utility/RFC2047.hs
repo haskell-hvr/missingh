@@ -3,7 +3,7 @@ module Network.Email.Utility.RFC2047 where
 import Char
 import List
 
-import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified Data.Codec.Base64 as Base64
 import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
 import Network.Email.Utility.Hex
 import Text.ParserCombinators.Parsec

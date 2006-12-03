@@ -7,7 +7,7 @@ import IO
 import Random
 import Char
 
-import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified Data.Codec.Base64 as Base64
 import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
 import Network.Email.Message.HeaderField
 import qualified Network.Email.Utility.RFC2279 as RFC2279

@@ -8,7 +8,7 @@ import Maybe
 -- 
 import Text.ParserCombinators.Parsec
 -- 
-import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified Data.Codec.Base64 as Base64
 import qualified MissingH.Wash.Utility.QuotedPrintable as QuotedPrintable
 import qualified Network.Email.Utility.RFC2047 as RFC2047
 import Network.Email.Utility.RFC2047 (p_token)

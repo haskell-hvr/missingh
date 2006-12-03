@@ -1,9 +1,9 @@
 module Network.Email.Utility.RFC2397 where
 
 import Network.Email.Utility.URLCoding
-import MissingH.Wash.Utility.Base64
+import Data.Codec.Base64
 
-import qualified MissingH.Wash.Utility.Base64 as Base64
+import qualified Data.Codec.Base64 as Base64
 import qualified Network.Email.Utility.URLCoding as URLCoding
 
 data ENC = BASE64 | URL
