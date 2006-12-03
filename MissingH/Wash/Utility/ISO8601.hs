@@ -7,7 +7,7 @@ import Time
 
 import System.IO.Unsafe
 
-import MissingH.Wash.Utility.IntToString
+import Network.Email.Utility.IntToString
 import MissingH.Wash.Utility.SimpleParser
 
 secondsToString seconds =

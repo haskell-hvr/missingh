@@ -1,5 +1,5 @@
 -- © 2002 Peter Thiemann
-module MissingH.Wash.Utility.IntToString where
+module Network.Email.Utility.IntToString where
 
 import Char
 
