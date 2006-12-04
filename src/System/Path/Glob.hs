@@ -35,7 +35,7 @@ module System.Path.Glob(glob, vGlob) where
 import Data.List.Utils
 import System.IO
 import System.IO.HVFS
-import System.FilePath
+import System.FilePath.Version_0_11
 import Control.Exception
 import System.Path.WildMatch
 
@@ -79,7 +79,8 @@ expandGlob fs fn =
                  else do r <- mapM expandNormalBase dirlist
                          return $ concat r
            
-    where (dirname, basename) = splitFileName fn
+    where basename = takeBaseName fn
+          dirname = takeDirectory fn
           expandWildBase :: FilePath -> IO [FilePath]
           expandWildBase dname =
               do dirglobs <- runGlob fs dname basename
