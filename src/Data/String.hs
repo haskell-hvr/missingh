@@ -40,14 +40,11 @@ module Data.String
                         -- * Conversions
                         -- | Note: Some of these functions are aliases for functions
                         -- in "Data.List.Utils".
-                        join, split, splitWs, splitRe, replace, subRe, escapeRe
+                        join, split, splitWs, replace, escapeRe
                        ) where
 import Data.List.Utils(startswith, endswith, join, split, replace)
 import Data.Char
 import Text.Regex
-
-{-# DEPRECATED splitRe "Use Text.Regex.splitRegex instead" #-}
-{-# DEPRECATED subRe "Use Text.Regex.subRegex instead" #-}
 
 wschars = " \t\r\n"
 
@@ -81,31 +78,6 @@ lstrip s = case s of
 -- | Same as 'strip', but applies only to the right side of the string.
 rstrip :: String -> String
 rstrip = reverse . lstrip . reverse
-
-{- | Replaces every occurance of the given regexp with the replacement string.
-
-In the replacement string, @\"\\1\"@ refers to the first substring; 
-@\"\\2\"@ to the second, etc; and @\"\\0\"@ to the entire match.
-@\"\\\\\\\\\"@ will insert a literal backslash.
-
-This code has been integrated into the standard Haskell libraries
-as Text.Regex.subRegex and is thus deprecated in MissingH.
--}
-subRe :: Regex                          -- ^ Search pattern
-      -> String                         -- ^ Input string
-      -> String                         -- ^ Replacement text
-      -> String                         -- ^ Output string
-subRe = subRegex
-
-{- | Splits a string based on a regular expression.  The regular expression
-should identify one delimiter.
-
-This code has been integrated into the standard Haskell libraries
-as Text.Regex.splitRegex and is thus deprecated in MissingH.
--}
-
-splitRe :: Regex -> String -> [String]
-splitRe = splitRegex
 
 {- | Splits a string around whitespace.  Empty elements in the result
 list are automatically removed. -}
