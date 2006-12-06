@@ -37,7 +37,7 @@ completely independently of the rest of the library, you may treat them
 under the licenses shown below.
 
 ----------------------------------------------------
-Portions if System.Path come from Volker Wysk's HsShellScript
+Portions of System.Path come from Volker Wysk's HsShellScript
 library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
 and is licensed under the GNU LGPL 2.1
 
