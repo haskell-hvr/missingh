@@ -49,7 +49,6 @@ import System.IO(Handle, hGetContents)
 import System.IO(hGetLine)
 import Text.Regex
 import Data.Word
-import Language.RFC2234.Parse(alpha)
 import Data.Char
 
 logit :: String -> IO ()
@@ -58,6 +57,8 @@ logit m = debugM "Network.FTP.Server.Parser" ("FTP received: " ++ m)
 ----------------------------------------------------------------------
 -- Utilities
 ----------------------------------------------------------------------
+
+alpha = oneOf (['A'..'Z'] ++ ['a'..'z']) <?> "alphabetic character"
 
 word = many1 alpha
 
