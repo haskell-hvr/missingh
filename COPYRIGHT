@@ -37,38 +37,6 @@ completely independently of the rest of the library, you may treat them
 under the licenses shown below.
 
 ----------------------------------------------------
-The Control.Concurrent.Thread.Utils.Child and Control.Concurrent.Thread.Utils.Timeout modules are from
-child-2005-02-14 at http://cryp.to/blockio/.
-
-Copyright/License:
-
-Copyright (c) 2005 Peter Simons <simons@cryp.to>. All rights reserved. This
-software is released under the terms of the GNU General Public License.
-
-John Goerzen has made these modifications:
-
- * Module names adjusted for MissingH namespace
-
- * Some files from the source distribution are not relevant to
-   MissingH and have been removed.
-
-----------------------------------------------------
-The System.IO.BlockIO module is from blockio 2005-02-14 at
-http://cryp.to/blockio/.
-
-Copyright/License:
-
-  Copyright (c) 2005 Peter Simons <simons@cryp.to>. All rights reserved. This
-  software is released under the terms of the GNU General Public License.
-
-I (John Goerzen) have made these modifications:
-
- * Module names adjusted to work with MissingH
-
- * Some files from the source distribution are not relevant to MissingH
-   and were removed.
-
-----------------------------------------------------
 Portions if System.Path come from Volker Wysk's HsShellScript
 library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
 and is licensed under the GNU LGPL 2.1
@@ -143,15 +111,4 @@ TO THOSE CONCERNED ABOUT THE LAW:
            -- SMH, Creator, Programmer.
 
 ----------------------------------------------------
-System.Path.FilePath was written by Isaac Jones.  It was pulled from
-the darcs repository at
-http://www.scannedinavian.org/~lemmih/FilePath/ as of July 21, 2005.
-
-The software is Copyright Isaac Jones 2003-2005.  All rights reserved.
-
-Debian GNU/Linux users may find the 3-clause BSD license at
-/usr/share/common-licenses/BSD.  Alternatively, you may find it at
-3rd-party-licenses/BSD.  Please note that the University of California
-has no claim on this code; simply substitute Isaac Jones for the
-University wherever it may occur in that file.
 
