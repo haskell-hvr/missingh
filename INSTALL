@@ -15,12 +15,15 @@ You must satisfy one or more of these major categories:
 
 2. Hugs 2005xx or above, plus cpphs
 
-If you don't already have cpphs, get it from
-http://www.cs.york.ac.uk/fp/cpphs/.
+   If you don't already have cpphs, get it from
+   http://www.cs.york.ac.uk/fp/cpphs/.
 
 If you need Cabal, get it from http://www.haskell.org/cabal.
 
 Debian users can install the packages cpphs and ghc6
+
+3. GHC extralibs collection, or the individual
+   libraries mentioned in MissingH.cabal
 
 INSTALLATION
 ------------
