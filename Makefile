@@ -15,17 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-SOURCES := $(wildcard MissingH/*.hs) \
-	$(wildcard MissingH/*/*.hs) \
-	$(wildcard MissingH/*/*/*.hs) 
-LHSSOURCES := $(wildcard MissingH/*/*.lhs) \
-	$(wildcard MissingH/*/*/*.lhs)
-TESTSOURCES := $(shell find testsrc -name "*.hs")
-O1 := $(SOURCES:.hs=.o) $(LHSSOURCES)
-OBJS := $(O1:.lhs=.o)
-LHSCONVSOURCES := $(patsubst %.lhs,doctmp/%.hs,$(LHSSOURCES))
-HUGSCONVSOURCES := $(patsubst %.hs,dist/build/%.hs,$(SOURCES))
-UNLIT ?= $(shell ghc --print-libdir)/unlit
+PROJECT := MissingH
 GHCPARMS := -fallow-overlapping-instances -fallow-undecidable-instances -fglasgow-exts -cpp
 
 .PHONY: all hugsbuild
@@ -37,7 +27,7 @@ hugsbuild: setup
 	./setup configure --hugs
 	./setup build
 
-setup: Setup.hs MissingH.cabal
+setup: Setup.hs $(PROJECT).cabal
 	ghc -package Cabal Setup.hs -o setup
 
 doctmp/%.hs: %.lhs doctmp
@@ -52,9 +42,9 @@ doc: $(LHSCONVSOURCES) setup
 	-rm -rf html
 	./setup configure
 	./setup haddock
-#	haddock $(HADDOCKARGS) --package=MissingH \
-#	   --dump-interface=html/MissingH.haddock \
-#	   -t 'MissingH API Manual' -h -o html $(HUGSCONVSOURCES) $(LHSCONVSOURCES)
+#	haddock $(HADDOCKARGS) --package=$(PROJECT) \
+#	   --dump-interface=html/$(PROJECT).haddock \
+#	   -t '$(PROJECT) API Manual' -h -o html $(HUGSCONVSOURCES) $(LHSCONVSOURCES)
 	mv dist/doc/html .
 
 .PHONY: hugsbuild
