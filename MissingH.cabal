@@ -38,6 +38,7 @@ Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils
     System.IO.HVFS.Utils,
   System.IO.HVIO, System.IO.StatCompat, System.IO.WindowsCompat,
     System.IO.PlafCompat, System.Posix.Consts,
+  System.Debian, System.Debian.ControlParser,
   Data.MIME.Types,
   System.Console.GetOpt.Utils
 Extensions: ExistentialQuantification, OverlappingInstances, 
