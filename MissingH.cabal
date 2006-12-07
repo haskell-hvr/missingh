@@ -49,7 +49,8 @@ Other-Modules: Data.ConfigFile.Lexer
 Extensions: ExistentialQuantification, OverlappingInstances, 
    UndecidableInstances, CPP
 Build-Depends: network, parsec, base,
-               haskell98, mtl, HUnit, regex-compat, QuickCheck, FilePath
+               haskell98, mtl, HUnit, regex-compat, QuickCheck, FilePath,
+               hslogger
 -- Cabal will automatically add unix here on non-Windows platforms
 GHC-Options: -O2
 

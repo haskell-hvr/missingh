@@ -1,15 +1,15 @@
 Source: missingh
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.6), ghc6 (<< 6.6-999), haskell-devscripts (>= 0.5.6), cpphs, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-hunit-dev, libghc6-quickcheck-dev, libghc6-filepath-dev
-Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs (>= 98.200503.08), haskell-devscripts (>= 0.5.6), ghc6 (>= 6.6), cpphs, libhugs-filepath, libhugs-hunit 
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.6), ghc6 (<< 6.6-999), haskell-devscripts (>= 0.5.6), cpphs, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-hunit-dev, libghc6-quickcheck-dev, libghc6-filepath-dev, libghc6-hslogger-dev
+Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs (>= 98.200503.08), haskell-devscripts (>= 0.5.6), ghc6 (>= 6.6), cpphs, libhugs-filepath, libhugs-hunit, libhugs-hslogger
 Standards-Version: 3.6.2
 Section: devel
 
 Package: libghc6-missingh-dev
 Section: devel
 Architecture: any
-Depends: ${haskell:Depends}, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-hunit-dev, libghc6-quickcheck-dev, libghc6-filepath-dev
+Depends: ${haskell:Depends}, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-hunit-dev, libghc6-quickcheck-dev, libghc6-filepath-dev, libghc6-hslogger-dev
 Suggests: missingh-doc
 Description: Library of utility functions for Haskell, GHC6 package 
  MissingH is a library of all sorts of utility functions for
@@ -26,7 +26,7 @@ Description: Library of utility functions for Haskell, GHC6 package
 Package: libhugs-missingh
 Section: devel
 Architecture: all
-Depends: ${haskell:Depends}, libhugs-filepath, libhugs-hunit
+Depends: ${haskell:Depends}, libhugs-filepath, libhugs-hunit, libhugs-hslogger
 Suggests: missingh-doc
 Description: Library of utility functions for Haskell, Hugs package 
  MissingH is a library of all sorts of utility functions for
