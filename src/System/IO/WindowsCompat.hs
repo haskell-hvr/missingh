@@ -65,7 +65,7 @@ where
 import System.Posix.Types
 import Data.Bits
 import System.IO.StatCompat
-import System.IO.Posix.Consts
+import System.Posix.Consts
 import System.Time.Utils
 import System.Directory
 
