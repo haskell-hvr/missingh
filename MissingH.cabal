@@ -25,9 +25,6 @@ Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils
   Network.SocketServer,
   Data.Either.Utils,
   Data.Maybe.Utils,
-  Data.ConfigFile,
-    Data.ConfigFile.Types,
-    Data.ConfigFile.Parser,
   Data.Bits.Utils,
   Data.Hash.CRC32.Posix, Data.Hash.CRC32.GZip,
    Data.Hash.MD5, Data.Hash.MD5.Zord64_HARD,
@@ -45,7 +42,6 @@ Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils
     Database.AnyDBM.MapDBM,
     Database.AnyDBM.StringDBM,
   System.Console.GetOpt.Utils
-Other-Modules: Data.ConfigFile.Lexer
 Extensions: ExistentialQuantification, OverlappingInstances, 
    UndecidableInstances, CPP
 Build-Depends: network, parsec, base,
