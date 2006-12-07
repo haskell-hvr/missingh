@@ -26,7 +26,6 @@ import qualified Pathtest
 import qualified Strtest
 import qualified IOtest
 import qualified Bitstest
-import qualified Network.FTP.Parsertest
 import qualified Eithertest
 import qualified ConfigParser.Parsertest
 import qualified ConfigParser.Maintest
@@ -58,7 +57,6 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Glob" Globtest.tests,
                  TestLabel "MIMETypes" MIMETypestest.tests,
                  TestLabel "Bitstest" Bitstest.tests,
-                 TestLabel "Network.FTP.Parser" Network.FTP.Parsertest.tests,
                  TestLabel "Eithertest" Eithertest.tests,
                  TestLabel "ConfigParser.RunParser" ConfigParser.Parsertest.tests,
                  TestLabel "ConfigParser.Main" ConfigParser.Maintest.tests,
