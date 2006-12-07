@@ -66,7 +66,6 @@ clean:
 		`find . -name "*~"` *.a setup dist testsrc/runtests \
 		local-pkg doctmp
 	-rm -rf testtmp/*
-	-cd doc && $(MAKE) clean
 
 .PHONY: local-pkg
 local-pkg: all
@@ -80,8 +79,8 @@ testsrc/runtests: all $(wildcard testsrc/*.hs) $(wildcard testsrc/*/*.hs) $(wild
 test-ghc6: testsrc/runtests
 	testsrc/runtests
 
-test-hugs: hugsbuild
-	runhugs -98 +o -P$(PWD)/dist/build:$(PWD)/testsrc: testsrc/runtests.hs
+test-hugs: 
+	runhugs -98 +o "-Fcpphs --noline" -P$(PWD)/src:$(PWD)/testsrc: testsrc/runtests.hs
 
 interact-hugs:
 	hugs -98 +o -P$(PWD)/dist/build:
