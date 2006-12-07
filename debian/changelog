@@ -1,3 +1,12 @@
+missingh (0.18.0) unstable; urgency=low
+
+  * Major API changes in this release; several large modules being
+    split off into separate packages.  See 
+    http://software.complete.org/missingh/wiki/TransitionPlanning
+    for details.
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu,  7 Dec 2006 06:13:58 -0600
+
 missingh (0.16.3) unstable; urgency=low
 
   * New version
