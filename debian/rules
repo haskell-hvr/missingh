@@ -55,7 +55,7 @@ clean:
 	# Add here commands to clean up after the build process.
 	-./setup clean
 	-make clean
-	-rm -rf setup Setup.hi Setup.ho Setup.o .*config* dist html
+	-rm -rf setup Setup.hi Setup.ho Setup.o .*config* dist 
 
 	dh_clean 
 
