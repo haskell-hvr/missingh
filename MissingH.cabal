@@ -37,9 +37,6 @@ Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils
   System.IO.HVIO, System.IO.StatCompat, System.IO.WindowsCompat,
     System.IO.PlafCompat, System.Posix.Consts,
   Data.MIME.Types,
-  Database.AnyDBM,
-    Database.AnyDBM.MapDBM,
-    Database.AnyDBM.StringDBM,
   System.Console.GetOpt.Utils
 Extensions: ExistentialQuantification, OverlappingInstances, 
    UndecidableInstances, CPP

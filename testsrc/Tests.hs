@@ -21,7 +21,6 @@ import Test.HUnit
 import qualified MIMETypestest
 import qualified Listtest
 import qualified Maptest
-import qualified AnyDBMtest
 import qualified Pathtest
 import qualified Strtest
 import qualified IOtest
