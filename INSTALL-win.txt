@@ -9,7 +9,8 @@ see the INSTALL file instead of this one.
 PREREQUISITES
 -------------
 
-You need GHC 6.6 or above.
+You need GHC 6.6 or above plus the packages listed at
+https://software.complete.org/missingh/wiki/RelatedSoftware#RequisiteLibraries
 
 INSTALLATION
 ------------
