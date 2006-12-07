@@ -25,6 +25,11 @@ Debian users can install the packages cpphs and ghc6
 3. GHC extralibs collection, or the individual
    libraries mentioned in MissingH.cabal
 
+   You can conveniently download them all in one package; see
+
+http://software.complete.org/missingh/wiki/RelatedSoftware#RequisiteLibraries
+
+
 INSTALLATION
 ------------
 

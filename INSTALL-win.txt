@@ -10,7 +10,7 @@ PREREQUISITES
 -------------
 
 You need GHC 6.6 or above plus the packages listed at
-https://software.complete.org/missingh/wiki/RelatedSoftware#RequisiteLibraries
+http://software.complete.org/missingh/wiki/RelatedSoftware#RequisiteLibraries
 
 INSTALLATION
 ------------
