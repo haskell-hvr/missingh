@@ -39,12 +39,13 @@ doctmp:
 
 .PHONY: doc
 doc: $(LHSCONVSOURCES) setup
-	-rm -rf dist/doc/html
+	-rm -rf html
 	./setup configure
 	./setup haddock
 #	haddock $(HADDOCKARGS) --package=$(PROJECT) \
 #	   --dump-interface=html/$(PROJECT).haddock \
 #	   -t '$(PROJECT) API Manual' -h -o html $(HUGSCONVSOURCES) $(LHSCONVSOURCES)
+	mv dist/doc/html .
 
 .PHONY: hugsbuild
 
