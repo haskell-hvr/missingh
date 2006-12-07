@@ -16,7 +16,6 @@ Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils
     System.Log.Logger, 
   Control.Concurrent.Thread.Utils,
   Network.Email.Sendmail,
-  Text.Regex.PerlOps,
     Data.CSV,
   System.Cmd.Utils,
   Data.Progress.Tracker,
