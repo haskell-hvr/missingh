@@ -23,8 +23,11 @@ import System.Path.Glob
 import System.Path
 import Test.HUnit.Utils
 import System.IO.HVFS
-import System.Posix.Directory
+import System.Directory(createDirectory)
+#ifndef mingw32_HOST_OS
+import System.Posix.Directory hiding (createDirectory)
 import System.Posix.Files
+#endif
 import Control.Exception
 import Data.List
 
@@ -36,14 +39,16 @@ globtest thetest =
              (recursiveRemove SystemFS bp)
              thetest
     where setupfs =
-              do mapM_ (\x -> createDirectory x 0o755)
+              do mapM_ (\x -> createDirectory x)
                        [bp, bp ++ "/a", bp ++ "/aab", bp ++ "/aaa",
                         bp ++ "/ZZZ", bp ++ "/a/bcd",
                         bp ++ "/a/bcd/efg"]
                  mapM_ touch [bp ++ "/a/D", bp ++ "/aab/F", bp ++ "/aaa/zzzF",
                               bp ++ "/a/bcd/EF", bp ++ "/a/bcd/efg/ha"]
+#ifndef mingw32_HOST_OS
                  createSymbolicLink (preppath "broken") (preppath "sym1")
                  createSymbolicLink (preppath "broken") (preppath "sym2")
+#endif
                  
 eq msg exp res =
     assertEqual msg (sort exp) (sort res)
@@ -83,11 +88,15 @@ test_dirnames =
         ]
 
 test_brokensymlinks =
+#ifndef mingw32_HOST_OS
     map f
         [glob (preppath "sym*") >>= eq "sym*" (map preppath ["sym1", "sym2"]),
          glob (preppath "sym1") >>= eq "sym1" [preppath "sym1"],
          glob (preppath "sym2") >>= eq "sym2" [preppath "sym2"]
         ]
+#else
+    []
+#endif
          
 
 tests = TestList [TestLabel "test_literal" (TestList test_literal),
