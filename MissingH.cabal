@@ -3,8 +3,10 @@ Name: MissingH
 Version: 0.18.0
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Stability: Beta
 Copyright: Copyright (c) 2004-2006 John Goerzen
+homepage: http://software.complete.org/missingh
+synopsis: Large utility library
+Stability: Beta
 Hs-Source-Dirs: src
 Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils,
   System.Daemon,
