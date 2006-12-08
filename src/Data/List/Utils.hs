@@ -60,8 +60,6 @@ module Data.List.Utils(-- * Merging
                     ) where
 import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
                 elemIndex, elemIndices, tails, find, findIndex)
-import IO
-import System.IO.Unsafe
 import Control.Monad.State(State, get, put)
 import Data.Maybe(isJust)
 
