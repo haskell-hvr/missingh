@@ -34,7 +34,8 @@ module Data.Either.Utils
      maybeToEither,
      forceEither,
      forceEitherMsg,
-     eitherToMonadError
+     eitherToMonadError,
+     fromLeft, fromRight, fromEither
 ) where
 import Control.Monad.Error
 
@@ -71,3 +72,20 @@ MonadError class. -}
 eitherToMonadError :: MonadError e m => Either e a -> m a
 eitherToMonadError (Left x) = throwError x
 eitherToMonadError (Right x) = return x
+
+
+-- | Take a Left to a value, crashes on a Right
+fromLeft :: Either a b -> a
+fromLeft (Left a) = a
+fromLeft _ = error "Data.Either.Utils.fromLeft: Right"
+
+-- | Take a Right to a value, crashes on a Left
+fromRight :: Either a b -> b
+fromRight (Right a) = a
+fromRight _ = error "Data.Either.Utils.fromRight: Left"
+
+-- | Take an Either, and return the value inside it
+fromEither :: Either a a -> a
+fromEither (Left a) = a
+fromEither (Right a) = a
+
