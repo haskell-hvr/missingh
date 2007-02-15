@@ -471,7 +471,7 @@ the current implementation happens to.
 This function is not compatible with infinite lists. -}
 uniq :: Eq a => [a] -> [a]
 uniq [] = []
-uniq (x:xs) = x : filter (/= x) (uniq xs)
+uniq (x:xs) = x : uniq (filter (/= x) xs)
 
 ----- same as
 --uniq (x:xs) = x : [y | y <- uniq xs, y /= x]
