@@ -1,3 +1,9 @@
+missingh (0.18.1) unstable; urgency=low
+
+  * Fixed hugs HUnit dep.  Closes: #409681.
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 22 Feb 2007 06:58:05 -0600
+
 missingh (0.18.0) unstable; urgency=low
 
   * Major API changes in this release; several large modules being
