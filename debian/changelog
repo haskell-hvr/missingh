@@ -1,9 +1,9 @@
 missingh (0.18.2) unstable; urgency=low
 
-  * Fixed bug in globbing
-  * Fixed hugs dependency
+  * Also fixed hugs HUnit dep (0.18.1 fixed the build-dep only).
+    Closes: #412146.
 
- -- John Goerzen <jgoerzen@complete.org>  Thu,  8 Mar 2007 04:10:43 -0600
+ -- John Goerzen <jgoerzen@complete.org>  Sat, 24 Feb 2007 08:04:02 -0600
 
 missingh (0.18.1) unstable; urgency=low
 
