@@ -1,11 +1,18 @@
 -- arch-tag: MissingH main description file
 Name: MissingH
-Version: 0.18.0
+Version: 0.18.2
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
+Author: John Goerzen
 Copyright: Copyright (c) 2004-2006 John Goerzen
+license-file: COPYRIGHT
+extra-source-files: COPYING
 homepage: http://software.complete.org/missingh
+Category: Unclassified
 synopsis: Large utility library
+Description:  MissingH is a library of all sorts of utility functions for
+ Haskell programmers.  It is written in pure Haskell and thus should
+ be extremely portable and easy to use.
 Stability: Beta
 Hs-Source-Dirs: src
 Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils,
