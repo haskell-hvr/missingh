@@ -41,7 +41,9 @@ test_wildCheckCase =
      f0 "a" "b",
      f "[\\]" "\\",
      f "[!\\]" "a",
-     f0 "[!\\]" "\\"]
+     f0 "[!\\]" "\\",
+     f0 "*.deb" "thedebianthing",
+     f0 "a/*.foo" "testtmp/a/D"]
      
 tests = TestList [TestLabel "wildCheckCase" (TestList test_wildCheckCase)]
 

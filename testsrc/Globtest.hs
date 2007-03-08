@@ -44,7 +44,9 @@ globtest thetest =
                         bp ++ "/ZZZ", bp ++ "/a/bcd",
                         bp ++ "/a/bcd/efg"]
                  mapM_ touch [bp ++ "/a/D", bp ++ "/aab/F", bp ++ "/aaa/zzzF",
-                              bp ++ "/a/bcd/EF", bp ++ "/a/bcd/efg/ha"]
+                              bp ++ "/a/bcd/EF", bp ++ "/a/bcd/efg/ha",
+                             bp ++ "/a/foo", bp ++ "/a/afoo",
+                             bp ++ "/a/a-foo", bp ++ "/a/a.foo"]
 #ifndef mingw32_HOST_OS
                  createSymbolicLink (preppath "broken") (preppath "sym1")
                  createSymbolicLink (preppath "broken") (preppath "sym2")
@@ -76,7 +78,8 @@ test_one_dir =
 test_nested_dir =
     map f
         [glob (preppath "a/bcd/E*") >>= eq "a/bcd/E*" [preppath "a/bcd/EF"],
-         glob (preppath "a/bcd/*g") >>= eq "a/bcd/*g" [preppath "a/bcd/efg"]
+         glob (preppath "a/bcd/*g") >>= eq "a/bcd/*g" [preppath "a/bcd/efg"],
+         glob (preppath "a/*.foo") >>= eq "a/*.foo" [preppath "a/a.foo"]
         ]
 
 test_dirnames = 

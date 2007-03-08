@@ -95,6 +95,7 @@ convwild ('*':xs) = ".*" ++ convwild xs
 convwild ('?':xs) = "." ++ convwild xs
 convwild ('[':'!':xs) = "[^" ++ convpat xs
 convwild ('[':xs) = '[' : convpat xs
+convwild ('.':xs) = "\\." ++ convwild xs
 convwild (x:xs) = escapeRe [x] ++ convwild xs
 
 convpat :: String -> String
