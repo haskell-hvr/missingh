@@ -35,9 +35,10 @@ module System.Path.Glob(glob, vGlob) where
 import Data.List.Utils
 import System.IO
 import System.IO.HVFS
-import System.FilePath.Version_0_11
+import System.FilePath
 import Control.Exception
 import System.Path.WildMatch
+import Data.List
 
 hasWild = hasAny "*?["
 
@@ -79,8 +80,12 @@ expandGlob fs fn =
                  else do r <- mapM expandNormalBase dirlist
                          return $ concat r
            
-    where basename = takeBaseName fn
-          dirname = takeDirectory fn
+    where (dirnameslash, basename) = splitFileName fn
+          dirname = case dirnameslash of
+                      "/" -> "/"
+                      x -> if isSuffixOf "/" x
+                              then take (length x - 1) x
+                              else x
           expandWildBase :: FilePath -> IO [FilePath]
           expandWildBase dname =
               do dirglobs <- runGlob fs dname basename
