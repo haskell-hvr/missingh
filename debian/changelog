@@ -1,3 +1,10 @@
+missingh (0.18.3) unstable; urgency=low
+
+  * Fixed bug in globbing
+  * Fixed hugs dependency
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu,  8 Mar 2007 04:10:43 -0600
+
 missingh (0.18.2) unstable; urgency=low
 
   * Also fixed hugs HUnit dep (0.18.1 fixed the build-dep only).
