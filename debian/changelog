@@ -1,3 +1,10 @@
+missingh (0.18.5) unstable; urgency=low
+
+  * Update for GHC 6.6.1.
+  * Update hugs build-dep for hugs 98.200609.21.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 01 Jun 2007 02:54:53 -0500
+
 missingh (0.18.4) unstable; urgency=low
 
   * Rebuilt with new filepath.  Closes: #319113.
