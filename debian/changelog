@@ -1,3 +1,11 @@
+missingh (0.18.6) unstable; urgency=low
+
+  * Drop Hugs support due to lack of Regex in Hugs.
+    Closes: #422627.
+  * Rebuild for GHC 6.6.1.  Closes: #429020.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 15 Jun 2007 14:32:41 -0500
+
 missingh (0.18.5) unstable; urgency=low
 
   * Update for GHC 6.6.1.
