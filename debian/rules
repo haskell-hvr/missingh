@@ -82,7 +82,7 @@ installdocs: builddocs
 	dh_clean -k
 	dh_installdirs -i
 
-	dh_haskell -i
+	#dh_haskell -i  disabled since there is no more hugs
 	#make test-hugs
 
 # Build architecture-independent files here.
