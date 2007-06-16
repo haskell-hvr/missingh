@@ -1,10 +1,10 @@
 -- arch-tag: MissingH main description file
 Name: MissingH
-Version: 0.18.3
+Version: 0.18.6
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
-Copyright: Copyright (c) 2004-2006 John Goerzen
+Copyright: Copyright (c) 2004-2007 John Goerzen
 license-file: COPYRIGHT
 extra-source-files: COPYING
 homepage: http://software.complete.org/missingh
