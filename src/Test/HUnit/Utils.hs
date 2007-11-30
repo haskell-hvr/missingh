@@ -30,16 +30,14 @@ Utilities for HUnit unit testing.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-
-
-module Test.HUnit.Utils(assertRaises, mapassertEqual, qccheck, qctest) where
+module Test.HUnit.Utils (assertRaises, mapassertEqual, qccheck, qctest)
+    where
 import Test.HUnit
 import Test.QuickCheck as QC
 import qualified Control.Exception
 import System.Random
 
 {- | Asserts that a specific exception is raised by a given action. -}
-
 assertRaises :: Show a => String -> Control.Exception.Exception -> IO a -> IO ()
 assertRaises msg selector action =
     let thetest e = if e == selector then return ()
@@ -49,18 +47,17 @@ assertRaises msg selector action =
            r <- Control.Exception.try action
            case r of
                   Left e -> thetest e
-                  Right x -> assertFailure $ msg ++ "\nReceived no exception, but was expecting exception: " ++ (show selector)
+                  Right _ -> assertFailure $ msg ++ "\nReceived no exception, but was expecting exception: " ++ (show selector)
 
 mapassertEqual :: (Show b, Eq b) => String -> (a -> b) -> [(a, b)] -> [Test]
-mapassertEqual descrip func [] = []
+mapassertEqual _ _ [] = []
 mapassertEqual descrip func ((inp,result):xs) =
     (TestCase $ assertEqual descrip result (func inp)) : mapassertEqual descrip func xs
 
 -- * Turn QuickCheck tests into HUnit tests
-
--- |qccheck turns the quickcheck test into an hunit test
-qccheck :: (QC.Testable a) => 
-           Config -- ^ quickcheck config
+-- | qccheck turns the quickcheck test into an hunit test
+qccheck :: (QC.Testable a) =>
+           QC.Config -- ^ quickcheck config
         -> String -- ^ label for the property
         -> a      -- ^ quickcheck property
         -> Test
@@ -69,14 +66,14 @@ qccheck config lbl property =
               do rnd <- newStdGen
                  tests config (evaluate property) rnd 0 0 []
 
--- |qctest is equivalent to 'qccheck defaultConfig'
+-- | qctest is equivalent to 'qccheck defaultConfig'
 qctest ::  (QC.Testable a) => String -> a -> Test
-qctest lbl property = qccheck defaultConfig lbl property
+qctest lbl = qccheck defaultConfig lbl
 
--- |modified version of the tests function from Test.QuickCheck
-tests :: Config -> Gen Result -> StdGen -> Int -> Int -> [[String]] -> IO () 
+-- | modified version of the tests function from Test.QuickCheck
+tests :: Config -> Gen Result -> StdGen -> Int -> Int -> [[String]] -> IO ()
 tests config gen rnd0 ntest nfail stamps
-  | ntest == configMaxTest config = return () 
+  | ntest == configMaxTest config = return ()
   | nfail == configMaxFail config = assertFailure $ "Arguments exhausted after " ++ show ntest ++ " tests."
   | otherwise               =
       do putStr (configEvery config ntest (arguments result))
