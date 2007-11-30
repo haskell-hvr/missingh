@@ -16,13 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
-
 {- |
    Module     : System.IO.HVFS.Combinators
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -32,31 +31,25 @@ Copyright (c) 2004-2005 John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module System.IO.HVFS.Combinators(
-                                    -- * Restrictions
+module System.IO.HVFS.Combinators ( -- * Restrictions
                                     HVFSReadOnly(..),
-                                    HVFSChroot, newHVFSChroot
-                                   )
-where
+                                    HVFSChroot, newHVFSChroot)
+    where
 
-import System.IO.HVFS
-import System.IO.HVIO
-import System.IO.HVFS.InstanceHelpers
 import System.IO
 import System.IO.Error
+import System.IO.HVFS
+import System.IO.HVFS.InstanceHelpers (getFullPath)
 #ifndef mingw32_HOST_OS
-import System.Posix.Files
+import System.Posix.Files -- This actually needed? -Wall doesn't seem to think
+                          -- so, but I'm not sure...
 #endif
-import System.Posix.Types
-import System.Time
-import System.Directory
-import System.Path
-import System.Path.NameManip
+import System.Path (secureAbsNormPath)
+import System.Path.NameManip (normalise_path)
 
 ----------------------------------------------------------------------
 -- Providing read-only access
 ----------------------------------------------------------------------
-
 {- | Restrict access to the underlying filesystem to be strictly
 read-only.  Any write-type operations will cause an error.
 
@@ -68,7 +61,8 @@ data HVFS a => HVFSReadOnly a = HVFSReadOnly a
 withro :: HVFS a => (a -> b) -> HVFSReadOnly a -> b
 withro f (HVFSReadOnly x) = f x
 
-roerror h = 
+roerror :: (HVFS a) => HVFSReadOnly a -> IO c
+roerror h =
     let err x = vRaiseError x permissionErrorType "Read-only virtual filesystem"
                   Nothing
         in withro err h
@@ -92,14 +86,13 @@ instance HVFS a => HVFS (HVFSReadOnly a) where
     vCreateLink h _ _ = roerror h
 
 instance HVFSOpenable a => HVFSOpenable (HVFSReadOnly a) where
-    vOpen fh fp mode = 
+    vOpen fh fp mode =
         case mode of ReadMode -> withro (\h -> vOpen h fp mode) fh
                      _ -> roerror fh
 
 ----------------------------------------------------------------------
 -- Restricting to a subdirectory
 ----------------------------------------------------------------------
-
 {- | Access a subdirectory of a real filesystem as if it was the root
 of that filesystem. -}
 data HVFS a => HVFSChroot a = HVFSChroot String a
@@ -121,16 +114,18 @@ newHVFSChroot fh fp =
                  (Just full)
 
 {- | Get the embedded object -}
+dch :: (HVFS t) => HVFSChroot t -> t
 dch (HVFSChroot _ a) = a
 
 {- | Convert a local (chroot) path to a full path. -}
-dch2fp mainh@(HVFSChroot fp h) locfp = 
+dch2fp, fp2dch :: (HVFS t) => HVFSChroot t -> String -> IO String
+dch2fp mainh@(HVFSChroot fp h) locfp =
     do full <- case (head locfp) of
                   '/' -> return (fp ++ locfp)
-                  x -> do y <- getFullPath mainh locfp
+                  _ -> do y <- getFullPath mainh locfp
                           return $ fp ++ y
        case secureAbsNormPath fp full of
-           Nothing -> vRaiseError h doesNotExistErrorType  
+           Nothing -> vRaiseError h doesNotExistErrorType
                         ("Trouble normalizing path in chroot")
                         (Just (fp ++ "," ++ full))
            Just x -> return x
@@ -149,9 +144,11 @@ fp2dch (HVFSChroot fp h) locfp =
                else let newpath2 = drop (length fp) newpath
                         in return $ normalise_path ("/" ++ newpath2)
 
-dch2fph func fh@(HVFSChroot fp h) locfp =
+dch2fph :: (HVFS t) => (t -> String -> IO t1) -> HVFSChroot t -> [Char] -> IO t1
+dch2fph func fh@(HVFSChroot _ h) locfp =
     do newfp <- dch2fp fh locfp
        func h newfp
+
 instance HVFS a => HVFS (HVFSChroot a) where
     vGetCurrentDirectory x = do fp <- vGetCurrentDirectory (dch x)
                                 fp2dch x fp
