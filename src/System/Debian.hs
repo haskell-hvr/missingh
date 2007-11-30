@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -36,20 +36,15 @@ module System.Debian (-- * Control or Similar File Utilities
                         -- * Version Number Utilities
                         DebVersion, compareDebVersion, checkDebVersion
                        )
-where
+    where
+
 import System.Cmd
-import System.Debian.ControlParser
-import System.Cmd.Utils
-import Data.String
 import System.IO.Unsafe
 import System.Exit
 
 {- | The type representing the contents of a Debian control file,
 or any control-like file (such as the output from apt-cache show, etc.) -}
 type ControlFile = [(String, String)]
-
-splitComma :: String -> [String]
-splitComma = map strip . split ","
 
 ----------------------------------------------------------------------
 -- VERSION NUMBERS
@@ -60,7 +55,7 @@ of 'Prelude.Ord', but you can also use 'compareDebVersion' if you prefer. -}
 data DebVersion = DebVersion String
                 deriving (Eq)
 instance Ord DebVersion where
-    compare (DebVersion v1) (DebVersion v2) = 
+    compare (DebVersion v1) (DebVersion v2) =
         {- This is OK since compareDebVersion should always be the same. -}
         unsafePerformIO $ compareDebVersion v1 v2
 
@@ -82,6 +77,6 @@ checkDebVersion :: String       -- ^ Version 1
                 -> IO Bool
 checkDebVersion v1 op v2 =
     do ec <- rawSystem "dpkg" ["--compare-versions", v1, op, v2]
-       case ec of 
+       case ec of
                ExitSuccess -> return True
                ExitFailure _ -> return False
