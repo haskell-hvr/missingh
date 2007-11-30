@@ -7,7 +7,7 @@
    Copyright  : Copyright (C) 2004 Volker Wysk
    License    : GNU LGPL, version 2.1 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -18,8 +18,8 @@ Written by Volker Wysk
 
 module System.Path.NameManip where
 
-import Data.List
-import System.Directory
+import Data.List (intersperse)
+import System.Directory (getCurrentDirectory)
 
 {- | Split a path in components. Repeated \"@\/@\" characters don\'t lead to empty
 components. \"@.@\" path components are removed. If the path is absolute, the first component
@@ -48,10 +48,10 @@ slice_path p =
                      (c:cs) -> (('/':c):cs)
       _ -> slice_path' p
    where
-      slice_path' p = filter (\c -> c /= "" && c /= ".") (split p)
+      slice_path' o = filter (\c -> c /= "" && c /= ".") (split o)
 
       split ""      = []
-      split ('/':p) = "" : split p
+      split ('/':o) = "" : split o
       split (x:xs)  = case split xs of
                          [] -> [[x]]
                          (y:ys) -> ((x:y):ys)
@@ -371,7 +371,7 @@ normalised. This is different from @pwd@.
 -}
 absolute_path :: String         -- ^ The path to be made absolute
               -> IO String      -- ^ Absulte path
-absolute_path path@('/':p) = return path
+absolute_path path@('/':_) = return path
 absolute_path path = do
    cwd <- getCurrentDirectory
    return (cwd ++ "/" ++ path)
@@ -385,7 +385,7 @@ directory. An absolute path is returned unmodified.
 absolute_path_by :: String        -- ^ The directory relative to which the path is made absolute
                  -> String        -- ^ The path to be made absolute
                  -> String        -- ^ Absolute path
-absolute_path_by dir path@('/':p) = path
+absolute_path_by _ path@('/':_) = path
 absolute_path_by dir path = dir ++ "/" ++ path
 
 
@@ -399,7 +399,7 @@ The order of the arguments can be confusing. You should rather use 'absolute_pat
 absolute_path' :: String        -- ^ The path to be made absolute
                -> String        -- ^ The directory relative to which the path is made absolute
                -> String        -- ^ Absolute path
-absolute_path' path@('/':p) dir = path
+absolute_path' path@('/':_) _ = path
 absolute_path' path dir = dir ++ "/" ++ path
 
 
@@ -427,5 +427,5 @@ guess_dotdot_comps = guess_dotdot_comps' []
 -}
 guess_dotdot :: String                  -- ^ Path to be normalised
              -> Maybe String            -- ^ In case the path could be transformed, the normalised, @\"..\"@-component free form of the path.
-guess_dotdot = 
+guess_dotdot =
    fmap unslice_path . guess_dotdot_comps . slice_path
