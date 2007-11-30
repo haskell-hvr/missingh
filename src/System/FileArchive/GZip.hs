@@ -46,17 +46,16 @@ module System.FileArchive.GZip (
                                   read_header,
                                   read_section
                                  )
-where
+    where
 
-import Data.Compression.Inflate
-import Data.Hash.CRC32.GZip
-import Data.List
-import Data.Bits
-import Control.Monad.Error
-import Data.Char
-import Data.Word
-import Data.Bits.Utils
-import System.IO
+import Data.Compression.Inflate (inflate_string_remainder)
+import Data.Hash.CRC32.GZip (update_crc)
+import Data.Bits ((.&.))
+import Control.Monad.Error -- (Error(), strMsg, throwError)
+import Data.Char (ord)
+import Data.Word (Word32())
+import Data.Bits.Utils (fromBytes)
+import System.IO (hGetContents, hPutStr, Handle())
 
 data GZipError = CRCError               -- ^ CRC-32 check failed
                | NotGZIPFile            -- ^ Couldn't find a GZip header
@@ -69,14 +68,16 @@ instance Error GZipError where
     strMsg = UnknownError
 
 -- | First two bytes of file
+magic :: String
 magic = "\x1f\x8b"
 
 -- | Flags
-fFTEXT = 1::Int
-fFHCRC = 2::Int
-fFEXTRA = 4::Int
-fFNAME = 8::Int
-fFCOMMENT = 16::Int
+fFHCRC, fFEXTRA, fFNAME, fFCOMMENT :: Int
+-- fFTEXT = 1 :: Int
+fFHCRC = 2
+fFEXTRA = 4
+fFNAME = 8
+fFCOMMENT = 16
 
 {- | The data structure representing the GZip header.  This occurs
 at the beginning of each 'Section' on disk. -}
@@ -117,7 +118,7 @@ handle should be discarded.
 hDecompress :: Handle                   -- ^ Input handle
             -> Handle                   -- ^ Output handle
             -> IO (Maybe GZipError)
-hDecompress infd outfd = 
+hDecompress infd outfd =
     do inc <- hGetContents infd
        let (outstr, err) = decompress inc
        hPutStr outfd outstr
@@ -131,15 +132,15 @@ returned should be discarded.
 -}
 decompress :: String -> (String, Maybe GZipError)
 {-
-decompress s = 
+decompress s =
     do x <- read_header s
        let rem = snd x
        return $ inflate_string rem
 -}
-decompress s = 
+decompress s =
     let procs :: [Section] -> (String, Bool)
         procs [] = ([], True)
-        procs ((_, content, foot):xs) = 
+        procs ((_, content, foot):xs) =
             let (nexth, nextb) = procs xs in
                 (content ++ nexth, (crc32valid foot) && nextb)
         in case read_sections s of
@@ -152,7 +153,7 @@ decompress s = do x <- read_sections s
                   return $ concatMap (\(_, x, _) -> x) x
 -}
 
--- | Read all sections.  
+-- | Read all sections.
 read_sections :: String -> Either GZipError [Section]
 read_sections [] = Right []
 read_sections s =
@@ -170,32 +171,32 @@ read_section :: String -> Either GZipError (Section, String)
 read_section s =
         do x <- read_header s
            let headerrem = snd x
-           let (decompressed, crc32, remainder) = read_data headerrem
-           let (crc32str, rem) = splitAt 4 remainder
-           let (sizestr, rem2) = splitAt 4 rem
+           let (decompressed, crc, remainder) = read_data headerrem
+           let (crc32str, rm) = splitAt 4 remainder
+           let (sizestr, rem2) = splitAt 4 rm
            let filecrc32 = parseword crc32str
            let filesize = parseword sizestr
            return ((fst x, decompressed,
                    Footer {size = filesize, crc32 = filecrc32,
-                           crc32valid = filecrc32 == crc32})
+                           crc32valid = filecrc32 == crc})
                    ,rem2)
 
 -- | Read the file's compressed data, returning
 -- (Decompressed, Calculated CRC32, Remainder)
 read_data :: String -> (String, Word32, String)
-read_data x = 
+read_data x =
     let (decompressed1, remainder) = inflate_string_remainder x
         (decompressed, crc32) = read_data_internal decompressed1 0
         in
-        (decompressed, crc32, remainder)
+          (decompressed, crc32, remainder)
     where
-    read_data_internal [] ck = ([], ck)
-    read_data_internal (x:xs) ck =
-        let newcrc = update_crc ck x
-            n = newcrc `seq` read_data_internal xs newcrc
+      read_data_internal [] ck = ([], ck)
+      read_data_internal (y:ys) ck =
+        let newcrc = update_crc ck y
+            n = newcrc `seq` read_data_internal ys newcrc
             in
-            (x : fst n, snd n)
-    
+            (y : fst n, snd n)
+
 
 
 {- | Read the GZip header.  Return (Header, Remainder).
@@ -217,22 +218,22 @@ read_header s =
        let mtime = parseword mtimea
        let (xfla, rem3b) = split1 rem3a
        let xfl = ord xfla
-       let (osa, rem3c) = split1 rem3b
+       let (osa, _) = split1 rem3b
        let os = ord osa
        -- skip modtime (4), extraflag (1), and os (1)
        let rem4 = drop 6 rem3
-       
-       let (extra, rem5) = 
+
+       let (extra, rem5) =
                if (flag .&. fFEXTRA /= 0)
                -- Skip past the extra field if we have it.
-                  then let (xlen_S, rem4a) = split1 rem4
+                  then let (xlen_S, _) = split1 rem4
                            (xlen2_S, rem4b) = split1 rem4
                            xlen = (ord xlen_S) + 256 * (ord xlen2_S)
                            (ex, rrem) = splitAt xlen rem4b
                            in (Just ex, rrem)
                   else (Nothing, rem4)
-       
-       let (filename, rem6) = 
+
+       let (filename, rem6) =
                if (flag .&. fFNAME /= 0)
                -- Skip past the null-terminated filename
                   then let fn = takeWhile (/= '\x00') rem5
@@ -245,12 +246,12 @@ read_header s =
                   then let cm = takeWhile (/= '\x00') rem6
                            in (Just cm, drop ((length cm) + 1) rem6)
                   else (Nothing, rem6)
-       
+
        rem8 <- if (flag .&. fFHCRC /= 0)
                   -- Skip past the header CRC
                   then return $ drop 2 rem7
                   else return rem7
-                  
+
        return (Header {method = ord method,
                       flags = flag,
                       extra = extra,
