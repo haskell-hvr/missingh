@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-{- 
+{-
 Copyright (C) 2005,2006 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2005-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -32,24 +32,22 @@ useful with HVFS and on Windows.  See also "System.IO.WindowsCompat".
 Copyright (c) 2005-2006 John Goerzen, jgoerzen\@complete.org
 -}
 
-module System.IO.StatCompat 
+module System.IO.StatCompat
 where
 import System.Posix.Types
 import System.Posix.Consts
 #ifndef mingw32_HOST_OS
 import System.Posix.Files(intersectFileModes)
 #endif
-import Data.Bits
+import Data.Bits ((.&.))
 
 #ifdef mingw32_HOST_OS
 type LinkCount = Int
 type UserID = Int
 type GroupID = Int
-
 #endif
 
-
-data FileStatusCompat = 
+data FileStatusCompat =
     FileStatusCompat {deviceID :: DeviceID,
                       fileID :: FileID,
                       fileMode :: FileMode,
@@ -62,10 +60,12 @@ data FileStatusCompat =
                       modificationTime :: EpochTime,
                       statusChangeTime :: EpochTime
                      }
-    
-sc_helper comp stat = 
+
+sc_helper :: FileMode -> FileStatusCompat -> Bool
+sc_helper comp stat =
     (fileMode stat `intersectFileModes` fileTypeModes) == comp
-                                      
+
+isBlockDevice,isCharacterDevice,isNamedPipe,isRegularFile,isDirectory,isSymbolicLink,isSocket :: FileStatusCompat -> Bool
 isBlockDevice = sc_helper blockSpecialMode
 isCharacterDevice = sc_helper characterSpecialMode
 isNamedPipe = sc_helper namedPipeMode
