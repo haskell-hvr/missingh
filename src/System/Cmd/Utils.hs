@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable to platforms with POSIX process\/signal tools
 
@@ -99,7 +99,7 @@ module System.Cmd.Utils(-- * High-Level Tools
                     pOpen, pOpen3, pOpen3Raw
 #endif
 #endif
-		   )
+                   )
 where
 
 -- FIXME - largely obsoleted by 6.4 - convert to wrappers.
@@ -122,6 +122,7 @@ import qualified System.Posix.Signals
 
 data PipeMode = ReadFromPipe | WriteToPipe
 
+logbase :: String
 logbase = "System.Cmd.Utils"
 
 {- | Return value from 'pipeFrom', 'pipeLinesFrom', 'pipeTo', or
@@ -129,7 +130,7 @@ logbase = "System.Cmd.Utils"
 executed.  If you prefer not to use 'forceSuccess' on the result of one
 of these pipe calls, you can use (processID ph), assuming ph is your 'PipeHandle',
 as a parameter to 'System.Posix.Process.getProcessStatus'. -}
-data PipeHandle = 
+data PipeHandle =
     PipeHandle { processID :: ProcessID,
                  phCommand :: FilePath,
                  phArgs :: [String],
@@ -152,7 +153,10 @@ pipeLinesFrom fp args =
 #endif
 #endif
 
+logRunning :: String -> FilePath -> [String] -> IO ()
 logRunning func fp args = debugM (logbase ++ "." ++ func) (showCmd fp args)
+
+warnFail :: [Char] -> FilePath -> [String] -> [Char] -> IO t
 warnFail funcname fp args msg =
     let m = showCmd fp args ++ ": " ++ msg
         in do warningM (logbase ++ "." ++ funcname) m
@@ -170,7 +174,7 @@ This function logs as pipeFrom.
 Not available on Windows or with Hugs.
 -}
 hPipeFrom :: FilePath -> [String] -> IO (PipeHandle, Handle)
-hPipeFrom fp args = 
+hPipeFrom fp args =
     do pipepair <- createPipe
        logRunning "pipeFrom" fp args
        let childstuff = do dupTo (snd pipepair) stdOutput
@@ -180,7 +184,7 @@ hPipeFrom fp args =
        -- parent
        pid <- case p of
                   Right x -> return x
-                  Left e -> warnFail "pipeFrom" fp args $ 
+                  Left e -> warnFail "pipeFrom" fp args $
                             "Error in fork: " ++ show e
        closeFd (snd pipepair)
        h <- fdToHandle (fst pipepair)
@@ -229,7 +233,7 @@ hPipeTo fp args =
        -- parent
        pid <- case p of
                    Right x -> return x
-                   Left e -> warnFail "pipeTo" fp args $ 
+                   Left e -> warnFail "pipeTo" fp args $
                              "Error in fork: " ++ show e
        closeFd (fst pipepair)
        h <- fdToHandle (snd pipepair)
@@ -319,7 +323,7 @@ pipeBoth fp args message =
 of the given process ID.  If the process terminated normally, does nothing.
 Otherwise, raises an exception with an appropriate error message.
 
-This call will block waiting for the given pid to terminate. 
+This call will block waiting for the given pid to terminate.
 
 Not available on Windows. -}
 forceSuccess :: PipeHandle -> IO ()
@@ -329,12 +333,12 @@ forceSuccess (PipeHandle pid fp args funcname) =
               case status of
                 Nothing -> warnfail fp args $ "Got no process status"
                 Just (Exited (ExitSuccess)) -> return ()
-                Just (Exited (ExitFailure fc)) -> 
+                Just (Exited (ExitFailure fc)) ->
                     cmdfailed funcname fp args fc
-                Just (Terminated sig) -> 
+                Just (Terminated sig) ->
                     warnfail fp args $ "Terminated by signal " ++ show sig
-                Just (Stopped sig) -> 
-                    warnfail fp args $ "Stopped by signal " ++ show sig 
+                Just (Stopped sig) ->
+                    warnfail fp args $ "Stopped by signal " ++ show sig
 #endif
 
 {- | Invokes the specified command in a subprocess, waiting for the result.
@@ -344,7 +348,7 @@ raises a userError with the problem.
 Implemented in terms of 'posixRawSystem' where supported, and System.Posix.rawSystem otherwise.
 -}
 safeSystem :: FilePath -> [String] -> IO ()
-safeSystem command args = 
+safeSystem command args =
     do debugM (logbase ++ ".safeSystem")
                ("Running: " ++ command ++ " " ++ (show args))
 #if defined(__HUGS__) || defined(mingw32_HOST_OS)
@@ -381,7 +385,7 @@ posixRawSystem program args =
        oldset <- getSignalMask
        blockSignals sigset
        childpid <- forkProcess (childaction oldint oldquit oldset)
-       
+
        mps <- getProcessStatus True False childpid
        restoresignals oldint oldquit oldset
        let retval = case mps of
@@ -392,9 +396,9 @@ posixRawSystem program args =
               (program ++ ": exited with " ++ show retval)
        return retval
 
-    where childaction oldint oldquit oldset = 
+    where childaction oldint oldquit oldset =
               do restoresignals oldint oldquit oldset
-                 executeFile program True args Nothing 
+                 executeFile program True args Nothing
           restoresignals oldint oldquit oldset =
               do installHandler sigINT oldint Nothing
                  installHandler sigQUIT oldquit Nothing
@@ -418,13 +422,11 @@ forkRawSystem program args =
     do debugM (logbase ++ ".forkRawSystem")
                ("Running: " ++ program ++ " " ++ (show args))
        forkProcess childaction
-
-    where childaction =
-                 executeFile program True args Nothing 
+    where
+      childaction = executeFile program True args Nothing
 
 #endif
 #endif
-
 
 cmdfailed :: String -> FilePath -> [String] -> Int -> IO a
 cmdfailed funcname command args failcode = do
@@ -452,12 +454,12 @@ cmdsignalled funcname command args failcode = do
 
 Passes the handle on to the specified function.
 
-The 'PipeMode' specifies what you will be doing.  That is, specifing 'ReadFromPipe' 
+The 'PipeMode' specifies what you will be doing.  That is, specifing 'ReadFromPipe'
 sets up a pipe from stdin, and 'WriteToPipe' sets up a pipe from stdout.
 
 Not available on Windows.
  -}
-pOpen :: PipeMode -> FilePath -> [String] -> 
+pOpen :: PipeMode -> FilePath -> [String] ->
          (Handle -> IO a) -> IO a
 pOpen pm fp args func =
         do
@@ -474,7 +476,7 @@ pOpen pm fp args func =
                                         return $! x
                          pOpen3 Nothing (Just (snd pipepair)) Nothing fp args
                                 callfunc (closeFd (fst pipepair))
-         WriteToPipe -> do 
+         WriteToPipe -> do
                         let callfunc _ = do
                                        closeFd (fst pipepair)
                                        h <- fdToHandle (snd pipepair)
@@ -488,7 +490,7 @@ pOpen pm fp args func =
 
 #ifndef mingw32_HOST_OS
 #ifndef __HUGS__
-{- | Runs a command, redirecting things to pipes. 
+{- | Runs a command, redirecting things to pipes.
 
 Not available on Windows.
 
@@ -503,7 +505,7 @@ pOpen3 :: Maybe Fd                      -- ^ Send stdin to this fd
        -> (ProcessID -> IO a)           -- ^ Action to run in parent
        -> IO ()                         -- ^ Action to run in child before execing (if you don't need something, set this to @return ()@) -- IGNORED IN HUGS
        -> IO a
-pOpen3 pin pout perr fp args func childfunc = 
+pOpen3 pin pout perr fp args func childfunc =
     do pid <- pOpen3Raw pin pout perr fp args childfunc
        retval <- func $! pid
        let rv = seq retval retval
@@ -514,7 +516,7 @@ pOpen3 pin pout perr fp args func childfunc =
 
 #ifndef mingw32_HOST_OS
 #ifndef __HUGS__
-{- | Runs a command, redirecting things to pipes. 
+{- | Runs a command, redirecting things to pipes.
 
 Not available on Windows.
 
@@ -554,7 +556,7 @@ pOpen3Raw pin pout perr fp args childfunc =
                      func p
 -}
         in
-        do 
+        do
         p <- try (forkProcess childstuff)
         pid <- case p of
                 Right x -> return x
@@ -564,7 +566,5 @@ pOpen3Raw pin pout perr fp args childfunc =
 #endif
 #endif
 
-
 showCmd :: FilePath -> [String] -> String
-showCmd fp args =
-    fp ++ " " ++ show args
+showCmd fp args = fp ++ " " ++ show args
