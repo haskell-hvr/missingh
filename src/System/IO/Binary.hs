@@ -21,14 +21,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable to platforms supporting binary I\/O
 
 This module provides various helpful utilities for dealing with binary
 input and output.
 
-You can use this module to deal with binary blocks of data as either Strings 
+You can use this module to deal with binary blocks of data as either Strings
 or lists of Word8.  The BinaryConvertible class provides this abstraction.
 
 Wherever you see HVIO, you can transparently substite a regular Handle.
@@ -44,7 +44,7 @@ are using an implementation that supports them.  At this time, here
 is the support status:
 
  * GHC 6.2 and above: yes
- 
+
  * GHC 6.x, earlier versions: unknown
 
  * GHC 5.x: no
@@ -80,17 +80,16 @@ module System.IO.Binary(
                        hFullBlockInteract, fullBlockInteract
                         ) where
 
-import Foreign.Ptr
+import Data.Word (Word8())
+import Foreign.C.String (peekCStringLen, withCString)
+import Foreign.C.Types (CChar())
 import Foreign.ForeignPtr
-import Foreign.C.String
-import Foreign.C.Types
-import Foreign.Storable
-import Foreign.Marshal.Array
-import Data.Word
-import System.IO.Unsafe
+import Foreign.Marshal.Array (peekArray, withArray)
+import Foreign.Ptr
 import System.IO
-import System.IO.HVIO
 import System.IO.HVFS
+import System.IO.HVIO
+import System.IO.Unsafe (unsafeInterleaveIO)
 
 {- | Provides support for handling binary blocks with convenient
 types.
@@ -103,7 +102,7 @@ class (Eq a, Show a) => BinaryConvertible a where
 
 instance BinaryConvertible Char where
     toBuf = withCString
-    fromBuf len func = 
+    fromBuf len func =
         do fbuf <- mallocForeignPtrArray (len + 1)
            withForeignPtr fbuf handler
         where handler ptr =
@@ -120,10 +119,9 @@ instance BinaryConvertible Word8 where
                      peekArray bytesread ptr
 
 
--- . **************************************************
--- . Binary Files
--- . **************************************************
-
+-- **************************************************
+-- Binary Files
+-- **************************************************
 
 {- | As a wrapper around the standard function 'System.IO.hPutBuf',
 this function takes a standard Haskell 'String' instead of the far less
@@ -159,7 +157,7 @@ getBufStr = hGetBufStr stdin
 {- | Like 'hGetBufStr', but guarantees that it will only return fewer than
 the requested number of bytes when EOF is encountered. -}
 hFullGetBufStr :: (HVIO a, BinaryConvertible b) => a -> Int -> IO [b]
-hFullGetBufStr f 0 = return []
+hFullGetBufStr _ 0 = return []
 hFullGetBufStr f count = do
                          thisstr <- hGetBufStr f count
                          if thisstr == []
@@ -186,9 +184,9 @@ hPutBlocks h (x:xs) = do
                       hPutBufStr h x
                       hPutBlocks h xs
 
--- | An alias for 'hPutBlocks' 'stdout'
+{- | An alias for 'hPutBlocks' 'stdout'
 putBlocks :: (BinaryConvertible b) => [[b]] -> IO ()
-putBlocks = hPutBlocks stdout
+putBlocks = hPutBlocks stdout -}
 
 {- | Returns a lazily-evaluated list of all blocks in the input file,
 as read by 'hGetBufStr'.  There will be no 0-length block in this list.
@@ -210,14 +208,13 @@ fullGetBlocks = hFullGetBlocks stdin
 
 hGetBlocksUtil :: (HVIO a, BinaryConvertible b) => (a -> Int -> IO [b]) -> a -> Int -> IO [[b]]
 hGetBlocksUtil readfunc h count =
-    unsafeInterleaveIO (do
+    unsafeInterleaveIO $ do
                        block <- readfunc h count
                        if block == []
                           then return []
                           else do
                                remainder <- hGetBlocksUtil readfunc h count
                                return (block : remainder)
-                       )
 
 {- | Binary block-based interaction.  This is useful for scenarios that
 take binary blocks, manipulate them in some way, and then write them
@@ -240,11 +237,11 @@ hFullBlockInteract :: (HVIO a, HVIO d, BinaryConvertible b, BinaryConvertible c)
 hFullBlockInteract = hBlockInteractUtil hFullGetBlocks
 
 -- | An alias for 'hFullBlockInteract' over 'stdin' and 'stdout'
-fullBlockInteract :: (BinaryConvertible b, BinaryConvertible c) => 
+fullBlockInteract :: (BinaryConvertible b, BinaryConvertible c) =>
                      Int -> ([[b]] -> [[c]]) -> IO ()
 fullBlockInteract x = hFullBlockInteract x stdin stdout
 
-hBlockInteractUtil :: (HVIO a, HVIO d, BinaryConvertible b, BinaryConvertible c) => 
+hBlockInteractUtil :: (HVIO a, HVIO d, BinaryConvertible b, BinaryConvertible c) =>
                       (a -> Int -> IO [[b]]) -> Int ->
                       a -> d -> ([[b]] -> [[c]]) -> IO ()
 hBlockInteractUtil blockreader blocksize hin hout func =
@@ -253,7 +250,7 @@ hBlockInteractUtil blockreader blocksize hin hout func =
     hPutBlocks hout (func blocks)
 
 {- | Copies everything from the input handle to the output handle using binary
-blocks of the given size.  This was once the following 
+blocks of the given size.  This was once the following
 beautiful implementation:
 
 > hBlockCopy bs hin hout = hBlockInteract bs hin hout id
@@ -264,9 +261,8 @@ to it)
 In more recent versions of MissingH, it uses a more optimized routine that
 avoids ever having to convert the binary buffer at all.
 -}
-
 hBlockCopy :: (HVIO a, HVIO b) => Int -> a -> b -> IO ()
-hBlockCopy bs hin hout = 
+hBlockCopy bs hin hout =
     do (fbuf::ForeignPtr CChar) <- mallocForeignPtrArray (bs + 1)
        withForeignPtr fbuf handler
     where handler ptr =
