@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -33,18 +33,20 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module System.Debian.ControlParser(control, depPart)
     where
-import Text.ParserCombinators.Parsec
-import Data.String
 
+import Text.ParserCombinators.Parsec
+import Data.MissingHString (split)
+
+eol, extline :: GenParser Char st String
 eol = (try (string "\r\n"))
       <|> string "\n" <?> "EOL"
 
 extline = try (do char ' '
                   content <- many (noneOf "\r\n")
                   eol
-                  return content
-              )
+                  return content )
 
+entry :: GenParser Char st (String, String)
 entry = do key <- many1 (noneOf ":\r\n")
            char ':'
            val <- many (noneOf "\r\n")
@@ -58,6 +60,7 @@ control = do many header
              retval <- many entry
              return retval
 
+headerPGP, blankLine, header, headerHash :: GenParser Char st ()
 headerPGP = do string "-----BEGIN PGP"
                manyTill (noneOf "\r\n") eol
                return ()
@@ -69,9 +72,9 @@ headerHash = do string "Hash: "
                 return ()
 header = (try headerPGP) <|> (try blankLine) <|> (try headerHash)
 
-{- | Dependency parser. 
+{- | Dependency parser.
 
-Returns (package name, Maybe version, arch list
+Returns (package name, Maybe version, arch list)
 
 version is (operator, operand) -}
 depPart :: CharParser a (String, (Maybe (String, String)), [String])
