@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -31,15 +31,16 @@ in "System.Path.WildMatch".
 
 -}
 
-module System.Path.Glob(glob, vGlob) where
-import Data.List.Utils
-import System.IO
+module System.Path.Glob (glob, vGlob)
+    where
+import Data.List.Utils (hasAny)
 import System.IO.HVFS
-import System.FilePath
-import Control.Exception
-import System.Path.WildMatch
-import Data.List
+import System.FilePath (splitFileName)
+import Control.Exception (tryJust, ioErrors)
+import System.Path.WildMatch (wildCheckCase)
+import Data.List (isSuffixOf)
 
+hasWild :: String -> Bool
 hasWild = hasAny "*?["
 
 {- | Takes a pattern.  Returns a list of names that match that pattern.
@@ -59,7 +60,7 @@ glob = vGlob SystemFS
 {- | Like 'glob', but works on both the system ("real") and HVFS virtual
 filesystems. -}
 vGlob :: HVFS a => a -> FilePath -> IO [FilePath]
-vGlob fs fn = 
+vGlob fs fn =
     if not (hasWild fn)           -- Don't try globbing if there are no wilds
        then do de <- vDoesExist fs fn
                if de
@@ -79,17 +80,19 @@ expandGlob fs fn =
                          return $ concat r
                  else do r <- mapM expandNormalBase dirlist
                          return $ concat r
-           
+
     where (dirnameslash, basename) = splitFileName fn
           dirname = case dirnameslash of
                       "/" -> "/"
                       x -> if isSuffixOf "/" x
                               then take (length x - 1) x
                               else x
+
           expandWildBase :: FilePath -> IO [FilePath]
           expandWildBase dname =
               do dirglobs <- runGlob fs dname basename
                  return $ map (\globfn -> dname ++ "/" ++ globfn) dirglobs
+
           expandNormalBase :: FilePath -> IO [FilePath]
           expandNormalBase dname =
               do isdir <- vDoesDirectoryExist fs dname
@@ -103,7 +106,7 @@ runGlob :: HVFS a => a -> FilePath -> FilePath -> IO [FilePath]
 runGlob fs "" patt = runGlob fs "." patt
 runGlob fs dirname patt =
     do r <- tryJust ioErrors (vGetDirectoryContents fs dirname)
-       case r of 
+       case r of
          Left _ -> return []
          Right names -> let matches = filter (wildCheckCase patt) $ names
                         in if head patt == '.'
