@@ -15,13 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
-
 {- |
    Module     : Network.Utils
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: systems with networking
 
@@ -31,10 +30,10 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 -}
 
-module Network.Utils(niceSocketsDo, connectTCP, connectTCPAddr,
-                        listenTCPAddr, showSockAddr
-                       )
-where
+module Network.Utils (niceSocketsDo, connectTCP, connectTCPAddr,
+                        listenTCPAddr, showSockAddr)
+    where
+
 import Network
 import Network.Socket
 import Network.BSD
@@ -43,11 +42,11 @@ import qualified System.Posix.Signals
 
 {- | Sets up the system for networking.  Similar to the built-in
 withSocketsDo (and actually, calls it), but also sets the SIGPIPE
-handler so that signal is ignored. 
+handler so that signal is ignored.
 
 Example:
 
-> main = niceSocketsDo $ do { ... } 
+> main = niceSocketsDo $ do { ... }
 -}
 
 -- FIXME integrate with WebCont.Util.UDP
@@ -56,7 +55,7 @@ niceSocketsDo :: IO a -> IO a
 niceSocketsDo func = do
 #ifndef mingw32_HOST_OS
                 -- No signals on Windows anyway
-                System.Posix.Signals.installHandler 
+                System.Posix.Signals.installHandler
                       System.Posix.Signals.sigPIPE
                       System.Posix.Signals.Ignore
                       Nothing
@@ -74,7 +73,7 @@ connectTCPAddr addr = do
                       s <- socket AF_INET Stream proto
                       connect s addr
                       return s
-                      
+
 listenTCPAddr :: SockAddr -> Int -> IO Socket
 listenTCPAddr addr queuelen = do
                      proto <- getProtocolNumber "tcp"
