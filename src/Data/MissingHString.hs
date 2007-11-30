@@ -30,7 +30,7 @@ This module provides various helpful utilities for dealing with strings.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-module Data.String
+module Data.MissingHString
                        (-- * Whitespace Removal
                         strip, lstrip, rstrip,
                         -- * Tests
@@ -42,10 +42,12 @@ module Data.String
                         -- in "Data.List.Utils".
                         join, split, splitWs, replace, escapeRe
                        ) where
-import Data.List.Utils(startswith, endswith, join, split, replace)
-import Data.Char
-import Text.Regex
 
+import Data.List.Utils (startswith, endswith, join, split, replace)
+import Data.Char (isAlpha, isAscii, isDigit)
+import Text.Regex (mkRegex, splitRegex)
+
+wschars :: String
 wschars = " \t\r\n"
 
 {- | Removes any whitespace characters that are present at the start
@@ -63,7 +65,6 @@ characters are present all in a row, they are all removed;
 2. If no
 whitespace characters are present, nothing is done.
 -}
-
 strip :: String -> String
 strip = lstrip . rstrip
 
@@ -94,7 +95,7 @@ escapeRe (x:xs)
     -- Chars that we never escape
     | x `elem` ['\'', '`'] = x : escapeRe xs
     -- General rules for chars we never escape
-    | isDigit x || (isAscii x && isAlpha x) || x `elem` ['<', '>'] 
+    | isDigit x || (isAscii x && isAlpha x) || x `elem` ['<', '>']
         = x : escapeRe xs
     -- Escape everything else
     | otherwise = '\\' : x : escapeRe xs
