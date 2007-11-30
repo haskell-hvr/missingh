@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -87,7 +87,7 @@ string in memory.  You can create a 'StreamReader' with a call to
 
 'MemoryBuffer' is a similar class, but with a different purpose.  It provides
 a full interface like Handle (it implements 'HVIOReader', 'HVIOWriter',
-and 'HVIOSeeker').  However, it maintains an in-memory buffer with the 
+and 'HVIOSeeker').  However, it maintains an in-memory buffer with the
 contents of the file, rather than an actual on-disk file.  You can access
 the entire contents of this buffer at any time.  This can be quite useful
 for testing I\/O code, or for cases where existing APIs use I\/O, but you
@@ -111,7 +111,7 @@ virtual filesystem solution.
 -}
 
 module System.IO.HVIO(-- * Implementation Classes
-                     HVIO(..), 
+                     HVIO(..),
                      -- * Standard HVIO Implementations
 
                      -- ** Handle
@@ -121,7 +121,7 @@ module System.IO.HVIO(-- * Implementation Classes
                      StreamReader, newStreamReader,
 
                      -- ** Memory Buffer
-                     MemoryBuffer, newMemoryBuffer, 
+                     MemoryBuffer, newMemoryBuffer,
                      mbDefaultCloseFunc, getMemoryBuffer,
 
                      -- ** Haskell Pipe
@@ -155,9 +155,8 @@ the default cannot implement proper partial closing semantics.
 Implementators of writable objects must provide at least 'vPutChar' and
 'vIsWritable'.
 
-Implementators of seekable objects must provide at least 
+Implementators of seekable objects must provide at least
 'vIsSeekable', 'vTell', and 'vSeek'.
-
 -}
 class (Show a) => HVIO a where
     -- | Close a file
@@ -201,12 +200,12 @@ class (Show a) => HVIO a where
        a 'vGetChar' after a 'vGetContents' may return some undefined
        result instead of the error you would normally get.  You should
        use caution to make sure your code doesn't fall into that trap,
-       or make sure to test your code with Handle or one of the 
+       or make sure to test your code with Handle or one of the
        default instances defined in this module.  Also, some implementations
        may essentially provide a complete close after a call to 'vGetContents'.
        The bottom line: after a call to 'vGetContents', you should do nothing
        else with the object save closing it with 'vClose'.
-       
+
        For implementators, you are highly encouraged to provide a correct
        implementation. -}
     vGetContents :: a -> IO String
@@ -225,7 +224,7 @@ class (Show a) => HVIO a where
     -- | Write a string representation of the argument, plus a newline.
     vPrint :: Show b => a -> b -> IO ()
     -- | Flush any output buffers.
-    -- Note: implementations should assure that a vFlush is automatically 
+    -- Note: implementations should assure that a vFlush is automatically
     -- performed
     -- on file close, if necessary to ensure all data sent is written.
     vFlush :: a -> IO ()
@@ -290,8 +289,8 @@ class (Show a) => HVIO a where
 
     vIsReadable _ = return False
 
-    vGetLine h = 
-        let loop accum = 
+    vGetLine h =
+        let loop accum =
                 let func = do c <- vGetChar h
                               case c of
                                      '\n' -> return accum
@@ -306,7 +305,7 @@ class (Show a) => HVIO a where
                    x -> loop [x]
 
     vGetContents h =
-        let loop = 
+        let loop =
                 let func = do c <- vGetChar h
                               next <- loop
                               c `seq` return (c : next)
@@ -315,7 +314,7 @@ class (Show a) => HVIO a where
                     in catch func handler
             in
             do loop
-           
+
     vReady h = do vTestEOF h
                   return True
 
@@ -329,7 +328,7 @@ class (Show a) => HVIO a where
     vPutStrLn h s = vPutStr h (s ++ "\n")
 
     vPrint h s = vPutStrLn h (show s)
-                 
+
     vFlush = vTestOpen
 
 
@@ -341,13 +340,13 @@ class (Show a) => HVIO a where
     vSeek h _ _ = vThrow h illegalOperationErrorType
     vTell h = vThrow h illegalOperationErrorType
     vGetChar h = vThrow h illegalOperationErrorType
-    
+
 
     vPutBuf h buf len =
         do str <- peekCStringLen (castPtr buf, len)
            vPutStr h str
 
-    vGetBuf h b l = 
+    vGetBuf h b l =
         worker b l 0
         where worker _ 0 accum = return accum
               worker buf len accum =
@@ -363,7 +362,6 @@ class (Show a) => HVIO a where
 ----------------------------------------------------------------------
 -- Handle instances
 ----------------------------------------------------------------------
-
 instance HVIO Handle where
     vClose = hClose
     vIsEOF = hIsEOF
@@ -393,7 +391,6 @@ instance HVIO Handle where
     vIsOpen = hIsOpen
     vIsClosed = hIsClosed
 
-
 ----------------------------------------------------------------------
 -- VIO Support
 ----------------------------------------------------------------------
@@ -414,7 +411,6 @@ vioc_set x newdat = modifyIORef x (\ (stat, _) -> (stat, newdat))
 ----------------------------------------------------------------------
 -- Stream Readers
 ----------------------------------------------------------------------
-
 {- | Simulate I\/O based on a string buffer.
 
 When a 'StreamReader' is created, it is initialized based on the contents of
@@ -434,7 +430,9 @@ newStreamReader :: String            -- ^ Initial contents of the 'StreamReader'
 newStreamReader s = do ref <- newIORef (True, s)
                        return (StreamReader ref)
 
+srv :: StreamReader -> VIOCloseSupport String
 srv (StreamReader x) = x
+
 instance Show StreamReader where
     show _ = "<StreamReader>"
 
@@ -451,7 +449,7 @@ instance HVIO StreamReader where
                     let retval = head c
                     vioc_set (srv h) (tail c)
                     return retval
-    
+
     vGetContents h = do vTestEOF h
                         c <- vioc_get (srv h)
                         vClose h
@@ -461,13 +459,12 @@ instance HVIO StreamReader where
 ----------------------------------------------------------------------
 -- Buffers
 ----------------------------------------------------------------------
-
 {- | A 'MemoryBuffer' simulates true I\/O, but uses an in-memory buffer instead
 of on-disk storage.
 
 It provides
 a full interface like Handle (it implements 'HVIOReader', 'HVIOWriter',
-and 'HVIOSeeker').  However, it maintains an in-memory buffer with the 
+and 'HVIOSeeker').  However, it maintains an in-memory buffer with the
 contents of the file, rather than an actual on-disk file.  You can access
 the entire contents of this buffer at any time.  This can be quite useful
 for testing I\/O code, or for cases where existing APIs use I\/O, but you
@@ -501,9 +498,10 @@ newMemoryBuffer initval closefunc = do ref <- newIORef (True, (0, initval))
 mbDefaultCloseFunc :: String -> IO ()
 mbDefaultCloseFunc _ = return ()
 
+vrv :: MemoryBuffer -> VIOCloseSupport (Int, String)
 vrv (MemoryBuffer _ x) = x
 
-{- | Grab the entire contents of the buffer as a string. 
+{- | Grab the entire contents of the buffer as a string.
 Unlike 'vGetContents', this has no effect on the open status of the
 item, the EOF status, or the current position of the file pointer. -}
 getMemoryBuffer :: MemoryBuffer -> IO String
@@ -546,9 +544,9 @@ instance HVIO MemoryBuffer where
     vIsWritable _ = return True
     vTell h = do v <- vioc_get (vrv h)
                  return . fromIntegral $ (fst v)
-    vSeek h seekmode seekposp = 
+    vSeek h seekmode seekposp =
         do (pos, buf) <- vioc_get (vrv h)
-           let seekpos = fromInteger seekposp 
+           let seekpos = fromInteger seekposp
            let newpos = case seekmode of
                              AbsoluteSeek -> seekpos
                              RelativeSeek -> pos + seekpos
@@ -562,7 +560,6 @@ instance HVIO MemoryBuffer where
 ----------------------------------------------------------------------
 -- Pipes
 ----------------------------------------------------------------------
-
 {- | Create a Haskell pipe.
 
 These pipes are analogous to the Unix
@@ -574,9 +571,7 @@ thread and the 'PipeReader' in another thread.  Data that's written to the
 pipes are implemented completely with existing Haskell threading primitives,
 and require no special operating system support.  Unlike Unix pipes, these
 pipes cannot be used across a fork().  Also unlike Unix pipes, these pipes
-are portable and interact well with Haskell threads.
--}
-
+are portable and interact well with Haskell threads. -}
 newHVIOPipe :: IO (PipeReader, PipeWriter)
 newHVIOPipe = do mv <- newEmptyMVar
                  readerref <- newIORef (True, mv)
@@ -584,7 +579,7 @@ newHVIOPipe = do mv <- newEmptyMVar
                  writerref <- newIORef (True, reader)
                  return (reader, PipeWriter writerref)
 
-data PipeBit = PipeBit Char 
+data PipeBit = PipeBit Char
              | PipeEOF
                deriving (Eq, Show)
 
@@ -599,12 +594,13 @@ newtype PipeWriter = PipeWriter (VIOCloseSupport PipeReader)
 ------------------------------
 -- Pipe Reader
 ------------------------------
-
+prv :: PipeReader -> VIOCloseSupport (MVar PipeBit)
 prv (PipeReader x) = x
 
 instance Show PipeReader where
-    show x = "<PipeReader>"
+    show _ = "<PipeReader>"
 
+pr_getc :: PipeReader -> IO PipeBit
 pr_getc h = do mv <- vioc_get (prv h)
                takeMVar mv
 
@@ -618,11 +614,11 @@ instance HVIO PipeReader where
 
     vGetChar h = do vTestEOF h
                     c <- pr_getc h
-                    case c of 
+                    case c of
                         PipeBit x -> return x
                         -- vTestEOF should eliminate this case
                         _ -> fail "Internal error in HVIOReader vGetChar"
-    vGetContents h = 
+    vGetContents h =
         let loop = do c <- pr_getc h
                       case c of
                           PipeEOF -> return []
@@ -631,15 +627,16 @@ instance HVIO PipeReader where
         in do vTestEOF h
               loop
     vIsReadable _ = return True
-                        
+
 ------------------------------
 -- Pipe Writer
 ------------------------------
-
+pwv :: PipeWriter -> VIOCloseSupport PipeReader
 pwv (PipeWriter x) = x
+
+pwmv :: PipeWriter -> IO (MVar PipeBit)
 pwmv (PipeWriter x) = do mv1 <- vioc_get x
                          vioc_get (prv mv1)
-
 
 instance Show PipeWriter where
     show _ = "<PipeWriter>"
@@ -659,7 +656,7 @@ instance HVIO PipeWriter where
     vPutChar h c = do vTestOpen h
                       child <- vioc_get (pwv h)
                       copen <- vIsOpen child
-                      if copen 
+                      if copen
                          then do mv <- pwmv h
                                  putMVar mv (PipeBit c)
                          else fail "PipeWriter: Couldn't write to pipe because child end is closed"
