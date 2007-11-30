@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -41,20 +41,19 @@ module System.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                         MemoryEntry(..),
                                         -- * Utilities
                                         nice_slice, getFullPath,
-                                        getFullSlice
-                                       )
-where
-import System.IO.HVFS
-import Data.IORef
-import Data.List
-import System.Path
-import System.Path.NameManip
-import Control.Monad.Error
-import System.IO.Error
-import System.IO
-import System.IO.HVIO
+                                        getFullSlice)
+    where
 
-{- | A simple "System.IO.HVFS.HVFSStat" 
+import Data.IORef (newIORef, readIORef, writeIORef, IORef())
+import Data.List (genericLength)
+import System.IO -- (ReadMode)
+import System.IO.Error (doesNotExistErrorType, illegalOperationErrorType, permissionErrorType)
+import System.IO.HVFS
+import System.IO.HVIO (newStreamReader)
+import System.Path (absNormPath)
+import System.Path.NameManip (slice_path)
+
+{- | A simple "System.IO.HVFS.HVFSStat"
 class that assumes that everything is either a file
 or a directory. -}
 data SimpleStat = SimpleStat {
@@ -69,7 +68,6 @@ instance HVFSStat SimpleStat where
 ----------------------------------------------------------------------
 -- In-Memory Tree Types
 ----------------------------------------------------------------------
-
 {- | The basic node of a 'MemoryVFS'.  The String corresponds to the filename,
 and the entry to the contents. -}
 type MemoryNode = (String, MemoryEntry)
@@ -81,8 +79,7 @@ data MemoryEntry = MemoryDirectory [MemoryNode]
 
 {- | An in-memory read\/write filesystem.  Think of it as a dynamically
 resizable ramdisk written in Haskell. -}
-
-data MemoryVFS = MemoryVFS 
+data MemoryVFS = MemoryVFS
                { content :: IORef [MemoryNode],
                  cwd :: IORef FilePath
                }
@@ -124,7 +121,7 @@ nice_slice path =
 getFullPath :: HVFS a => a -> String -> IO String
 getFullPath fs path =
     do cwd <- vGetCurrentDirectory fs
-       case absNormPath cwd path of
+       case (absNormPath cwd path) of
            Nothing -> vRaiseError fs doesNotExistErrorType
                         ("Trouble normalizing path " ++ path) (Just (cwd ++ "/" ++ path))
            Just newpath -> return newpath
@@ -145,7 +142,7 @@ findMelem x path =
         t = tail sliced1
         newh = if (h /= "/") && head h == '/' then tail h else h
         sliced2 = newh : t
-                  
+
         -- Walk the tree
         walk :: MemoryEntry -> [String] -> Either String MemoryEntry
         -- Empty list -- return the item we have
@@ -153,14 +150,14 @@ findMelem x path =
         -- Root directory -- return the item we have
         walk y ["/"] = Right y
         -- File but stuff: error
-        walk (MemoryFile _) (x : _) = 
-            Left $ "Attempt to look up name " ++ x ++ " in file"
-        walk (MemoryDirectory y) (x : xs) =
-            let newentry = case lookup x y of
-                                Nothing -> Left $ "Couldn't find entry " ++ x
-                                Just z -> Right z
+        walk (MemoryFile _) (z : _) =
+            Left $ "Attempt to look up name " ++ z ++ " in file"
+        walk (MemoryDirectory y) (z : zs) =
+            let newentry = case lookup z y of
+                                Nothing -> Left $ "Couldn't find entry " ++ z
+                                Just a -> Right a
                 in do newobj <- newentry
-                      walk newobj xs
+                      walk newobj zs
         in do
            c <- readIORef $ content x
            case walk (MemoryDirectory c) (sliced2) of
@@ -169,7 +166,7 @@ findMelem x path =
 
 -- | Find an element on the tree, normalizing the path first
 getMelem :: MemoryVFS -> String -> IO MemoryEntry
-getMelem x s = 
+getMelem x s =
     do base <- readIORef $ cwd x
        case absNormPath base s of
            Nothing -> vRaiseError x doesNotExistErrorType
@@ -182,17 +179,17 @@ instance HVFS MemoryVFS where
         do curpath <- vGetCurrentDirectory x
            -- Make sure new dir is valid
            newdir <- getMelem x fp
-           case newdir of 
-               (MemoryFile _) -> vRaiseError x doesNotExistErrorType 
+           case newdir of
+               (MemoryFile _) -> vRaiseError x doesNotExistErrorType
                                  ("Attempt to cwd to non-directory " ++ fp)
                                  (Just fp)
-               (MemoryDirectory _) -> 
+               (MemoryDirectory _) ->
                    case absNormPath curpath fp of
                        Nothing -> -- should never happen due to above getMelem call
                                   vRaiseError x illegalOperationErrorType
                                               "Bad internal error" (Just fp)
                        Just y -> writeIORef (cwd x) y
-    vGetFileStatus x fp = 
+    vGetFileStatus x fp =
         do elem <- getMelem x fp
            case elem of
                      (MemoryFile y) -> return $ HVFSStatEncap $
@@ -210,9 +207,9 @@ instance HVFS MemoryVFS where
                 MemoryDirectory c -> return $ map fst c
 
 instance HVFSOpenable MemoryVFS where
-    vOpen x fp (ReadMode) = 
+    vOpen x fp (ReadMode) =
         do elem <- getMelem x fp
-           case elem of 
+           case elem of
                 MemoryDirectory _ -> vRaiseError x doesNotExistErrorType
                                       "Can't open a directory"
                                       (Just fp)
