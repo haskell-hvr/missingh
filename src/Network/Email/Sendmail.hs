@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -45,6 +45,7 @@ import System.Directory
 import System.IO
 import System.IO.Error
 
+sendmails :: [String]
 sendmails = ["/usr/sbin/sendmail",
              "/usr/local/sbin/sendmail",
              "/usr/local/bin/sendmail",
@@ -90,12 +91,12 @@ sendmail :: Maybe String                -- ^ The envelope from address.  If not 
          -> IO ()
 sendmail _ [] _ = fail "sendmail: no recipients specified"
 sendmail Nothing recipients msg = sendmail_worker recipients msg
-sendmail (Just from) recipients msg = 
+sendmail (Just from) recipients msg =
     sendmail_worker (("-f" ++ from) : recipients) msg
-    
+
 sendmail_worker :: [String] -> String -> IO ()
 sendmail_worker args msg =
-    let func h = hPutStr h msg 
+    let func h = hPutStr h msg
         in
         do
         --pOpen WriteToPipe "/usr/sbin/sendmail" args func
@@ -104,8 +105,8 @@ sendmail_worker args msg =
             Right x -> return x
             Left _ -> do
                       sn <- findsendmail
-                      rv <- pOpen WriteToPipe sn args func
-                      return $! rv
-                         
+                      r <- pOpen WriteToPipe sn args func
+                      return $! r
+
 #endif
 
