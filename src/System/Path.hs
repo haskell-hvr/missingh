@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -59,11 +59,9 @@ import System.IO.HVFS.Utils
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
 dot after the last slash to the end.  Either returned string may be empty. -}
-
--- FIXME - See 6.4 API when released.
-
+-- FIXME: See 6.4 API when released.
 splitExt :: String -> (String, String)
-splitExt path = 
+splitExt path =
     let dotindex = alwaysElemRIndex '.' path
         slashindex = alwaysElemRIndex '/' path
         in
@@ -140,7 +138,7 @@ removes the directory and all its contents when the action completes (or raises
 an exception. -}
 brackettmpdir :: String -> (String -> IO a) -> IO a
 brackettmpdir x action = do tmpdir <- mktmpdir x
-                            finally (action tmpdir) 
+                            finally (action tmpdir)
                                     (recursiveRemove SystemFS tmpdir)
 
 {- | Changes the current working directory to the given path,

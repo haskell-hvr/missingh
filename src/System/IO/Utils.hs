@@ -21,11 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004-2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
-
-asdf.
 -}
 
 module System.IO.Utils(-- * Entire File Handle Utilities
@@ -46,15 +44,14 @@ module System.IO.Utils(-- * Entire File Handle Utilities
                        optimizeForBatch, optimizeForInteraction
                         ) where
 
-import System.IO.Unsafe
+import System.IO.Unsafe (unsafeInterleaveIO)
 import System.IO
-import Data.List
+import Data.List (genericLength)
 import System.IO.HVIO
 
 {- | Given a list of strings, output a line containing each item, adding
 newlines as appropriate.  The list is not expected to have newlines already.
 -}
-
 hPutStrLns :: HVIO a => a -> [String] -> IO ()
 hPutStrLns h = mapM_ $ vPutStrLn h
 
@@ -72,17 +69,16 @@ Example:
 
 -}
 
--- FIXME does hGetContents h >>= return.lines not work?
+-- FIXME: does hGetContents h >>= return . lines not work?
 hGetLines :: HVIO a => a -> IO [String]
 hGetLines h = unsafeInterleaveIO (do
                                   ieof <- vIsEOF h
-                                  if (ieof) 
+                                  if (ieof)
                                      then return []
                                      else do
                                           line <- vGetLine h
                                           remainder <- hGetLines h
-                                          return (line : remainder)
-                                 )
+                                          return (line : remainder))
 
 
 {- | This is similar to the built-in 'System.IO.interact', but works
@@ -117,7 +113,7 @@ to wrapping hInteract with 'lines' and 'unlines'.
 
 One could view this function like this:
 
-> hLineInteract finput foutput func = 
+> hLineInteract finput foutput func =
 >     let newf = unlines . func . lines in
 >         hInteract finput foutput newf
 
@@ -128,7 +124,6 @@ Though the actual implementation is this for efficiency:
 >     lines <- hGetLines finput
 >     hPutStrLns foutput (func lines)
 -}
-
 hLineInteract :: (HVIO a, HVIO b) => a -> b -> ([String] -> [String]) -> IO ()
 hLineInteract finput foutput func =
     do
@@ -146,8 +141,7 @@ hCopy hin hout = do
 {- | Copies from one handle to another in raw mode (using hGetContents).
 Takes a function to provide progress updates to the user.
 -}
-
-hCopyProgress :: (HVIO b, HVIO c, Integral a) => 
+hCopyProgress :: (HVIO b, HVIO c, Integral a) =>
                     b        -- ^ Input handle
                  -> c              -- ^ Output handle
                  -> (Maybe a -> Integer -> Bool -> IO ()) -- ^ Progress function -- the bool is always False unless this is the final call
@@ -178,13 +172,11 @@ Like 'hBlockCopy', this implementation is nice:
 
 > hLineCopy hin hout = hLineInteract hin hout id
 -}
-
 hLineCopy :: (HVIO a, HVIO b) => a -> b -> IO()
 hLineCopy hin hout = hLineInteract hin hout id
 
 {- | Copies from 'stdin' to 'stdout' using lines.  An alias for 'hLineCopy'
 over 'stdin' and 'stdout'. -}
-
 lineCopy :: IO ()
 lineCopy = hLineCopy stdin stdout
 
@@ -194,7 +186,6 @@ Please note that the Unix permission bits are set at a default; you may
 need to adjust them after the copy yourself.
 
 This function is implemented using 'hLineCopy' internally. -}
-
 copyFileLinesToFile :: FilePath -> FilePath -> IO ()
 copyFileLinesToFile infn outfn = do
                                  hin <- openFile infn ReadMode
@@ -213,8 +204,7 @@ optimizeForBatch = do
                    hSetBuffering stdout (BlockBuffering (Just 4096))
 
 {- | Sets stdin and stdout to be line-buffered.  This saves resources
-on stdout, but not many on stdin, since it it still looking for newlines.
--}
+on stdout, but not many on stdin, since it it still looking for newlines. -}
 optimizeForInteraction :: IO ()
 optimizeForInteraction = do
                          hSetBuffering stdin LineBuffering
