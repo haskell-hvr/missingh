@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -39,7 +39,7 @@ module Data.Progress.Meter (-- * Types
                                addComponent,
                                removeComponent,
                                setWidth,
-                               
+
                                -- * Rendering and Output
                                renderMeter,
                                displayMeter,
@@ -50,17 +50,16 @@ module Data.Progress.Meter (-- * Types
                                ) where
 
 import Data.Progress.Tracker
-import Control.Concurrent.MVar
 import Control.Concurrent
-import Control.Monad(when)
-import Data.String
-import System.Time.Utils
-import Data.Quantity
+import Control.Monad (when)
+import Data.MissingHString (join)
+import System.Time.Utils (renderSecs)
+import Data.Quantity (renderNums, binaryOpts)
 import System.IO
-import Control.Monad(filterM)
+import Control.Monad (filterM)
 
 {- | The main data type for the progress meter. -}
-data ProgressMeterR = 
+data ProgressMeterR =
     ProgressMeterR {masterP :: Progress, -- ^ The master 'Progress' object for overall status
                     components :: [Progress], -- ^ Individual component statuses
                     width :: Int, -- ^ Width of the meter
@@ -91,7 +90,7 @@ newMeter :: Progress           -- ^ The top-level 'Progress'
           -> Int                -- ^ Width of the terminal -- usually 80
           -> ([Integer] -> [String])-- ^ A function to render sizes
           -> IO ProgressMeter
-newMeter tracker u w rfunc = 
+newMeter tracker u w rfunc =
     newMVar $ ProgressMeterR {masterP = tracker, components = [],
                          width = w, renderer = rfunc, autoDisplayers = [],
                          unit = u}
@@ -102,7 +101,7 @@ setComponents meter componentlist = modifyMVar_ meter (\m -> return $ m {compone
 
 {- | Add a new component to the list of components. -}
 addComponent :: ProgressMeter -> Progress -> IO ()
-addComponent meter component = 
+addComponent meter component =
     modifyMVar_ meter (\m -> return $ m {components = component : components m})
 
 {- | Remove a component by name. -}
@@ -116,9 +115,9 @@ removeComponent meter componentname = modifyMVar_ meter $ \m ->
 setWidth :: ProgressMeter -> Int -> IO ()
 setWidth meter w = modifyMVar_ meter (\m -> return $ m {width = w})
 
-{- | Like renderMeter, but prints it to the screen instead of returning it. 
+{- | Like renderMeter, but prints it to the screen instead of returning it.
 
-This function will output CR, then the meter. 
+This function will output CR, then the meter.
 
 Pass stdout as the handle for regular display to the screen. -}
 displayMeter :: Handle -> ProgressMeter -> IO ()
@@ -130,15 +129,15 @@ displayMeter h r = withMVar r $ \meter ->
        -- lock the IO and prevent IO from stomping on each other.
 
 {- | Clears the meter -- outputs CR, spaces equal to the width - 1,
-then another CR. 
+then another CR.
 
 Pass stdout as the handle for regular display to the screen. -}
 clearMeter :: Handle -> ProgressMeter -> IO ()
-clearMeter h pm = withMVar pm $ \m -> 
+clearMeter h pm = withMVar pm $ \m ->
                      do hPutStr h (clearmeterstr m)
                         hFlush h
 
-{- | Clears the meter, writes the given string, then restores the meter. 
+{- | Clears the meter, writes the given string, then restores the meter.
 The string is assumed to contain a trailing newline.
 
 Pass stdout as the handle for regular display to the screen. -}
@@ -150,11 +149,11 @@ writeMeterString h pm msg = withMVar pm $ \meter ->
                                hPutStr h s
                                hFlush h
 
+clearmeterstr :: ProgressMeterR -> String
 clearmeterstr m = "\r" ++ replicate (width m - 1) ' ' ++ "\r"
 
-
 {- | Starts a thread that updates the meter every n seconds by calling
-the specified function.  Note: @displayMeter stdout@ 
+the specified function.  Note: @displayMeter stdout@
 is an ideal function here.
 
 Save this threadID and use it later to call 'stopAutoDisplayMeter'.
@@ -185,7 +184,7 @@ autoDisplayMeter pm delay displayfunc =
 
 You should probably call 'clearMeter' after a call to this. -}
 killAutoDisplayMeter :: ProgressMeter -> ThreadId -> IO ()
-killAutoDisplayMeter pm t = 
+killAutoDisplayMeter pm t =
     modifyMVar_ pm (\p -> return $ p {autoDisplayers = filter (/= t) (autoDisplayers p)})
 
 {- | Render the current status. -}
@@ -194,10 +193,10 @@ renderMeter r = withMVar r $ renderMeterR
 
 renderMeterR :: ProgressMeterR -> IO String
 renderMeterR meter =
-    do overallpct <- renderpct (masterP meter)
-       components <- mapM (rendercomponent (renderer meter))
+    do overallpct <- renderpct $ masterP meter
+       compnnts <- mapM (rendercomponent $ renderer meter)
                      (components meter)
-       let componentstr = case join " " components of
+       let componentstr = case join " " compnnts of
                             [] -> ""
                             x -> x ++ " "
        rightpart <- renderoverall (renderer meter) (masterP meter)
@@ -206,25 +205,28 @@ renderMeterR meter =
        if padwidth < 1
           then return $ take (width meter - 1) $ leftpart ++ rightpart
           else return $ leftpart ++ replicate padwidth ' ' ++ rightpart
-       
-    where renderpct pt = 
+
+    where
+      u = unit meter
+      renderpct pt =
               withStatus pt renderpctpts
-          renderpctpts pts = 
+      renderpctpts pts =
                   if (totalUnits pts == 0)
                      then return "0%"
                      else return $ show (((completedUnits pts) * 100) `div` (totalUnits pts)) ++ "%"
-          rendercomponent :: ([Integer] -> [String]) -> Progress -> IO String
-          rendercomponent rfunc pt = withStatus pt $ \pts ->
+      rendercomponent :: ([Integer] -> [String]) -> Progress -> IO String
+      rendercomponent rfunc pt = withStatus pt $ \pts ->
               do pct <- renderpctpts pts
-                 let u = unit meter
                  let renders = rfunc [totalUnits pts, completedUnits pts]
                  return $ "[" ++ trackerName pts ++ " " ++
                      (renders !! 1) ++ u ++ "/" ++
                      head renders ++ u ++ " " ++ pct ++ "]"
-          renderoverall rfunc pt = withStatus pt $ \pts ->
-              do etr <- getETR pts
-                 speed <- getSpeed pts
-                 return $ head (rfunc [floor speed]) ++ (unit meter) ++ 
-                            "/s " ++ renderSecs etr
+
+      renderoverall :: (ProgressStatuses a (IO [Char])) => ([Integer] -> [[Char]]) -> a -> IO [Char]
+      renderoverall rfunc pt = withStatus pt $ \pts ->
+                                         do etr <- getETR pts
+                                            speed <- getSpeed pts
+                                            return $ head (rfunc [floor (speed :: Double)]) ++ u ++
+                                                       "/s " ++ renderSecs etr
 
 
