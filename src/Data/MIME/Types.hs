@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -45,7 +45,6 @@ module Data.MIME.Types (-- * Creating Lookup Objects
 where
 
 import qualified Data.Map as Map
-import qualified System.Directory
 import Monad
 import System.IO
 import System.IO.Error
@@ -55,10 +54,10 @@ import Data.Map.Utils
 import Data.Char
 
 ----------------------------------------------------------------------
--- Basic type decl
+-- Basic type declarations
 ----------------------------------------------------------------------
 
-data MIMETypeData = MIMETypeData 
+data MIMETypeData = MIMETypeData
     {
      -- | A mapping used to expand common suffixes into equivolent,
      -- better-parsed versions.  For instance, ".tgz" would expand
@@ -88,8 +87,6 @@ type MIMEResults = (Maybe String,       -- The MIME type
 
 {- | Read the given mime.types file and add it to an existing object.
 Returns new object. -}
-
-
 readMIMETypes :: MIMETypeData            -- ^ Data to work with
               -> Bool                    -- ^ Whether to work on strict data
               -> FilePath               -- ^ File to read
@@ -103,10 +100,10 @@ hReadMIMETypes :: MIMETypeData          -- ^ Data to work with
                   -> Bool               -- ^ Whether to work on strict data
                   -> Handle             -- ^ Handle to read from
                   -> IO MIMETypeData       -- ^ New object
-hReadMIMETypes mtd strict h = 
+hReadMIMETypes mtd strict h =
     let parseline :: MIMETypeData -> String -> MIMETypeData
         parseline obj line =
-            let l1 = words line 
+            let l1 = words line
                 procwords [] = []
                 procwords (('#':_) :_) = []
                 procwords (x:xs) = x : procwords xs
@@ -119,29 +116,28 @@ hReadMIMETypes mtd strict h =
                        foldl (\o suff -> addType o strict thetype ('.' : suff)) obj suffixlist
                 else obj
         in
-        do
-        lines <- hGetLines h
-        return (foldl parseline mtd lines)
+          do
+            lines <- hGetLines h
+            return (foldl parseline mtd lines)
 
 {- | Guess the type of a file given a filename or URL.  The file
    is not opened; only the name is considered. -}
-
 guessType :: MIMETypeData               -- ^ Source data for guessing
              -> Bool                    -- ^ Whether to limit to strict data
              -> String                  -- ^ File or URL name to consider
              -> MIMEResults             -- ^ Result of guessing (see 'MIMEResults' for details on interpreting it)
-guessType mtd strict fn = 
-    let mapext (base, ext) =
-            case Map.lookup ext (suffixMap mtd) of
-                Nothing -> (base, ext)
+guessType mtd strict fn =
+    let mapext (base, ex) =
+            case Map.lookup ex (suffixMap mtd) of
+                Nothing -> (base, ex)
                 Just x -> mapext (splitExt (base ++ x))
-        checkencodings (base, ext) =
-            case Map.lookup ext (encodingsMap mtd) of
-                 Nothing -> (base, ext, Nothing)
+        checkencodings (base, ex) =
+            case Map.lookup ex (encodingsMap mtd) of
+                 Nothing -> (base, ex, Nothing)
                  Just x -> (fst (splitExt base),
                             snd (splitExt base),
                             Just x)
-        (base, ext, enc) = checkencodings . mapext $ splitExt fn
+        (_, ext, enc) = checkencodings . mapext $ splitExt fn
         typemap = getStrict mtd strict
         in
         case Map.lookup ext typemap of
@@ -160,7 +156,7 @@ guessExtension :: MIMETypeData          -- ^ Source data for guessing
                   -> Bool               -- ^ Whether to limit to strict data
                   -> String             -- ^ MIME type to consider
                   -> Maybe String       -- ^ Result of guessing, or Nothing if no match possible
-guessExtension mtd strict fn = 
+guessExtension mtd strict fn =
     case guessAllExtensions mtd strict fn of
                                           [] -> Nothing
                                           (x:_) -> Just x
@@ -176,22 +172,21 @@ guessAllExtensions mtd strict fn =
         themap = getStrict mtd strict
         in
         flippedLookupM mimetype themap
-        
+
 {- | Adds a new type to the data structures, replacing whatever data
    may exist about it already.  That is, it overrides existing information
    about the given extension, but the same type may occur more than once. -}
-
 addType :: MIMETypeData                 -- ^ Source data
            -> Bool                      -- ^ Whether to add to strict data set
            -> String                    -- ^ MIME type to add
            -> String                    -- ^ Extension to add
            -> MIMETypeData              -- ^ Result of addition
-addType mtd strict thetype theext = 
+addType mtd strict thetype theext =
     setStrict mtd strict (\m -> Map.insert theext thetype m)
 
 {- | Default MIME type data to use -}
 defaultmtd :: MIMETypeData
-defaultmtd = 
+defaultmtd =
     MIMETypeData {suffixMap = default_suffix_map,
                   encodingsMap = default_encodings_map,
                   typesMap = default_types_map,
@@ -202,7 +197,7 @@ therein to the passed object, then return the new one. -}
 readSystemMIMETypes :: MIMETypeData -> IO MIMETypeData
 readSystemMIMETypes mtd =
     let tryread :: MIMETypeData -> String -> IO MIMETypeData
-        tryread inputobj filename = 
+        tryread inputobj filename =
             do
             fn <- try (openFile filename ReadMode)
             case fn of
@@ -213,12 +208,11 @@ readSystemMIMETypes mtd =
                                return x
         in
         do
-        foldM tryread mtd defaultfilelocations
+          foldM tryread mtd defaultfilelocations
 
 ----------------------------------------------------------------------
 -- Internal utilities
 ----------------------------------------------------------------------
-
 getStrict :: MIMETypeData -> Bool -> Map.Map String String
 getStrict mtd True = typesMap mtd
 getStrict mtd False = Map.union (typesMap mtd) (commonTypesMap mtd)
@@ -230,7 +224,7 @@ setStrict mtd False func = mtd{commonTypesMap = func (commonTypesMap mtd)}
 ----------------------------------------------------------------------
 -- Default data structures
 ----------------------------------------------------------------------
-
+defaultfilelocations :: [String]
 defaultfilelocations =
     [
      "/etc/mime.types",
@@ -240,13 +234,13 @@ defaultfilelocations =
      "/usr/local/etc/mime.types"                -- Apache 1.3
     ]
 
-
+default_encodings_map, default_suffix_map, default_types_map, default_common_types :: Map.Map String String
 default_encodings_map = Map.fromList [
                                       (".Z", "compress"),
                                       (".gz", "gzip"),
                                       (".bz2", "bzip2")
                                      ]
-                               
+
 default_suffix_map = Map.fromList [
                                    (".tgz", ".tar.gz"),
                                    (".tz", ".tar.gz"),
