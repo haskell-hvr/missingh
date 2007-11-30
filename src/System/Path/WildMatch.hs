@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2006 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -61,15 +61,13 @@ by this module.  That is, @*.txt@ will match @.test.txt@.
 
 module System.Path.WildMatch (-- * Wildcard matching
                                 wildCheckCase,
-                                wildToRegex
-                               )
-
-where
+                                wildToRegex)
+    where
 
 import Text.Regex
-import Data.String
+import Data.MissingHString
 
-{- | Convert a wildcard to an (uncompiled) regular expression. 
+{- | Convert a wildcard to an (uncompiled) regular expression.
 
 -}
 wildToRegex :: String -> String
@@ -88,7 +86,6 @@ wildCheckCase patt name =
       Just _ -> True
 
 -- This is SO MUCH CLEANER than the python implementation!
-
 convwild :: String -> String
 convwild [] = []
 convwild ('*':xs) = ".*" ++ convwild xs
@@ -102,3 +99,4 @@ convpat :: String -> String
 convpat ('\\':xs) = "\\\\" ++ convpat xs
 convpat (']':xs) = ']' : convwild xs
 convpat (x:xs) = x : convpat xs
+convpat [] = []
