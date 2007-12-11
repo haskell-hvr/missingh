@@ -14,8 +14,16 @@ Description:  MissingH is a library of all sorts of utility functions for
  Haskell programmers.  It is written in pure Haskell and thus should
  be extremely portable and easy to use.
 Stability: Beta
-Hs-Source-Dirs: src
-Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils,
+Build-Type: Simple
+Cabal-Version: >=1.2
+
+Flag splitBase
+  description: Choose the new smaller, split-up base package.
+
+Library
+ Hs-Source-Dirs: src
+ Exposed-Modules:
+  Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils,
   System.Daemon,
   Text.ParserCombinators.Parsec.Utils,
   Test.HUnit.Utils,
@@ -49,17 +57,31 @@ Exposed-Modules: Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils
   System.Debian, System.Debian.ControlParser,
   Data.MIME.Types,
   System.Console.GetOpt.Utils
-Extensions: ExistentialQuantification, OverlappingInstances, 
-   UndecidableInstances, CPP
-Build-Depends: network, parsec, base,
+
+ Extensions: ExistentialQuantification, OverlappingInstances,
+   UndecidableInstances, CPP, Rank2Types,
+   MultiParamTypeClasses, FlexibleInstances, FlexibleContexts
+ -- Hack because ghc-6.6 and the Cabal the comes with ghc-6.8.1
+ -- does not understand the PatternSignatures extension.
+ -- The Cabal that comes with ghc-6.8.2 does understand it, so
+ -- this hack can be dropped if we require Cabal-Version: >=1.2.3
+ If impl(ghc >= 6.8)
+   GHC-Options: -XPatternSignatures
+
+ Build-Depends: network, parsec, base,
                haskell98, mtl, HUnit, regex-compat, QuickCheck, filepath,
                hslogger
--- Cabal will automatically add unix here on non-Windows platforms
-GHC-Options: -O2
+ If flag(splitBase)
+   Build-Depends: base >= 3, directory, random, process, old-time,
+                             containers, old-locale, array
+ Else
+   Build-Depends: base < 3
+ If ! os(windows)
+   Build-Depends: unix
 
-Executable: runtests
-Buildable: False
-Main-Is: runtests.hs
-HS-Source-Dirs: testsrc, .
-Extensions: ExistentialQuantification, OverlappingInstances,
+Executable runtests
+  Buildable: False
+  Main-Is: runtests.hs
+  HS-Source-Dirs: testsrc, .
+  Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP
