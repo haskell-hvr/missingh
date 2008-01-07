@@ -59,7 +59,7 @@ module Data.List.Utils(-- * Merging
                      -- sub,
                     ) where
 import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
-                elemIndex, elemIndices, tails, find, findIndex)
+                elemIndex, elemIndices, tails, find, findIndex, isInfixOf)
 import Control.Monad.State(State, get, put)
 import Data.Maybe(isJust)
 
@@ -227,6 +227,7 @@ Examples:
 genericJoin :: Show a => String -> [a] -> String
 genericJoin delim l = join delim (map show l)
 
+{-# DEPRECATED contains: Use Data.List.isInfixOf, will be removed in MissingH 1.1.0 #-}
 {- | Returns true if the given parameter is a sublist of the given list;
 false otherwise.
 
@@ -234,10 +235,14 @@ Example:
 
 > contains "Haskell" "I really like Haskell." -> True
 > contains "Haskell" "OCaml is great." -> False
+
+This function was submitted to GHC and was applied as
+'Data.List.isInfixOf'.  This function therefore is deprecated and will
+be removed in future versions.
 -}
 
 contains :: Eq a => [a] -> [a] -> Bool
-contains substr str = isJust $ find (isPrefixOf substr) (tails str)
+contains = isInfixOf
 
 -- above function submitted to GHC as Data.List.isInfixOf on 8/31/2006
 
