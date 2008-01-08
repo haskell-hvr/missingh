@@ -65,7 +65,7 @@ module System.Path.WildMatch (-- * Wildcard matching
     where
 
 import Text.Regex
-import Data.MissingHString
+import Data.String.Utils
 
 {- | Convert a wildcard to an (uncompiled) regular expression.
 

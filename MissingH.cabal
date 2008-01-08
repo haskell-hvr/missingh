@@ -23,7 +23,7 @@ Flag splitBase
 Library
  Hs-Source-Dirs: src
  Exposed-Modules:
-  Data.String, System.IO.Utils, System.IO.Binary, Data.List.Utils,
+  Data.String.Utils, System.IO.Utils, System.IO.Binary, Data.List.Utils,
   System.Daemon,
   Text.ParserCombinators.Parsec.Utils,
   Test.HUnit.Utils,

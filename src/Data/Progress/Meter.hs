@@ -52,7 +52,7 @@ module Data.Progress.Meter (-- * Types
 import Data.Progress.Tracker
 import Control.Concurrent
 import Control.Monad (when)
-import Data.MissingHString (join)
+import Data.String.Utils (join)
 import System.Time.Utils (renderSecs)
 import Data.Quantity (renderNums, binaryOpts)
 import System.IO

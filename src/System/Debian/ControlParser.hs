@@ -35,7 +35,7 @@ module System.Debian.ControlParser(control, depPart)
     where
 
 import Text.ParserCombinators.Parsec
-import Data.MissingHString (split)
+import Data.String.Utils (split)
 
 eol, extline :: GenParser Char st String
 eol = (try (string "\r\n"))
