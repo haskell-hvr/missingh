@@ -119,18 +119,18 @@ instance BinaryConvertible Word8 where
                      peekArray bytesread ptr
 
 
--- **************************************************
--- Binary Files
--- **************************************************
+--  **************************************************
+--  Binary Files
+--  **************************************************
 
 {- | As a wrapper around the standard function 'System.IO.hPutBuf',
 this function takes a standard Haskell 'String' instead of the far less
-convenient 'Ptr a'.  The entire contents of the string will be written
+convenient @Ptr a@.  The entire contents of the string will be written
 as a binary buffer using 'hPutBuf'.  The length of the output will be
-the length of the passed String or list..
+the length of the passed String or list.
 
 If it helps, you can thing of this function as being of type
-@Handle -> String -> IO ()@. -}
+@Handle -> String -> IO ()@ -}
 hPutBufStr :: (HVIO a, BinaryConvertible b) => a -> [b] -> IO ()
 hPutBufStr f s = toBuf s (\cs -> vPutBuf f cs (length s))
 
