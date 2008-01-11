@@ -1,3 +1,11 @@
+missingh (1.0.0) unstable; urgency=low
+
+  * New version.
+  * API fix for ghc 6.8.x introducing Data.String
+  * Update for ghc 6.8.x.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 11 Jan 2008 03:18:55 -0600
+
 missingh (0.18.6) unstable; urgency=low
 
   * Rebuild for newer GHC 6.6.1.  Closes: #427769.
