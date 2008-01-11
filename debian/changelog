@@ -1,4 +1,4 @@
-missingh (1.0.0) unstable; urgency=low
+missingh (1.0.0.0) unstable; urgency=low
 
   * New version.
   * API fix for ghc 6.8.x introducing Data.String
