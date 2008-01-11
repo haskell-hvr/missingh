@@ -227,7 +227,7 @@ Examples:
 genericJoin :: Show a => String -> [a] -> String
 genericJoin delim l = join delim (map show l)
 
-{-# DEPRECATED contains: Use Data.List.isInfixOf, will be removed in MissingH 1.1.0 #-}
+{-# DEPRECATED contains "Use Data.List.isInfixOf, will be removed in MissingH 1.1.0" #-}
 {- | Returns true if the given parameter is a sublist of the given list;
 false otherwise.
 
