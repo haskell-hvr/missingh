@@ -1,3 +1,9 @@
+missingh (1.0.0.2) unstable; urgency=low
+
+  * Rebuild with newer hslogger.  Closes: #464013.
+
+ -- John Goerzen <jgoerzen@complete.org>  Sun, 02 Mar 2008 07:18:00 -0600
+
 missingh (1.0.0.1) unstable; urgency=low
 
   * Rebuilt with newer regex deps.
