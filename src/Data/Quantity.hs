@@ -44,6 +44,7 @@ module Data.Quantity (
 where
 import Data.List
 import Text.Printf
+import Data.Char
 
 {- | The options for 'quantifyNum' and 'renderNum' -}
 data SizeOpts = SizeOpts { base :: Int, -- ^ The base from which calculations are made
@@ -186,13 +187,16 @@ parseNum opts insensitive inp =
       [] -> Left "Couldn't parse numeric component of input"
       [(num, "")] -> Right num  -- No suffix; pass number unhindered
       [(num, [suffix])] ->
-          case lookup suffix suffixMap of
+          case lookup (caseTransformer suffix) suffixMap of
             Nothing -> Left $ "Unrecognized suffix " ++ show suffix
             Just power -> Right $ num * multiplier power
       [(_, suffix)] -> Left $ "Multi-character suffix " ++ show suffix
       _ -> Left "Multiple parses for input"
-    where suffixMap = zip (suffixes opts) 
+    where suffixMap = zip (map caseTransformer . suffixes $ opts) 
                           (iterate (+ (powerIncr opts)) (firstPower opts))
+          caseTransformer x
+              | insensitive = toLower x
+              | otherwise = x
           multiplier :: (Read a, Fractional a) => Int -> a
           multiplier power =
               fromRational . toRational $ 
