@@ -1,5 +1,5 @@
 {-
-Copyright (C) 2006 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2006-2008 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 {- |
    Module     : Data.Quantity
-   Copyright  : Copyright (C) 2006 John Goerzen
+   Copyright  : Copyright (C) 2006-2008 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -165,3 +165,16 @@ renderNums opts prec numbers =
               (printf ("%." ++ show prec ++ "f") num) ++ [suffix]
           (convnums, suffix) = 
               (quantifyNums opts numbers)::([Double], Char)
+
+parseNum :: Real a => SizeOpts -> String -> Either String a
+parseNum opts inp =
+    case reads inp of
+      [] -> Left "Couldn't parse numeric component of input"
+      [(num, "")] -> Right num  -- No suffix; pass number unhindered
+      [(num, suffix)] ->
+          case lookup suffix suffixMap of
+            Nothing -> Left $ "Unrecognized suffix " ++ show suffix
+            Just power -> Right $ num * ((base opts) ** power)
+      _ -> Left "Multiple parses for input"
+    where suffixMap = zip (suffixes opts) 
+                          (iterate (+ (powerIncr opts)) (firstPower opts))
