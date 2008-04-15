@@ -1,3 +1,9 @@
+missingh (1.0.1.0) unstable; urgency=low
+
+  * Now add support for parseNum to Data.Quantity.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 15 Apr 2008 00:34:07 -0500
+
 missingh (1.0.0.2) unstable; urgency=low
 
   * Rebuild with newer hslogger.  Closes: #464013.
