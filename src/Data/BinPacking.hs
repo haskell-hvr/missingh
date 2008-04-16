@@ -40,18 +40,45 @@ A description of bin packing algorithms can be found at
 -}
 
 module Data.BinPacking (BinPacker,
+                        BinPackerError(..),
                         packByOrder,
                         packLargeFirst
                        )
 
 where
 import Data.List
+import Control.Monad.Error
 
-{- | The primary type for bin-packing functions -}
-type BinPacker = (Num size, Ord size, Show obj) => 
+{- | Potential errors returned as Left values by 'BinPacker' functions. 
+Calling 'show' on this value will produce a nice error message suitable for
+display. -}
+data (Num size, Ord size, Show size, Show obj) => BinPackerError size obj = 
+    BPTooFewBins [(size, obj)]                -- ^ Ran out of bins; attached value is the list of objects that don't fit
+    | BPSizeTooLarge size (size, obj)   -- ^ Bin size1 exceeded by at least the given object and size
+    | BPOther String                    -- ^ Other error
+      deriving (Eq, Read)
+
+instance (Num size, Ord size, Show size, Show obj) => Show (BinPackerError size obj) where
+    show (BPTooFewBins _) = "Too few bins"
+    show (BPSizeTooLarge binsize (objsize, obj)) =
+        "Size " ++ show objsize ++ " greater than bin size " ++ show binsize
+        ++ " at " ++ show obj
+    show (BPOther x) = x
+
+{- | Let us use this as part of the Either monad -}
+instance (Num size, Ord size, Show size, Show obj) => Error (BinPackerError size obj) where
+    strMsg = BPOther
+
+{- | The primary type for bin-packing functions.
+
+These functions take a list of size of bins.  If every bin is the same size,
+you can pass @(repeat binSize)@ to pass an infinite list of bins if the
+same size.  Any surplus bins will simply be ignored. -}
+type BinPacker = (Num size, Ord size, Show size, Show obj) => 
                   [size]        -- ^ The sizes of bins
                -> [(size, obj)] -- ^ The sizes and objects
-               -> Either String [[(size, obj)]] -- ^ Either error or results
+               -> Either (BinPackerError size obj) [[(size, obj)]] -- ^ Either error or results
+
 
 {- | Pack objects into bins, preserving order.  Objects will be taken from the
 input list one by one, and added to each bin until the bin is full.  Work will
@@ -60,11 +87,11 @@ bins.  This is the simplest and most naive bin-packing algorithm, but
 may not make very good use of bin space. -}
 packByOrder :: BinPacker
 packByOrder _ [] = Right []                     -- Ran out of sizes
-packByOrder [] _ = Left "Ran out of bins"
+packByOrder [] remainder = Left (BPTooFewBins remainder)
 packByOrder (thisbinsize:otherbins) sizes =
     let fillBin _ [] = Right []
         fillBin accumsize ((s, o):xs) 
-            | s > thisbinsize = Left $ "Size " ++ show s ++ " greater than bin size " ++ show thisbinsize ++ " at " ++ show o
+            | s > thisbinsize = Left $ BPSizeTooLarge thisbinsize (s, o)
             | s + accumsize > thisbinsize = Right []
             | otherwise = do next <- fillBin (accumsize + s) xs
                              return $ (s, o) : next
@@ -82,14 +109,14 @@ packLargeFirst bins sizes = packLargeFirst' bins (sortBy fstSort sizes)
 
 packLargeFirst' :: BinPacker
 packLargeFirst' _ [] = Right []                     -- Ran out of sizes
-packLargeFirst' [] _ = Left "Ran out of bins"
+packLargeFirst' [] remainder = Left (BPTooFewBins remainder)
 packLargeFirst' (thisbinsize:otherbins) sizes =
     let fillBin _ [] = Right []
         fillBin accumsize sizelist =
             case break (\x -> (fst x) + accumsize < thisbinsize) sizelist of
               (_, []) ->
                   if accumsize == 0
-                     then Left $ "No items small enough to fit in bin " ++ show thisbinsize ++ "; remainder is " ++ show sizelist
+                     then Left $ BPSizeTooLarge thisbinsize (head sizelist)
                      else Right []
               (nonmatches, ((s, o):matchxs)) ->
                   do next <- fillBin (accumsize + s) (nonmatches ++ matchxs)
