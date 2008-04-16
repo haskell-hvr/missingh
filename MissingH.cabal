@@ -1,5 +1,5 @@
 Name: MissingH
-Version: 1.0.1.1
+Version: 1.0.1.2
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -60,7 +60,8 @@ Library
 
  Extensions: ExistentialQuantification, OverlappingInstances,
    UndecidableInstances, CPP, Rank2Types,
-   MultiParamTypeClasses, FlexibleInstances, FlexibleContexts
+   MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
+   PatternSignatures
 
  Build-Depends: network, parsec, base,
                haskell98, mtl, HUnit, regex-compat, QuickCheck, filepath,
