@@ -113,7 +113,7 @@ packLargeFirst' [] remainder = Left (BPTooFewBins remainder)
 packLargeFirst' (thisbinsize:otherbins) sizes =
     let fillBin _ [] = Right []
         fillBin accumsize sizelist =
-            case break (\x -> (fst x) + accumsize < thisbinsize) sizelist of
+            case break (\x -> (fst x) + accumsize <= thisbinsize) sizelist of
               (_, []) ->
                   if accumsize == 0
                      then Left $ BPSizeTooLarge thisbinsize (head sizelist)
