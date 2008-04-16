@@ -1,5 +1,5 @@
 Name: MissingH
-Version: 1.0.1
+Version: 1.0.1.1
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -61,12 +61,6 @@ Library
  Extensions: ExistentialQuantification, OverlappingInstances,
    UndecidableInstances, CPP, Rank2Types,
    MultiParamTypeClasses, FlexibleInstances, FlexibleContexts
- -- Hack because ghc-6.6 and the Cabal the comes with ghc-6.8.1
- -- does not understand the PatternSignatures extension.
- -- The Cabal that comes with ghc-6.8.2 does understand it, so
- -- this hack can be dropped if we require Cabal-Version: >=1.2.3
- If impl(ghc >= 6.8)
-   GHC-Options: -XPatternSignatures
 
  Build-Depends: network, parsec, base,
                haskell98, mtl, HUnit, regex-compat, QuickCheck, filepath,
@@ -84,4 +78,4 @@ Executable runtests
   Main-Is: runtests.hs
   HS-Source-Dirs: testsrc, .
   Extensions: ExistentialQuantification, OverlappingInstances,
-    UndecidableInstances, CPP
+    UndecidableInstances, CPP, PatternSignatures
