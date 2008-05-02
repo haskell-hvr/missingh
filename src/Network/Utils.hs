@@ -1,5 +1,5 @@
 {- arch-tag: Network utilities main file
-Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2008 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 {- |
    Module     : Network.Utils
-   Copyright  : Copyright (C) 2004-2005 John Goerzen
+   Copyright  : Copyright (C) 2004-2008 John Goerzen
    License    : GNU GPL, version 2 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org>
@@ -38,7 +38,9 @@ import Network
 import Network.Socket
 import Network.BSD
 import System.IO
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import qualified System.Posix.Signals
+#endif
 
 {- | Sets up the system for networking.  Similar to the built-in
 withSocketsDo (and actually, calls it), but also sets the SIGPIPE
