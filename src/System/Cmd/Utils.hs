@@ -111,14 +111,13 @@ import System.Log.Logger
 import System.Posix.IO
 import System.Posix.Process
 import System.Posix.Signals
+import qualified System.Posix.Signals
 #endif
 import System.Posix.Types
 import System.IO
 import System.IO.Error
 import Control.Concurrent(forkIO)
 import Control.Exception(finally)
-
-import qualified System.Posix.Signals
 
 data PipeMode = ReadFromPipe | WriteToPipe
 
