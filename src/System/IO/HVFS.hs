@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP, TypeSynonymInstances #-}
 {- arch-tag: HVFS main file
 Copyright (C) 2004-2005 John Goerzen <jgoerzen@complete.org>
 
