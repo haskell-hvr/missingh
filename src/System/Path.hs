@@ -43,7 +43,7 @@ module System.Path(-- * Name processing
 where
 import Data.List
 import Data.List.Utils
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import System.Posix.Files
 import System.Posix.Directory (createDirectory)
 import System.Posix.Temp
@@ -111,7 +111,7 @@ System.Directory.getTemporaryDirectory.
 The name of the directory created will be returned.
 -}
 mktmpdir :: String -> IO String
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 mktmpdir x =
     do y <- mkstemp x
        let (dirname, h) = y

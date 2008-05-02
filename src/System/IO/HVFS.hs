@@ -307,7 +307,7 @@ instance HVFS SystemFS where
     vRemoveFile _ = removeFile
     vRenameFile _ = renameFile
     vGetFileStatus _ fp = getFileStatus fp >>= return . HVFSStatEncap
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
     vGetSymbolicLinkStatus _ fp = getSymbolicLinkStatus fp >>= return . HVFSStatEncap
 #else
     -- No symlinks on Windows; just get the file status directly
@@ -315,7 +315,7 @@ instance HVFS SystemFS where
 #endif
 
     vGetModificationTime _ = getModificationTime
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
     vCreateSymbolicLink _ = createSymbolicLink
     vReadSymbolicLink _ = readSymbolicLink
     vCreateLink _ = createLink

@@ -24,7 +24,7 @@ import System.Path
 import Test.HUnit.Utils
 import System.IO.HVFS
 import System.Directory(createDirectory)
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import System.Posix.Directory hiding (createDirectory)
 import System.Posix.Files
 #endif
@@ -47,7 +47,7 @@ globtest thetest =
                               bp ++ "/a/bcd/EF", bp ++ "/a/bcd/efg/ha",
                              bp ++ "/a/foo", bp ++ "/a/afoo",
                              bp ++ "/a/a-foo", bp ++ "/a/a.foo"]
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
                  createSymbolicLink (preppath "broken") (preppath "sym1")
                  createSymbolicLink (preppath "broken") (preppath "sym2")
 #endif
@@ -91,7 +91,7 @@ test_dirnames =
         ]
 
 test_brokensymlinks =
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
     map f
         [glob (preppath "sym*") >>= eq "sym*" (map preppath ["sym1", "sym2"]),
          glob (preppath "sym1") >>= eq "sym1" [preppath "sym1"],

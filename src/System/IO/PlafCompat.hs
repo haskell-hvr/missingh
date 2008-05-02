@@ -36,7 +36,7 @@ The result should be roughly the same set of defined variables and types.
 
 module System.IO.PlafCompat
     (nullFileName,
-#ifdef mingw32_HOST_OS
+#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
      module System.IO.WindowsCompat,
 #else
      module System.Posix.Files,
@@ -45,7 +45,7 @@ module System.IO.PlafCompat
 where
 
 import System.Posix.Types
-#ifdef mingw32_HOST_OS
+#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import System.IO.WindowsCompat
 #else
 import System.Posix.Files
@@ -55,7 +55,7 @@ import System.Posix.Files
 -}
 
 nullFileName :: String
-#ifdef mingw32_HOST_OS
+#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 nullFileName = "NUL:"
 #else
 nullFileName = "/dev/null"

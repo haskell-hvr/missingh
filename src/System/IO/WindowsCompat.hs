@@ -44,7 +44,7 @@ to stat(2).
 Common usage might be like this:
 
 >import System.Posix.Types
->#ifdef mingw32_HOST_OS
+>#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 >import System.IO.WindowsCompat
 >#else
 >import System.Posix.Files
@@ -56,7 +56,7 @@ Or, to avoid having to use CPP and make things even easier, just import
 -}
 
 module System.IO.WindowsCompat
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 where
 #else
        (module System.IO.StatCompat, module System.IO.WindowsCompat)

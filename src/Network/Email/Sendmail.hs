@@ -33,7 +33,7 @@ This is not compatible with Windows at this time.
 Written by John Goerzen, jgoerzen\@complete.org
 -}
 
-#ifdef mingw32_HOST_OS
+#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 module Network.Email.Sendmail
 where
 #else

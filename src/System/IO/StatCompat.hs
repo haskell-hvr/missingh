@@ -36,12 +36,12 @@ module System.IO.StatCompat
 where
 import System.Posix.Types
 import System.Posix.Consts
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import System.Posix.Files(intersectFileModes)
 #endif
 import Data.Bits ((.&.))
 
-#ifdef mingw32_HOST_OS
+#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 type LinkCount = Int
 type UserID = Int
 type GroupID = Int
@@ -74,7 +74,7 @@ isDirectory = sc_helper directoryMode
 isSymbolicLink = sc_helper symbolicLinkMode
 isSocket = sc_helper socketMode
 
-#ifdef mingw32_HOST_OS
+#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 intersectFileModes :: FileMode -> FileMode -> FileMode
 intersectFileModes m1 m2 = m1 .&. m2
 #endif

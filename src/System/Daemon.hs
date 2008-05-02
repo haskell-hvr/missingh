@@ -44,12 +44,12 @@ This module is not available on Windows.
 
 module System.Daemon (
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
         detachDaemon
 #endif
                    )
                        where
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 
 import System.Posix.Process
 import System.Posix.IO

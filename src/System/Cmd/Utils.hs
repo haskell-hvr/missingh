@@ -76,7 +76,7 @@ Most of this module will be incompatible with Windows.
 module System.Cmd.Utils(-- * High-Level Tools
                     PipeHandle(..),
                     safeSystem,
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
                     forceSuccess,
 #ifndef __HUGS__
                     posixRawSystem,
@@ -94,7 +94,7 @@ module System.Cmd.Utils(-- * High-Level Tools
 #endif
                     -- * Low-Level Tools
                     PipeMode(..),
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
                     pOpen, pOpen3, pOpen3Raw
 #endif
@@ -107,7 +107,7 @@ where
 import System.Exit
 import System.Cmd
 import System.Log.Logger
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import System.Posix.IO
 import System.Posix.Process
 import System.Posix.Signals
@@ -138,7 +138,7 @@ data PipeHandle =
                }
     deriving (Eq, Show)
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Like 'pipeFrom', but returns data in lines instead of just a String.
 Shortcut for calling lines on the result from 'pipeFrom'.
@@ -162,7 +162,7 @@ warnFail funcname fp args msg =
         in do warningM (logbase ++ "." ++ funcname) m
               fail m
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Read data from a pipe.  Returns a Handle and a 'PipeHandle'.
 
@@ -192,7 +192,7 @@ hPipeFrom fp args =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Read data from a pipe.  Returns a lazy string and a 'PipeHandle'.
 
@@ -210,7 +210,7 @@ pipeFrom fp args =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Write data to a pipe.  Returns a 'PipeHandle' and a new Handle to write
 to.
@@ -241,7 +241,7 @@ hPipeTo fp args =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Write data to a pipe.  Returns a ProcessID.
 
@@ -260,7 +260,7 @@ pipeTo fp args message =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Like a combination of 'hPipeTo' and 'hPipeFrom'; returns
 a 3-tuple of ('PipeHandle', Data From Pipe, Data To Pipe).
@@ -299,7 +299,7 @@ hPipeBoth fp args =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
 to send data to the piped program, and simultaneously returns its output
@@ -318,7 +318,7 @@ pipeBoth fp args message =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 {- | Uses 'System.Posix.Process.getProcessStatus' to obtain the exit status
 of the given process ID.  If the process terminated normally, does nothing.
 Otherwise, raises an exception with an appropriate error message.
@@ -351,7 +351,7 @@ safeSystem :: FilePath -> [String] -> IO ()
 safeSystem command args =
     do debugM (logbase ++ ".safeSystem")
                ("Running: " ++ command ++ " " ++ (show args))
-#if defined(__HUGS__) || defined(mingw32_HOST_OS)
+#if defined(__HUGS__) || defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__)
        ec <- rawSystem command args
        case ec of
             ExitSuccess -> return ()
@@ -365,7 +365,7 @@ safeSystem command args =
             Stopped s -> cmdsignalled "safeSystem" command args s
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Invokes the specified command in a subprocess, waiting for the result.
 Return the result status.  Never raises an exception.  Only available
@@ -407,7 +407,7 @@ posixRawSystem program args =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Invokes the specified command in a subprocess, without waiting for
 the result.  Returns the PID of the subprocess -- it is YOUR responsibility
@@ -436,7 +436,7 @@ cmdfailed funcname command args failcode = do
     warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 cmdsignalled :: String -> FilePath -> [String] -> Signal -> IO a
 cmdsignalled funcname command args failcode = do
@@ -448,7 +448,7 @@ cmdsignalled funcname command args failcode = do
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Open a pipe to the specified command.
 
@@ -488,7 +488,7 @@ pOpen pm fp args func =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Runs a command, redirecting things to pipes.
 
@@ -514,7 +514,7 @@ pOpen3 pin pout perr fp args func childfunc =
 #endif
 #endif
 
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 #ifndef __HUGS__
 {- | Runs a command, redirecting things to pipes.
 

@@ -53,7 +53,7 @@ Example:
 
 niceSocketsDo :: IO a -> IO a
 niceSocketsDo func = do
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
                 -- No signals on Windows anyway
                 System.Posix.Signals.installHandler
                       System.Posix.Signals.sigPIPE
@@ -83,7 +83,7 @@ listenTCPAddr addr queuelen = do
                      return s
 
 showSockAddr :: SockAddr -> IO String
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 showSockAddr (SockAddrUnix x) = return $ "UNIX socket at " ++ x
 #endif
 showSockAddr (SockAddrInet port host) =

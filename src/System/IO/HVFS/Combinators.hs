@@ -40,7 +40,7 @@ import System.IO
 import System.IO.Error
 import System.IO.HVFS
 import System.IO.HVFS.InstanceHelpers (getFullPath)
-#ifndef mingw32_HOST_OS
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import System.Posix.Files -- This actually needed? -Wall doesn't seem to think
                           -- so, but I'm not sure...
 #endif
