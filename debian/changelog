@@ -1,3 +1,9 @@
+missingh (1.0.2.1) unstable; urgency=low
+
+  * Rebuilt with newer hslogger.  Closes: #503005.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 04 Nov 2008 06:21:17 -0600
+
 missingh (1.0.2.0) unstable; urgency=low
 
   * Various fixes to fix compatibility with Windows.
