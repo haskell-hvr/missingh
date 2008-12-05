@@ -1,3 +1,11 @@
+missingh (1.0.3.0) unstable; urgency=low
+
+  * New upstream release to bring more sanity to upstream/debian version numbering.
+    Also will reduce API-visible changes when Debian changes are made.
+  * Now uses dh_haskell_depends to reduce future dependency issues.  Closes: #507848.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 05 Dec 2008 13:28:14 -0600
+
 missingh (1.0.2.1) unstable; urgency=low
 
   * Rebuilt with newer hslogger.  Closes: #503005.
