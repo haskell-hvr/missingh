@@ -1,3 +1,9 @@
+missingh (1.0.3.1) unstable; urgency=low
+
+  * Rebuild with latest hslogger.  Closes: #507936.
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 11 Dec 2008 08:46:22 -0600
+
 missingh (1.0.3.0) unstable; urgency=low
 
   * New upstream release to bring more sanity to upstream/debian version numbering.
