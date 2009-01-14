@@ -1,5 +1,5 @@
 Name: MissingH
-Version: 1.0.2.0
+Version: 1.0.3
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -64,7 +64,9 @@ Library
    PatternSignatures
 
  Build-Depends: network, parsec, base,
-               haskell98, mtl, HUnit, regex-compat, QuickCheck, filepath,
+               haskell98, mtl, HUnit, regex-compat,
+               QuickCheck >= 1.0 && < 2.0,
+               filepath,
                hslogger
  If flag(splitBase)
    Build-Depends: base >= 3, directory, random, process, old-time,
