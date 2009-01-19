@@ -70,8 +70,11 @@ vGlob fs fn =
 
 expandGlob :: HVFS a => a -> FilePath -> IO [FilePath]
 expandGlob fs fn =
-    case dirname of
-      "." -> runGlob fs "." basename
+    case dirnameslash of
+      "./" -> runGlob fs "." basename
+      "/"  -> do
+              rgs <- runGlob fs "/" basename
+              return $ map ('/' :) rgs
       _ -> do dirlist <- if hasWild dirname
                              then expandGlob fs dirname
                              else return [dirname]
@@ -91,7 +94,10 @@ expandGlob fs fn =
           expandWildBase :: FilePath -> IO [FilePath]
           expandWildBase dname =
               do dirglobs <- runGlob fs dname basename
-                 return $ map (\globfn -> dname ++ "/" ++ globfn) dirglobs
+                 return $ map withD dirglobs
+                 where withD = case dname of
+                                 ""  -> id
+                                 _   -> \globfn -> dname ++ "/" ++ globfn
 
           expandNormalBase :: FilePath -> IO [FilePath]
           expandNormalBase dname =
