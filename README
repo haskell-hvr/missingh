@@ -4,7 +4,7 @@ What is MissingH?
 
 It's a collection of Haskell-related utilities.  It is an extension of my
 earlier work developing MissingLib for OCaml.  You can download
-MissingH from http://quux.org/devel/missingh.  There is a mirror, with
+MissingH from http://software.complete.org/missingh.  There is a mirror, with
 a few days' lag, at http://ftp.debian.org/debian/pool/main/m/missingh.
 
 -------------------------
@@ -226,11 +226,7 @@ MissingH was written by John Goerzen <jgoerzen@complete.org>.
 
 The latest version may be obtained at:
 
-   gopher://quux.org/1/devel/missingh
-
-or:
-
-   http://quux.org/devel/missingh
+   http://software.complete.org/missingh
 
 Documentation is also available on that page.
 
