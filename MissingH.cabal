@@ -79,5 +79,6 @@ Executable runtests
   Buildable: False
   Main-Is: runtests.hs
   HS-Source-Dirs: testsrc, .
+  Build-Depends: testpack, QuickCheck >= 1.0 && <2.0, HUnit
   Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP, PatternSignatures
