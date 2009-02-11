@@ -25,7 +25,6 @@ Library
   Data.String.Utils, System.IO.Utils, System.IO.Binary, Data.List.Utils,
   System.Daemon,
   Text.ParserCombinators.Parsec.Utils,
-  Test.HUnit.Utils,
   Network.Email.Mailbox,
   Control.Concurrent.Thread.Utils,
   Network.Email.Sendmail,
