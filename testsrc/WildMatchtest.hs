@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module WildMatchtest(tests) where
 import Test.HUnit
 import System.Path.WildMatch
-import Test.HUnit.Utils
+import Test.HUnit.Tools
 
 test_wildCheckCase =
     let f patt name = TestCase $ assertBool (patt ++ "," ++ name ++ " was false")

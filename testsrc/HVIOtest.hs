@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module HVIOtest(tests) where
 import Test.HUnit
 import System.IO.HVIO
-import Test.HUnit.Utils
+import Test.HUnit.Tools
 import System.IO
 import System.IO.Error
 import Control.Exception
