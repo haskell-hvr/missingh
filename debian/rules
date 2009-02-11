@@ -34,7 +34,6 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	make setup
-	./setup configure --prefix=$(LIBPATH) --ghc
 
 	touch configure-stamp
 
