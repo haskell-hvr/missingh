@@ -1,5 +1,5 @@
 {- arch-tag: HVIO tests main file
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2009 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ test_MemoryBuffer =
         in
         [
          f "" (\x -> do True `ioeq` vIsOpen x
-                        assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
+                        assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
                         vPutStrLn x "Line1"
                         vPutStrLn x "Line2"
                         vRewind x
@@ -54,7 +54,7 @@ test_MemoryBuffer =
                         "Line2" `ioeq` vGetLine x                        
                         vSeek x SeekFromEnd 0
                         vPutChar x 'c'
-                        assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
+                        assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
                         vRewind x
                         "LINe1\nLine2\nc" `ioeq` vGetContents x
               )
@@ -67,7 +67,7 @@ test_StreamReader =
         [
          f "" (\x -> do True `ioeq` vIsEOF x
                         True `ioeq` vIsOpen x
-                        assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
+                        assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
                         vClose x
                         False `ioeq` vIsOpen x
                         
@@ -86,7 +86,7 @@ test_StreamReader =
                      "" `ioeq` vGetLine x
                      "line5" `ioeq` vGetLine x
                      "lastline" `ioeq` vGetLine x
-                     assertRaises "eof error" (IOException $ mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
+                     assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
            )
         ]
 
