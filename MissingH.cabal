@@ -74,7 +74,7 @@ Library
                filepath,
                hslogger
  If flag(splitBase)
-   Build-Depends: base >= 3, base <= 4, directory, random, process, old-time,
+   Build-Depends: base >= 4, base <= 5, directory, random, process, old-time,
                              containers, old-locale, array
  Else
    Build-Depends: base < 3
