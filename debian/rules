@@ -67,13 +67,14 @@ install: build
 	# Add here commands to install the package into debian/tmp
 	dh_haskell -a
 	dh_haskell_depends -a
+	dh_haskell -i
+	dh_haskell_depends -i
 	make test-ghc6
 
 builddocs: builddocs-stamp
 builddocs-stamp:
 	dh_testdir
 
-	make doc
 	#make test-hugs
 
 installdocs: builddocs
