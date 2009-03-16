@@ -31,7 +31,6 @@ Library
   Data.String.Utils, System.IO.Utils, System.IO.Binary, Data.List.Utils,
   System.Daemon,
   Text.ParserCombinators.Parsec.Utils,
-  Test.HUnit.Utils,
   Network.Email.Mailbox,
   Control.Concurrent.Thread.Utils,
   Network.Email.Sendmail,
@@ -75,7 +74,7 @@ Library
                filepath,
                hslogger
  If flag(splitBase)
-   Build-Depends: base >= 3, directory, random, process, old-time,
+   Build-Depends: base >= 3, base <= 4, directory, random, process, old-time,
                              containers, old-locale, array
  Else
    Build-Depends: base < 3
@@ -86,5 +85,6 @@ Executable runtests
   Buildable: False
   Main-Is: runtests.hs
   HS-Source-Dirs: testsrc, .
+  Build-Depends: testpack, QuickCheck >= 1.0 && <2.0, HUnit
   Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP, PatternSignatures

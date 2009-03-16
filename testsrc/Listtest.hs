@@ -22,7 +22,7 @@ import Data.List.Utils
 import Data.List
 import Test.HUnit
 import Test.QuickCheck as QC
-import Test.HUnit.Utils
+import Test.HUnit.Tools
 
 test_delFromAL = 
     let f :: [(String, Int)] -> [(String, Int)] -> Test
