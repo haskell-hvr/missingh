@@ -1,3 +1,9 @@
+missingh (1.0.4-1) unstable; urgency=low
+
+  * Rebuild with GHC 6.10.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 16 Mar 2009 10:01:38 -0500
+
 missingh (1.0.3.2) unstable; urgency=high
 
   * Rebuild with newer GHC.

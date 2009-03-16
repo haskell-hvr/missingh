@@ -1,9 +1,9 @@
 Name: MissingH
-Version: 1.0.3
+Version: 1.0.4
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
-Copyright: Copyright (c) 2004-2008 John Goerzen
+Copyright: Copyright (c) 2004-2009 John Goerzen
 license-file: COPYRIGHT
 extra-source-files: COPYING
 homepage: http://software.complete.org/missingh
