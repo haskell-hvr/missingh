@@ -36,7 +36,7 @@ module System.Path.Glob (glob, vGlob)
 import Data.List.Utils (hasAny)
 import System.IO.HVFS
 import System.FilePath (splitFileName)
-import Control.Exception (tryJust, ioErrors)
+import Control.Exception (tryJust)
 import System.Path.WildMatch (wildCheckCase)
 import Data.List (isSuffixOf)
 
@@ -118,3 +118,5 @@ runGlob fs dirname patt =
                         in if head patt == '.'
                            then return matches
                            else return $ filter (\x -> head x /= '.') matches
+    where ioErrors :: IOError -> Maybe IOError
+          ioErrors e = Just e
