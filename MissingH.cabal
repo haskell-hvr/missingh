@@ -20,7 +20,7 @@ Description:  MissingH is a library of all sorts of utility functions for
  be extremely portable and easy to use.
 Stability: Beta
 Build-Type: Simple
-Cabal-Version: >=1.2
+Cabal-Version: >=1.2.3
 
 Flag splitBase
   description: Choose the new smaller, split-up base package.
