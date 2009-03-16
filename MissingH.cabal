@@ -5,7 +5,13 @@ Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Copyright: Copyright (c) 2004-2009 John Goerzen
 license-file: COPYRIGHT
-extra-source-files: COPYING
+extra-source-files: COPYING,
+                    testsrc/gzfiles/empty.gz,
+                    testsrc/gzfiles/t1.gz,
+                    testsrc/gzfiles/t1bad.gz,
+                    testsrc/gzfiles/t2.gz,
+                    testsrc/gzfiles/zeros.gz,
+                    testsrc/mime.types.test
 homepage: http://software.complete.org/missingh
 Category: Unclassified
 synopsis: Large utility library
