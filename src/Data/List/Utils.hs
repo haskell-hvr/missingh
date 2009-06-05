@@ -59,7 +59,7 @@ module Data.List.Utils(-- * Merging
                      -- sub,
                     ) where
 import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
-                elemIndex, elemIndices, tails, find, findIndex, isInfixOf)
+                elemIndex, elemIndices, tails, find, findIndex, isInfixOf, nub)
 import Control.Monad.State(State, get, put)
 import Data.Maybe(isJust)
 
@@ -473,10 +473,12 @@ For example:
 You should not rely on this function necessarily preserving order, though
 the current implementation happens to.
 
-This function is not compatible with infinite lists. -}
+This function is not compatible with infinite lists.
+
+This is presently an alias for Data.List.nub
+ -}
 uniq :: Eq a => [a] -> [a]
-uniq [] = []
-uniq (x:xs) = x : uniq (filter (/= x) xs)
+uniq = nub
 
 ----- same as
 --uniq (x:xs) = x : [y | y <- uniq xs, y /= x]
