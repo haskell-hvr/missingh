@@ -73,11 +73,16 @@ instance (Num size, Ord size, Show size, Show obj) => Error (BinPackerError size
 
 These functions take a list of size of bins.  If every bin is the same size,
 you can pass @repeat binSize@ to pass an infinite list of bins if the
-same size.  Any surplus bins will simply be ignored. -}
+same size.  Any surplus bins will simply be ignored. 
+
+> [size] is the sizes of bins
+> [(size, obj)] is the sizes and objects
+> result is Either error or results
+-}
 type BinPacker = (Num size, Ord size, Show size, Show obj) => 
-                  [size]        -- ^ The sizes of bins
-               -> [(size, obj)] -- ^ The sizes and objects
-               -> Either (BinPackerError size obj) [[(size, obj)]] -- ^ Either error or results
+                  [size]        -- The sizes of bins
+               -> [(size, obj)] -- The sizes and objects
+               -> Either (BinPackerError size obj) [[(size, obj)]] -- Either error or results
 
 
 {- | Pack objects into bins, preserving order.  Objects will be taken from the
