@@ -1,6 +1,7 @@
 missingh (1.1.0.1-1) unstable; urgency=low
 
   * Fix build-deps.  Closes: #522476.
+  * Switch to team maintenance.
 
  -- John Goerzen <jgoerzen@complete.org>  Wed, 19 Aug 2009 16:24:26 -0500
 
