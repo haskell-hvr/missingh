@@ -1,10 +1,13 @@
 Source: missingh
 Priority: optional
-Maintainer: John Goerzen <jgoerzen@complete.org>
+Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>
+Uploaders: John Goerzen <jgoerzen@complete.org>
 Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.10), haskell-devscripts (>= 0.6.15), cpphs, libghc6-network-dev, libghc6-mtl-dev, libghc6-hunit-dev, libghc6-quickcheck-dev, libghc6-hslogger-dev (>= 1.0.7.2), libghc6-regex-compat-dev (>= 0.91-1), libghc6-testpack-dev, libghc6-parsec-dev
 Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs (>= 98.200503.08-4), haskell-devscripts (>= 0.6.15), ghc6 (>= 6.10), cpphs, libhugs-filepath, libhugs-hslogger, libhugs-hunit, libhugs-mtl, libhugs-network, libhugs-parsec, libhugs-quickcheck, libhugs-unix
 Standards-Version: 3.6.2
 Section: devel
+Vcs-Git: git://git.debian.org/git/pkg-haskell/missingh.git
+Vcs-Browser: http://git.debian.org/?p=pkg-haskell/missingh.git;a=summary
 
 Package: libghc6-missingh-dev
 Section: devel
