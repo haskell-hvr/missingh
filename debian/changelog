@@ -1,3 +1,19 @@
+missingh (1.1.0.1-1+nmu1) UNRELEASED; urgency=low
+
+  * NMU upload ok-ed by regular maintainer.
+  * debian/rules
+    - Convert to hlibrary.mk (dh_haskell was removed to haskell-devscripts).
+  * debian/control
+    - Depend on haskell-devscripts >= 0.6.18.
+    - Move Build-Depends-Indeps to Build-Depends.
+    - Add hscolour to build deps.
+    - Standards-Version 3.8.3
+    - Section haskell.
+   * debian/compat
+    - Version 5
+
+ -- Erik de Castro Lopo <erikd@mega-nerd.com>  Mon, 23 Nov 2009 20:58:16 +1100
+
 missingh (1.1.0.1-1) unstable; urgency=low
 
   * Fix build-deps.  Closes: #522476.
