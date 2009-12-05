@@ -1,5 +1,5 @@
 Source: missingh
-Priority: optional
+Priority: extra
 Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>
 Uploaders: John Goerzen <jgoerzen@complete.org>
 Build-Depends: debhelper (>= 5.0.0),

@@ -1,5 +1,6 @@
 missingh (1.1.0.1-2) UNRELEASED; urgency=low
 
+  [ Erik de Castro Lopo ]
   * debian/rules
     - Convert to hlibrary.mk (dh_haskell was removed to haskell-devscripts).
     (Closes: 556807)
@@ -11,6 +12,9 @@ missingh (1.1.0.1-2) UNRELEASED; urgency=low
     - Section haskell.
    * debian/compat
     - Version 5
+
+  [  Joachim Breitner ]
+  * Switch priority to extra
 
  -- Erik de Castro Lopo <erikd@mega-nerd.com>  Mon, 23 Nov 2009 20:58:16 +1100
 
