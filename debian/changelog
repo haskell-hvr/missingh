@@ -1,4 +1,4 @@
-missingh (1.1.0.1-2) UNRELEASED; urgency=low
+missingh (1.1.0.1-2) unstable; urgency=low
 
   [ Erik de Castro Lopo ]
   * debian/rules
@@ -18,7 +18,7 @@ missingh (1.1.0.1-2) UNRELEASED; urgency=low
   * Add ${shlibs:Depends}
   * Convert debian/copyright to utf8 
 
- -- Erik de Castro Lopo <erikd@mega-nerd.com>  Mon, 23 Nov 2009 20:58:16 +1100
+ -- Joachim Breitner <nomeata@debian.org>  Sat, 05 Dec 2009 18:09:13 +0100
 
 missingh (1.1.0.1-1) unstable; urgency=low
 
