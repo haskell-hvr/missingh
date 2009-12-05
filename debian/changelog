@@ -15,6 +15,7 @@ missingh (1.1.0.1-2) UNRELEASED; urgency=low
 
   [  Joachim Breitner ]
   * Switch priority to extra
+  * Add ${shlibs:Depends}
 
  -- Erik de Castro Lopo <erikd@mega-nerd.com>  Mon, 23 Nov 2009 20:58:16 +1100
 
