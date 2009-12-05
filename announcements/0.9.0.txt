@@ -1,0 +1,86 @@
+MissingH 0.9.0
+
+New feature summary:
+
+ * Perl-like regular expression operators (MissingH.Regex.Pesco)
+   
+   This module builds atop the standard POSIX Text.Regex module,
+   extending it to be far more convenient with easier maching,
+   grouping, and substitution operations.  (Integrated from Pesco)
+
+ * strToAL, strFomAL (MissingH.List)
+
+   Converts any [(String, String)] and many other association lists
+   to a simple string representation that can be stored on-disk
+   or sent across the network.  Also, re-generates the original list
+   upon parsing the string representation.  Used internally by
+   MissingH.AnyDBM.StringDBM.
+
+ * Persistent or non-persistent DBM storage class
+
+   MissingH.AnyDBM is an abstraction for various mapping systems.
+   MissingH itself provides an implementation using a non-persistent
+   HashTable or FiniteMap, as well as a persistent StringDBM.
+   Bindings to dbm, gdbm, dbhash, etc. are in the works and will
+   be simple members of this typeclass.
+
+ * Major cleaning up of the build system.
+
+Description of MissingH from README:
+
+-------------------------
+What is MissingH?
+-------------------------
+
+It's a collection of Haskell-related utilities.  It is an extension of my
+earlier work developing MissingLib for OCaml.  You can download
+MissingH from http://quux.org/devel/missingh.  There is a mirror, with
+a few days' lag, at http://ftp.debian.org/debian/pool/main/m/missingh.
+
+-------------------------
+Major Features
+-------------------------
+
+ * Powerful Logging Framework for Haskell
+   This framework provides a system of hierarchical loggers and
+   modular handlers permitting fine-grained logging with a great deal
+   of control and yet a simple and fast interface.  It's based on
+   log4j for Java and logging for Python.
+
+   Also included is a native-Haskell Syslog client.
+
+ * Versatile modules to simplify everyday tasks:
+   + FTP client library
+   + E-mail client library
+   + MIME types library to determine MIME types from files or URLs
+   + Configuration file parser/generator
+
+ * IO utilities make it easier to work with line-based text files
+   and binary files
+
+ * IO object virtualization so you can use one set of code to work
+   on files of many different types
+
+ * Filesystem virtualization so you can access variuos items with the
+   same ease as your system's filesystem
+
+ * Network utilities to streamline connections
+
+ * List utilities including association list tools,
+   list splitting, truncation, and delimiter joining
+
+ * String utilities including removal of leading or trailing
+   whitespace, joining, splitting, and truncation
+
+ * Other utilities for threads, parers, filenames, etc.
+
+ * Printf utilities for formatting strings
+
+ * GZip decompression
+
+ * Hundreds of unit tests to verify proper functionality
+
+ * DBM module abstraction
+
+
+# arch-tag: 0.9.0 announcement
