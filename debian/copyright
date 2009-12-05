@@ -177,7 +177,7 @@ http://web.comlab.ox.ac.uk/oucl/work/ian.lynagh/md5/
 System.Time.Utils.ParseDate is from 
 http://www.dtek.chalmers.se/~d00bring/projects.html
 
-Copyright (c) Björn Bringert
+Copyright (c) BjÃ¶rn Bringert
 License: GNU General Public License, version 2
 
 I (John Goerzen) have modified only the module name and Haddock
