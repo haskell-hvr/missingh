@@ -34,7 +34,7 @@ Vcs-Browser: http://git.debian.org/?p=pkg-haskell/missingh.git;a=summary
 Package: libghc6-missingh-dev
 Section: haskell
 Architecture: any
-Depends: ${misc:Depends} ${haskell:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${haskell:Depends}, ${shlibs:Depends}
 Suggests: missingh-doc
 Description: Library of utility functions for Haskell, GHC6 package 
  MissingH is a library of all sorts of utility functions for
