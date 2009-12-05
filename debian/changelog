@@ -1,6 +1,5 @@
-missingh (1.1.0.1-1+nmu1) UNRELEASED; urgency=low
+missingh (1.1.0.1-2) UNRELEASED; urgency=low
 
-  * NMU upload ok-ed by regular maintainer.
   * debian/rules
     - Convert to hlibrary.mk (dh_haskell was removed to haskell-devscripts).
   * debian/control
