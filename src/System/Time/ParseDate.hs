@@ -1,9 +1,9 @@
 {- |
    Module      : System.Time.ParseDate
-   Copyright   : (c) by Björn Bringert
+   Copyright   : (c) by BjÃ¶rn Bringert
    License     : GPL2
 
-   Maintainer  : Björn Bringert
+   Maintainer  : BjÃ¶rn Bringert
    Stability   : provisional
    Portability : portable
 
