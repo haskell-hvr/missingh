@@ -1,4 +1,4 @@
-missingh (1.1.0.1-3) UNRELEASED; urgency=low
+missingh (1.1.0.1-3) unstable; urgency=low
 
   * debian/control: Remove uneeded Build-Dependencies: in libhugs-*.
   * debian/control: Bump Standards-Version:, no changes needed.
@@ -6,7 +6,7 @@ missingh (1.1.0.1-3) UNRELEASED; urgency=low
     compat-dev.
   * debian/control: Add Homepage: field.
 
- -- Marco Túlio Gontijo e Silva <marcot@debian.org>  Mon, 08 Feb 2010 21:30:09 -0200
+ -- Marco Túlio Gontijo e Silva <marcot@debian.org>  Mon, 08 Feb 2010 21:54:15 -0200
 
 missingh (1.1.0.1-2) unstable; urgency=low
 
