@@ -19,6 +19,7 @@ Build-Depends: debhelper (>= 5.0.0),
  libghc6-parsec-dev
 Standards-Version: 3.8.4
 Section: haskell
+Homepage: http://software.complete.org/software/projects/show/missingh
 Vcs-Git: git://git.debian.org/git/pkg-haskell/missingh.git
 Vcs-Browser: http://git.debian.org/?p=pkg-haskell/missingh.git;a=summary
 
