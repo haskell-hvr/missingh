@@ -1,11 +1,16 @@
-Name: MissingH
-Version: 1.0.4
+Version: 1.1.0.2
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
-Copyright: Copyright (c) 2004-2008 John Goerzen
+Copyright: Copyright (c) 2004-2009 John Goerzen
 license-file: COPYRIGHT
-extra-source-files: COPYING
+extra-source-files: COPYING,
+                    testsrc/gzfiles/empty.gz,
+                    testsrc/gzfiles/t1.gz,
+                    testsrc/gzfiles/t1bad.gz,
+                    testsrc/gzfiles/t2.gz,
+                    testsrc/gzfiles/zeros.gz,
+                    testsrc/mime.types.test
 homepage: http://software.complete.org/missingh
 Category: Unclassified
 synopsis: Large utility library
@@ -14,7 +19,7 @@ Description:  MissingH is a library of all sorts of utility functions for
  be extremely portable and easy to use.
 Stability: Beta
 Build-Type: Simple
-Cabal-Version: >=1.2
+Cabal-Version: >=1.2.3
 
 Flag splitBase
   description: Choose the new smaller, split-up base package.
@@ -67,7 +72,7 @@ Library
                filepath,
                hslogger
  If flag(splitBase)
-   Build-Depends: base >= 3, base <= 4, directory, random, process, old-time,
+   Build-Depends: base >= 4, base <= 5, directory, random, process, old-time,
                              containers, old-locale, array
  Else
    Build-Depends: base < 3

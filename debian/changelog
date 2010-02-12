@@ -1,3 +1,17 @@
+missingh (1.1.0.1-1) unstable; urgency=low
+
+  * Fix build-deps.  Closes: #522476.
+  * Switch to team maintenance.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed, 19 Aug 2009 16:24:26 -0500
+
+missingh (1.1.0-1) unstable; urgency=low
+
+  * Rebuild with GHC 6.10.
+  * Moved testing stuff to testpack.  testpack is now a dep.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 16 Mar 2009 10:01:38 -0500
+
 missingh (1.0.3.2) unstable; urgency=high
 
   * Rebuild with newer GHC.

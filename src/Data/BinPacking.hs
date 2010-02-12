@@ -53,7 +53,7 @@ import Control.Monad.Error
 Calling 'show' on this value will produce a nice error message suitable for
 display. -}
 data (Num size, Ord size, Show size, Show obj) => BinPackerError size obj = 
-    BPTooFewBins [(size, obj)]                -- ^ Ran out of bins; attached value is the list of objects that don't fit
+    BPTooFewBins [(size, obj)]                -- ^ Ran out of bins; attached value is the list of objects that do not fit
     | BPSizeTooLarge size (size, obj)   -- ^ Bin size1 exceeded by at least the given object and size
     | BPOther String                    -- ^ Other error
       deriving (Eq, Read)
@@ -72,12 +72,17 @@ instance (Num size, Ord size, Show size, Show obj) => Error (BinPackerError size
 {- | The primary type for bin-packing functions.
 
 These functions take a list of size of bins.  If every bin is the same size,
-you can pass @(repeat binSize)@ to pass an infinite list of bins if the
-same size.  Any surplus bins will simply be ignored. -}
+you can pass @repeat binSize@ to pass an infinite list of bins if the
+same size.  Any surplus bins will simply be ignored. 
+
+> [size] is the sizes of bins
+> [(size, obj)] is the sizes and objects
+> result is Either error or results
+-}
 type BinPacker = (Num size, Ord size, Show size, Show obj) => 
-                  [size]        -- ^ The sizes of bins
-               -> [(size, obj)] -- ^ The sizes and objects
-               -> Either (BinPackerError size obj) [[(size, obj)]] -- ^ Either error or results
+                  [size]        -- The sizes of bins
+               -> [(size, obj)] -- The sizes and objects
+               -> Either (BinPackerError size obj) [[(size, obj)]] -- Either error or results
 
 
 {- | Pack objects into bins, preserving order.  Objects will be taken from the
