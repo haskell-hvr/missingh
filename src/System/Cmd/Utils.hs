@@ -166,7 +166,7 @@ warnFail funcname fp args msg =
 {- | Read data from a pipe.  Returns a Handle and a 'PipeHandle'.
 
 When done, you must hClose the handle, and then use either 'forceSuccess' or
-getProcessStatus on the 'PipeHandle'.  Zomeibes will result otherwise.
+getProcessStatus on the 'PipeHandle'.  Zombies will result otherwise.
 
 This function logs as pipeFrom.
 
@@ -215,7 +215,7 @@ pipeFrom fp args =
 to.
 
 When done, you must hClose the handle, and then use either 'forceSuccess' or
-getProcessStatus on the 'PipeHandle'.  Zomeibes will result otherwise.
+getProcessStatus on the 'PipeHandle'.  Zombies will result otherwise.
 
 This function logs as pipeTo.
 
@@ -265,7 +265,7 @@ pipeTo fp args message =
 a 3-tuple of ('PipeHandle', Data From Pipe, Data To Pipe).
 
 When done, you must hClose both handles, and then use either 'forceSuccess' or
-getProcessStatus on the 'PipeHandle'.  Zomeibes will result otherwise.
+getProcessStatus on the 'PipeHandle'.  Zombies will result otherwise.
 
 Hint: you will usually need to ForkIO a thread to handle one of the Handles;
 otherwise, deadlock can result.
