@@ -86,7 +86,7 @@ Library
  Extensions: ExistentialQuantification, OverlappingInstances,
    UndecidableInstances, CPP, Rank2Types,
    MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
-   PatternSignatures
+   ScopedTypeVariables
 
  Build-Depends: network, parsec, base,
                haskell98, mtl, HUnit, regex-compat,
@@ -128,4 +128,4 @@ Executable runtests
     Timetest,
     WildMatchtest
   Extensions: ExistentialQuantification, OverlappingInstances,
-    UndecidableInstances, CPP, PatternSignatures
+    UndecidableInstances, CPP, ScopedTypeVariables
