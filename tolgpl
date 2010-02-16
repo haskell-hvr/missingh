@@ -1,7 +1,0 @@
-#!/bin/bash
-ssed -i -e 's/GNU General/GNU Lesser General/g' \
-        -e 's/ GPL/ LGPL/g' \
-        -e 's/version 2 /version 2.1 /g' \
-        -e 's/59 Temple Place, Suite 330, Boston, MA  02111-1307/51 Franklin St, Fifth Floor, Boston, MA  02110-1301/g' \
-        $1
-

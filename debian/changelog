@@ -1,3 +1,35 @@
+missingh (1.1.0.1-3) unstable; urgency=low
+
+  * debian/control: Remove uneeded Build-Dependencies: in libhugs-*.
+  * debian/control: Bump Standards-Version:, no changes needed.
+  * debian/control: Remove >= X-1 Build-Dependency on libghc6-regex-
+    compat-dev.
+  * debian/control: Add Homepage: field.
+
+ -- Marco Túlio Gontijo e Silva <marcot@debian.org>  Mon, 08 Feb 2010 21:54:15 -0200
+
+missingh (1.1.0.1-2) unstable; urgency=low
+
+  [ Erik de Castro Lopo ]
+  * debian/rules
+    - Convert to hlibrary.mk (dh_haskell was removed to haskell-devscripts).
+    (Closes: 556807)
+  * debian/control
+    - Depend on haskell-devscripts >= 0.6.18.
+    - Move Build-Depends-Indeps to Build-Depends.
+    - Add hscolour to build deps.
+    - Standards-Version 3.8.3
+    - Section haskell.
+   * debian/compat
+    - Version 5
+
+  [  Joachim Breitner ]
+  * Switch priority to extra
+  * Add ${shlibs:Depends}
+  * Convert debian/copyright to utf8 
+
+ -- Joachim Breitner <nomeata@debian.org>  Sat, 05 Dec 2009 18:09:13 +0100
+
 missingh (1.1.0.1-1) unstable; urgency=low
 
   * Fix build-deps.  Closes: #522476.
