@@ -23,7 +23,6 @@ extra-source-files: COPYING,
                     pending/Maildir.disabled,
                     pending/Tar.newhs,
                     pending/Tar/HeaderParser.newhs,
-                    renameit.sh,
                     tolgpl,
                     winbuild.bat,
                     wintest.bat
