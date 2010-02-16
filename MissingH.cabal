@@ -1,9 +1,9 @@
 Name: MissingH
-Version: 1.1.0.1
+Version: 1.1.0.3
 License: GPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
-Copyright: Copyright (c) 2004-2009 John Goerzen
+Copyright: Copyright (c) 2004-2010 John Goerzen
 license-file: COPYRIGHT
 extra-source-files: COPYING,
                     testsrc/gzfiles/empty.gz,
