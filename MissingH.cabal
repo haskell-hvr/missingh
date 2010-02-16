@@ -6,6 +6,9 @@ Author: John Goerzen
 Copyright: Copyright (c) 2004-2010 John Goerzen
 license-file: COPYRIGHT
 extra-source-files: COPYING,
+                    announcements/0.10.0.txt,
+                    announcements/0.8.0.txt,
+                    announcements/0.9.0.txt,
                     testsrc/gzfiles/empty.gz,
                     testsrc/gzfiles/t1.gz,
                     testsrc/gzfiles/t1bad.gz,
