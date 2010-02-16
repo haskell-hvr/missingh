@@ -101,7 +101,10 @@ Library
    Build-Depends: unix
 
 Executable runtests
-  Buildable: False
+  if flag(buildtests)
+    Buildable: True
+  else
+    Buildable: False
   Main-Is: runtests.hs
   HS-Source-Dirs: testsrc, .
   Build-Depends: testpack, QuickCheck >= 1.0 && <2.0, HUnit
