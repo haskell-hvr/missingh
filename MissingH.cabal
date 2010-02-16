@@ -84,7 +84,6 @@ Library
 
  Build-Depends: network, parsec, base,
                haskell98, mtl, HUnit, regex-compat,
-               QuickCheck >= 1.0 && < 2.0,
                filepath,
                hslogger
  If flag(splitBase)
