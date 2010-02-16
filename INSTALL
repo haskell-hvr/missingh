@@ -1,0 +1,60 @@
+=========================================
+INSTALLATION INSTRUCTIONS
+For Linux, Unix, BSD, and POSIX platforms
+=========================================
+
+Please see the file INSTALL-win.txt for Windows platform instructions.
+
+PREREQUISITES
+-------------
+
+You must satisfy one or more of these major categories:
+
+1. GHC 6.6 or above (including cpphs)
+   (for GHC 6.4.0 or 6.4.1, use MissingH 0.14.3 or below)
+
+2. Hugs 2005xx or above, plus cpphs
+
+   If you don't already have cpphs, get it from
+   http://www.cs.york.ac.uk/fp/cpphs/.
+
+If you need Cabal, get it from http://www.haskell.org/cabal.
+
+Debian users can install the packages cpphs and ghc6
+
+3. GHC extralibs collection, or the individual
+   libraries mentioned in MissingH.cabal
+
+   You can conveniently download them all in one package; see
+
+http://software.complete.org/missingh/wiki/RelatedSoftware#RequisiteLibraries
+
+
+INSTALLATION
+------------
+
+The first step is to generate your setup file.  To do that, run:
+
+  make setup
+
+Now, for GHC:
+
+ ./setup configure
+ ./setup build
+ ./setup install
+
+Or, for Hugs:
+
+ ./setup configure --hugs
+ ./setup build
+ ./setup install
+ 
+Optionally, to run the unit tests, you'll need to install HUnit.  Then:
+
+ make test-ghc6
+
+or:
+
+ make test-hugs
+
+(More to come in this file)

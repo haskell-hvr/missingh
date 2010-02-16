@@ -1,0 +1,63 @@
+MissingH 0.8.0 -- the "Festive Lambda" release
+
+New feature summary:
+
+ * Virtualized I/O system
+   Use familiar functions to work on not just Handles but all sorts of
+   other types, including in-memory buffers. (HVIO module)
+
+ * Virtualized filesystem
+   Extends the virtual I/O concept to the filesystem, supporting
+   entire virtual filesystems, and operations such as renames,
+   stat(), etc. on them.  (HVFS module)
+
+ * Network server infrastructure
+   Makes it easy to write a network server in Haskell.  Functional
+   interface permits easy adding of things such as multithreading,
+   logging, etc.  Functions to do these things are provided.
+   Patterned loosely after Python's SocketServer system.
+   (SocketServer module)
+
+ * Full, pure-Haskell FTP server
+   Provides a full FTP server over a real or virtual (HVFS)
+   filesystem.  It's a SocketServer server, so you get multithreading
+   for free.  Supports passive eand port modes.
+
+   See below for an example:
+ 
+ * Many path/file manipulation functions imported from
+   Volker's HsShellScript.
+
+ * Existing MissingH.IO functions updated to be HVIO compatible.
+
+MissingH 0.8.0 is available from:
+
+  gopher://gopher.quux.org/1/devel/missingh
+
+or
+
+  http://gopher.quux.org:70/devel/missingh
+
+------------------------------------------------------------
+
+Here is an example of a fully self-contained FTP server that serves
+up the local filesystem in read-only mode:
+
+import MissingH.Network.FTP.Server
+import MissingH.Network.SocketServer
+import MissingH.Logging.Logger
+import MissingH.IO.HVFS
+import MissingH.IO.HVFS.Combinators
+
+main = do
+       updateGlobalLogger "" (setLevel DEBUG)
+       updateGlobalLogger "MissingH.Network.FTP.Server" (setLevel DEBUG)
+       let opts = (simpleTCPOptions 12345) {reuse = True}
+       serveTCPforever opts $
+            threadedHandler $ 
+            loggingHandler "" INFO $
+            handleHandler $
+            anonFtpHandler (HVFSReadOnly SystemFS)
+
+
+# arch-tag: 0.8.0 announcement

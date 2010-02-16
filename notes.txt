@@ -1,0 +1,27 @@
+ basename p = reverse $ takeWhile (/= '/') $ reverse p
+
+ dirname p  = case reverse $ dropWhile (/= '/') $ reverse p of
+ [] -> "."
+ p' -> p'
+
+--------------------------------------------------
+
+From: Mark Carroll <mark@ixod.org>
+Date: Sat, 15 Jan 2005 19:17:09 -0500 (EST)
+To: John Goerzen <jgoerzen@complete.org>
+Subject: Re: [Haskell-cafe] Re: Utility functions
+
+You can take the original, or this version, as being Copyright (c) 2004
+Mark Carroll under the modified BSD license. At the time of writing, it's
+the one at http://www.opensource.org/licenses/bsd-license.php
+
+splitListBy :: (a -> Bool) -> [a] -> [[a]]
+
+splitListBy isElement =
+    unfoldr splitter . (ignored :)
+    where
+    splitter [] = Nothing
+    splitter xs = Just (span isElement (tail xs))
+    ignored = error "internal failure in splitListBy"
+
+-- Mark
