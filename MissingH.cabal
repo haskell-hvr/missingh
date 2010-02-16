@@ -103,11 +103,11 @@ Library
 Executable runtests
   if flag(buildtests)
     Buildable: True
+    Build-Depends: testpack, QuickCheck >= 1.0 && <2.0, HUnit
   else
     Buildable: False
   Main-Is: runtests.hs
   HS-Source-Dirs: testsrc, .
-  Build-Depends: testpack, QuickCheck >= 1.0 && <2.0, HUnit
   Other-Modules: Bitstest,
     CRC32GZIPtest,
     CRC32POSIXtest,
