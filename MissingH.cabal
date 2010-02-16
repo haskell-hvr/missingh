@@ -11,7 +11,24 @@ extra-source-files: COPYING,
                     testsrc/gzfiles/t1bad.gz,
                     testsrc/gzfiles/t2.gz,
                     testsrc/gzfiles/zeros.gz,
-                    testsrc/mime.types.test
+                    testsrc/mime.types.test,
+                    3rd-party-licenses/BSD,
+                    3rd-party-licenses/LGPL-2.1,
+                    INSTALL,
+                    INSTALL-win.txt,
+                    Makefile,
+                    TODO,
+                    examples/simplegrep.hs,
+                    examples/test2.hs,
+                    examples/test3.hs,
+                    pending/Gopher.hs,
+                    pending/Maildir.disabled,
+                    pending/Tar.newhs,
+                    pending/Tar/HeaderParser.newhs,
+                    renameit.sh,
+                    tolgpl,
+                    winbuild.bat,
+                    wintest.bat
 homepage: http://software.complete.org/missingh
 Category: Unclassified
 synopsis: Large utility library
@@ -86,5 +103,24 @@ Executable runtests
   Main-Is: runtests.hs
   HS-Source-Dirs: testsrc, .
   Build-Depends: testpack, QuickCheck >= 1.0 && <2.0, HUnit
+  Other-Modules: Bitstest,
+    CRC32GZIPtest,
+    CRC32POSIXtest,
+    Eithertest,
+    GZiptest,
+    Globtest,
+    HVFStest,
+    HVIOtest,
+    IOtest,
+    Listtest,
+    MIMETypestest,
+    Maptest,
+    Pathtest,
+    ProgressTrackertest,
+    Str.CSVtest,
+    Strtest,
+    Tests,
+    Timetest,
+    WildMatchtest
   Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP, PatternSignatures
