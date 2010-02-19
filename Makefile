@@ -25,7 +25,7 @@ install: setup
 	./setup install
 
 clean:
-	./Setup.hs clean
+	runghc ./Setup.hs clean
 
 .PHONY: test
 test: test-ghc test-hugs
