@@ -12,7 +12,6 @@ Build-Depends: debhelper (>= 5.0.0),
  libghc6-network-dev,
  libghc6-mtl-dev,
  libghc6-hunit-dev,
- libghc6-quickcheck-dev,
  libghc6-hslogger-dev (>= 1.0.7.2),
  libghc6-regex-compat-dev (>= 0.91),
  libghc6-parsec-dev
