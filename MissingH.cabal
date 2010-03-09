@@ -89,7 +89,7 @@ Library
    ScopedTypeVariables
 
  Build-Depends: network, parsec, base,
-               haskell98, mtl, HUnit, regex-compat,
+               mtl, HUnit, regex-compat,
                filepath,
                hslogger
  If flag(splitBase)

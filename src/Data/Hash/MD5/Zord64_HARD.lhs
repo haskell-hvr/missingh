@@ -1,8 +1,8 @@
 >-- #hide
 > module Data.Hash.MD5.Zord64_HARD (Zord64) where
 
-> import Word
-> import Bits
+> import Data.Word
+> import Data.Bits
 
 > data Zord64 = W64 {lo,hi::Word32} deriving (Eq, Ord, Bounded)
 
