@@ -45,7 +45,7 @@ module Data.MIME.Types (-- * Creating Lookup Objects
 where
 
 import qualified Data.Map as Map
-import Monad
+import Control.Monad
 import System.IO
 import System.IO.Error
 import System.IO.Utils

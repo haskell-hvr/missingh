@@ -15,9 +15,9 @@
 > module Data.Hash.MD5 (md5,  md5s,  md5i,
 >             MD5(..), ABCD(..), Zord64, Str(..), BoolList(..), WordList(..)) where
 
-> import Char
-> import Bits
-> import Word
+> import Data.Char
+> import Data.Bits
+> import Data.Word
 
 
 Nasty kludge to create a type Zord64 which is really a Word64 but works
