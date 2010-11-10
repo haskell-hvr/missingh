@@ -38,10 +38,13 @@ Description: Library of utility functions for Haskell, GHC6 package
  due to things Haskell is missing, or things that Haskell makes
  possible.
 
-Package: missingh-doc
+Package: libghc6-missingh-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends}
+Provides: missingh-doc
+Replaces: missingh-doc (<< 1.1.0.3-2)
+Conflicts: missingh-doc (<< 1.1.0.3-2)
 Description: Documentation for Haskell utility library
  MissingH is a library of all sorts of utility functions for
  Haskell programmers.  It is written in pure Haskell and thus should
