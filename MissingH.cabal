@@ -107,7 +107,7 @@ Executable runtests
   else
     Buildable: False
   Main-Is: runtests.hs
-  HS-Source-Dirs: testsrc, .
+  HS-Source-Dirs: testsrc, ., src
   Other-Modules: Bitstest,
     CRC32GZIPtest,
     CRC32POSIXtest,
@@ -128,4 +128,6 @@ Executable runtests
     Timetest,
     WildMatchtest
   Extensions: ExistentialQuantification, OverlappingInstances,
-    UndecidableInstances, CPP, ScopedTypeVariables
+    UndecidableInstances, CPP, Rank2Types,
+    MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
+    ScopedTypeVariables
