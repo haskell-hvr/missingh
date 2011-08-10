@@ -25,3 +25,66 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+============================================================================
+Special Notes for Included Code
+============================================================================
+
+If you split out the parts originally from other authors, and use them
+completely independently of the rest of the library, you may treat them
+under the licenses shown below.
+
+----------------------------------------------------
+Portions of System.Path come from Volker Wysk's HsShellScript
+library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
+and is licensed under the GNU LGPL 2.1
+
+Debian GNU/Linux users may find the GNU LGPL 2.1 at
+/usr/share/common-licenses/LGPL-2.1.  Alternatively, you may find it
+at 3rd-party-licenses/LGPL-2.1 in the source distribution.
+
+----------------------------------------------------
+Data.Hash.CRC32.Posix is
+(C) 2002 HardCore SoftWare, Doug Hoyte
+and is "distributed under the terms of the GNU GPL."  This license is
+the same as the main license for MissingH.
+
+The code was obtained from 
+http://cvs.sourceforge.net/viewcvs.py/haskell-libs/libs/crypto/crc32.hs
+
+----------------------------------------------------
+Data.Compression.Inflate is
+Copyright 2004 Ian Lynagh <igloo@earth.li>
+Licence: 3 clause BSD.
+
+Debian GNU/Linux users may find the 3-clause BSD license at
+/usr/share/common-licenses/BSD.  Alternatively, you may find it at
+3rd-party-licenses/BSD.  Please note that the University of California
+has no claim on this code; simply substitute Ian Lynagh for the
+University wherever it may occur in that file.
+
+The code was obtained from
+http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
+----------------------------------------------------
+Data.Hash.MD5* is
+Copyright 2001 Ian Lynagh <igloo@earth.li>
+Licence: GPL or 3 clause BSD
+
+Debian GNU/Linux users may find the 3-clause BSD license at
+/usr/share/common-licenses/BSD.  Alternatively, you may find it at
+3rd-party-licenses/BSD.  Please note that the University of California
+has no claim on this code; simply substitute Ian Lynagh for the
+University wherever it may occur in that file.
+
+The code was obtained from
+http://web.comlab.ox.ac.uk/oucl/work/ian.lynagh/md5/
+
+----------------------------------------------------
+System.Time.Utils.ParseDate is from 
+http://www.dtek.chalmers.se/~d00bring/projects.html
+
+Copyright (c) Bj<F6>rn Bringert
+License: GNU General Public License, version 2
+
+I (John Goerzen) have modified only the module name and Haddock
+comments at the top of it.
