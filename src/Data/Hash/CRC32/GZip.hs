@@ -1,25 +1,15 @@
 {- arch-tag: GZIP CRC32 implementation in pure Haskell
-Copyright (C) 2004 John Goerzen <jgoerzen@complete.org>
+Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+All rights reserved.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+For license and copyright information, see the file LICENSE
 -}
 
 {- |
    Module     : Data.Hash.CRC32.GZip
-   Copyright  : Copyright (C) 2004 John Goerzen
-   License    : GNU GPL, version 2 or later
+   Copyright  : Copyright (C) 2004-2011 John Goerzen
+   License    : BSD3
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
@@ -29,7 +19,6 @@ CRC32 checksumming using the GZIP\/PKZIP algorithm as used in both
 ISO 3309 and section 8.1.1.6.2 of ITU-T V.42 and referenced in 
 RFC1952.
 
-Copyright (c) 2004 John Goerzen, jgoerzen\@complete.org
 -}
 
 module Data.Hash.CRC32.GZip where

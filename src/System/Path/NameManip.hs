@@ -1,7 +1,3 @@
-{- arch-tag: Path utilities name manipulation code
-
--}
-
 {- |
    Module     : System.Path.NameManip
    Copyright  : Copyright (C) 2004 Volker Wysk
