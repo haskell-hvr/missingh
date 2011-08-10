@@ -37,11 +37,9 @@ under the licenses shown below.
 ----------------------------------------------------
 Portions of System.Path come from Volker Wysk's HsShellScript
 library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
-and is licensed under the GNU LGPL 2.1
-
-Debian GNU/Linux users may find the GNU LGPL 2.1 at
-/usr/share/common-licenses/LGPL-2.1.  Alternatively, you may find it
-at 3rd-party-licenses/LGPL-2.1 in the source distribution.
+and was originally licensed under the GNU LGPL 2.1.  Volker gave permission
+on Aug. 10, 2011, to John Goerzen to relicense it under the same 3-clause
+BSD license as MissingH itself.
 
 ----------------------------------------------------
 Data.Hash.CRC32.Posix is
