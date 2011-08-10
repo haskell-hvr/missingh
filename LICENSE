@@ -1,36 +1,34 @@
-MissingH: Haskell libraries
-Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
+Copyright (c) 2004 - 2011 John Goerzen
+All rights reserved.
 
-All code is under the following license unless otherwise noted:
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+* Redistributions in binary form must reproduce the above copyright notice, this
+  list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
 
-The GNU General Public License is available in the file COPYING in the source
-distribution.  Debian GNU/Linux users may find this in
-/usr/share/common-licenses/GPL-2.
+* Neither the name of John Goerzen nor the names of its
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
 
-If the GPL is unacceptable for your uses, please e-mail me; alternative
-terms can be negotiated for your project.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ============================================================================
 Special Notes for Included Code
 ============================================================================
-
-MissingH includes some code from other authors.  The copyright and license
-statements for these sources are included below.  All are GPL-compatible
-licenses, so if you have any doubt about how to treat MissingH as a whole,
-simply know that the GPL should be understood to cover the entire library.
 
 If you split out the parts originally from other authors, and use them
 completely independently of the rest of the library, you may treat them
@@ -39,14 +37,10 @@ under the licenses shown below.
 ----------------------------------------------------
 Portions of System.Path come from Volker Wysk's HsShellScript
 library, version 2.1.0.  That code is Copyright (c) 2004 Volker Wysk
-and is licensed under the GNU LGPL 2.1
+and was originally licensed under the GNU LGPL 2.1.  Volker gave permission
+on Aug. 10, 2011, to John Goerzen to relicense it under the same 3-clause
+BSD license as MissingH itself.
 
-Debian GNU/Linux users may find the GNU LGPL 2.1 at
-/usr/share/common-licenses/LGPL-2.1.  Alternatively, you may find it
-at 3rd-party-licenses/LGPL-2.1 in the source distribution.
-
-Pursuant to the terms of the LGPL, you may consider this code to fall
-under the GPL as part of the whole MissingH work.
 ----------------------------------------------------
 Data.Hash.CRC32.Posix is
 (C) 2002 HardCore SoftWare, Doug Hoyte
@@ -69,7 +63,6 @@ University wherever it may occur in that file.
 
 The code was obtained from
 http://urchin.earth.li/darcs/ian/inflate/Inflate.lhs
-
 ----------------------------------------------------
 Data.Hash.MD5* is
 Copyright 2001 Ian Lynagh <igloo@earth.li>
@@ -88,10 +81,8 @@ http://web.comlab.ox.ac.uk/oucl/work/ian.lynagh/md5/
 System.Time.Utils.ParseDate is from 
 http://www.dtek.chalmers.se/~d00bring/projects.html
 
-Copyright (c) Björn Bringert
+Copyright (c) Bj<F6>rn Bringert
 License: GNU General Public License, version 2
 
 I (John Goerzen) have modified only the module name and Haddock
 comments at the top of it.
-
-

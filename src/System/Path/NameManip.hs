@@ -1,11 +1,7 @@
-{- arch-tag: Path utilities name manipulation code
-
--}
-
 {- |
    Module     : System.Path.NameManip
    Copyright  : Copyright (C) 2004 Volker Wysk
-   License    : GNU LGPL, version 2.1 or above
+   License    : BSD3
 
    Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
