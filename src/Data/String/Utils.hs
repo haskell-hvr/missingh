@@ -30,11 +30,14 @@ module Data.String.Utils
                         -- * Conversions
                         -- | Note: Some of these functions are aliases for functions
                         -- in "Data.List.Utils".
-                        join, split, splitWs, replace, escapeRe
+                        join, split, splitWs, replace, escapeRe,
+                        -- * Reading
+                        maybeRead
                        ) where
 
 import Data.List.Utils (startswith, endswith, join, split, replace)
 import Data.Char (isAlpha, isAscii, isDigit)
+import Data.Maybe (listToMaybe)
 import Text.Regex (mkRegex, splitRegex)
 
 wschars :: String
@@ -89,3 +92,7 @@ escapeRe (x:xs)
         = x : escapeRe xs
     -- Escape everything else
     | otherwise = '\\' : x : escapeRe xs
+
+-- | Attempts to parse a value from the front of the string.
+maybeRead :: Read a => String -> Maybe a
+maybeRead = fmap fst . listToMaybe . reads
