@@ -35,6 +35,7 @@ module Data.MIME.Types (-- * Creating Lookup Objects
 where
 
 import qualified Data.Map as Map
+import qualified Control.Exception (try, IOException)
 import Control.Monad
 import System.IO
 import System.IO.Error
@@ -189,9 +190,9 @@ readSystemMIMETypes mtd =
     let tryread :: MIMETypeData -> String -> IO MIMETypeData
         tryread inputobj filename =
             do
-            fn <- try (openFile filename ReadMode)
+            fn <- Control.Exception.try (openFile filename ReadMode)
             case fn of
-                    Left _ -> return inputobj
+                    Left (_ :: Control.Exception.IOException) -> return inputobj
                     Right h -> do
                                x <- hReadMIMETypes inputobj True h
                                hClose h

@@ -121,6 +121,7 @@ where
 
 import System.IO
 import System.IO.Error
+import qualified Control.Exception (catch, IOException)
 import Control.Concurrent.MVar
 import Data.IORef
 import Foreign.Ptr
@@ -287,7 +288,7 @@ class (Show a) => HVIO a where
                                      x -> accum `seq` loop (accum ++ [x])
                     handler e = if isEOFError e then return accum
                                 else ioError e
-                    in catch func handler
+                    in Control.Exception.catch func handler
             in
             do firstchar <- vGetChar h
                case firstchar of
@@ -301,7 +302,7 @@ class (Show a) => HVIO a where
                               c `seq` return (c : next)
                     handler e = if isEOFError e then return []
                                 else ioError e
-                    in catch func handler
+                    in Control.Exception.catch func handler
             in
             do loop
 
