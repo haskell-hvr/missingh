@@ -108,6 +108,7 @@ import System.IO
 import System.IO.Error
 import Control.Concurrent(forkIO)
 import Control.Exception(finally)
+import qualified Control.Exception(try, IOException)
 
 data PipeMode = ReadFromPipe | WriteToPipe
 
@@ -169,11 +170,11 @@ hPipeFrom fp args =
        let childstuff = do dupTo (snd pipepair) stdOutput
                            closeFd (fst pipepair)
                            executeFile fp True args Nothing
-       p <- try (forkProcess childstuff)
+       p <- Control.Exception.try (forkProcess childstuff)
        -- parent
        pid <- case p of
                   Right x -> return x
-                  Left e -> warnFail "pipeFrom" fp args $
+                  Left (e :: Control.Exception.IOException) -> warnFail "pipeFrom" fp args $
                             "Error in fork: " ++ show e
        closeFd (snd pipepair)
        h <- fdToHandle (fst pipepair)
@@ -218,11 +219,11 @@ hPipeTo fp args =
        let childstuff = do dupTo (fst pipepair) stdInput
                            closeFd (snd pipepair)
                            executeFile fp True args Nothing
-       p <- try (forkProcess childstuff)
+       p <- Control.Exception.try (forkProcess childstuff)
        -- parent
        pid <- case p of
                    Right x -> return x
-                   Left e -> warnFail "pipeTo" fp args $
+                   Left (e :: Control.Exception.IOException) -> warnFail "pipeTo" fp args $
                              "Error in fork: " ++ show e
        closeFd (fst pipepair)
        h <- fdToHandle (snd pipepair)
@@ -274,11 +275,11 @@ hPipeBoth fp args =
                            dupTo (fst topair) stdInput
                            closeFd (snd topair)
                            executeFile fp True args Nothing
-       p <- try (forkProcess childstuff)
+       p <- Control.Exception.try (forkProcess childstuff)
        -- parent
        pid <- case p of
                    Right x -> return x
-                   Left e -> warnFail "pipeBoth" fp args $
+                   Left (e :: Control.Exception.IOException) -> warnFail "pipeBoth" fp args $
                              "Error in fork: " ++ show e
        closeFd (snd frompair)
        closeFd (fst topair)
@@ -546,10 +547,10 @@ pOpen3Raw pin pout perr fp args childfunc =
 -}
         in
         do
-        p <- try (forkProcess childstuff)
+        p <- Control.Exception.try (forkProcess childstuff)
         pid <- case p of
                 Right x -> return x
-                Left e -> fail ("Error in fork: " ++ (show e))
+                Left (e :: Control.Exception.IOException) -> fail ("Error in fork: " ++ (show e))
         return pid
 
 #endif
