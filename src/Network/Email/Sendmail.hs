@@ -34,6 +34,7 @@ import System.Cmd.Utils
 import System.Directory
 import System.IO
 import System.IO.Error
+import qualified Control.Exception(try, IOException)
 
 sendmails :: [String]
 sendmails = ["/usr/sbin/sendmail",
@@ -90,10 +91,10 @@ sendmail_worker args msg =
         in
         do
         --pOpen WriteToPipe "/usr/sbin/sendmail" args func
-        rv <- try (pOpen WriteToPipe "sendmail" args func)
+        rv <- Control.Exception.try (pOpen WriteToPipe "sendmail" args func)
         case rv of
             Right x -> return x
-            Left _ -> do
+            Left (_ :: Control.Exception.IOException) -> do
                       sn <- findsendmail
                       r <- pOpen WriteToPipe sn args func
                       return $! r
