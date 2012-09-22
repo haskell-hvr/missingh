@@ -48,7 +48,7 @@ Results are undefined if any components of the input list are > 0xff!
 
 -}
 
-fromBytes :: (Bits a) => [a] -> a
+fromBytes :: (Bits a, Num a) => [a] -> a
 fromBytes input =
     let dofb accum [] = accum
         dofb accum (x:xs) = dofb ((shiftL accum 8) .|. x) xs

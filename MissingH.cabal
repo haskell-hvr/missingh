@@ -94,7 +94,7 @@ Library
                hslogger
  If flag(splitBase)
    Build-Depends: base >= 4, base < 5, directory, random, process, old-time,
-                             containers, old-locale, array
+                             containers, old-locale, array, time
  Else
    Build-Depends: base < 3
  If ! os(windows)
