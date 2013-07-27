@@ -37,13 +37,10 @@ Description:  MissingH is a library of all sorts of utility functions for
  be extremely portable and easy to use.
 Stability: Beta
 Build-Type: Simple
-Cabal-Version: >=1.2.3
+Cabal-Version: >=1.8
 
 Flag splitBase
   description: Choose the new smaller, split-up base package.
-Flag buildtests
-  description: Build the executable to run unit tests
-  default: False
 
 Library
  Hs-Source-Dirs: src
@@ -100,12 +97,22 @@ Library
  If ! os(windows)
    Build-Depends: unix
 
-Executable runtests
-  if flag(buildtests)
-    Buildable: True
-    Build-Depends: testpack, QuickCheck >= 1.0 && <2.0, HUnit
-  else
-    Buildable: False
+test-suite runtests
+  type:           exitcode-stdio-1.0
+
+  Build-Depends: network, parsec, base,
+               mtl, HUnit, regex-compat,
+               filepath,
+               hslogger
+  If flag(splitBase)
+   Build-Depends: base >= 4, base < 5, directory, random, process, old-time,
+                             containers, old-locale, array, time
+  Else
+   Build-Depends: base < 3
+  If ! os(windows)
+   Build-Depends: unix
+  Build-Depends: testpack, QuickCheck, HUnit
+
   Main-Is: runtests.hs
   HS-Source-Dirs: testsrc, ., src
   Other-Modules: Bitstest,
