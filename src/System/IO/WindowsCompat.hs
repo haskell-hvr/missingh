@@ -56,6 +56,8 @@ import System.IO.StatCompat
 import System.Posix.Consts
 import System.Time.Utils
 import System.Directory
+import Data.Time
+import Data.Time.Clock.POSIX
 
 -- these types aren't defined here
 
@@ -112,6 +114,9 @@ otherModes = 0o00007
 accessModes :: FileMode
 accessModes = ownerModes .|. groupModes .|. otherModes
 
+utcTimeToSeconds :: Num a => UTCTime -> a
+utcTimeToSeconds = fromInteger . floor . utcTimeToPOSIXSeconds
+
 ----------- stat
 type FileStatus = FileStatusCompat
 getFileStatus :: FilePath -> IO FileStatus
@@ -120,7 +125,11 @@ getFileStatus fp =
        isdir <- doesDirectoryExist fp
        perms <- getPermissions fp
        modct <- getModificationTime fp
+#if MIN_VERSION_directory(1,2,0)
+       let epochtime = utcTimeToSeconds modct
+#else
        let epochtime = clockTimeToEpoch modct
+#endif
        return $ FileStatusCompat {deviceID = -1,
                                   fileID = -1,
                                   fileMode = if isfile then regularFileMode
