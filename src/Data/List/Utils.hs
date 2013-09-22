@@ -44,7 +44,7 @@ module Data.List.Utils(-- * Merging
                      grab,
                      -- * Miscellaneous
                      countElem, elemRIndex, alwaysElemRIndex, seqList,
-                     subIndex, uniq
+                     subIndex, uniq, concatWithAll
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
@@ -473,5 +473,14 @@ uniq = nub
 ----- same as
 --uniq (x:xs) = x : [y | y <- uniq xs, y /= x]
 
+{- | Given two lists, returns a list of the first list, with each element
+in the second list appended to it.
 
+For Example:
 
+>concatWithAll "abc" "def" -> ["abcd", "abce", "abcf"]
+>concatWithAll [10, 20, 30] [1, 2] -> [[10, 20, 30, 1], [10, 20, 30, 2]]
+-}
+
+concatWithAll :: [a] -> [a] -> [[a]]
+concatWithAll first lasts = zipWith (++) (repeat first) (map (:[]) lasts)
