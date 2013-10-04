@@ -46,6 +46,7 @@ Library
  Hs-Source-Dirs: src
  Exposed-Modules:
   Data.String.Utils, System.IO.Utils, System.IO.Binary, Data.List.Utils,
+  Data.Sequence.Utils,
   System.Daemon,
   Text.ParserCombinators.Parsec.Utils,
   Network.Email.Mailbox,
@@ -133,7 +134,8 @@ test-suite runtests
     Strtest,
     Tests,
     Timetest,
-    WildMatchtest
+    WildMatchtest,
+    Sequencetest
   Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP, Rank2Types,
     MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
