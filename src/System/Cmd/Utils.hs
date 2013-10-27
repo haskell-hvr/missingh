@@ -325,8 +325,16 @@ forceSuccess (PipeHandle pid fp args funcname) =
                 Just (Exited (ExitSuccess)) -> return ()
                 Just (Exited (ExitFailure fc)) ->
                     cmdfailed funcname fp args fc
+#if MIN_VERSION_unix(2,7,0)
+                Just (Terminated sig coreDumped) ->
+                    let coreMessage = if coreDumped
+                                        then ". Core dumped."
+                                        else ""
+                    in warnfail fp args $ "Terminated by signal " ++ show sig ++ coreMessage
+#else
                 Just (Terminated sig) ->
                     warnfail fp args $ "Terminated by signal " ++ show sig
+#endif
                 Just (Stopped sig) ->
                     warnfail fp args $ "Stopped by signal " ++ show sig
 #endif
@@ -351,7 +359,11 @@ safeSystem command args =
        case ec of
             Exited ExitSuccess -> return ()
             Exited (ExitFailure fc) -> cmdfailed "safeSystem" command args fc
+#if MIN_VERSION_unix(2,7,0)
+            Terminated s _ -> cmdsignalled "safeSystem" command args s
+#else
             Terminated s -> cmdsignalled "safeSystem" command args s
+#endif
             Stopped s -> cmdsignalled "safeSystem" command args s
 #endif
 
