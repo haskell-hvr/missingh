@@ -28,7 +28,7 @@ module System.Debian (-- * Control or Similar File Utilities
                        )
     where
 
-import System.Cmd
+import System.Process
 import System.IO.Unsafe
 import System.Exit
 
