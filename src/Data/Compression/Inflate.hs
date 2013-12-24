@@ -37,6 +37,7 @@ import Data.Array
 import Data.List
 import Data.Maybe
 import qualified Data.Char
+import Control.Applicative
 import Control.Monad
 
 import Data.Bits
@@ -123,6 +124,14 @@ instance Monad InfM where
                                 in y s'
  -- return :: a -> InfM a
     return x = InfM $ \s -> (x, s)
+
+instance Applicative InfM where
+    pure = return
+    (<*>) = ap
+
+instance Functor InfM where
+    fmap f (InfM g) = InfM $ \s ->
+        case g s of ~(a, s') -> (f a, s')
 
 set_bits :: [Bit] -> InfM ()
 set_bits bs = InfM $ const ((), State bs 0 (array (0, 32767) []) 0)
