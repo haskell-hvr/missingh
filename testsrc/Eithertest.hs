@@ -12,9 +12,7 @@ import Test.HUnit
 import Data.Either.Utils
 import Test.HUnit.Tools
 import Control.Exception
-
-instance Eq ErrorCall where
-    (ErrorCall x) == (ErrorCall y) = x == y
+import Control.Exception.ErrorCall.EqInstance
 
 test_maybeToEither =
     let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" exp inp in
