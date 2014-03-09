@@ -95,7 +95,7 @@ where
 -- FIXME - largely obsoleted by 6.4 - convert to wrappers.
 
 import System.Exit
-import System.Cmd
+import System.Process (rawSystem)
 import System.Log.Logger
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import System.Posix.IO
@@ -325,7 +325,11 @@ forceSuccess (PipeHandle pid fp args funcname) =
                 Just (Exited (ExitSuccess)) -> return ()
                 Just (Exited (ExitFailure fc)) ->
                     cmdfailed funcname fp args fc
+#if MIN_VERSION_unix(2,7,0)
+                Just (Terminated sig _) ->
+#else
                 Just (Terminated sig) ->
+#endif
                     warnfail fp args $ "Terminated by signal " ++ show sig
                 Just (Stopped sig) ->
                     warnfail fp args $ "Stopped by signal " ++ show sig
@@ -351,7 +355,11 @@ safeSystem command args =
        case ec of
             Exited ExitSuccess -> return ()
             Exited (ExitFailure fc) -> cmdfailed "safeSystem" command args fc
+#if MIN_VERSION_unix(2,7,0)
+            Terminated s _ -> cmdsignalled "safeSystem" command args s
+#else
             Terminated s -> cmdsignalled "safeSystem" command args s
+#endif
             Stopped s -> cmdsignalled "safeSystem" command args s
 #endif
 
