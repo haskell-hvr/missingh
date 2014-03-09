@@ -1,9 +1,9 @@
 Name: MissingH
-Version: 1.2.0.2
+Version: 1.2.1.0
 License: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
-Copyright: Copyright (c) 2004-2011 John Goerzen
+Copyright: Copyright (c) 2004-2014 John Goerzen
 license-file: LICENSE
 extra-source-files: LICENSE,
                     announcements/0.10.0.txt,
