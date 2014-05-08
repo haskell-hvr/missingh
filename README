@@ -31,7 +31,7 @@ Major Features
  * IO object virtualization so you can use one set of code to work
    on files of many different types
 
- * Filesystem virtualization so you can access variuos items with the
+ * Filesystem virtualization so you can access various items with the
    same ease as your system's filesystem
 
  * Network utilities to streamline connections
@@ -42,7 +42,7 @@ Major Features
  * String utilities including removal of leading or trailing
    whitespace, joining, splitting, and truncation
 
- * Other utilities for threads, parers, filenames, etc.
+ * Other utilities for threads, parsers, filenames, etc.
 
  * Printf utilities for formatting strings
 
