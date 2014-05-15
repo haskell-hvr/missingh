@@ -34,16 +34,16 @@ Here are some examples:
 >Input (literal strings)          Parses As (Haskell String syntax)
 >-------------------------------- ---------------------------------
 
->1,2,3                            [["1", "2", "3"]]
+>1	2	3                 [["1", "2", "3"]]
 >
 >l1                               [["l1"], ["l2"]]
 >l2
 >
 > (empty line)                    [[""]]
 >
->NQ,"Quoted"                      [["NQ", "Quoted"]]
+>NQ	"Quoted"                  [["NQ", "Quoted"]]
 >
->NQ,"Embedded""Quote"             [["NQ", "Embedded\"Quote"]]
+>NQ	"Embedded""Quote"         [["NQ", "Embedded\"Quote"]]
 
 To parse a String, you might use:
 
