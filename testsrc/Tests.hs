@@ -23,6 +23,7 @@ import qualified HVIOtest
 import qualified HVFStest
 import qualified Timetest
 import qualified Str.CSVtest
+import qualified Str.TSVtest
 import qualified WildMatchtest
 import qualified Globtest
 import qualified ProgressTrackertest
@@ -33,6 +34,7 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "List" Listtest.tests,
                  TestLabel "Str" Strtest.tests,
                  TestLabel "CSV" Str.CSVtest.tests,
+                 TestLabel "TSV" Str.TSVtest.tests,
                  TestLabel "Time" Timetest.tests,
                  TestLabel "Map" Maptest.tests,
                  TestLabel "ProgressTracker" ProgressTrackertest.tests,
