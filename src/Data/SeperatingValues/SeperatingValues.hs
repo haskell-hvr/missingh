@@ -22,7 +22,7 @@ eol = (try $ string "\n\r") <|> (try $ string "\r\n") <|> string "\n" <|>
       string "\r" <?> "End of line"
 
 cellOfX :: Char -> GenParser Char st String
-cellOfX x = quotedcell <|> many (noneOf ([x] ++ "\n\r"))
+cellOfX x = quotedcell <|> many (noneOf (x : "\n\r"))
 
 quotedchar :: GenParser Char st Char
 quotedchar = noneOf "\""
