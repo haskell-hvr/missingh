@@ -21,6 +21,7 @@ import System.Posix.Files
 #endif
 import Control.Exception
 import Data.List
+import System.FilePath (pathSeparator)
 
 bp = "testtmp"
 touch x = writeFile x ""
@@ -30,7 +31,7 @@ globtest thetest =
              (recursiveRemove SystemFS bp)
              thetest
     where setupfs =
-              do mapM_ (\x -> createDirectory x)
+              do mapM_ (\x -> createDirectory (sep x))
                        [bp, bp ++ "/a", bp ++ "/aab", bp ++ "/aaa",
                         bp ++ "/ZZZ", bp ++ "/a/bcd",
                         bp ++ "/a/bcd/efg"]
@@ -47,7 +48,11 @@ eq msg exp res =
     assertEqual msg (sort exp) (sort res)
 mf msg func = TestLabel msg $ TestCase $ globtest func
 f func = TestCase $ globtest func
-preppath x = bp ++ "/" ++ x
+--preppath x = bp ++ "/" ++ x
+preppath x = sep (bp ++ "/" ++ x)
+--preppath x = bp </> sep x
+sep = replace '/' pathSeparator
+replace x y = map (\c -> if c == x then y else c)
 
 test_literal =
     map f
