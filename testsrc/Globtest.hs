@@ -26,7 +26,7 @@ import System.FilePath (pathSeparator)
 sep = map (\c -> if c == '/' then pathSeparator else c)
 
 bp = "testtmp"
-touch x = writeFile x ""
+touch x = writeFile (sep x) ""
 
 globtest thetest = 
     bracket_ (setupfs)
