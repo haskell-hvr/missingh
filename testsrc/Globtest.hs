@@ -23,6 +23,8 @@ import Control.Exception
 import Data.List
 import System.FilePath (pathSeparator)
 
+sep = map (\c -> if c == '/' then pathSeparator else c)
+
 bp = "testtmp"
 touch x = writeFile x ""
 
@@ -48,11 +50,7 @@ eq msg exp res =
     assertEqual msg (sort exp) (sort res)
 mf msg func = TestLabel msg $ TestCase $ globtest func
 f func = TestCase $ globtest func
---preppath x = bp ++ "/" ++ x
 preppath x = sep (bp ++ "/" ++ x)
---preppath x = bp </> sep x
-sep = replace '/' pathSeparator
-replace x y = map (\c -> if c == x then y else c)
 
 test_literal =
     map f

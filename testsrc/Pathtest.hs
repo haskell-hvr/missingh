@@ -10,9 +10,16 @@ For license and copyright information, see the file LICENSE
 module Pathtest(tests) where
 import Test.HUnit
 import System.Path
+import System.FilePath (pathSeparator)
+
+sep = map (\c -> if c == '/' then pathSeparator else c)
 
 test_absNormPath =
-    let f base p exp = TestLabel (show (base, p)) $ TestCase $ exp @=? absNormPath base p
+    let f base' p' exp' = TestLabel (show (base, p)) $ TestCase $ exp @=? absNormPath base p
+                            where
+                              base = sep base'
+                              p    = sep p'
+                              exp  = fmap sep exp'
         f2 = f "/usr/1/2" in
         [ 
          f "/" "" (Just "/")
@@ -31,7 +38,11 @@ test_absNormPath =
         ]
 
 test_secureAbsNormPath =
-    let f base p exp = TestLabel (show (base, p)) $ TestCase $ exp @=? secureAbsNormPath base p
+    let f base' p' exp' = TestLabel (show (base, p)) $ TestCase $ exp @=? secureAbsNormPath base p
+                            where
+                              base = sep base'
+                              p    = sep p'
+                              exp  = fmap sep exp'
         f2 = f "/usr/1/2" in
         [ 
          f "/" "" (Just "/")
@@ -52,8 +63,11 @@ test_secureAbsNormPath =
         ]
 
 test_splitExt =
-    let f inp exp = TestCase $ exp @=? splitExt inp in
-        [
+    let f inp' exp' = TestCase $ exp @=? splitExt inp
+                            where
+                              inp = sep inp'
+                              exp = (\(x,y) -> (sep x, y)) exp'
+    in  [
          f "" ("", "")
         ,f "/usr/local" ("/usr/local", "")
         ,f "../foo.txt" ("../foo", ".txt")
