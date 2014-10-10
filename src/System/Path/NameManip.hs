@@ -14,9 +14,9 @@ Written by Volker Wysk
 
 module System.Path.NameManip where
 
-import Data.List (intercalate, foldl1', unfoldr)
+import Data.List (intercalate, unfoldr)
 import System.Directory (getCurrentDirectory)
-import System.FilePath ((</>), pathSeparator, isPathSeparator, joinPath, splitPath)
+import System.FilePath ((</>), pathSeparator, isPathSeparator)
 
 {- | Split a path in components. Repeated \"@\/@\" characters don\'t lead to empty
 components. \"@.@\" path components are removed. If the path is absolute, the first component
@@ -64,9 +64,6 @@ See 'slice_path'.
 unslice_path :: [String]        -- ^ List of path components
              -> String          -- ^ The path which consists of the supplied path components
 unslice_path [] = "."
---unslice_path cs = joinPath cs
---unslice_path cs = foldl1' (</>) cs
---unslice_path cs = concat (intersperse [pathSeparator] cs)
 unslice_path cs = intercalate [pathSeparator] cs
 
 
