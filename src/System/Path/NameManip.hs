@@ -14,7 +14,7 @@ Written by Volker Wysk
 
 module System.Path.NameManip where
 
-import Data.List (intersperse, foldl1', unfoldr)
+import Data.List (intercalate, foldl1', unfoldr)
 import System.Directory (getCurrentDirectory)
 import System.FilePath ((</>), pathSeparator, isPathSeparator, joinPath, splitPath)
 
@@ -64,9 +64,10 @@ See 'slice_path'.
 unslice_path :: [String]        -- ^ List of path components
              -> String          -- ^ The path which consists of the supplied path components
 unslice_path [] = "."
-unslice_path cs = joinPath cs
+--unslice_path cs = joinPath cs
 --unslice_path cs = foldl1' (</>) cs
---unslice_path cs = concat (intersperse "/" cs)
+--unslice_path cs = concat (intersperse [pathSeparator] cs)
+unslice_path cs = intercalate [pathSeparator] cs
 
 
 {- | Normalise a path. This is done by reducing repeated @\/@ characters to one, and removing
@@ -157,7 +158,7 @@ See 'slice_filename'.
 -}
 unslice_filename :: [String]    -- ^ List of file name components
                  -> String      -- ^ Name of the file which consists of the supplied components
-unslice_filename = concat . intersperse "."
+unslice_filename = intercalate "."
 
 
 {- | Split a path in directory and file name. Only in the case that the
@@ -291,7 +292,7 @@ split_filename path =
    case slice_path path of
       []    -> (".","")
       comps -> let (pref_fn, suff_fn) = split_filename' (last comps)
-               in ( concat (intersperse [pathSeparator] (init comps ++ [pref_fn]))
+               in ( intercalate [pathSeparator] (init comps ++ [pref_fn])
                   , suff_fn
                   )
 
