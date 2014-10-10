@@ -64,14 +64,14 @@ test_content =
 test_chroot =
     let f msg testfunc = TestLabel msg $ TestCase $ 
                          do x <- newMemoryVFS testTree
-                            vSetCurrentDirectory x "/emptydir"
-                            y <- newHVFSChroot x "/dir1"
+                            vSetCurrentDirectory x (sep "/emptydir")
+                            y <- newHVFSChroot x (sep "/dir1")
                             testfunc y
         in
         [
          f "root" (\x -> ["file3.txt", "test.txt", "dir2"]
                    `ioeq` vGetDirectoryContents x (sep "/"))
-        ,f "cwd" (\x -> "/" `ioeq` vGetCurrentDirectory x)
+        ,f "cwd" (\x -> sep "/" `ioeq` vGetCurrentDirectory x)
         ,f "dir2" (\x -> [] `ioeq` vGetDirectoryContents x (sep "/dir2"))
         ,f "dot" (\x -> ["file3.txt", "test.txt", "dir2"]
                   `ioeq` vGetDirectoryContents x ".")
