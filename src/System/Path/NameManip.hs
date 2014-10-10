@@ -14,8 +14,9 @@ Written by Volker Wysk
 
 module System.Path.NameManip where
 
-import Data.List (intersperse)
+import Data.List (intersperse, foldl1', unfoldr)
 import System.Directory (getCurrentDirectory)
+import System.FilePath ((</>), pathSeparator, isPathSeparator, joinPath, splitPath)
 
 {- | Split a path in components. Repeated \"@\/@\" characters don\'t lead to empty
 components. \"@.@\" path components are removed. If the path is absolute, the first component
@@ -37,20 +38,22 @@ See 'unslice_path', 'realpath', 'realpath_s'.
 -}
 slice_path :: String    -- ^ The path to be broken to components.
            -> [String]  -- ^ List of path components.
-slice_path p =
-   case p of
-      ('/':p') -> case slice_path' p' of
-                     [] -> ["/"]
-                     (c:cs) -> (('/':c):cs)
-      _ -> slice_path' p
-   where
+slice_path "" = []
+slice_path (c:cs) = if isPathSeparator c
+                       then case slice_path' cs of
+                           [] -> [[c]]
+                           (p:ps) -> (c:p):ps
+                       else slice_path' (c:cs)
+    where
       slice_path' o = filter (\c -> c /= "" && c /= ".") (split o)
 
-      split ""      = []
-      split ('/':o) = "" : split o
-      split (x:xs)  = case split xs of
-                         [] -> [[x]]
-                         (y:ys) -> ((x:y):ys)
+      split xs = unfoldr f xs
+        where
+          f "" = Nothing
+          f xs = Just $ fmap tail' $ break isPathSeparator xs
+          tail' [] = []
+          tail' xs = tail xs
+
 
 {- | Form a path from path components. This isn't the inverse
 of 'slice_path', since @'unslice_path' . 'slice_path'@
@@ -61,7 +64,9 @@ See 'slice_path'.
 unslice_path :: [String]        -- ^ List of path components
              -> String          -- ^ The path which consists of the supplied path components
 unslice_path [] = "."
-unslice_path cs = concat (intersperse "/" cs)
+unslice_path cs = joinPath cs
+--unslice_path cs = foldl1' (</>) cs
+--unslice_path cs = concat (intersperse "/" cs)
 
 
 {- | Normalise a path. This is done by reducing repeated @\/@ characters to one, and removing
@@ -188,13 +193,12 @@ split_path :: String            -- ^ Path to be split
 split_path "" = ("","")
 split_path path =
    case slice_path path of
-      []      -> (".",".")
-      ["/"]   -> ("/", ".")
-      ['/':p] -> ("/", p)
-      [fn]    -> (".", fn)
-      parts   -> ( unslice_path (init parts)
-                 , last parts
-                 )
+      []     -> (".", ".")
+      [""]   -> (".", "")
+      [f:fs] -> if isPathSeparator f then ([pathSeparator], fs) else (".", f:fs)
+      parts  -> ( unslice_path (init parts)
+                , last parts
+                )
 
 {- | Get the directory part of a path.
 
@@ -251,7 +255,7 @@ unsplit_path (".", q)  = q
 unsplit_path ("", q)   = q
 unsplit_path (p, "")   = p
 unsplit_path (p, ".")  = p
-unsplit_path (p, q)    = p ++ "/" ++ q
+unsplit_path (p, q)    = p </> q
 
 
 {- | Split a file name in prefix and suffix. If there isn't any suffix in
@@ -287,7 +291,7 @@ split_filename path =
    case slice_path path of
       []    -> (".","")
       comps -> let (pref_fn, suff_fn) = split_filename' (last comps)
-               in ( concat (intersperse "/" (init comps ++ [pref_fn]))
+               in ( concat (intersperse [pathSeparator] (init comps ++ [pref_fn]))
                   , suff_fn
                   )
 
@@ -367,10 +371,7 @@ normalised. This is different from @pwd@.
 -}
 absolute_path :: String         -- ^ The path to be made absolute
               -> IO String      -- ^ Absulte path
-absolute_path path@('/':_) = return path
-absolute_path path = do
-   cwd <- getCurrentDirectory
-   return (cwd ++ "/" ++ path)
+absolute_path path = fmap (absolute_path' path) getCurrentDirectory
 
 
 {- | Make a path absolute.
@@ -381,8 +382,7 @@ directory. An absolute path is returned unmodified.
 absolute_path_by :: String        -- ^ The directory relative to which the path is made absolute
                  -> String        -- ^ The path to be made absolute
                  -> String        -- ^ Absolute path
-absolute_path_by _ path@('/':_) = path
-absolute_path_by dir path = dir ++ "/" ++ path
+absolute_path_by = (</>)
 
 
 {- | Make a path absolute.
@@ -395,8 +395,7 @@ The order of the arguments can be confusing. You should rather use 'absolute_pat
 absolute_path' :: String        -- ^ The path to be made absolute
                -> String        -- ^ The directory relative to which the path is made absolute
                -> String        -- ^ Absolute path
-absolute_path' path@('/':_) _ = path
-absolute_path' path dir = dir ++ "/" ++ path
+absolute_path' = flip absolute_path_by
 
 
 {- | Guess the @\"..\"@-component free form of a path, specified as a list of path components, by syntactically removing them, along with the preceding
