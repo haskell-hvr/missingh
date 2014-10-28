@@ -41,6 +41,7 @@ import System.Directory hiding (createDirectory)
 #else
 import System.Directory
 #endif
+import System.FilePath ((</>), pathSeparator, isPathSeparator)
 import Control.Exception
 import System.IO
 import System.Path.NameManip
@@ -53,7 +54,7 @@ dot after the last slash to the end.  Either returned string may be empty. -}
 splitExt :: String -> (String, String)
 splitExt path =
     let dotindex = alwaysElemRIndex '.' path
-        slashindex = alwaysElemRIndex '/' path
+        slashindex = alwaysElemRIndex pathSeparator path
         in
         if dotindex <= slashindex
            then (path, "")
@@ -77,7 +78,7 @@ absNormPath :: String                   -- ^ Absolute path for use with starting
 absNormPath base thepath =
     let abs = absolute_path_by base thepath
         in case guess_dotdot (normalise_path abs) of
-                Just "." -> Just "/"
+                Just "." -> Just [pathSeparator]
                 x -> x
 
 {- | Like absNormPath, but returns Nothing if the generated result is not

@@ -41,6 +41,7 @@ import System.IO.HVFS
 import System.IO.HVIO (newStreamReader)
 import System.Path (absNormPath)
 import System.Path.NameManip (slice_path)
+import System.FilePath ((</>), pathSeparator, isPathSeparator)
 
 {- | A simple "System.IO.HVFS.HVFSStat"
 class that assumes that everything is either a file
@@ -86,7 +87,7 @@ newMemoryVFS s = do r <- newIORef s
 -- existing tree.
 newMemoryVFSRef :: IORef [MemoryNode] -> IO MemoryVFS
 newMemoryVFSRef r = do
-                    c <- newIORef "/"
+                    c <- newIORef [pathSeparator]
                     return (MemoryVFS {content = r, cwd = c})
 
 {- | Similar to 'System.Path.NameManip' but the first element
@@ -96,14 +97,15 @@ won't be @\/@.
 >nice_slice "/foo/bar" -> ["foo", "bar"]
 -}
 nice_slice :: String -> [String]
-nice_slice "/" = []
-nice_slice path =
-    let sliced1 = slice_path path
-        h = head sliced1
-        t = tail sliced1
-        newh =  if head h == '/' then tail h else h
-        sliced2 = newh : t
-    in sliced2
+nice_slice path
+  | path == [pathSeparator] = []
+  | otherwise = 
+      let sliced1 = slice_path path
+          h = head sliced1
+          t = tail sliced1
+          newh =  if isPathSeparator (head h) then tail h else h
+          sliced2 = newh : t
+      in sliced2
 
 {- | Gets a full path, after investigating the cwd.
 -}
@@ -112,7 +114,7 @@ getFullPath fs path =
     do cwd <- vGetCurrentDirectory fs
        case (absNormPath cwd path) of
            Nothing -> vRaiseError fs doesNotExistErrorType
-                        ("Trouble normalizing path " ++ path) (Just (cwd ++ "/" ++ path))
+                        ("Trouble normalizing path " ++ path) (Just (cwd </> path))
            Just newpath -> return newpath
 
 {- | Gets the full path via 'getFullPath', then splits it via 'nice_slice'.
@@ -124,34 +126,34 @@ getFullSlice fs fp =
 
 -- | Find an element on the tree, assuming a normalized path
 findMelem :: MemoryVFS -> String -> IO MemoryEntry
-findMelem x "/" = readIORef (content x) >>= return . MemoryDirectory
-findMelem x path =
+findMelem x path
+  | path == [pathSeparator] = readIORef (content x) >>= return . MemoryDirectory
+  | otherwise =
     let sliced1 = slice_path path
         h = head sliced1
         t = tail sliced1
-        newh = if (h /= "/") && head h == '/' then tail h else h
+        newh = if (h /= [pathSeparator]) && isPathSeparator (head h) then tail h else h
         sliced2 = newh : t
 
         -- Walk the tree
         walk :: MemoryEntry -> [String] -> Either String MemoryEntry
         -- Empty list -- return the item we have
-        walk y [] = Right y
-        -- Root directory -- return the item we have
-        walk y ["/"] = Right y
-        -- File but stuff: error
-        walk (MemoryFile _) (z : _) =
-            Left $ "Attempt to look up name " ++ z ++ " in file"
-        walk (MemoryDirectory y) (z : zs) =
-            let newentry = case lookup z y of
-                                Nothing -> Left $ "Couldn't find entry " ++ z
-                                Just a -> Right a
+        walk y zs
+          | null zs = Right y
+          | zs == [[pathSeparator]] = Right y
+          | otherwise = case y of
+              MemoryFile _ -> Left $ "Attempt to look up name " ++ head zs ++ " in file"
+              MemoryDirectory y ->
+                let newentry = case lookup (head zs) y of
+                                  Nothing -> Left $ "Couldn't find entry " ++ head zs
+                                  Just a -> Right a
                 in do newobj <- newentry
-                      walk newobj zs
-        in do
-           c <- readIORef $ content x
-           case walk (MemoryDirectory c) (sliced2) of
-              Left err -> vRaiseError x doesNotExistErrorType err Nothing
-              Right result -> return result
+                      walk newobj (tail zs)
+    in do
+       c <- readIORef $ content x
+       case walk (MemoryDirectory c) (sliced2) of
+         Left err -> vRaiseError x doesNotExistErrorType err Nothing
+         Right result -> return result
 
 -- | Find an element on the tree, normalizing the path first
 getMelem :: MemoryVFS -> String -> IO MemoryEntry

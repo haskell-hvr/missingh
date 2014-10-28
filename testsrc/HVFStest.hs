@@ -16,6 +16,9 @@ import Test.HUnit.Tools
 import System.IO
 import System.IO.Error
 import Control.Exception
+import System.FilePath (pathSeparator)
+
+sep = map (\c -> if c == '/' then pathSeparator else c)
 
 ioeq :: (Show a, Eq a) => a -> IO a -> Assertion
 ioeq exp inp = do x <- inp
@@ -33,7 +36,9 @@ testTree = [("test.txt", MemoryFile "line1\nline2\n"),
            ]
 
 test_nice_slice =
-    let f exp fp = TestLabel fp $ TestCase $ exp @=? nice_slice fp
+    let f exp fp' = TestLabel fp $ TestCase $ exp @=? nice_slice fp
+                     where
+                       fp  = sep fp'
         in [
             f [] "/"
            ,f ["foo", "bar"] "/foo/bar"
@@ -41,11 +46,13 @@ test_nice_slice =
            ]
 
 test_content = 
-    let f exp fp = TestLabel fp $ TestCase $
+    let f exp fp' = TestLabel fp $ TestCase $
                      do x <- newMemoryVFS testTree
                         h <- vOpen x fp ReadMode
                         case h of
                            HVFSOpenEncap h2 -> exp `ioeq` vGetContents h2
+                     where
+                       fp  = sep fp'
         in
         [
          f "line1\nline2\n" "test.txt",
@@ -57,27 +64,27 @@ test_content =
 test_chroot =
     let f msg testfunc = TestLabel msg $ TestCase $ 
                          do x <- newMemoryVFS testTree
-                            vSetCurrentDirectory x "/emptydir"
-                            y <- newHVFSChroot x "/dir1"
+                            vSetCurrentDirectory x (sep "/emptydir")
+                            y <- newHVFSChroot x (sep "/dir1")
                             testfunc y
         in
         [
          f "root" (\x -> ["file3.txt", "test.txt", "dir2"]
-                   `ioeq` vGetDirectoryContents x "/")
-        ,f "cwd" (\x -> "/" `ioeq` vGetCurrentDirectory x)
-        ,f "dir2" (\x -> [] `ioeq` vGetDirectoryContents x "/dir2")
+                   `ioeq` vGetDirectoryContents x (sep "/"))
+        ,f "cwd" (\x -> sep "/" `ioeq` vGetCurrentDirectory x)
+        ,f "dir2" (\x -> [] `ioeq` vGetDirectoryContents x (sep "/dir2"))
         ,f "dot" (\x -> ["file3.txt", "test.txt", "dir2"]
                   `ioeq` vGetDirectoryContents x ".")
         ,f "cwd tests" $
-          (\x -> do a <- vGetDirectoryContents x "/"
+          (\x -> do a <- vGetDirectoryContents x (sep "/")
                     ["file3.txt", "test.txt", "dir2"] @=? a
-                    vSetCurrentDirectory x "/dir2"
+                    vSetCurrentDirectory x (sep "/dir2")
                     cwd <- vGetCurrentDirectory x
-                    "/dir2" @=? cwd
+                    sep "/dir2" @=? cwd
                     y <- vGetDirectoryContents x "."
                     [] @=? y
                     vSetCurrentDirectory x ".."
-                    "/" `ioeq` vGetCurrentDirectory x
+                    sep "/" `ioeq` vGetCurrentDirectory x
                     --vSetCurrentDirectory x ".."
                     --"/" `ioeq` vGetCurrentDirectory x
           )
@@ -92,16 +99,16 @@ test_structure =
         in
         [
          f "root" (\x -> ["test.txt", "file2.txt", "emptydir", "dir1"]
-                         `ioeq` vGetDirectoryContents x "/")
+                         `ioeq` vGetDirectoryContents x (sep ("/")))
         ,f "dot" (\x -> ["test.txt", "file2.txt", "emptydir", "dir1"]
                   `ioeq` vGetDirectoryContents x ".")
         ,f "dot2" (\x -> ["file3.txt", "test.txt", "dir2"]
-                   `ioeq` do vSetCurrentDirectory x "./dir1"
+                   `ioeq` do vSetCurrentDirectory x (sep "./dir1")
                              vGetDirectoryContents x ".")
-        ,f "emptydir" (\x -> [] `ioeq` vGetDirectoryContents x "/emptydir")
+        ,f "emptydir" (\x -> [] `ioeq` vGetDirectoryContents x (sep "/emptydir"))
         ,f "dir1" (\x -> ["file3.txt", "test.txt", "dir2"] `ioeq`
                    vGetDirectoryContents x "/dir1")
-        ,f "dir1/dir2" (\x -> [] `ioeq` vGetDirectoryContents x "/dir1/dir2")
+        ,f (sep "dir1/dir2") (\x -> [] `ioeq` vGetDirectoryContents x (sep "/dir1/dir2"))
         ,f "relative tests" (\x -> 
             do vSetCurrentDirectory x "dir1"
                [] `ioeq` vGetDirectoryContents x "dir2"
