@@ -40,6 +40,7 @@ import Text.Printf
 import System.Time
 import System.Locale
 import System.IO.Unsafe
+import System.FilePath ((</>), pathSeparator)
 
 {- | Obtain a recursive listing of all files\/directories beneath 
 the specified directory.  The traversal is depth-first
@@ -72,7 +73,7 @@ recurseDirStat h fn =
        if withStat fs vIsDirectory 
           then do
                dirc <- vGetDirectoryContents h fn
-               let contents = map ((++) (fn ++ "/")) $ 
+               let contents = map ((++) (fn ++ [pathSeparator])) $ 
                               filter (\x -> x /= "." && x /= "..") dirc
                subdirs <- unsafeInterleaveIO $ mapM (recurseDirStat h) contents
                return $ (concat subdirs) ++ [(fn, fs)]
@@ -127,7 +128,7 @@ lsl fs fp =
                           linkstr <- case vIsSymbolicLink se of
                                        False -> return ""
                                        True -> do sl <- vReadSymbolicLink fh 
-                                                           (origdir ++ "/" ++ fp)
+                                                           (origdir </> fp)
                                                   return $ " -> " ++ sl
                           return $ printf "%c%s  1 %-8d %-8d %-9d %s %s%s" 
                                      typechar
@@ -139,7 +140,7 @@ lsl fs fp =
                                      fp
                                      linkstr
         in do c <- vGetDirectoryContents fs fp
-              pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs (fp ++ "/" ++ x)
+              pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs (fp </> x)
                                       return (ss, x) 
                             ) c
               linedata <- mapM (showentry fp fs) pairs

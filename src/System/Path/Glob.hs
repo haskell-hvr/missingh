@@ -26,7 +26,7 @@ module System.Path.Glob (glob, vGlob)
     where
 import Data.List.Utils (hasAny)
 import System.IO.HVFS
-import System.FilePath (splitFileName)
+import System.FilePath (splitFileName, (</>), pathSeparator, isPathSeparator)
 import Control.Exception (tryJust)
 import System.Path.WildMatch (wildCheckCase)
 import Data.List (isSuffixOf)
@@ -60,27 +60,24 @@ vGlob fs fn =
        else expandGlob fs fn -- It's there
 
 expandGlob :: HVFS a => a -> FilePath -> IO [FilePath]
-expandGlob fs fn =
-    case dirnameslash of
-      "./" -> runGlob fs "." basename
-      "/"  -> do
-              rgs <- runGlob fs "/" basename
-              return $ map ('/' :) rgs
-      _ -> do dirlist <- if hasWild dirname
-                             then expandGlob fs dirname
-                             else return [dirname]
-              if hasWild basename
-                 then do r <- mapM expandWildBase dirlist
-                         return $ concat r
-                 else do r <- mapM expandNormalBase dirlist
-                         return $ concat r
+expandGlob fs fn
+    | dirnameslash == '.':pathSeparator:[] = runGlob fs "." basename
+    | dirnameslash == [pathSeparator] = do
+                        rgs <- runGlob fs [pathSeparator] basename
+                        return $ map (pathSeparator :) rgs
+    | otherwise = do dirlist <- if hasWild dirname
+                                  then expandGlob fs dirname
+                                  else return [dirname]
+                     if hasWild basename
+                       then concat `fmap` mapM expandWildBase dirlist
+                       else concat `fmap` mapM expandNormalBase dirlist
 
     where (dirnameslash, basename) = splitFileName fn
-          dirname = case dirnameslash of
-                      "/" -> "/"
-                      x -> if isSuffixOf "/" x
-                              then take (length x - 1) x
-                              else x
+          dirname = if dirnameslash == [pathSeparator]
+                      then [pathSeparator]
+                      else if isSuffixOf [pathSeparator] dirnameslash
+                              then init dirnameslash
+                              else dirnameslash
 
           expandWildBase :: FilePath -> IO [FilePath]
           expandWildBase dname =
@@ -88,15 +85,15 @@ expandGlob fs fn =
                  return $ map withD dirglobs
                  where withD = case dname of
                                  ""  -> id
-                                 _   -> \globfn -> dname ++ "/" ++ globfn
+                                 _   -> \globfn -> dname ++ [pathSeparator] ++ globfn
 
           expandNormalBase :: FilePath -> IO [FilePath]
           expandNormalBase dname =
               do isdir <- vDoesDirectoryExist fs dname
-                 let newname = dname ++ "/" ++ basename
+                 let newname = dname </> basename
                  isexists <- vDoesExist fs newname
                  if isexists && ((basename /= "." && basename /= "") || isdir)
-                    then return [dname ++ "/" ++ basename]
+                    then return [dname </> basename]
                     else return []
 
 runGlob :: HVFS a => a -> FilePath -> FilePath -> IO [FilePath]

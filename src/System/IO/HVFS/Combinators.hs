@@ -36,6 +36,7 @@ import System.Posix.Files -- This actually needed? -Wall doesn't seem to think
 #endif
 import System.Path (secureAbsNormPath)
 import System.Path.NameManip (normalise_path)
+import System.FilePath ((</>), pathSeparator, isPathSeparator)
 
 ----------------------------------------------------------------------
 -- Providing read-only access
@@ -97,7 +98,7 @@ newHVFSChroot fh fp =
        isdir <- vDoesDirectoryExist fh full
        if isdir
           then do let newobj = (HVFSChroot full fh)
-                  vSetCurrentDirectory newobj "/"
+                  vSetCurrentDirectory newobj [pathSeparator]
                   return newobj
           else vRaiseError fh doesNotExistErrorType
                  ("Attempt to instantiate HVFSChroot over non-directory " ++ full)
@@ -110,10 +111,9 @@ dch (HVFSChroot _ a) = a
 {- | Convert a local (chroot) path to a full path. -}
 dch2fp, fp2dch :: (HVFS t) => HVFSChroot t -> String -> IO String
 dch2fp mainh@(HVFSChroot fp h) locfp =
-    do full <- case (head locfp) of
-                  '/' -> return (fp ++ locfp)
-                  _ -> do y <- getFullPath mainh locfp
-                          return $ fp ++ y
+    do full <- (fp ++) `fmap` if isPathSeparator (head locfp)
+                                then return locfp
+                                else getFullPath mainh locfp
        case secureAbsNormPath fp full of
            Nothing -> vRaiseError h doesNotExistErrorType
                         ("Trouble normalizing path in chroot")
@@ -125,14 +125,14 @@ fp2dch (HVFSChroot fp h) locfp =
     do newpath <- case secureAbsNormPath fp locfp of
                      Nothing -> vRaiseError h doesNotExistErrorType
                                   ("Unable to securely normalize path")
-                                  (Just (fp ++ "/" ++ locfp))
+                                  (Just (fp </> locfp))
                      Just x -> return x
        if (take (length fp) newpath /= fp)
                then vRaiseError h doesNotExistErrorType
                         ("Local path is not subdirectory of parent path")
                         (Just newpath)
                else let newpath2 = drop (length fp) newpath
-                        in return $ normalise_path ("/" ++ newpath2)
+                        in return $ normalise_path ([pathSeparator] ++ newpath2)
 
 dch2fph :: (HVFS t) => (t -> String -> IO t1) -> HVFSChroot t -> [Char] -> IO t1
 dch2fph func fh@(HVFSChroot _ h) locfp =
