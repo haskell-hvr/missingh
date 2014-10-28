@@ -1,4 +1,4 @@
-{- arch-tag: CSV and TSV utilities
+{- arch-tag: CSV utilities
 Copyright (c) 2005-2011 John Goerzen <jgoerzen@complete.org>
 
 All rights reserved.
@@ -22,28 +22,13 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 module Data.CSV (csvFile, genCsvFile) where
 import Text.ParserCombinators.Parsec
-import Data.List (intersperse)
-
-eol :: forall st. GenParser Char st String
-eol = (try $ string "\n\r") <|> (try $ string "\r\n") <|> string "\n" <|>
-      string "\r" <?> "End of line"
+import Data.SeperatingValues.SeperatingValues
 
 cell :: GenParser Char st String
-cell = quotedcell <|> many (noneOf ",\n\r")
-
-quotedchar :: GenParser Char st Char
-quotedchar = noneOf "\""
-             <|> (try $ do string "\"\""
-                           return '"'
-                 )
-quotedcell :: CharParser st String
-quotedcell = do char '"'
-                content <- many quotedchar
-                char '"'
-                return content
+cell = cellOfX ','
 
 line :: GenParser Char st [String]
-line = sepBy cell (char ',')
+line = lineOfX ','
 
 {- | Parse a Comma-Separated Value (CSV) file.  The return value is a list of
 lines; each line is a list of cells; and each cell is a String.
@@ -89,14 +74,4 @@ csvFile = endBy line eol
 {- | Generate CSV data for a file.  The resulting string can be
 written out to disk directly. -}
 genCsvFile :: [[String]] -> String
-genCsvFile inp =
-    unlines . map csvline $ inp
-    where csvline :: [String] -> String
-          csvline l = concat . intersperse "," . map csvcells $ l
-          csvcells :: String -> String
-          csvcells "" = ""
-          csvcells c = '"' : convcell c ++ "\""
-          convcell :: String -> String
-          convcell c = concatMap convchar c
-          convchar '"' = "\"\""
-          convchar x = [x]
+genCsvFile inp = genXsvFile "," inp
