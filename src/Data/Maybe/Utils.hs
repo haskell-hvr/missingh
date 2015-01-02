@@ -15,7 +15,7 @@ For license and copyright information, see the file LICENSE
    Stability  : provisional
    Portability: portable
 
-Utilities for working with the Either data type
+Utilities for working with the Maybe data type
 
 -}
 module Data.Maybe.Utils

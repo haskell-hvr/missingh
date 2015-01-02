@@ -11,11 +11,11 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    License    : BSD3
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
-This module provides various helpful utilities for dealing with lists.
+This module provides various helpful utilities for dealing with tuples.
 
 Written by Neil Mitchell, <http://www.cs.york.ac.uk/~ndm/>
 -}
