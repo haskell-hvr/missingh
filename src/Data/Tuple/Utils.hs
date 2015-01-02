@@ -22,7 +22,8 @@ Written by Neil Mitchell, <http://www.cs.york.ac.uk/~ndm/>
 
 module Data.Tuple.Utils(
     -- * Extraction
-    fst3, snd3, thd3
+    fst3, snd3, thd3,
+    dupl
     ) where
 
 
@@ -37,3 +38,7 @@ snd3 (a,b,c) = b
 -- | Take the third item out of a 3 element tuple
 thd3 :: (a,b,c) -> c
 thd3 (a,b,c) = c
+
+-- | Create a two-tuple containing the argument twice
+dupl :: a -> (a,a)
+dupl a = (a,a)
