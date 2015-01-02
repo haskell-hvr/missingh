@@ -217,25 +217,6 @@ Examples:
 genericJoin :: Show a => String -> [a] -> String
 genericJoin delim l = join delim (map show l)
 
-{-# DEPRECATED contains "Use Data.List.isInfixOf, will be removed in MissingH 1.1.0" #-}
-{- | Returns true if the given parameter is a sublist of the given list;
-false otherwise.
-
-Example:
-
-> contains "Haskell" "I really like Haskell." -> True
-> contains "Haskell" "OCaml is great." -> False
-
-This function was submitted to GHC and was applied as
-'Data.List.isInfixOf'.  This function therefore is deprecated and will
-be removed in future versions.
--}
-
-contains :: Eq a => [a] -> [a] -> Bool
-contains = isInfixOf
-
--- above function submitted to GHC as Data.List.isInfixOf on 8/31/2006
-
 {- | Adds the specified (key, value) pair to the given list, removing any
 existing pair with the same key already present. -}
 addToAL :: Eq key => [(key, elt)] -> key -> elt -> [(key, elt)]
