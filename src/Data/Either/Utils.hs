@@ -24,7 +24,7 @@ module Data.Either.Utils
      forceEither,
      forceEitherMsg,
      eitherToMonadError,
-     fromLeft, fromRight, fromEither
+     fromLeft, fromRight, fromEither, fromBoolEither
 ) where
 import Control.Monad.Error
 
@@ -78,3 +78,9 @@ fromEither :: Either a a -> a
 fromEither (Left a) = a
 fromEither (Right a) = a
 
+-- | Returns an Either given a Bool and two values
+fromBoolEither :: Bool -> a -> b -> Either a b
+fromBoolEither bool a b =
+  case bool of
+    True  -> Right b
+    False -> Left a
