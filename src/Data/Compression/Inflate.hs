@@ -1,3 +1,4 @@
+{-# LANGUAGE Safe #-}
 -- arch-tag: Inflate implementation for Haskell
 
 {-
