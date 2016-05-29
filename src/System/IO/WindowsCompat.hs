@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE Safe #-}
 {- Windows compatibility layer
 Copyright (c) 2005-2011 John Goerzen <jgoerzen@complete.org>
 

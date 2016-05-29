@@ -1,3 +1,4 @@
+{-# LANGUAGE Safe #-}
 -- arch-tag: CRC32 implementation in pure Haskell
 -- from http://cvs.sourceforge.net/viewcvs.py/haskell-libs/libs/crypto/crc32.hs
 --

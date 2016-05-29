@@ -1,3 +1,4 @@
+{-# LANGUAGE Safe #-}
 {- |
    Module      : System.Time.ParseDate
    Copyright   : (c) by Björn Bringert
