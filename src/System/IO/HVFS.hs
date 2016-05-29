@@ -61,7 +61,7 @@ import System.IO.Error
 import System.IO.PlafCompat
 import System.Posix.Types
 import System.Time
-import System.Directory
+import System.Directory hiding (isSymbolicLink)
 
 #if MIN_VERSION_directory(1,2,0)
 import Data.Time.Clock.POSIX ( utcTimeToPOSIXSeconds )
