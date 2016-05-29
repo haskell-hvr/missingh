@@ -1,5 +1,5 @@
 Name: MissingH
-Version: 1.3.0.2
+Version: 1.4.0.0
 License: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -59,14 +59,14 @@ Library
   Data.Quantity,
   Data.Map.Utils, System.Path, System.Path.NameManip,
     System.Path.WildMatch, System.Path.Glob,
-  System.Time.Utils, System.Time.ParseDate,
+  System.Time.Utils,
   Network.Utils,
   Network.SocketServer,
   Data.Either.Utils,
   Data.Maybe.Utils,
   Data.Tuple.Utils,
   Data.Bits.Utils,
-  Data.Hash.CRC32.Posix, Data.Hash.CRC32.GZip,
+  Data.Hash.CRC32.GZip,
    Data.Hash.MD5, Data.Hash.MD5.Zord64_HARD,
   Data.Compression.Inflate,
   System.FileArchive.GZip,
@@ -118,7 +118,6 @@ test-suite runtests
   HS-Source-Dirs: testsrc, ., src
   Other-Modules: Bitstest,
     CRC32GZIPtest,
-    CRC32POSIXtest,
     Eithertest,
     GZiptest,
     Globtest,
