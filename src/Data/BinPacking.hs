@@ -69,7 +69,7 @@ same size.  Any surplus bins will simply be ignored.
 > [(size, obj)] is the sizes and objects
 > result is Either error or results
 -}
-type BinPacker = (Num size, Ord size, Show size, Show obj) => 
+type BinPacker = forall size obj. (Num size, Ord size, Show size, Show obj) => 
                   [size]        -- The sizes of bins
                -> [(size, obj)] -- The sizes and objects
                -> Either (BinPackerError size obj) [[(size, obj)]] -- Either error or results

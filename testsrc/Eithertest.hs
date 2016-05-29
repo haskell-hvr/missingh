@@ -30,7 +30,8 @@ test_forceEither =
     let f msg inp exp = TestLabel msg $ TestCase $ assertEqual "" exp inp in
     [
      f "Right" (forceEither ((Right "foo")::Either Int String)) "foo",
-     TestLabel "Left" $ TestCase $ assertRaises "" (ErrorCall "\"wrong\"")
+     TestLabel "Left" $ TestCase $ assertRaises ""
+       (ErrorCallWithLocation "\"wrong\"" "CallStack (from HasCallStack):\n  error, called at src/Data/Either/Utils.hs:51:24 in main:Data.Either.Utils")
            ("" @=? forceEither (Left "wrong"))
     ]
 
