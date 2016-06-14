@@ -86,7 +86,7 @@ Library
                mtl, HUnit, regex-compat,
                filepath,
                hslogger,
-               base >= 4, base < 5, directory, random, process, old-time,
+               base >= 4.5, base < 5, directory, random, process, old-time,
                            containers, old-locale, array, time
  If ! os(windows)
    Build-Depends: unix
@@ -99,7 +99,7 @@ test-suite runtests
                errorcall-eq-instance,
                filepath,
                hslogger,
-               base >= 4, base < 5, directory, random, process, old-time,
+               base >= 4.5, base < 5, directory, random, process, old-time,
                          containers, old-locale, array, time
   If ! os(windows)
    Build-Depends: unix
