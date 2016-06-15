@@ -39,9 +39,6 @@ Stability: Beta
 Build-Type: Simple
 Cabal-Version: >=1.8
 
-Flag splitBase
-  description: Choose the new smaller, split-up base package.
-
 Library
  Hs-Source-Dirs: src
  Exposed-Modules:
@@ -88,12 +85,9 @@ Library
  Build-Depends: network, parsec, base,
                mtl, HUnit, regex-compat,
                filepath,
-               hslogger
- If flag(splitBase)
-   Build-Depends: base >= 4, base < 5, directory, random, process, old-time,
-                             containers, old-locale, array, time
- Else
-   Build-Depends: base < 3
+               hslogger,
+               base >= 4.5, base < 5, directory, random, process, old-time,
+                           containers, old-locale, array, time
  If ! os(windows)
    Build-Depends: unix
 
@@ -104,12 +98,9 @@ test-suite runtests
                mtl, HUnit, regex-compat,
                errorcall-eq-instance,
                filepath,
-               hslogger
-  If flag(splitBase)
-   Build-Depends: base >= 4, base < 5, directory, random, process, old-time,
-                             containers, old-locale, array, time
-  Else
-   Build-Depends: base < 3
+               hslogger,
+               base >= 4.5, base < 5, directory, random, process, old-time,
+                         containers, old-locale, array, time
   If ! os(windows)
    Build-Depends: unix
   Build-Depends: testpack, QuickCheck, HUnit

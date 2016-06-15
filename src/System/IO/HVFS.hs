@@ -12,7 +12,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    License    : BSD3
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -41,7 +41,7 @@ to standard Handles.
 -}
 
 module System.IO.HVFS(-- * Implementation Classes \/ Types
-                        HVFS(..), HVFSStat(..), 
+                        HVFS(..), HVFSStat(..),
                         HVFSOpenable(..), HVFSOpenEncap(..),HVFSStatEncap(..),
                         withStat, withOpen,
                         SystemFS(..),
@@ -60,7 +60,7 @@ import System.IO.Error
 import System.IO.PlafCompat
 import System.Posix.Types
 import System.Time
-import System.Directory hiding (isSymbolicLink)
+import qualified System.Directory as D
 
 #if MIN_VERSION_directory(1,2,0)
 import Data.Time.Clock.POSIX ( utcTimeToPOSIXSeconds )
@@ -75,11 +75,11 @@ typing restrictions.  You can get at it with:
 data HVFSStatEncap = forall a. HVFSStat a => HVFSStatEncap a
 
 {- | Convenience function for working with stat -- takes a stat result
-and a function that uses it, and returns the result. 
+and a function that uses it, and returns the result.
 
 Here is an example from the HVFS source:
 
->    vGetModificationTime fs fp = 
+>    vGetModificationTime fs fp =
 >       do s <- vGetFileStatus fs fp
 >          return $ epochToClockTime (withStat s vModificationTime)
 
@@ -204,7 +204,7 @@ class (Show a) => HVFS a where
     vReadSymbolicLink :: a -> FilePath -> IO FilePath
     vCreateLink :: a -> FilePath -> FilePath -> IO ()
 
-    vGetModificationTime fs fp = 
+    vGetModificationTime fs fp =
         do s <- vGetFileStatus fs fp
            return $ epochToClockTime (withStat s vModificationTime)
     vRaiseError _ et desc mfp =
@@ -213,11 +213,11 @@ class (Show a) => HVFS a where
     vGetCurrentDirectory fs = eh fs "vGetCurrentDirectory"
     vSetCurrentDirectory fs _ = eh fs "vSetCurrentDirectory"
     vGetDirectoryContents fs _ = eh fs "vGetDirectoryContents"
-    vDoesFileExist fs fp = 
+    vDoesFileExist fs fp =
         Control.Exception.catch (do s <- vGetFileStatus fs fp
                                     return $ withStat s vIsRegularFile
               ) (\(_ :: Control.Exception.IOException) -> return False)
-    vDoesDirectoryExist fs fp = 
+    vDoesDirectoryExist fs fp =
         Control.Exception.catch (do s <- vGetFileStatus fs fp
                                     return $ withStat s vIsDirectory
               ) (\(_ :: Control.Exception.IOException) -> return False)
@@ -237,7 +237,7 @@ class (Show a) => HVFS a where
 
 -- | Error handler helper
 eh :: HVFS a => a -> String -> IO c
-eh fs desc = vRaiseError fs illegalOperationErrorType 
+eh fs desc = vRaiseError fs illegalOperationErrorType
              (desc ++ " is not implemented in this HVFS class") Nothing
 
 {- | Types that can open a HVIO object should be instances of this class.
@@ -249,7 +249,7 @@ class HVFS a => HVFSOpenable a where
     vWriteFile :: a -> FilePath -> String -> IO ()
     vOpenBinaryFile :: a -> FilePath -> IOMode -> IO HVFSOpenEncap
 
-    vReadFile h fp = 
+    vReadFile h fp =
         do oe <- vOpen h fp ReadMode
            withOpen oe (\fh -> vGetContents fh)
 
@@ -291,16 +291,16 @@ data SystemFS = SystemFS
               deriving (Eq, Show)
 
 instance HVFS SystemFS where
-    vGetCurrentDirectory _ = getCurrentDirectory
-    vSetCurrentDirectory _ = setCurrentDirectory
-    vGetDirectoryContents _ = getDirectoryContents
-    vDoesFileExist _ = doesFileExist
-    vDoesDirectoryExist _ = doesDirectoryExist
-    vCreateDirectory _ = createDirectory
-    vRemoveDirectory _ = removeDirectory
-    vRenameDirectory _ = renameDirectory
-    vRemoveFile _ = removeFile
-    vRenameFile _ = renameFile
+    vGetCurrentDirectory _ = D.getCurrentDirectory
+    vSetCurrentDirectory _ = D.setCurrentDirectory
+    vGetDirectoryContents _ = D.getDirectoryContents
+    vDoesFileExist _ = D.doesFileExist
+    vDoesDirectoryExist _ = D.doesDirectoryExist
+    vCreateDirectory _ = D.createDirectory
+    vRemoveDirectory _ = D.removeDirectory
+    vRenameDirectory _ = D.renameDirectory
+    vRemoveFile _ = D.removeFile
+    vRenameFile _ = D.renameFile
     vGetFileStatus _ fp = getFileStatus fp >>= return . HVFSStatEncap
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
     vGetSymbolicLinkStatus _ fp = getSymbolicLinkStatus fp >>= return . HVFSStatEncap
@@ -310,9 +310,9 @@ instance HVFS SystemFS where
 #endif
 
 #if MIN_VERSION_directory(1,2,0)
-    vGetModificationTime _ p = getModificationTime p >>= (\modUTCTime -> return $ TOD ((toEnum . fromEnum . utcTimeToPOSIXSeconds) modUTCTime) 0)
+    vGetModificationTime _ p = D.getModificationTime p >>= (\modUTCTime -> return $ TOD ((toEnum . fromEnum . utcTimeToPOSIXSeconds) modUTCTime) 0)
 #else
-    vGetModificationTime _ = getModificationTime
+    vGetModificationTime _ = D.getModificationTime
 #endif
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
     vCreateSymbolicLink _ = createSymbolicLink
@@ -327,4 +327,3 @@ instance HVFS SystemFS where
 instance HVFSOpenable SystemFS where
     vOpen _ fp iomode = openFile fp iomode >>= return . HVFSOpenEncap
     vOpenBinaryFile _ fp iomode = openBinaryFile fp iomode >>= return . HVFSOpenEncap
-
