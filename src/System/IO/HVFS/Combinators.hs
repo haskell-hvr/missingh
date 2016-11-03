@@ -108,16 +108,16 @@ newHVFSChroot fh fp =
 dch :: (HVFS t) => HVFSChroot t -> t
 dch (HVFSChroot _ a) = a
 
-{- | Convert a local (chroot) path to a full path. -}
+{- | Convert a local (chroot) path to a full path. If the provided path is
+not a subdirectory of the chrooted directory then the root of the chrooted
+dir will be returned. -}
 dch2fp, fp2dch :: (HVFS t) => HVFSChroot t -> String -> IO String
 dch2fp mainh@(HVFSChroot fp h) locfp =
     do full <- (fp ++) `fmap` if isPathSeparator (head locfp)
                                 then return locfp
                                 else getFullPath mainh locfp
        case secureAbsNormPath fp full of
-           Nothing -> vRaiseError h doesNotExistErrorType
-                        ("Trouble normalizing path in chroot")
-                        (Just (fp ++ "," ++ full))
+           Nothing -> return fp
            Just x -> return x
 
 {- | Convert a full path to a local (chroot) path. -}
