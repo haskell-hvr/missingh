@@ -99,6 +99,7 @@ maybeRead :: Read a => String -> Maybe a
 maybeRead = fmap fst . listToMaybe . reads
 
 
+-- | Convert a String to title case (upper case the first letter in every word.)
 toTitle :: String -> String
 toTitle = go True
   where
