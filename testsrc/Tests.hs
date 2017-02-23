@@ -26,6 +26,7 @@ import qualified Str.CSVtest
 import qualified WildMatchtest
 import qualified Globtest
 import qualified ProgressTrackertest
+import qualified Sequencetest
 
 test1 = TestCase ("x" @=? "x")
 
@@ -46,6 +47,5 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "Eithertest" Eithertest.tests,
                  TestLabel "CRC32POSIXtest" CRC32POSIXtest.tests,
                  TestLabel "CRC32GZIPtest" CRC32GZIPtest.tests,
-                 TestLabel "GZiptest" GZiptest.tests]
-
-
+                 TestLabel "GZiptest" GZiptest.tests,
+                 TestLabel "Sequence" Sequencetest.tests]
