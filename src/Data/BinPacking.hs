@@ -99,8 +99,7 @@ and keep packing the largest object from the remainder until no object can
 be found to put in the bin.  This is substantially more efficient than
 'packByOrder', but requires sorting the input. -}
 packLargeFirst :: BinPacker
-packLargeFirst bins sizes = packLargeFirst' bins (sortBy fstSort sizes)
-    where fstSort a b = compare (fst a) (fst b)
+packLargeFirst bins sizes = packLargeFirst' bins (sortOn fst sizes)
 
 packLargeFirst' :: BinPacker
 packLargeFirst' _ [] = Right []                     -- Ran out of sizes
