@@ -50,7 +50,7 @@ line = sepBy cell (char ',')
 lines; each line is a list of cells; and each cell is a String.
 
 Please note that CSV files may have a different number of cells on each line.
-Also, it is impossible to distinguish a CSV line that has a call with no data
+Also, it is impossible to distinguish a CSV line that has a cell with no data
 from a CSV line that has no cells.
 
 Here are some examples:
