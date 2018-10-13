@@ -186,8 +186,10 @@ get_w32 i = do bs <- get_bits i
                return (bits_to_word32 bs)
 
 get_bit :: InfM Bit
-get_bit = do [x] <- get_bits 1
-             return x
+get_bit = do res <- get_bits 1
+             case res of
+                 _ -> error $ "get_bit: expected exactly one bit"
+                 [x] -> return x
 
 {-
 \section{Inflate itself}
@@ -205,24 +207,27 @@ inflate is = extract_InfM $ do set_bits $ concatMap int_to_bits is
 inflate_blocks :: Bool -> InfM Output
 inflate_blocks True = return []
 inflate_blocks False
-     = do [Bit is_last, Bit t1, Bit t2] <- get_bits 3
-          case (t1, t2) of
-              (False, False) ->
-                  do align_8_bits
-                     len <- get_w32 16
-                     nlen <- get_w32 16
-                     unless (len + nlen == 2^(32 :: Int) - 1)
-                        $ error "inflate_blocks: Mismatched lengths"
-                     ws <- get_word32s 8 len
-                     mapM_ output_w32 ws
-                     return ws
-              (True, False) ->
-                  inflate_codes is_last inflate_trees_fixed
-              (False, True) ->
-                  do tables <- inflate_tables
-                     inflate_codes is_last tables
-              (True, True) ->
-                  error ("inflate_blocks: case 11 reserved")
+     = do res <- get_bits 3
+          case res of
+              [Bit is_last, Bit t1, Bit t2] ->
+                  case (t1, t2) of
+                      (False, False) ->
+                          do align_8_bits
+                             len <- get_w32 16
+                             nlen <- get_w32 16
+                             unless (len + nlen == 2^(32 :: Int) - 1)
+                                $ error "inflate_blocks: Mismatched lengths"
+                             ws <- get_word32s 8 len
+                             mapM_ output_w32 ws
+                             return ws
+                      (True, False) ->
+                          inflate_codes is_last inflate_trees_fixed
+                      (False, True) ->
+                          do tables <- inflate_tables
+                             inflate_codes is_last tables
+                      (True, True) ->
+                          error ("inflate_blocks: case 11 reserved")
+              _ -> error ("inflate_blocks: expected 3 bits")
 
 inflate_tables :: InfM Tables
 inflate_tables
