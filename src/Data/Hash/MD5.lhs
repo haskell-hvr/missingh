@@ -1,3 +1,5 @@
+> {-# LANGUAGE CPP #-}
+
 >{- |
 >   Module     : Data.Hash.MD5
 >   Copyright  : Copyright (C) 2001 Ian Lynagh 

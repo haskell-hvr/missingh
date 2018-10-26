@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 {- 
 Copyright (C) 2006-2011 John Goerzen <jgoerzen@complete.org>
 

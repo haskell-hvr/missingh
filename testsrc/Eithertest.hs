@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 {- arch-tag: Data.Either.Utils tests
 Copyright (C) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
