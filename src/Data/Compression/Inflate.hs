@@ -188,8 +188,8 @@ get_w32 i = do bs <- get_bits i
 get_bit :: InfM Bit
 get_bit = do res <- get_bits 1
              case res of
-                 _ -> error $ "get_bit: expected exactly one bit"
                  [x] -> return x
+                 _ -> error $ "get_bit: expected exactly one bit"
 
 {-
 \section{Inflate itself}
