@@ -33,7 +33,12 @@ test_forceEither =
     [
      f "Right" (forceEither ((Right "foo")::Either Int String)) "foo",
      TestLabel "Left" $ TestCase $ assertRaises ""
-       (ErrorCallWithLocation "\"wrong\"" "CallStack (from HasCallStack):\n  error, called at src/Data/Either/Utils.hs:51:24 in main:Data.Either.Utils")
+#if MIN_VERSION_base(4,9,0)
+    -- FIXME: too fragile
+       (ErrorCallWithLocation "\"wrong\"" "CallStack (from HasCallStack):\n  error, called at src/Data/Either/Utils.hs:52:24 in MissingH-1.4.1.1-inplace:Data.Either.Utils")
+#else
+       (ErrorCall "\"wrong\"")
+#endif
            ("" @=? forceEither (Left "wrong"))
     ]
 
