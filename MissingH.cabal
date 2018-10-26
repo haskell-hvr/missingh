@@ -16,8 +16,10 @@ description:
   programmers.  It is written in pure Haskell and thus should be
   extremely portable and easy to use.
 category: Unclassified
+bug-reports: https://github.com/hvr/missingh/issues
 
 extra-source-files:
+  CHANGES.md
   LICENSE
   announcements/0.10.0.txt
   announcements/0.8.0.txt
