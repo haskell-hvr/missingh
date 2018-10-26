@@ -36,7 +36,8 @@ module Data.String.Utils
                        ) where
 
 import Data.List.Utils (startswith, endswith, join, split, replace)
-import Data.Char (isAlpha, isAscii, isDigit)
+import Data.Char (isAlpha, isAscii, isDigit, isLetter)
+import qualified Data.Char as C
 import Data.Maybe (listToMaybe)
 import Text.Regex (mkRegex, splitRegex)
 
@@ -96,3 +97,15 @@ escapeRe (x:xs)
 -- | Attempts to parse a value from the front of the string.
 maybeRead :: Read a => String -> Maybe a
 maybeRead = fmap fst . listToMaybe . reads
+
+
+-- | Convert a String to title case (upper case the first letter in every word.)
+toTitle :: String -> String
+toTitle = go True
+  where
+    go _ [] = []
+    go convert (x:xs)
+        | convert && letter = C.toTitle x : go False xs
+        | letter = x : go False xs
+        | otherwise = x : go True xs
+      where letter = isLetter x

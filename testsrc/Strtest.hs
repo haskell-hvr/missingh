@@ -52,6 +52,17 @@ test_splitWs =
            ]
 
 
+test_toTitle = 
+    mapassertEqual "toTitle" toTitle
+                   [ ("", "")
+                   , ("a", "A")
+                   , ("2", "2")
+                   , ("  ", "  ")
+                   , ("eerg  ro", "Eerg  Ro")
+                   , ("asdf\t  5fert", "Asdf\t  5Fert")
+                   ]
+
+
 test_escapeRe =
     map (\i -> TestLabel (show $ chr i) $ TestCase $ assertEqual [chr i] (Just []) 
                 (matchRegex (mkRegex $ escapeRe $ [chr i]) [chr i]))
@@ -67,7 +78,8 @@ tests = TestList [TestLabel "lstrip" (TestList test_lstrip),
                   TestLabel "rstrip" $ TestList test_rstrip,
                   TestLabel "strip" $ TestList test_strip,
                   TestLabel "splitWs" $ TestList test_splitWs,
-                  TestLabel "escapeRe" $ TestList test_escapeRe
+                  TestLabel "escapeRe" $ TestList test_escapeRe,
+                  TestLabel "toTitle" $ TestList test_toTitle
                   ]
 
 
