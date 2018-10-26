@@ -2,9 +2,8 @@
 {- |
    Module     : System.Path.NameManip
    Copyright  : Copyright (C) 2004 Volker Wysk
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -15,9 +14,9 @@ Written by Volker Wysk
 
 module System.Path.NameManip where
 
-import Data.List (intercalate, unfoldr)
-import System.Directory (getCurrentDirectory)
-import System.FilePath ((</>), pathSeparator, isPathSeparator)
+import           Data.List        (intercalate, unfoldr)
+import           System.Directory (getCurrentDirectory)
+import           System.FilePath  (isPathSeparator, pathSeparator, (</>))
 
 {- | Split a path in components. Repeated \"@\/@\" characters don\'t lead to empty
 components. \"@.@\" path components are removed. If the path is absolute, the first component
@@ -42,7 +41,7 @@ slice_path :: String    -- ^ The path to be broken to components.
 slice_path "" = []
 slice_path (c:cs) = if isPathSeparator c
                        then case slice_path' cs of
-                           [] -> [[c]]
+                           []     -> [[c]]
                            (p:ps) -> (c:p):ps
                        else slice_path' (c:cs)
     where

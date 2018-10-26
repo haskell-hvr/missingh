@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.Daemon
    Copyright  : Copyright (C) 2005-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable to platforms with POSIX process\/signal tools
 
@@ -41,11 +40,11 @@ module System.Daemon (
                        where
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 
-import System.Posix.Process
-import System.Posix.IO
-import System.Directory
-import System.Log.Logger
-import System.Exit
+import           System.Directory
+import           System.Exit
+import           System.Log.Logger
+import           System.Posix.IO
+import           System.Posix.Process
 
 
 trap :: IO a -> IO a

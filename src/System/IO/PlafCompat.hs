@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP  #-}
 {-# LANGUAGE Safe #-}
 {- Platform Compatibility Layer
 Copyright (c) 2005-2011 John Goerzen <jgoerzen@complete.org>
@@ -11,9 +11,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.IO.PlafCompat
    Copyright  : Copyright (C) 2005-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
@@ -35,11 +34,11 @@ module System.IO.PlafCompat
      module System.Posix.Types)
 where
 
-import System.Posix.Types
+import           System.Posix.Types
 #if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-import System.IO.WindowsCompat
+import           System.IO.WindowsCompat
 #else
-import System.Posix.Files
+import           System.Posix.Files
 #endif
 
 {- | The name of the null device.  NUL: on Windows, \/dev\/null everywhere else.

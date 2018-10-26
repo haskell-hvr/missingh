@@ -12,9 +12,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.IO.HVIO
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -122,14 +121,14 @@ module System.IO.HVIO(-- * Implementation Classes
                     )
 where
 
-import System.IO
-import System.IO.Error
-import qualified Control.Exception (catch, IOException)
-import Control.Concurrent.MVar
-import Data.IORef
-import Foreign.Ptr
-import Foreign.C
-import Foreign.Storable
+import           Control.Concurrent.MVar
+import qualified Control.Exception       (IOException, catch)
+import           Data.IORef
+import           Foreign.C
+import           Foreign.Ptr
+import           Foreign.Storable
+import           System.IO
+import           System.IO.Error
 
 {- | This is the generic I\/O support class.  All objects that are to be used
 in the HVIO system must provide an instance of 'HVIO'.
@@ -288,7 +287,7 @@ class (Show a) => HVIO a where
                 let func = do c <- vGetChar h
                               case c of
                                      '\n' -> return accum
-                                     x -> accum `seq` loop (accum ++ [x])
+                                     x    -> accum `seq` loop (accum ++ [x])
                     handler e = if isEOFError e then return accum
                                 else ioError e
                     in Control.Exception.catch func handler
@@ -296,7 +295,7 @@ class (Show a) => HVIO a where
             do firstchar <- vGetChar h
                case firstchar of
                    '\n' -> return []
-                   x -> loop [x]
+                   x    -> loop [x]
 
     vGetContents h =
         let loop =
@@ -436,7 +435,7 @@ instance HVIO StreamReader where
                   d <- vioc_get (srv h)
                   return $ case d of
                                   [] -> True
-                                  _ -> False
+                                  _  -> False
     vIsOpen = vioc_isopen . srv
     vGetChar h = do vTestEOF h
                     c <- vioc_get (srv h)
@@ -544,7 +543,7 @@ instance HVIO MemoryBuffer where
            let newpos = case seekmode of
                              AbsoluteSeek -> seekpos
                              RelativeSeek -> pos + seekpos
-                             SeekFromEnd -> (length buf) + seekpos
+                             SeekFromEnd  -> (length buf) + seekpos
            let buf2 = buf ++ if newpos > (length buf)
                                 then replicate (newpos - (length buf)) '\0'
                                 else []

@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Network.SocketServer
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : experimental
    Portability: systems with networking
 
@@ -44,21 +43,21 @@ module Network.SocketServer(-- * Generic Options and Types
                                      handleHandler
                                     )
 where
-import Network.Socket
-import Network.BSD
-import Network.Utils
-import Control.Concurrent
-import System.IO
+import           Control.Concurrent
+import           Network.BSD
+import           Network.Socket
+import           Network.Utils
+import           System.IO
 import qualified System.Log.Logger
 
 {- | Options for your server. -}
 data InetServerOptions  = InetServerOptions {listenQueueSize :: Int,
-                                             portNumber :: PortNumber,
-                                             interface :: HostAddress,
-                                             reuse :: Bool,
-                                             family :: Family,
-                                             sockType :: SocketType,
-                                             protoStr :: String
+                                             portNumber      :: PortNumber,
+                                             interface       :: HostAddress,
+                                             reuse           :: Bool,
+                                             family          :: Family,
+                                             sockType        :: SocketType,
+                                             protoStr        :: String
                                             }
     deriving (Eq, Show)
 
@@ -71,7 +70,7 @@ The second is the address of the remote endpoint.
 The third is the address of the local endpoint.
 -}
 type HandlerT = Socket -> SockAddr -> SockAddr -> IO ()
-                     
+
 {- | Get Default options.  You can always modify it later. -}
 simpleTCPOptions :: Int                -- ^ Port Number
                  -> InetServerOptions
@@ -85,7 +84,7 @@ simpleTCPOptions p = InetServerOptions {listenQueueSize = 5,
                                        }
 
 data SocketServer = SocketServer {optionsSS :: InetServerOptions,
-                                  sockSS :: Socket}
+                                  sockSS    :: Socket}
                   deriving (Eq, Show)
 
 {- | Takes some options and sets up the 'SocketServer'.  I will bind
@@ -95,7 +94,7 @@ setupSocketServer opts =
     do proto <- getProtocolNumber (protoStr opts)
        s <- socket (family opts) (sockType opts) proto
        setSocketOption s ReuseAddr (case (reuse opts) of
-                                    True -> 1
+                                    True  -> 1
                                     False -> 0)
        bindSocket s (SockAddrInet (portNumber opts)
                      (interface opts))
@@ -107,7 +106,7 @@ handlers, if any. -}
 closeSocketServer :: SocketServer -> IO ()
 closeSocketServer ss =
     sClose (sockSS ss)
-       
+
 {- | Handle one incoming request from the given 'SocketServer'. -}
 handleOne :: SocketServer -> HandlerT -> IO ()
 handleOne ss func =
@@ -115,7 +114,7 @@ handleOne ss func =
         in    do a <- accept (sockSS ss)
                  localaddr <- getSocketName (fst a)
                  func (fst a) (snd a) localaddr
-    
+
 {- | Handle all incoming requests from the given 'SocketServer'. -}
 serveForever :: SocketServer -> HandlerT -> IO ()
 serveForever ss func =
@@ -132,7 +131,7 @@ This function is literally this:
  -}
 serveTCPforever :: InetServerOptions     -- ^ Server options
                 -> HandlerT              -- ^ Handler function
-                -> IO ()                
+                -> IO ()
 serveTCPforever options func =
     do sockserv <- setupSocketServer options
        serveForever sockserv func
@@ -152,16 +151,16 @@ loggingHandler :: String                -- ^ Name of logger to use
                -> System.Log.Logger.Priority -- ^ Priority of logged messages
                -> HandlerT              -- ^ Handler to call after logging
                -> HandlerT              -- ^ Resulting handler
-loggingHandler hname prio nexth socket r_sockaddr l_sockaddr = 
+loggingHandler hname prio nexth socket r_sockaddr l_sockaddr =
     do sockStr <- showSockAddr r_sockaddr
-       System.Log.Logger.logM hname prio 
+       System.Log.Logger.logM hname prio
                    ("Received connection from " ++ sockStr)
-       System.Log.Logger.traplogging hname 
-               System.Log.Logger.WARNING "" (nexth socket r_sockaddr 
+       System.Log.Logger.traplogging hname
+               System.Log.Logger.WARNING "" (nexth socket r_sockaddr
                                                    l_sockaddr)
        System.Log.Logger.logM hname prio
                    ("Connection " ++ sockStr ++ " disconnected")
-       
+
 
 -- | Handle each incoming connection in its own thread to
 -- make the server multi-tasking.
@@ -182,7 +181,7 @@ handler.
 -}
 handleHandler :: (Handle -> SockAddr -> SockAddr -> IO ())      -- ^ Handler to call
               -> HandlerT
-handleHandler func socket r_sockaddr l_sockaddr = 
+handleHandler func socket r_sockaddr l_sockaddr =
     do h <- socketToHandle socket ReadWriteMode
        hSetBuffering h LineBuffering
        func h r_sockaddr l_sockaddr

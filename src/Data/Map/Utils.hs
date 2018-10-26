@@ -1,5 +1,5 @@
 {-# LANGUAGE Safe #-}
-{- 
+{-
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
 All rights reserved.
@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Data.Map.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
@@ -29,8 +28,8 @@ module Data.Map.Utils (-- * Basic Utilities
                           )
 where
 
+import           Data.List.Utils (flipAL, strFromAL, strToAL)
 import qualified Data.Map
-import Data.List.Utils(flipAL, strToAL, strFromAL)
 
 {- | Converts a String, String Map into a string representation.
 See 'Data.List.Utils.strFromAL' for more on the similar function for
@@ -71,7 +70,7 @@ flippedLookupM :: (Ord val, Ord key) => val -> Data.Map.Map key val -> [key]
 flippedLookupM v fm =
     case Data.Map.lookup v (flipM fm) of
                              Nothing -> []
-                             Just x -> x
+                             Just x  -> x
 
 {- | Performs a lookup, and raises an exception (with an error message
 prepended with the given string) if the key could not be found.
@@ -80,5 +79,5 @@ forceLookupM :: (Show key, Ord key) => String -> key ->
                                        Data.Map.Map key elt -> elt
 forceLookupM msg k fm =
     case Data.Map.lookup k fm of
-         Just x -> x
+         Just x  -> x
          Nothing -> error $ msg ++ ": could not find key " ++ (show k)

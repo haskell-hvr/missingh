@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.Path
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -31,21 +30,21 @@ module System.Path(-- * Name processing
                      mktmpdir, brackettmpdir, brackettmpdirCWD
                     )
 where
-import Data.List
-import Data.List.Utils
+import           Data.List
+import           Data.List.Utils
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-import System.Posix.Files
-import System.Posix.Directory (createDirectory)
-import System.Posix.Temp
-import System.Directory hiding (createDirectory)
+import           System.Directory       hiding (createDirectory)
+import           System.Posix.Directory (createDirectory)
+import           System.Posix.Files
+import           System.Posix.Temp
 #else
-import System.Directory
+import           System.Directory
 #endif
-import System.FilePath ((</>), pathSeparator, isPathSeparator)
-import Control.Exception
-import System.IO
-import System.Path.NameManip
-import System.IO.HVFS.Utils
+import           Control.Exception
+import           System.FilePath        (isPathSeparator, pathSeparator, (</>))
+import           System.IO
+import           System.IO.HVFS.Utils
+import           System.Path.NameManip
 
 {- | Splits a pathname into a tuple representing the root of the name and
 the extension.  The extension is considered to be all characters from the last
@@ -79,7 +78,7 @@ absNormPath base thepath =
     let abs = absolute_path_by base thepath
         in case guess_dotdot (normalise_path abs) of
                 Just "." -> Just [pathSeparator]
-                x -> x
+                x        -> x
 
 {- | Like absNormPath, but returns Nothing if the generated result is not
 the passed base path or a subdirectory thereof. -}

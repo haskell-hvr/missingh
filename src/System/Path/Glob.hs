@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.Path.Glob
    Copyright  : Copyright (C) 2006-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -24,12 +23,13 @@ in "System.Path.WildMatch".
 
 module System.Path.Glob (glob, vGlob)
     where
-import Data.List.Utils (hasAny)
-import System.IO.HVFS
-import System.FilePath (splitFileName, (</>), pathSeparator, isPathSeparator)
-import Control.Exception (tryJust)
-import System.Path.WildMatch (wildCheckCase)
-import Data.List (isSuffixOf)
+import           Control.Exception     (tryJust)
+import           Data.List             (isSuffixOf)
+import           Data.List.Utils       (hasAny)
+import           System.FilePath       (isPathSeparator, pathSeparator,
+                                        splitFileName, (</>))
+import           System.IO.HVFS
+import           System.Path.WildMatch (wildCheckCase)
 
 hasWild :: String -> Bool
 hasWild = hasAny "*?["

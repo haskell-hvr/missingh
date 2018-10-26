@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Control.Concurrent.Thread.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
@@ -26,9 +25,9 @@ module Control.Concurrent.Thread.Utils(-- * I\/O utilities
                        )
 where
 
-import Control.Concurrent
+import           Control.Concurrent
 
-{- | Takes a IO action and a function.  The IO action will be called in a 
+{- | Takes a IO action and a function.  The IO action will be called in a
 separate thread.  When it is completed, the specified function is called with
 its result.  This is a simple way of doing callbacks. -}
 

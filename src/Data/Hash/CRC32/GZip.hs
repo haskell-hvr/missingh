@@ -10,25 +10,24 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Data.Hash.CRC32.GZip
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
 CRC32 checksumming using the GZIP\/PKZIP algorithm as used in both
-ISO 3309 and section 8.1.1.6.2 of ITU-T V.42 and referenced in 
+ISO 3309 and section 8.1.1.6.2 of ITU-T V.42 and referenced in
 RFC1952.
 
 -}
 
 module Data.Hash.CRC32.GZip where
 
-import Data.Array
-import Data.Bits
-import Data.Word
-import Data.List
-import Data.Char
+import           Data.Array
+import           Data.Bits
+import           Data.Char
+import           Data.List
+import           Data.Word
 
 update_crc :: Word32 -> Char -> Word32
 update_crc crc ch =
@@ -43,7 +42,7 @@ update_crc_list start list = foldl update_crc start list
 
 calc_crc32 :: [Char] -> Word32
 calc_crc32 s = update_crc_list 0 s
-        
+
 gzipcrctab :: Array Int Word32
 gzipcrctab = array (0,255) (zip [0..255]
   [

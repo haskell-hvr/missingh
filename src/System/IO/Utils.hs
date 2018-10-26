@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.IO.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 -}
@@ -34,10 +33,10 @@ module System.IO.Utils(-- * Entire File Handle Utilities
                        optimizeForBatch, optimizeForInteraction
                         ) where
 
-import System.IO.Unsafe (unsafeInterleaveIO)
-import System.IO
-import Data.List (genericLength)
-import System.IO.HVIO
+import           Data.List        (genericLength)
+import           System.IO
+import           System.IO.HVIO
+import           System.IO.Unsafe (unsafeInterleaveIO)
 
 {- | Given a list of strings, output a line containing each item, adding
 newlines as appropriate.  The list is not expected to have newlines already.

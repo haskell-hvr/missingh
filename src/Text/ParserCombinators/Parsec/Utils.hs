@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Text.ParserCombinators.Parsec.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
@@ -30,7 +29,7 @@ module Text.ParserCombinators.Parsec.Utils(-- * Generalized Utilities
                        notMatching
                       ) where
 
-import Text.ParserCombinators.Parsec
+import           Text.ParserCombinators.Parsec
 
 type GeneralizedToken a = (SourcePos, a)
 type GeneralizedTokenParser a st b = GenParser (GeneralizedToken a) st b
@@ -86,8 +85,8 @@ listg l = tokens (show . map fst) nextpos l
 If it fails, returns ().  If it succeds, cause a failure and raise
 the given error message.  It will not consume input in either case. -}
 notMatching :: GenParser a b c -> String -> GenParser a b ()
-notMatching p errormsg = 
-    let maybeRead = try (do 
+notMatching p errormsg =
+    let maybeRead = try (do
                          x <- p
                          return (Just x)
                         )
@@ -96,7 +95,7 @@ notMatching p errormsg =
                       x <- maybeRead
                       case x of
                              Nothing -> return ()
-                             Just _ -> unexpected errormsg
+                             Just _  -> unexpected errormsg
         in
         try workerFunc
 

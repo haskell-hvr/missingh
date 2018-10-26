@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.Path.WildMatch
    Copyright  : Copyright (C) 2006-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -55,8 +54,8 @@ module System.Path.WildMatch (-- * Wildcard matching
                                 wildToRegex)
     where
 
-import Text.Regex
-import Data.String.Utils
+import           Data.String.Utils
+import           Text.Regex
 
 {- | Convert a wildcard to an (uncompiled) regular expression.
 
@@ -74,20 +73,20 @@ wildCheckCase :: String         -- ^ The wildcard pattern to use as the base
 wildCheckCase patt name =
     case matchRegex (mkRegex $ "^" ++ wildToRegex patt) name of
       Nothing -> False
-      Just _ -> True
+      Just _  -> True
 
 -- This is SO MUCH CLEANER than the python implementation!
 convwild :: String -> String
-convwild [] = []
-convwild ('*':xs) = ".*" ++ convwild xs
-convwild ('?':xs) = "." ++ convwild xs
+convwild []           = []
+convwild ('*':xs)     = ".*" ++ convwild xs
+convwild ('?':xs)     = "." ++ convwild xs
 convwild ('[':'!':xs) = "[^" ++ convpat xs
-convwild ('[':xs) = '[' : convpat xs
-convwild ('.':xs) = "\\." ++ convwild xs
-convwild (x:xs) = escapeRe [x] ++ convwild xs
+convwild ('[':xs)     = '[' : convpat xs
+convwild ('.':xs)     = "\\." ++ convwild xs
+convwild (x:xs)       = escapeRe [x] ++ convwild xs
 
 convpat :: String -> String
 convpat ('\\':xs) = "\\\\" ++ convpat xs
-convpat (']':xs) = ']' : convwild xs
-convpat (x:xs) = x : convpat xs
-convpat [] = []
+convpat (']':xs)  = ']' : convwild xs
+convpat (x:xs)    = x : convpat xs
+convpat []        = []

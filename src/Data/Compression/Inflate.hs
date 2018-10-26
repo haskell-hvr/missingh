@@ -16,11 +16,9 @@ as described by RFC 1951.
 
 {- |
    Module     : Data.Compression.Inflate
-   Copyright  : Copyright (C) 2004 Ian Lynagh 
-   License    : 3-clause BSD
+   Copyright  : Copyright (C) 2004 Ian Lynagh
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : Ian Lynagh, 
-   Maintainer : <igloo@earth.li>
    Stability  : provisional
    Portability: portable
 
@@ -34,15 +32,15 @@ module Data.Compression.Inflate (inflate_string,
                                      inflate, Output, Bit,
                                     bits_to_word32) where
 
-import Data.Array
-import Data.List
-import Data.Maybe
+import           Control.Applicative
+import           Control.Monad
+import           Data.Array
 import qualified Data.Char
-import Control.Applicative
-import Control.Monad
+import           Data.List
+import           Data.Maybe
 
-import Data.Bits
-import Data.Word
+import           Data.Bits
+import           Data.Word
 
 inflate_string :: String -> String
 inflate_string = fst . inflate_string_remainder
@@ -92,7 +90,7 @@ instance Show Bit where
     showList bs = showString $ "'" ++ map show_b bs ++ "'"
 
 show_b :: Bit -> Char
-show_b (Bit True) = '1'
+show_b (Bit True)  = '1'
 show_b (Bit False) = '0'
 
 int_to_bits :: Int -> [Bit]
@@ -111,10 +109,10 @@ bits_to_word32 = foldr (\(Bit b) i -> 2 * i + (if b then 1 else 0)) 0
 offset is rarely used, so make it strict to avoid building huge closures.
 
 -}
-data State = State { bits :: [Bit],                  -- remaining input bits
-                     offset :: !Word32,              -- num bits consumed mod 8
+data State = State { bits    :: [Bit],                  -- remaining input bits
+                     offset  :: !Word32,              -- num bits consumed mod 8
                      history :: Array Word32 Word32, -- last 32768 output words
-                     loc :: Word32                   -- where in history we are
+                     loc     :: Word32                   -- where in history we are
                    }
 data InfM a = InfM (State -> (a, State))
 
@@ -152,8 +150,8 @@ get_bits n = InfM $ \s -> case need n (bits s) of
                               (ys, zs) ->
                                   (ys, s { bits = zs,
                                            offset = (n + offset s) `mod` 8 } )
-    where need 0 xs = ([], xs)
-          need _ [] = error "get_bits: Don't have enough!"
+    where need 0 xs     = ([], xs)
+          need _ []     = error "get_bits: Don't have enough!"
           need i (x:xs) = let (ys, zs) = need (i-1) xs in (x:ys, zs)
 
 extract_InfM :: InfM a -> (a, [Bit])
@@ -189,7 +187,7 @@ get_bit :: InfM Bit
 get_bit = do res <- get_bits 1
              case res of
                  [x] -> return x
-                 _ -> error $ "get_bit: expected exactly one bit"
+                 _   -> error $ "get_bit: expected exactly one bit"
 
 {-
 \section{Inflate itself}
@@ -249,8 +247,8 @@ inflate_tables
 
 triple :: [a] -> [[a]]
 triple (a:b:c:xs) = [a,b,c]:triple xs
-triple [] = []
-triple _ = error "triple: can't happen"
+triple []         = []
+triple _          = error "triple: can't happen"
 
 make_lit_dist_lengths :: Table -> Word32 -> Word32 -> InfM [Word32]
 make_lit_dist_lengths _ i _ | i < 0 = error "make_lit_dist_lengths i < 0"
@@ -348,7 +346,7 @@ data Tree = Branch Tree Tree | Leaf Word32 | Null
 make_table :: [(Length, Code)] -> Table
 make_table lcs = case make_tree 0 $ sort $ filter ((/= 0) . fst) lcs of
                      (tree, []) -> get_code tree
-                     _ -> error $ "make_table: Left-over lcs from"
+                     _          -> error $ "make_table: Left-over lcs from"
 
 get_code :: Tree -> InfM Code
 get_code (Branch zero_tree one_tree)

@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Data.Maybe.Utils
    Copyright  : Copyright (C) 2005-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
@@ -33,4 +32,4 @@ forceMaybe = forceMaybeMsg "forceMaybe: Got Nothing"
 Nothing is supplied. -}
 forceMaybeMsg :: String -> Maybe a -> a
 forceMaybeMsg msg Nothing = error msg
-forceMaybeMsg _ (Just x) = x
+forceMaybeMsg _ (Just x)  = x

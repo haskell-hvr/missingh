@@ -10,13 +10,12 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.IO.HVFS.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
-This module provides various helpful utilities for dealing 
+This module provides various helpful utilities for dealing
 filesystems.
 
 Written by John Goerzen, jgoerzen\@complete.org
@@ -33,16 +32,16 @@ module System.IO.HVFS.Utils (recurseDir,
                               )
 where
 
-import System.IO.HVFS
-import System.Time.Utils
-import System.IO.PlafCompat
-import Text.Printf
-import System.Time
-import System.Locale
-import System.IO.Unsafe
-import System.FilePath ((</>), pathSeparator)
+import           System.FilePath      (pathSeparator, (</>))
+import           System.IO.HVFS
+import           System.IO.PlafCompat
+import           System.IO.Unsafe
+import           System.Locale
+import           System.Time
+import           System.Time.Utils
+import           Text.Printf
 
-{- | Obtain a recursive listing of all files\/directories beneath 
+{- | Obtain a recursive listing of all files\/directories beneath
 the specified directory.  The traversal is depth-first
 and the original
 item is always present in the returned list.
@@ -68,12 +67,12 @@ Alternatively, you may wish to pass an absolute path to this function.
 -}
 
 recurseDirStat :: HVFS a => a -> FilePath -> IO [(FilePath, HVFSStatEncap)]
-recurseDirStat h fn = 
+recurseDirStat h fn =
     do fs <- vGetSymbolicLinkStatus h fn
-       if withStat fs vIsDirectory 
+       if withStat fs vIsDirectory
           then do
                dirc <- vGetDirectoryContents h fn
-               let contents = map ((++) (fn ++ [pathSeparator])) $ 
+               let contents = map ((++) (fn ++ [pathSeparator])) $
                               filter (\x -> x /= "." && x /= "..") dirc
                subdirs <- unsafeInterleaveIO $ mapM (recurseDirStat h) contents
                return $ (concat subdirs) ++ [(fn, fs)]
@@ -85,7 +84,7 @@ child files\/directories.
 recursiveRemove :: HVFS a => a -> FilePath -> IO ()
 recursiveRemove h fn =
     recurseDirStat h fn >>= (mapM_ $
-        \(fn, fs) -> if withStat fs vIsDirectory 
+        \(fn, fs) -> if withStat fs vIsDirectory
                          then vRemoveDirectory h fn
                          else vRemoveFile h fn
                               )
@@ -96,7 +95,7 @@ Known bug: setuid bit semantics are inexact compared with standard ls.
 -}
 lsl :: HVFS a => a -> FilePath -> IO String
 lsl fs fp =
-    let showmodes mode = 
+    let showmodes mode =
             let i m = (intersectFileModes mode m /= 0)
                 in
                 (if i ownerReadMode then 'r' else '-') :
@@ -110,10 +109,10 @@ lsl fs fp =
                 (if i otherReadMode then 'r' else '-') :
                 (if i otherWriteMode then 'w' else '-') :
                 (if i otherExecuteMode then 'x' else '-') : []
-        showentry origdir fh (state, fp) = 
+        showentry origdir fh (state, fp) =
             case state of
-              HVFSStatEncap se -> 
-               let typechar = 
+              HVFSStatEncap se ->
+               let typechar =
                     if vIsDirectory se then 'd'
                        else if vIsSymbolicLink se then 'l'
                        else if vIsBlockDevice se then 'b'
@@ -122,15 +121,15 @@ lsl fs fp =
                        else if vIsNamedPipe se then 's'
                        else '-'
                    clocktime = epochToClockTime (vModificationTime se)
-                   datestr c= formatCalendarTime defaultTimeLocale "%b %e  %Y" 
+                   datestr c= formatCalendarTime defaultTimeLocale "%b %e  %Y"
                                c
                     in do c <- toCalendarTime clocktime
                           linkstr <- case vIsSymbolicLink se of
                                        False -> return ""
-                                       True -> do sl <- vReadSymbolicLink fh 
+                                       True -> do sl <- vReadSymbolicLink fh
                                                            (origdir </> fp)
                                                   return $ " -> " ++ sl
-                          return $ printf "%c%s  1 %-8d %-8d %-9d %s %s%s" 
+                          return $ printf "%c%s  1 %-8d %-8d %-9d %s %s%s"
                                      typechar
                                      (showmodes (vFileMode se))
                                      (toInteger $ vFileOwner se)
@@ -141,9 +140,9 @@ lsl fs fp =
                                      linkstr
         in do c <- vGetDirectoryContents fs fp
               pairs <- mapM (\x -> do ss <- vGetSymbolicLinkStatus fs (fp </> x)
-                                      return (ss, x) 
+                                      return (ss, x)
                             ) c
               linedata <- mapM (showentry fp fs) pairs
               return $ unlines $ ["total 1"] ++ linedata
-                  
-            
+
+

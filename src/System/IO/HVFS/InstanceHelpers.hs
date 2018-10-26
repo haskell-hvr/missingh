@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.IO.HVFS.InstanceHelpers
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -33,21 +32,23 @@ module System.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
                                         getFullSlice)
     where
 
-import Data.IORef (newIORef, readIORef, writeIORef, IORef())
-import Data.List (genericLength)
-import System.IO -- (ReadMode)
-import System.IO.Error (doesNotExistErrorType, illegalOperationErrorType, permissionErrorType)
-import System.IO.HVFS
-import System.IO.HVIO (newStreamReader)
-import System.Path (absNormPath)
-import System.Path.NameManip (slice_path)
-import System.FilePath ((</>), pathSeparator, isPathSeparator)
+import           Data.IORef            (IORef, newIORef, readIORef, writeIORef)
+import           Data.List             (genericLength)
+import           System.FilePath       (isPathSeparator, pathSeparator, (</>))
+import           System.IO
+import           System.IO.Error       (doesNotExistErrorType,
+                                        illegalOperationErrorType,
+                                        permissionErrorType)
+import           System.IO.HVFS
+import           System.IO.HVIO        (newStreamReader)
+import           System.Path           (absNormPath)
+import           System.Path.NameManip (slice_path)
 
 {- | A simple "System.IO.HVFS.HVFSStat"
 class that assumes that everything is either a file
 or a directory. -}
 data SimpleStat = SimpleStat {
-                              isFile :: Bool, -- ^ True if file, False if directory
+                              isFile   :: Bool, -- ^ True if file, False if directory
                               fileSize :: FileOffset -- ^ Set to 0 if unknown or a directory
                              } deriving (Show, Eq)
 instance HVFSStat SimpleStat where
@@ -71,7 +72,7 @@ data MemoryEntry = MemoryDirectory [MemoryNode]
 resizable ramdisk written in Haskell. -}
 data MemoryVFS = MemoryVFS
                { content :: IORef [MemoryNode],
-                 cwd :: IORef FilePath
+                 cwd     :: IORef FilePath
                }
 
 instance Show MemoryVFS where
@@ -99,7 +100,7 @@ won't be @\/@.
 nice_slice :: String -> [String]
 nice_slice path
   | path == [pathSeparator] = []
-  | otherwise = 
+  | otherwise =
       let sliced1 = slice_path path
           h = head sliced1
           t = tail sliced1
@@ -152,7 +153,7 @@ findMelem x path
     in do
        c <- readIORef $ content x
        case walk (MemoryDirectory c) (sliced2) of
-         Left err -> vRaiseError x doesNotExistErrorType err Nothing
+         Left err     -> vRaiseError x doesNotExistErrorType err Nothing
          Right result -> return result
 
 -- | Find an element on the tree, normalizing the path first

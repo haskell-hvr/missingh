@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Data.String.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -35,10 +34,10 @@ module Data.String.Utils
                         maybeRead
                        ) where
 
-import Data.List.Utils (startswith, endswith, join, split, replace)
-import Data.Char (isAlpha, isAscii, isDigit)
-import Data.Maybe (listToMaybe)
-import Text.Regex (mkRegex, splitRegex)
+import           Data.Char       (isAlpha, isAscii, isDigit)
+import           Data.List.Utils (endswith, join, replace, split, startswith)
+import           Data.Maybe      (listToMaybe)
+import           Text.Regex      (mkRegex, splitRegex)
 
 wschars :: String
 wschars = " \t\r\n"

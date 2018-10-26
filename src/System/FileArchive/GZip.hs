@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.FileArchive.GZip
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -39,14 +38,14 @@ module System.FileArchive.GZip (
                                  )
     where
 
-import Data.Compression.Inflate (inflate_string_remainder)
-import Data.Hash.CRC32.GZip (update_crc)
-import Data.Bits ((.&.))
-import Control.Monad.Error -- (Error(), strMsg, throwError)
-import Data.Char (ord)
-import Data.Word (Word32())
-import Data.Bits.Utils (fromBytes)
-import System.IO (hGetContents, hPutStr, Handle())
+import           Control.Monad.Error
+import           Data.Bits                ((.&.))
+import           Data.Bits.Utils          (fromBytes)
+import           Data.Char                (ord)
+import           Data.Compression.Inflate (inflate_string_remainder)
+import           Data.Hash.CRC32.GZip     (update_crc)
+import           Data.Word                (Word32)
+import           System.IO                (Handle, hGetContents, hPutStr)
 
 data GZipError = CRCError               -- ^ CRC-32 check failed
                | NotGZIPFile            -- ^ Couldn't find a GZip header
@@ -73,20 +72,20 @@ fFCOMMENT = 16
 {- | The data structure representing the GZip header.  This occurs
 at the beginning of each 'Section' on disk. -}
 data Header = Header {
-                      method :: Int,    -- ^ Compression method.  Only 8 is defined at present.
-                      flags :: Int,
-                      extra :: Maybe String,
+                      method   :: Int,    -- ^ Compression method.  Only 8 is defined at present.
+                      flags    :: Int,
+                      extra    :: Maybe String,
                       filename :: Maybe String,
-                      comment :: Maybe String,
-                      mtime :: Word32,  -- ^ Modification time of the original file
-                      xfl :: Int,       -- ^ Extra flags
-                      os :: Int         -- ^ Creating operating system
+                      comment  :: Maybe String,
+                      mtime    :: Word32,  -- ^ Modification time of the original file
+                      xfl      :: Int,       -- ^ Extra flags
+                      os       :: Int         -- ^ Creating operating system
                      } deriving (Eq, Show)
 
 {- | Stored on-disk at the end of each section. -}
 data Footer = Footer {
-                      size :: Word32,   -- ^ The size of the original, decompressed data
-                      crc32 :: Word32,  -- ^ The stored GZip CRC-32 of the original, decompressed data
+                      size       :: Word32,   -- ^ The size of the original, decompressed data
+                      crc32      :: Word32,  -- ^ The stored GZip CRC-32 of the original, decompressed data
                       crc32valid :: Bool -- ^ Whether or not the stored CRC-32 matches the calculated CRC-32 of the data
                      }
 

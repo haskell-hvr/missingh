@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.IO.HVFS.Combinators
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -26,17 +25,18 @@ module System.IO.HVFS.Combinators ( -- * Restrictions
                                     HVFSChroot, newHVFSChroot)
     where
 
-import System.IO
-import System.IO.Error
-import System.IO.HVFS
-import System.IO.HVFS.InstanceHelpers (getFullPath)
+import           System.IO
+import           System.IO.Error
+import           System.IO.HVFS
+import           System.IO.HVFS.InstanceHelpers (getFullPath)
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-import System.Posix.Files -- This actually needed? -Wall doesn't seem to think
+import           System.Posix.Files
                           -- so, but I'm not sure...
 #endif
-import System.Path (secureAbsNormPath)
-import System.Path.NameManip (normalise_path)
-import System.FilePath ((</>), pathSeparator, isPathSeparator)
+import           System.FilePath                (isPathSeparator, pathSeparator,
+                                                 (</>))
+import           System.Path                    (secureAbsNormPath)
+import           System.Path.NameManip          (normalise_path)
 
 ----------------------------------------------------------------------
 -- Providing read-only access
@@ -79,7 +79,7 @@ instance HVFS a => HVFS (HVFSReadOnly a) where
 instance HVFSOpenable a => HVFSOpenable (HVFSReadOnly a) where
     vOpen fh fp mode =
         case mode of ReadMode -> withro (\h -> vOpen h fp mode) fh
-                     _ -> roerror fh
+                     _        -> roerror fh
 
 ----------------------------------------------------------------------
 -- Restricting to a subdirectory

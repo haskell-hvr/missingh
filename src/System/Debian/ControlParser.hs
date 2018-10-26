@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.Debian.ControlParser
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -24,8 +23,8 @@ Written by John Goerzen, jgoerzen\@complete.org
 module System.Debian.ControlParser(control, depPart)
     where
 
-import Text.ParserCombinators.Parsec
-import Data.String.Utils (split)
+import           Data.String.Utils             (split)
+import           Text.ParserCombinators.Parsec
 
 eol, extline :: GenParser Char st String
 eol = (try (string "\r\n"))

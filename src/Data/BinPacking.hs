@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Data.BinPacking
    Copyright  : Copyright (C) 2008-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 

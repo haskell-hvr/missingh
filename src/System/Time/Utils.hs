@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.Time.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
@@ -32,8 +31,8 @@ module System.Time.Utils(
                      renderSecs, renderTD
                     )
 where
-import System.Time
-import Data.Ratio
+import           Data.Ratio
+import           System.Time
 
 {- | January 1, 1970, midnight, UTC, represented as a CalendarTime. -}
 epoch :: CalendarTime
@@ -57,7 +56,7 @@ timegm :: CalendarTime -> Integer
 timegm ct =
     timeDiffToSecs (diffClockTimes (toClockTime ct) (toClockTime epoch))
 
-{- | Converts the specified CalendarTime (see System.Time) to 
+{- | Converts the specified CalendarTime (see System.Time) to
 seconds-since-epoch format.
 
 The input CalendarTime is assumed to be the time as given in your local
@@ -77,12 +76,12 @@ timelocal ct =
        let newct = ct {ctTZ = ctTZ guessct}
        return $ timegm newct
     where guesscl = toClockTime ct
-    
-{- | Converts the given timeDiff to the number of seconds it represents. 
+
+{- | Converts the given timeDiff to the number of seconds it represents.
 
 Uses the same algorithm as normalizeTimeDiff in GHC. -}
 timeDiffToSecs :: TimeDiff -> Integer
-timeDiffToSecs td = 
+timeDiffToSecs td =
     (fromIntegral $ tdSec td) +
     60 * ((fromIntegral $ tdMin td) +
           60 * ((fromIntegral $ tdHour td) +
@@ -100,7 +99,7 @@ epochToClockTime x =
           seconds = floor ratval
           secfrac = floor $ (ratval - (seconds % 1) ) * picosecondfactor
           picosecondfactor = 10 ^ 12
-          
+
 {- | Converts a ClockTime to something represented with an arbitrary Real.
 The result could be treated as a CTime from Foreign.C.Types or EpochTime from
 System.Posix.Types.  The inverse of 'epochToClockTime'.
@@ -125,7 +124,7 @@ renderTD :: TimeDiff -> String
 renderTD itd =
     case workinglist of
       [] -> "0s"
-      _ -> concat . map (\(q, s) -> show q ++ [s]) $ workinglist
+      _  -> concat . map (\(q, s) -> show q ++ [s]) $ workinglist
     where td = normalizeTimeDiff itd
           suffixlist = "yMdhms"
           quantlist = (\(TimeDiff y mo d h m s _) -> [y, mo, d, h, m, s]) td

@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Network.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: systems with networking
 
@@ -26,10 +25,10 @@ module Network.Utils (niceSocketsDo, connectTCP, connectTCPAddr,
                         listenTCPAddr, showSockAddr)
     where
 
-import Network
-import Network.Socket
-import Network.BSD
-import System.IO
+import           Network
+import           Network.BSD
+import           Network.Socket
+import           System.IO
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import qualified System.Posix.Signals
 #endif

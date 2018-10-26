@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : Data.List.Utils
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
    Stability  : provisional
    Portability: portable
 
@@ -49,10 +48,12 @@ module Data.List.Utils(-- * Merging
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
-import Data.List(intersperse, concat, isPrefixOf, isSuffixOf, elemIndices,
-                elemIndex, elemIndices, tails, find, findIndex, isInfixOf, nub)
-import Control.Monad.State(State, get, put)
-import Data.Maybe(isJust)
+import           Control.Monad.State (State, get, put)
+import           Data.List           (concat, elemIndex, elemIndices,
+                                      elemIndices, find, findIndex, intersperse,
+                                      isInfixOf, isPrefixOf, isSuffixOf, nub,
+                                      tails)
+import           Data.Maybe          (isJust)
 
 
 {- | Merge two sorted lists into a single, sorted whole.
@@ -83,7 +84,7 @@ prop_mergeBy xs ys =
 mergeBy :: (a -> a -> Ordering) -> [a] -> [a] -> [a]
 mergeBy cmp [] ys = ys
 mergeBy cmp xs [] = xs
-mergeBy cmp (allx@(x:xs)) (ally@(y:ys)) 
+mergeBy cmp (allx@(x:xs)) (ally@(y:ys))
         -- Ordering derives Eq, Ord, so the comparison below is valid.
         -- Explanation left as an exercise for the reader.
         -- Someone please put this code out of its misery.
@@ -118,8 +119,8 @@ list. -}
 hasAny :: Eq a => [a]           -- ^ List of elements to look for
        -> [a]                   -- ^ List to search
        -> Bool                  -- ^ Result
-hasAny [] _ = False             -- An empty search list: always false
-hasAny _ [] = False             -- An empty list to scan: always false
+hasAny [] _          = False             -- An empty search list: always false
+hasAny _ []          = False             -- An empty list to scan: always false
 hasAny search (x:xs) = if x `elem` search then True else hasAny search xs
 
 {- | Similar to Data.List.takeWhile, takes elements while the func is true.
@@ -127,7 +128,7 @@ The function is given the remainder of the list to examine. -}
 takeWhileList :: ([a] -> Bool) -> [a] -> [a]
 takeWhileList _ [] = []
 takeWhileList func list@(x:xs) =
-    if func list 
+    if func list
        then x : takeWhileList func xs
        else []
 
@@ -141,9 +142,9 @@ dropWhileList func list@(x:xs) =
        else list
 
 {- | Similar to Data.List.span, but performs the test on the entire remaining
-list instead of just one element. 
+list instead of just one element.
 
-@spanList p xs@ is the same as @(takeWhileList p xs, dropWhileList p xs)@ 
+@spanList p xs@ is the same as @(takeWhileList p xs, dropWhileList p xs)@
 -}
 spanList :: ([a] -> Bool) -> [a] -> ([a], [a])
 
@@ -172,12 +173,12 @@ split :: Eq a => [a] -> [a] -> [[a]]
 split _ [] = []
 split delim str =
     let (firstline, remainder) = breakList (startswith delim) str
-        in 
+        in
         firstline : case remainder of
                                    [] -> []
                                    x -> if x == delim
                                         then [] : []
-                                        else split delim 
+                                        else split delim
                                                  (drop (length delim) x)
 
 
@@ -280,7 +281,7 @@ flipAL oldl =
         worker ((k, v):xs) accum =
             case lookup v accum of
                                 Nothing -> worker xs ((v, [k]) : accum)
-                                Just y -> worker xs (addToAL accum v (k:y))
+                                Just y  -> worker xs (addToAL accum v (k:y))
         in
         worker oldl []
 
@@ -296,13 +297,13 @@ strFromAL inp =
         in unlines . map worker $ inp
 
 {- | The inverse of 'strFromAL', this function reads a string and outputs the
-appropriate association list. 
+appropriate association list.
 
 Like 'strFromAL', this is designed to work with [(String, String)] association
 lists but may also work with other objects with simple representations.
 -}
 strToAL :: (Read a, Read b) => String -> [(a, b)]
-strToAL inp = 
+strToAL inp =
     let worker line =
             case reads line of
                [(key, remainder)] -> case remainder of
@@ -324,7 +325,7 @@ given list. -}
 elemRIndex :: Eq a => a -> [a] -> Maybe Int
 elemRIndex item l =
     case reverse $ elemIndices item l of
-                                   [] -> Nothing
+                                   []    -> Nothing
                                    (x:_) -> Just x
 {- | Like elemRIndex, but returns -1 if there is nothing
 found. -}
@@ -332,11 +333,11 @@ alwaysElemRIndex :: Eq a => a -> [a] -> Int
 alwaysElemRIndex item list =
     case elemRIndex item list of
                               Nothing -> -1
-                              Just x -> x
+                              Just x  -> x
 
 {- | Forces the evaluation of the entire list. -}
 seqList :: [a] -> [a]
-seqList [] = []
+seqList []          = []
 seqList list@(x:xs) = seq (seqList xs) list
 
 --------------------------------------------------
@@ -347,7 +348,7 @@ seqList list@(x:xs) = seq (seqList xs) list
 -}
 newtype WholeFunc a b = WholeFunc ([a] -> (WholeFunc a b, [a], [b]))
 
-{- | This is an enhanced version of the concatMap or map functions in 
+{- | This is an enhanced version of the concatMap or map functions in
 Data.List.
 
 Unlike those functions, this one:
@@ -401,7 +402,7 @@ Examples:
 > --> ["Hello",", T","his is"," ","a test."]
 -}
 fixedWidth :: [Int] -> WholeFunc a [a]
-fixedWidth len = 
+fixedWidth len =
     WholeFunc (fixedWidthFunc len)
     where -- Empty input: Empty output, stop
           fixedWidthFunc _ [] = ((fixedWidth []), [], [])

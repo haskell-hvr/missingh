@@ -1,5 +1,5 @@
 {-# LANGUAGE Safe #-}
-{- 
+{-
 Copyright (c) 2005-2011 John Goerzen <jgoerzen@complete.org>
 
 All rights reserved.
@@ -10,9 +10,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : MissingH.getOpt
    Copyright  : Copyright (C) 2005-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -28,8 +27,8 @@ module System.Console.GetOpt.Utils (parseCmdLine,
                         stdOptional
                        )
 where
-import System.Console.GetOpt
-import System.Environment
+import           System.Console.GetOpt
+import           System.Environment
 
 {- | Simple command line parser -- a basic wrapper around the system's
 default getOpt.  See the System.Console.GetOpt manual for a description of the
@@ -40,11 +39,11 @@ The third parameter is a usage information header.
 The return value consists of the list of parsed flags and a list of
 non-option arguments. -}
 parseCmdLine :: ArgOrder a -> [OptDescr a] -> String -> IO ([a], [String])
-parseCmdLine order options header = 
+parseCmdLine order options header =
     do argv <- getArgs
        case getOpt order options argv of
          (o, n, []) -> return (o, n)
-         (_, _, errors) -> ioError (userError (concat errors ++ 
+         (_, _, errors) -> ioError (userError (concat errors ++
                                                usageInfo header options))
 
 {- | Similar to 'parseCmdLine', but takes an additional function that validates
@@ -80,5 +79,5 @@ stdRequired name value = (name, value)
 {- | Handle an optional argument. -}
 stdOptional :: String           -- ^ Name of arg
                -> Maybe String -> StdOption
-stdOptional name Nothing = (name, "")
+stdOptional name Nothing  = (name, "")
 stdOptional name (Just x) = (name, x)

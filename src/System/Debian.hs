@@ -9,9 +9,8 @@ For license and copyright information, see the file LICENSE
 {- |
    Module     : System.Debian
    Copyright  : Copyright (C) 2004-2011 John Goerzen
-   License    : BSD3
+   SPDX-License-Identifier: BSD-3-Clause
 
-   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -28,9 +27,9 @@ module System.Debian (-- * Control or Similar File Utilities
                        )
     where
 
-import System.Process
-import System.IO.Unsafe
-import System.Exit
+import           System.Exit
+import           System.IO.Unsafe
+import           System.Process
 
 {- | The type representing the contents of a Debian control file,
 or any control-like file (such as the output from apt-cache show, etc.) -}
@@ -68,5 +67,5 @@ checkDebVersion :: String       -- ^ Version 1
 checkDebVersion v1 op v2 =
     do ec <- rawSystem "dpkg" ["--compare-versions", v1, op, v2]
        case ec of
-               ExitSuccess -> return True
+               ExitSuccess   -> return True
                ExitFailure _ -> return False
