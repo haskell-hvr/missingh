@@ -7,14 +7,13 @@ For license and copyright information, see the file LICENSE
 -}
 
 module Listtest(tests) where
-import Test.HUnit
-import Data.List.Utils
-import Data.List
-import Test.HUnit
-import Test.QuickCheck as QC
-import Test.HUnit.Tools
+import           Data.List
+import           Data.List.Utils
+import           Test.HUnit
+import           Test.HUnit
+-- import           Test.QuickCheck as QC
 
-test_delFromAL = 
+test_delFromAL =
     let f :: [(String, Int)] -> [(String, Int)] -> Test
         f inp exp = TestCase $ exp @=? (delFromAL inp "testkey") in
         [
@@ -115,7 +114,7 @@ test_trunc =
         ,f 2 [1, 2, 3, 4, 5] [1, 2]
         ,f 10 "Hello" "Hello"
         ,f 0 "" ""
-        ]              
+        ]
 
 test_contains =
     let f msg sub testlist exp = TestCase $ assertEqual msg exp (contains sub testlist) in
@@ -154,8 +153,8 @@ test_alwaysElemRIndex =
         ,f 'f' ['f', 'b', 'f', 'f', 'b'] 3
         ]
 
-test_subIndex = 
-    let f item inp exp = TestCase $ exp @=? subIndex item inp in 
+test_subIndex =
+    let f item inp exp = TestCase $ exp @=? subIndex item inp in
         [f "foo" "asdfoobar" (Just 3)
         ,f "foo" [] (Nothing)
         ,f "" [] (Just 0)
@@ -179,7 +178,7 @@ test_fixedWidth =
         ,f [1, 2, 3] "1234567890"  ["1","23","456","7890"]
         ,f (repeat 2) "123456789" ["12","34","56","78","9"]
         ,f [] "123456789" ["123456789"]
-        ,f [5, 3, 6, 1] "Hello, This is a test." 
+        ,f [5, 3, 6, 1] "Hello, This is a test."
                ["Hello",", T","his is"," ","a test."]
         ]
 
@@ -208,23 +207,23 @@ test_spanList =
            f (contains "foo") "foo" ("f", "oo")]
 
 
-test_merge =
-    qctest "prop_merge" prop_merge
+-- test_merge =
+--     qctest "prop_merge" prop_merge
 
 prop_merge xs ys =
     merge (sort xs) (sort ys) == sort (xs ++ ys)
           where types = xs :: [Int]
 
-test_mergeBy =
-    qctest "test_mergeBy" prop_mergeBy
+-- test_mergeBy =
+--     qctest "test_mergeBy" prop_mergeBy
 
 prop_mergeBy xs ys =
     mergeBy cmp (sortBy cmp xs) (sortBy cmp ys) == sortBy cmp (xs ++ ys)
           where types = xs :: [Int]
                 cmp = compare
 
-tests = TestList [test_merge,
-                  test_mergeBy,
+tests = TestList [-- test_merge,
+                  -- test_mergeBy,
                   TestLabel "delFromAL" (TestList test_delFromAL),
                   TestLabel "uniq" (TestList test_uniq),
                   TestLabel "addToAL" (TestList test_addToAL),

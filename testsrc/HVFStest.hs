@@ -12,7 +12,7 @@ import System.IO.HVIO
 import System.IO.HVFS
 import System.IO.HVFS.InstanceHelpers
 import System.IO.HVFS.Combinators
-import Test.HUnit.Tools
+import TestUtils
 import System.IO
 import System.IO.Error
 import Control.Exception

@@ -7,12 +7,12 @@ For license and copyright information, see the file LICENSE
 -}
 
 module HVIOtest(tests) where
-import Test.HUnit
-import System.IO.HVIO
-import Test.HUnit.Tools
+import Control.Exception
 import System.IO
 import System.IO.Error
-import Control.Exception
+import System.IO.HVIO
+import Test.HUnit
+import TestUtils
 
 ioeq :: (Show a, Eq a) => a -> IO a -> Assertion
 ioeq exp inp = do x <- inp
@@ -24,7 +24,7 @@ test_MemoryBuffer =
         in
         [
          f "" (\x -> do True `ioeq` vIsOpen x
-                        assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
+                        assertRaises (== mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
                         vPutStrLn x "Line1"
                         vPutStrLn x "Line2"
                         vRewind x
@@ -41,10 +41,10 @@ test_MemoryBuffer =
                         vPutStr x "IN"
                         vRewind x
                         "LINe1" `ioeq` vGetLine x
-                        "Line2" `ioeq` vGetLine x                        
+                        "Line2" `ioeq` vGetLine x
                         vSeek x SeekFromEnd 0
                         vPutChar x 'c'
-                        assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
+                        assertRaises (== mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
                         vRewind x
                         "LINe1\nLine2\nc" `ioeq` vGetContents x
               )
@@ -53,14 +53,14 @@ test_MemoryBuffer =
 test_StreamReader =
     let f inp testfunc = TestLabel inp $ TestCase $ do x <- newStreamReader inp
                                                        testfunc x
-        in 
+        in
         [
          f "" (\x -> do True `ioeq` vIsEOF x
                         True `ioeq` vIsOpen x
-                        assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
+                        assertRaises (== mkIOError eofErrorType "" Nothing Nothing) (vGetChar x)
                         vClose x
                         False `ioeq` vIsOpen x
-                        
+
               )
         ,f "abcd" (\x -> do False `ioeq` vIsEOF x
                             True `ioeq` vIsOpen x
@@ -76,7 +76,7 @@ test_StreamReader =
                      "" `ioeq` vGetLine x
                      "line5" `ioeq` vGetLine x
                      "lastline" `ioeq` vGetLine x
-                     assertRaises "eof error" (mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
+                     assertRaises (== mkIOError eofErrorType "" Nothing Nothing) (vGetLine x)
            )
         ]
 

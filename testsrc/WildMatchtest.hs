@@ -11,7 +11,7 @@ For license and copyright information, see the file LICENSE
 module WildMatchtest(tests) where
 import Test.HUnit
 import System.Path.WildMatch
-import Test.HUnit.Tools
+import TestUtils
 
 test_wildCheckCase =
     let f patt name = TestCase $ assertBool (patt ++ "," ++ name ++ " was false")

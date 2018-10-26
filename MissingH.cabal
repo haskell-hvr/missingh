@@ -110,7 +110,7 @@ library
     CPP
     Safe
     TypeSynonymInstances
-  
+
   build-depends:
       array               >= 0.4.0.0 && < 0.6
     , base                >= 4.5.0.0 && < 4.13
@@ -127,9 +127,11 @@ library
     , random              >= 1.0.1.1 && < 1.2
     , regex-compat        >= 0.95.1  && < 0.96
     , time                >= 1.4     && < 1.10
-    
+
   If !os(windows)
     Build-Depends: unix   >= 2.5.1.0 && < 2.8
+
+  ghc-options: -fno-warn-deprecations
 
 ----------------------------------------------------------------------------
 
@@ -139,6 +141,8 @@ test-suite runtests
   hs-source-dirs: testsrc
   main-is: runtests.hs
   other-modules:
+    TestUtils
+
     Bitstest
     CRC32GZIPtest
     Eithertest
@@ -173,16 +177,14 @@ test-suite runtests
     , parsec
     , regex-compat
     , time
-                         
+
   if !os(windows)
     build-depends: unix
 
   -- additional testsuite-specific dependencies
   build-depends:
-      HUnit                  == 1.2.*
-    , QuickCheck             == 2.7.*
+      HUnit                  == 1.6.*
+--  , QuickCheck             == 2.7.*
     , errorcall-eq-instance  == 0.3.*
-    , testpack               >= 2.1.3.0 && < 2.2
 
-  -- testsuite isn't supported on GHC 8.4+ just yet due to 'testpack'
-  build-depends: base < 4.11
+  ghc-options: -fno-warn-deprecations

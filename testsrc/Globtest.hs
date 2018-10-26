@@ -14,7 +14,7 @@ module Globtest(tests) where
 import Test.HUnit
 import System.Path.Glob
 import System.Path
-import Test.HUnit.Tools
+import TestUtils
 import System.IO.HVFS
 import System.Directory(createDirectory)
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))

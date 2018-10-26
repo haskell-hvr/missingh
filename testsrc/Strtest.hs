@@ -9,7 +9,7 @@ For license and copyright information, see the file LICENSE
 module Strtest(tests) where
 import Test.HUnit
 import Data.String.Utils
-import Test.HUnit.Tools
+import TestUtils
 import Text.Regex
 import Data.Char
 
