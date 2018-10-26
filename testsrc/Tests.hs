@@ -16,7 +16,6 @@ import qualified Strtest
 import qualified IOtest
 import qualified Bitstest
 import qualified Eithertest
-import qualified CRC32POSIXtest
 import qualified CRC32GZIPtest
 import qualified GZiptest
 import qualified HVIOtest
@@ -44,7 +43,6 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "MIMETypes" MIMETypestest.tests,
                  TestLabel "Bitstest" Bitstest.tests,
                  TestLabel "Eithertest" Eithertest.tests,
-                 TestLabel "CRC32POSIXtest" CRC32POSIXtest.tests,
                  TestLabel "CRC32GZIPtest" CRC32GZIPtest.tests,
                  TestLabel "GZiptest" GZiptest.tests]
 
