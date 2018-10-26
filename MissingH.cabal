@@ -1,131 +1,188 @@
-Name: MissingH
-Version: 1.4.1.0
-License: BSD3
-Maintainer: John Goerzen <jgoerzen@complete.org>
-Author: John Goerzen
-Copyright: Copyright (c) 2004-2018 John Goerzen
+cabal-version: 1.12
+name: MissingH
+version: 1.4.1.1
+
+build-type: Simple
+license: BSD3
+author: John Goerzen
+copyright: Copyright (c) 2004-2018 John Goerzen
+maintainer: Herbert Valerio Riedel <hvr@gnu.org>
 license-file: LICENSE
-extra-source-files: LICENSE,
-                    announcements/0.10.0.txt,
-                    announcements/0.8.0.txt,
-                    announcements/0.9.0.txt,
-                    testsrc/gzfiles/empty.gz,
-                    testsrc/gzfiles/t1.gz,
-                    testsrc/gzfiles/t1bad.gz,
-                    testsrc/gzfiles/t2.gz,
-                    testsrc/gzfiles/zeros.gz,
-                    testsrc/mime.types.test,
-                    3rd-party-licenses/BSD,
-                    3rd-party-licenses/LGPL-2.1,
-                    Makefile,
-                    TODO,
-                    examples/simplegrep.hs,
-                    examples/test2.hs,
-                    examples/test3.hs,
-                    pending/Gopher.hs,
-                    pending/Maildir.disabled,
-                    pending/Tar.newhs,
-                    pending/Tar/HeaderParser.newhs,
-                    tolgpl,
-                    winbuild.bat,
-                    wintest.bat
-homepage: http://software.complete.org/missingh
-Category: Unclassified
+tested-with: GHC==8.6.2, GHC==8.4.4, GHC==8.2.2, GHC==8.0.2, GHC==7.10.3, GHC==7.8.4, GHC==7.6.3, GHC==7.4.2
+
 synopsis: Large utility library
-Description:  MissingH is a library of all sorts of utility functions for
- Haskell programmers.  It is written in pure Haskell and thus should
- be extremely portable and easy to use.
-Stability: Beta
-Build-Type: Simple
-Cabal-Version: >=1.8
+description:
+  @MissingH@ is a library of all sorts of utility functions for Haskell
+  programmers.  It is written in pure Haskell and thus should be
+  extremely portable and easy to use.
+category: Unclassified
 
-Library
- Hs-Source-Dirs: src
- Exposed-Modules:
-  Data.String.Utils, System.IO.Utils, System.IO.Binary, Data.List.Utils,
-  System.Daemon,
-  Text.ParserCombinators.Parsec.Utils,
-  Network.Email.Mailbox,
-  Control.Concurrent.Thread.Utils,
-  Network.Email.Sendmail,
-    Data.CSV,
-  System.Cmd.Utils,
-  Data.BinPacking,
-  Data.Progress.Tracker,
-  Data.Progress.Meter,
-  Data.Quantity,
-  Data.Map.Utils, System.Path, System.Path.NameManip,
-    System.Path.WildMatch, System.Path.Glob,
-  System.Time.Utils,
-  Network.Utils,
-  Network.SocketServer,
-  Data.Either.Utils,
-  Data.Maybe.Utils,
-  Data.Tuple.Utils,
-  Data.Bits.Utils,
-  Data.Hash.CRC32.GZip,
-   Data.Hash.MD5, Data.Hash.MD5.Zord64_HARD,
-  Data.Compression.Inflate,
-  System.FileArchive.GZip,
-  System.IO.HVFS,
-    System.IO.HVFS.Combinators,
-    System.IO.HVFS.InstanceHelpers,
-    System.IO.HVFS.Utils,
-  System.IO.HVIO, System.IO.StatCompat, System.IO.WindowsCompat,
-    System.IO.PlafCompat, System.Posix.Consts,
-  System.Debian, System.Debian.ControlParser,
-  Data.MIME.Types,
-  System.Console.GetOpt.Utils
+extra-source-files:
+  LICENSE
+  announcements/0.10.0.txt
+  announcements/0.8.0.txt
+  announcements/0.9.0.txt
+  testsrc/gzfiles/empty.gz
+  testsrc/gzfiles/t1.gz
+  testsrc/gzfiles/t1bad.gz
+  testsrc/gzfiles/t2.gz
+  testsrc/gzfiles/zeros.gz
+  testsrc/mime.types.test
+  3rd-party-licenses/BSD
+  3rd-party-licenses/LGPL-2.1
+  Makefile
+  TODO
+  examples/simplegrep.hs
+  examples/test2.hs
+  examples/test3.hs
+  pending/Gopher.hs
+  pending/Maildir.disabled
+  pending/Tar.newhs
+  pending/Tar/HeaderParser.newhs
+  tolgpl
+  winbuild.bat
+  wintest.bat
 
- Extensions: ExistentialQuantification, OverlappingInstances,
-   UndecidableInstances, CPP, Rank2Types,
-   MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
-   ScopedTypeVariables
+source-repository head
+  type: git
+  location: https://github.com/hvr/missingh.git
 
- Build-Depends: network, parsec, base,
-               mtl, HUnit, regex-compat,
-               filepath,
-               hslogger,
-               base >= 4.5, base < 5, directory, random, process, old-time,
-                           containers, old-locale, array, time
- If ! os(windows)
-   Build-Depends: unix
+library
+  hs-source-dirs: src
+  exposed-modules:
+    Control.Concurrent.Thread.Utils
+    Data.BinPacking
+    Data.Bits.Utils
+    Data.CSV
+    Data.Compression.Inflate
+    Data.Either.Utils
+    Data.Hash.CRC32.GZip
+    Data.Hash.MD5
+    Data.Hash.MD5.Zord64_HARD
+    Data.List.Utils
+    Data.MIME.Types
+    Data.Map.Utils
+    Data.Maybe.Utils
+    Data.Progress.Meter
+    Data.Progress.Tracker
+    Data.Quantity
+    Data.String.Utils
+    Data.Tuple.Utils
+    Network.Email.Mailbox
+    Network.Email.Sendmail
+    Network.SocketServer
+    Network.Utils
+    System.Cmd.Utils
+    System.Console.GetOpt.Utils
+    System.Daemon
+    System.Debian
+    System.Debian.ControlParser
+    System.FileArchive.GZip
+    System.IO.Binary
+    System.IO.HVFS
+    System.IO.HVFS.Combinators
+    System.IO.HVFS.InstanceHelpers
+    System.IO.HVFS.Utils
+    System.IO.HVIO
+    System.IO.PlafCompat
+    System.IO.StatCompat
+    System.IO.Utils
+    System.IO.WindowsCompat
+    System.Path
+    System.Path.Glob
+    System.Path.NameManip
+    System.Path.WildMatch
+    System.Posix.Consts
+    System.Time.Utils
+    Text.ParserCombinators.Parsec.Utils
+
+  default-language: Haskell2010
+  default-extensions:
+    ExistentialQuantification
+    FlexibleContexts
+    FlexibleInstances
+    MultiParamTypeClasses
+    OverlappingInstances
+    Rank2Types
+    ScopedTypeVariables
+    UndecidableInstances
+  other-extensions:
+    CPP
+    Safe
+    TypeSynonymInstances
+  
+  build-depends:
+      array               >= 0.4.0.0 && < 0.6
+    , base                >= 4.5.0.0 && < 4.13
+    , containers          >= 0.4.2.1 && < 0.7
+    , directory           >= 1.1.0.2 && < 1.4
+    , filepath            >= 1.3.0.0 && < 1.5
+    , hslogger            >= 1.0.9   && < 1.3
+    , mtl                 >= 1.1.1.0 && < 2.3
+    , network             >= 2.3     && < 2.9
+    , old-locale          == 1.0.*
+    , old-time            == 1.1.*
+    , parsec              >= 2.0 && (< 3.1.12 || >= 3.1.13) && < 3.2
+    , process             >= 1.1.0.1 && < 1.7
+    , random              >= 1.0.1.1 && < 1.2
+    , regex-compat        >= 0.95.1  && < 0.96
+    , time                >= 1.4     && < 1.10
+    
+  If !os(windows)
+    Build-Depends: unix   >= 2.5.1.0 && < 2.8
+
+----------------------------------------------------------------------------
 
 test-suite runtests
-  type:           exitcode-stdio-1.0
+  type: exitcode-stdio-1.0
 
-  Build-Depends: network, parsec, base,
-               mtl, HUnit, regex-compat,
-               errorcall-eq-instance,
-               filepath,
-               hslogger,
-               base >= 4.5, base < 5, directory, random, process, old-time,
-                         containers, old-locale, array, time
-  If ! os(windows)
-   Build-Depends: unix
-  Build-Depends: testpack, QuickCheck, HUnit
-
-  Main-Is: runtests.hs
-  HS-Source-Dirs: testsrc, ., src
-  Other-Modules: Bitstest,
-    CRC32GZIPtest,
-    Eithertest,
-    GZiptest,
-    Globtest,
-    HVFStest,
-    HVIOtest,
-    IOtest,
-    Listtest,
-    MIMETypestest,
-    Maptest,
-    Pathtest,
-    ProgressTrackertest,
-    Str.CSVtest,
-    Strtest,
-    Tests,
-    Timetest,
+  hs-source-dirs: testsrc
+  main-is: runtests.hs
+  other-modules:
+    Bitstest
+    CRC32GZIPtest
+    Eithertest
+    GZiptest
+    Globtest
+    HVFStest
+    HVIOtest
+    IOtest
+    Listtest
+    MIMETypestest
+    Maptest
+    Pathtest
+    ProgressTrackertest
+    Str.CSVtest
+    Strtest
+    Tests
+    Timetest
     WildMatchtest
-  Extensions: ExistentialQuantification, OverlappingInstances,
-    UndecidableInstances, CPP, Rank2Types,
-    MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
-    ScopedTypeVariables
+
+  default-language: Haskell2010
+
+  -- intra-package dependency
+  build-depends: MissingH
+
+  -- deps with version bounds inherited via lib:MissingH component
+  build-depends:
+      base
+    , containers
+    , directory
+    , filepath
+    , old-time
+    , parsec
+    , regex-compat
+    , time
+                         
+  if !os(windows)
+    build-depends: unix
+
+  -- additional testsuite-specific dependencies
+  build-depends:
+      HUnit                  == 1.2.*
+    , QuickCheck             == 2.7.*
+    , errorcall-eq-instance  == 0.3.*
+    , testpack               >= 2.1.3.0 && < 2.2
+
+  -- testsuite isn't supported on GHC 8.4+ just yet due to 'testpack'
+  build-depends: base < 4.11
