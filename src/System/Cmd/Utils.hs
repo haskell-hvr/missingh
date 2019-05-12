@@ -1,5 +1,7 @@
 -- arch-tag: Command utilities main file
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE Trustworthy #-}
+
 {-
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

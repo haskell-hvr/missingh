@@ -1,3 +1,5 @@
+{-# LANGUAGE Safe #-}
+
 {- arch-tag: Parser for Debian control file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

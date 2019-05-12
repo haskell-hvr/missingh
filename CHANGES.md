@@ -1,7 +1,9 @@
-### 1.4.1.1
+### 1.4.2.0
 
 - Fix regression (introduced in 1.4.1.0 release) in `Data.Compression.Inflate`
 - Drop redundant dependency on `HUnit`
+- Add more explicit `SafeHaskell` annotations to modules; all modules
+  except for `System.Debian` are now explicitly either `Safe` or `Trustworthy`
 
 ## 1.4.1.0
 

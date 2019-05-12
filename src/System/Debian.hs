@@ -28,7 +28,7 @@ module System.Debian (-- * Control or Similar File Utilities
     where
 
 import           System.Exit
-import           System.IO.Unsafe
+import           System.IO.Unsafe (unsafePerformIO)
 import           System.Process
 
 {- | The type representing the contents of a Debian control file,
@@ -40,7 +40,10 @@ type ControlFile = [(String, String)]
 ----------------------------------------------------------------------
 
 {- | The type representing a Debian version number.  This type is an instance
-of 'Prelude.Ord', but you can also use 'compareDebVersion' if you prefer. -}
+of 'Prelude.Ord', but you can also use 'compareDebVersion' if you prefer.
+
+__WARNING__: calls out to @dpkg@ and will throw exceptions if @dpkg@ is missing
+-}
 data DebVersion = DebVersion String
                 deriving (Eq)
 instance Ord DebVersion where

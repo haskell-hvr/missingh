@@ -1,3 +1,5 @@
+{-# LANGUAGE Trustworthy #-}
+
 {- arch-tag: String utilities main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

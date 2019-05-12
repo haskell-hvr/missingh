@@ -1,16 +1,17 @@
 > {-# LANGUAGE CPP #-}
+> {-# LANGUAGE Safe #-}
 
 >{- |
 >   Module     : Data.Hash.MD5
->   Copyright  : Copyright (C) 2001 Ian Lynagh 
+>   Copyright  : Copyright (C) 2001 Ian Lynagh
 >   License    : Either BSD or GPL
->
+
 >   Maintainer : Ian Lynagh <igloo@earth.li>
 >   Stability  : provisional
 >   Portability: portable
->
+
 >Generation of MD5sums
->
+
 >Written by Ian Lynagh, igloo\@earth.li
 >-}
 
@@ -32,7 +33,7 @@ Also need a rotate left function that actually works.
 #else
 
 > import Data.Hash.MD5.Zord64_HARD
- 
+
 > rotL :: Word32 -> Rotation -> Word32
 > rotL a s = shiftL a s .|. shiftL a (s-32)
 
@@ -358,4 +359,3 @@ for strings
 > length_to_chars 0 _ = []
 > length_to_chars p n = this:length_to_chars (p-1) (shiftR n 8)
 >          where this = chr $ fromIntegral $ n .&. 255
-

@@ -1,4 +1,5 @@
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE Trustworthy #-}
+
 {- arch-tag: HVFS utilities main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -35,7 +36,7 @@ where
 import           System.FilePath      (pathSeparator, (</>))
 import           System.IO.HVFS
 import           System.IO.PlafCompat
-import           System.IO.Unsafe
+import           System.IO.Unsafe (unsafeInterleaveIO)
 import           System.Locale
 import           System.Time
 import           System.Time.Utils

@@ -1,4 +1,5 @@
 >-- #hide
+> {-# LANGUAGE Safe #-}
 > module Data.Hash.MD5.Zord64_HARD (Zord64) where
 
 > import Data.Word
