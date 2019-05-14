@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP  #-}
 {-# LANGUAGE Safe #-}
 
 {- arch-tag: HVIO main file
@@ -358,9 +357,7 @@ class (Show a) => HVIO a where
 instance HVIO Handle where
     vClose = hClose
     vIsEOF = hIsEOF
-#ifdef __GLASGOW_HASKELL__
     vShow = hShow
-#endif
     vMkIOError h et desc mfp =
         mkIOError et desc (Just h) mfp
     vGetChar = hGetChar

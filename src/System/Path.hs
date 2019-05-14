@@ -111,16 +111,12 @@ mktmpdir x =
        createDirectory dirname 0o700
        return dirname
 #else
-#ifdef __GLASGOW_HASKELL__
 mktmpdir x =
     do (fp, h) <- openTempFile "" x
        hClose h
        removeFile fp
        createDirectory fp
        return fp
-#else
-mktmpdir _ = fail "mktmpdir not supported on Windows unless you have GHC"
-#endif
 #endif
 
 {- | Creates a temporary directory for your use via 'mktmpdir',
