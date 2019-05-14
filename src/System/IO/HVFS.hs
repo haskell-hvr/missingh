@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP, TypeSynonymInstances #-}
-{-# LANGUAGE Safe #-}
+{-# LANGUAGE Trustworthy #-}
 {- arch-tag: HVFS main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
