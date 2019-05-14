@@ -1,0 +1,4 @@
+packages: .
+
+package MissingH
+  tests: True

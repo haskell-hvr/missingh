@@ -32,18 +32,9 @@ extra-source-files:
   testsrc/mime.types.test
   3rd-party-licenses/BSD
   3rd-party-licenses/LGPL-2.1
-  Makefile
-  TODO
   examples/simplegrep.hs
   examples/test2.hs
   examples/test3.hs
-  pending/Gopher.hs
-  pending/Maildir.disabled
-  pending/Tar.newhs
-  pending/Tar/HeaderParser.newhs
-  tolgpl
-  winbuild.bat
-  wintest.bat
 
 flag network--GE-3_0_0
   description: [network](http://hackage.haskell.org/package/network) ≥ 3.0.0
