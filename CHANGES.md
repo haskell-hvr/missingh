@@ -4,6 +4,7 @@
 - Drop redundant dependency on `HUnit`
 - Add more explicit `SafeHaskell` annotations to modules; all modules
   except for `System.Debian` are now explicitly either `Safe` or `Trustworthy`
+- Add support for `network-3.0` and `network-3.1`
 
 ## 1.4.1.0
 

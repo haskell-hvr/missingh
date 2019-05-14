@@ -78,7 +78,7 @@ simpleTCPOptions :: Int                -- ^ Port Number
                  -> InetServerOptions
 simpleTCPOptions p = InetServerOptions {listenQueueSize = 5,
                                         portNumber = (fromIntegral p),
-                                        interface = iNADDR_ANY,
+                                        interface = 0,
                                         reuse = False,
                                         family = AF_INET,
                                         sockType = Stream,
@@ -98,7 +98,7 @@ setupSocketServer opts =
        setSocketOption s ReuseAddr (case (reuse opts) of
                                     True  -> 1
                                     False -> 0)
-       bindSocket s (SockAddrInet (portNumber opts)
+       bind s (SockAddrInet (portNumber opts)
                      (interface opts))
        listen s (listenQueueSize opts)
        return $ SocketServer {optionsSS = opts, sockSS = s}
@@ -107,7 +107,7 @@ setupSocketServer opts =
 handlers, if any. -}
 closeSocketServer :: SocketServer -> IO ()
 closeSocketServer ss =
-    sClose (sockSS ss)
+    close (sockSS ss)
 
 {- | Handle one incoming request from the given 'SocketServer'. -}
 handleOne :: SocketServer -> HandlerT -> IO ()
