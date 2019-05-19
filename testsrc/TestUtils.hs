@@ -1,5 +1,3 @@
-{-# LANGUAGE CPP #-}
-
 module TestUtils (mapassertEqual, assertRaises, errorCallMsg) where
 
 import           Control.Exception (ErrorCall (..), Exception,
@@ -29,6 +27,3 @@ assertRaises check act = do
 
 errorCallMsg :: ErrorCall -> String
 errorCallMsg (ErrorCall msg)               = msg
-#if MIN_VERSION_base(4,9,0)
-errorCallMsg (ErrorCallWithLocation msg _) = msg
-#endif

@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE Safe #-}
+
 {- Windows compatibility layer
 Copyright (c) 2005-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -125,11 +125,7 @@ getFileStatus fp =
        isdir <- doesDirectoryExist fp
        perms <- getPermissions fp
        modct <- getModificationTime fp
-#if MIN_VERSION_directory(1,2,0)
-       let epochtime = utcTimeToSeconds modct
-#else
        let epochtime = clockTimeToEpoch modct
-#endif
        return $ FileStatusCompat {deviceID = -1,
                                   fileID = -1,
                                   fileMode = if isfile then regularFileMode

@@ -1,5 +1,3 @@
-{-# LANGUAGE Safe #-}
-
 {-# OPTIONS_HADDOCK hide #-}
 {-# OPTIONS_GHC -fno-warn-missing-methods #-}
 

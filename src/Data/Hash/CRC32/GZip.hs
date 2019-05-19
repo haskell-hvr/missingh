@@ -1,4 +1,3 @@
-{-# LANGUAGE Safe #-}
 {- arch-tag: GZIP CRC32 implementation in pure Haskell
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

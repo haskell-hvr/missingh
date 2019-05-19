@@ -1,4 +1,3 @@
-{-# LANGUAGE Safe #-}
 {- arch-tag: Maybe utilities
 Copyright (c) 2005-2011 John Goerzen <jgoerzen@complete.org>
 

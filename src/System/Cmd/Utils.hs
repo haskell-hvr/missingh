@@ -1,6 +1,5 @@
 -- arch-tag: Command utilities main file
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE Trustworthy #-}
 
 {-
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
@@ -326,11 +325,7 @@ forceSuccess (PipeHandle pid fp args funcname) =
                 Just (Exited (ExitSuccess)) -> return ()
                 Just (Exited (ExitFailure fc)) ->
                     cmdfailed funcname fp args fc
-#if MIN_VERSION_unix(2,7,0)
-                Just (Terminated sig _) ->
-#else
                 Just (Terminated sig) ->
-#endif
                     warnfail fp args $ "Terminated by signal " ++ show sig
                 Just (Stopped sig) ->
                     warnfail fp args $ "Stopped by signal " ++ show sig
@@ -356,11 +351,7 @@ safeSystem command args =
        case ec of
             Exited ExitSuccess -> return ()
             Exited (ExitFailure fc) -> cmdfailed "safeSystem" command args fc
-#if MIN_VERSION_unix(2,7,0)
-            Terminated s _ -> cmdsignalled "safeSystem" command args s
-#else
             Terminated s -> cmdsignalled "safeSystem" command args s
-#endif
             Stopped s -> cmdsignalled "safeSystem" command args s
 #endif
 

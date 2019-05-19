@@ -1,4 +1,3 @@
-{-# LANGUAGE Safe #-}
 {- |
    Module     : System.Path.NameManip
    Copyright  : Copyright (C) 2004 Volker Wysk

@@ -1,5 +1,3 @@
-{-# LANGUAGE Safe #-}
-
 {- arch-tag: MIME Types main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP  #-}
-{-# LANGUAGE Safe #-}
 {-
 Copyright (c) 2005-2011 John Goerzen <jgoerzen@complete.org>
 

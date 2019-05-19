@@ -1,4 +1,8 @@
-### 1.4.2.0
+### 1.4.2.1
+
+- GHC 7.0 only compat release
+
+## 1.4.2.0
 
 - Fix regression (introduced in 1.4.1.0 release) in `Data.Compression.Inflate`
 - Drop redundant dependency on `HUnit`
