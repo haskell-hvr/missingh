@@ -1,3 +1,4 @@
+{-# LANGUAGE Safe #-}
 {-
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

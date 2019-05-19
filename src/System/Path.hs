@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE Safe #-}
 {- arch-tag: Path utilities main file
 Copyright (C) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

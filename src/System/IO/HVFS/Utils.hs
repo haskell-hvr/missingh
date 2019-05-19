@@ -1,3 +1,4 @@
+{-# LANGUAGE Trustworthy #-}
 
 {- arch-tag: HVFS utilities main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>

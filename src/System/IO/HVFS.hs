@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP, TypeSynonymInstances #-}
+{-# LANGUAGE Trustworthy #-}
 {- arch-tag: HVFS main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -60,6 +61,10 @@ import System.IO.PlafCompat
 import System.Posix.Types
 import System.Time
 import qualified System.Directory as D
+
+#if MIN_VERSION_directory(1,2,0)
+import Data.Time.Clock.POSIX ( utcTimeToPOSIXSeconds )
+#endif
 
 {- | Encapsulate a 'HVFSStat' result.  This is required due to Haskell
 typing restrictions.  You can get at it with:
@@ -304,7 +309,11 @@ instance HVFS SystemFS where
     vGetSymbolicLinkStatus = vGetFileStatus
 #endif
 
+#if MIN_VERSION_directory(1,2,0)
+    vGetModificationTime _ p = D.getModificationTime p >>= (\modUTCTime -> return $ TOD ((toEnum . fromEnum . utcTimeToPOSIXSeconds) modUTCTime) 0)
+#else
     vGetModificationTime _ = D.getModificationTime
+#endif
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
     vCreateSymbolicLink _ = createSymbolicLink
     vReadSymbolicLink _ = readSymbolicLink

@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE Safe #-}
 
 {- arch-tag: Sendmail utility
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
