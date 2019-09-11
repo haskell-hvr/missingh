@@ -32,6 +32,7 @@ import           System.IO
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import qualified System.Posix.Signals
 #endif
+import           Control.Exception (bracketOnError)
 
 {- | Sets up the system for networking.  Similar to the built-in
 withSocketsDo (and actually, calls it), but also sets the SIGPIPE
@@ -63,9 +64,8 @@ connectTCP host port = do
 connectTCPAddr :: SockAddr -> IO Socket
 connectTCPAddr addr = do
                       proto <- getProtocolNumber "tcp"
-                      s <- socket AF_INET Stream proto
-                      connect s addr
-                      return s
+                      bracketOnError (socket AF_INET Stream proto) close
+                        (\s -> connect s addr >> return s)
 
 listenTCPAddr :: SockAddr -> Int -> IO Socket
 listenTCPAddr addr queuelen = do
