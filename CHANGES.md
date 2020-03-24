@@ -1,3 +1,8 @@
+### 1.4.3.0
+
+- New tuple construction helpers `Data.Tuple.Utils.dup` and `Data.Tuple.Utils.triple`
+- Close sockets on connection failure in `connectTCPAddr` ([#50](https://github.com/haskell-hvr/missingh/issues/50))
+
 ### 1.4.2.1
 
 - GHC 7.0 only compat release

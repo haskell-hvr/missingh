@@ -21,10 +21,23 @@ Written by Neil Mitchell, <http://www.cs.york.ac.uk/~ndm/>
 -}
 
 module Data.Tuple.Utils(
+    -- * Construction
+    dup, triple,
     -- * Extraction
     fst3, snd3, thd3
     ) where
 
+-- | Construct a pair by duplication of a single value
+--
+-- @since 1.4.3.0
+dup :: a -> (a,a)
+dup a = (a,a)
+
+-- | Construct a 3-tuple from a single value
+--
+-- @since 1.4.3.0
+triple :: a -> (a,a,a)
+triple a = (a,a,a)
 
 -- | Take the first item out of a 3 element tuple
 fst3 :: (a,b,c) -> a
