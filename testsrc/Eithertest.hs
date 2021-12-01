@@ -6,10 +6,14 @@ All rights reserved.
 For license and copyright information, see the file LICENSE
 
 -}
+{-# LANGUAGE CPP #-}
 
 module Eithertest(tests) where
+
 import           Control.Exception
+#if !MIN_VERSION_base(4,7,0)
 import           Control.Exception.ErrorCall.EqInstance
+#endif
 import           Data.Either.Utils
 import           Test.HUnit
 import           TestUtils
@@ -37,4 +41,3 @@ test_forceEither =
 tests = TestList [TestLabel "test_maybeToEither" (TestList test_maybeToEither),
                   TestLabel "test_forceEither" (TestList test_forceEither)
                  ]
-
