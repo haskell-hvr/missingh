@@ -2,6 +2,7 @@
 
 {-# OPTIONS_HADDOCK hide #-}
 {-# OPTIONS_GHC -fno-warn-missing-methods #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
 -- | Obsolete legacy module
 module Data.Hash.MD5.Zord64_HARD (Zord64) where

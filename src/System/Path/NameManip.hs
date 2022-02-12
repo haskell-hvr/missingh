@@ -1,4 +1,6 @@
 {-# LANGUAGE Safe #-}
+{-# LANGUAGE LambdaCase #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {- |
    Module     : System.Path.NameManip
    Copyright  : Copyright (C) 2004 Volker Wysk
@@ -124,8 +126,7 @@ See 'slice_filename', 'unslice_filename'.
 -}
 slice_filename' :: String        -- ^ File name without path
                 -> [String]      -- ^ List of components the file name is made up of
-slice_filename' filename =
-   case filename of
+slice_filename' = \case
      ('.':filename') -> case slice_filename'' filename' of
                            []     -> ["."]
                            (t:ts) -> ('.':t) : ts

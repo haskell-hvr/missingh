@@ -120,8 +120,8 @@ Though the actual implementation is this for efficiency:
 hLineInteract :: (HVIO a, HVIO b) => a -> b -> ([String] -> [String]) -> IO ()
 hLineInteract finput foutput func =
     do
-    lines <- hGetLines finput
-    hPutStrLns foutput (func lines)
+    ls <- hGetLines finput
+    hPutStrLns foutput (func ls)
 
 {- | Copies from one handle to another in raw mode (using
 hGetContents).

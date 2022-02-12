@@ -1,4 +1,5 @@
 {-# LANGUAGE Safe #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {- arch-tag: GZip file support in Haskell
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 

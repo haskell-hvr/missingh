@@ -1,4 +1,6 @@
 {-# LANGUAGE Safe #-}
+{-# LANGUAGE LambdaCase #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {- arch-tag: HVFS instance helpers
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -120,10 +122,10 @@ nice_slice path
 -}
 getFullPath :: HVFS a => a -> String -> IO String
 getFullPath fs path =
-    do cwd <- vGetCurrentDirectory fs
-       case (absNormPath cwd path) of
+    do dir <- vGetCurrentDirectory fs
+       case (absNormPath dir path) of
            Nothing -> vRaiseError fs doesNotExistErrorType
-                        ("Trouble normalizing path " ++ path) (Just (cwd </> path))
+                        ("Trouble normalizing path " ++ path) (Just (dir </> path))
            Just newpath -> return newpath
 
 {- | Gets the full path via 'getFullPath', then splits it via 'nice_slice'.
@@ -190,8 +192,7 @@ instance HVFS MemoryVFS where
                                               "Bad internal error" (Just fp)
                        Just y -> writeIORef (cwd x) y
     vGetFileStatus x fp =
-        do elem <- getMelem x fp
-           case elem of
+        getMelem x fp >>= \case
                      (MemoryFile y) -> return $ HVFSStatEncap $
                                              SimpleStat {isFile = True,
                                                         fileSize = (genericLength y)}
@@ -199,8 +200,7 @@ instance HVFS MemoryVFS where
                                              SimpleStat {isFile = False,
                                                         fileSize = 0}
     vGetDirectoryContents x fp =
-        do elem <- getMelem x fp
-           case elem of
+        getMelem x fp >>= \case
                 MemoryFile _ -> vRaiseError x doesNotExistErrorType
                                   "Can't list contents of a file"
                                   (Just fp)
@@ -208,8 +208,7 @@ instance HVFS MemoryVFS where
 
 instance HVFSOpenable MemoryVFS where
     vOpen x fp (ReadMode) =
-        do elem <- getMelem x fp
-           case elem of
+        getMelem x fp >>= \case
                 MemoryDirectory _ -> vRaiseError x doesNotExistErrorType
                                       "Can't open a directory"
                                       (Just fp)

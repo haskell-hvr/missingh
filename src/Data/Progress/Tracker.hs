@@ -1,4 +1,5 @@
 {-# LANGUAGE Safe #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {-
 Copyright (c) 2006-2011 John Goerzen <jgoerzen@complete.org>
 

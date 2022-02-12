@@ -1,4 +1,5 @@
 {-# LANGUAGE Trustworthy #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
 {- arch-tag: Generic Server Support
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>

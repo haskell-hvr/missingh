@@ -1,4 +1,5 @@
 {-# LANGUAGE Trustworthy #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
 {- arch-tag: HVFS utilities main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
@@ -103,8 +104,8 @@ recurseDirStat h fn =
 child files\/directories.
 -}
 recursiveRemove :: HVFS a => a -> FilePath -> IO ()
-recursiveRemove h fn =
-    recurseDirStat h fn >>= (mapM_ $
+recursiveRemove h path =
+    recurseDirStat h path >>= (mapM_ $
         \(fn, fs) -> if withStat fs vIsDirectory
                          then vRemoveDirectory h fn
                          else vRemoveFile h fn

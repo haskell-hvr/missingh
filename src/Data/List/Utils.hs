@@ -398,8 +398,8 @@ Examples:
 > --> ["Hello",", T","his is"," ","a test."]
 -}
 fixedWidth :: [Int] -> WholeFunc a [a]
-fixedWidth len =
-    WholeFunc (fixedWidthFunc len)
+fixedWidth =
+    WholeFunc . fixedWidthFunc
     where -- Empty input: Empty output, stop
           fixedWidthFunc _ [] = ((fixedWidth []), [], [])
           -- Empty length: Stop here.

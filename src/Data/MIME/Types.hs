@@ -93,8 +93,9 @@ hReadMIMETypes :: MIMETypeData          -- ^ Data to work with
                   -> Bool               -- ^ Whether to work on strict data
                   -> Handle             -- ^ Handle to read from
                   -> IO MIMETypeData       -- ^ New object
-hReadMIMETypes mtd strict h =
-    let parseline :: MIMETypeData -> String -> MIMETypeData
+hReadMIMETypes mtd strict h = foldl parseline mtd <$> hGetLines h
+    where
+        parseline :: MIMETypeData -> String -> MIMETypeData
         parseline obj line =
             let l1 = words line
                 procwords [] = []
@@ -108,10 +109,6 @@ hReadMIMETypes mtd strict h =
                        in
                        foldl (\o suff -> addType o strict thetype ('.' : suff)) obj suffixlist
                 else obj
-        in
-          do
-            lines <- hGetLines h
-            return (foldl parseline mtd lines)
 
 {- | Guess the type of a file given a filename or URL.  The file
    is not opened; only the name is considered. -}

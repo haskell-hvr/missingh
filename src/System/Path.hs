@@ -77,8 +77,8 @@ absNormPath :: String                   -- ^ Absolute path for use with starting
             -> String                   -- ^ The path name to make absolute
             -> Maybe String                   -- ^ Result
 absNormPath base thepath =
-    let abs = absolute_path_by base thepath
-        in case guess_dotdot (normalise_path abs) of
+    let path = absolute_path_by base thepath
+        in case guess_dotdot (normalise_path path) of
                 Just "." -> Just [pathSeparator]
                 x        -> x
 
