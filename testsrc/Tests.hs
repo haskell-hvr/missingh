@@ -46,4 +46,3 @@ tests = TestList [TestLabel "test1" test1,
                  TestLabel "CRC32GZIPtest" CRC32GZIPtest.tests,
                  TestLabel "GZiptest" GZiptest.tests]
 
-

@@ -1,4 +1,4 @@
-{- 
+{-
 Copyright (C) 2006-2011 John Goerzen <jgoerzen@complete.org>
 
 All rights reserved.
@@ -19,7 +19,7 @@ setup =
 
 settime timem newval = swapMVar timem newval >> return ()
 
-test_incrP = 
+test_incrP =
     do (po, timem) <- setup
        incrP po 5
        withStatus po $ \s ->
@@ -92,14 +92,14 @@ test_speed =
        getETR po >>= assertEqual "etr 2" 44
        getETA po >>= assertEqual "eta 2" 444
 
-test_callback =       
+test_callback =
     do (po, _) <- setup
        mcounter <- newMVar (0::Int)
        mcounter1 <- newMVar (0::Int)
        mcounter2 <- newMVar (0::Int)
        (po2, _) <- setup
        (po3, _) <- setup
-       
+
        addCallback po (minc mcounter)
        addParent po po2
        incrP po 5
@@ -107,13 +107,13 @@ test_callback =
        withStatus po (\x -> 5 @=? completedUnits x)
        withStatus po2 (\x -> do 5 @=? completedUnits x
                                 200 @=? totalUnits x)
-       
+
        addCallback po2 (minc mcounter2)
        incrP po 100
        readMVar mcounter2 >>= (\x -> assertBool "cb2" (0 /= x))
        withStatus po2 (\x -> do 105 @=? completedUnits x
                                 205 @=? totalUnits x)
-       
+
        incrP' po 5
        withStatus po2 (\x -> do 110 @=? completedUnits x
                                 205 @=? totalUnits x)
@@ -121,14 +121,12 @@ test_callback =
        finishP po
        withStatus po2 (\x -> do 110 @=? completedUnits x
                                 210 @=? totalUnits x)
-       
-       
+
+
     where minc mv _ _ = modifyMVar_ mv (\x -> return $ x + 1)
 
 tests = TestList [TestLabel "incrP" (TestCase test_incrP),
                   TestLabel "setP" (TestCase test_setP),
                   TestLabel "speed" (TestCase test_speed),
                   TestLabel "test_callback" (TestCase test_callback)]
-
-
 

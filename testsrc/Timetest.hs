@@ -22,7 +22,7 @@ test_ctu2e =
          f (base {ctYear = 2005, ctMonth = January, ctDay = 21,
                           ctHour = 1, ctMin = 1, ctSec = 20})
            1106269280
-           
+
          ,f (base {ctYear = 2004, ctMonth = July, ctDay = 1,
                            ctHour = 17, ctMin = 0, ctSec = 0})
            1088701200
@@ -30,7 +30,7 @@ test_ctu2e =
         ]
 
 test_ct2e =
-    let f base exp = TestLabel (show base) $ TestCase $ 
+    let f base exp = TestLabel (show base) $ TestCase $
                        do r <- timelocal base
                           exp @=? r in
         [

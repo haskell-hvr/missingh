@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU GPL, version 2 or above
 
-   Maintainer : John Goerzen, 
+   Maintainer : John Goerzen,
    Maintainer : jgoerzen@complete.org
    Stability  : experimental
    Portability: systems with networking
@@ -54,7 +54,7 @@ You can 'read' to a 'GopherEntry'.  This will parse a string as a one-line
 piece of text suitable for use generating a 'GopherEntry'.
 
 Neither show nor read will consider the 'ea' member. -}
-data GopherEntry = GopherEntry 
+data GopherEntry = GopherEntry
     {
      selector :: String,                -- ^ Path to file on server
      gophertype :: Char,                -- ^ Gopher0 type character

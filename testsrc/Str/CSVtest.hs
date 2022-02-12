@@ -13,7 +13,7 @@ import Data.CSV
 import Text.ParserCombinators.Parsec
 
 test_csv =
-    let f inp exp = TestLabel inp $ TestCase $ 
+    let f inp exp = TestLabel inp $ TestCase $
                     exp @=? case parse csvFile "" inp of
                                   Right x -> Right x
                                   Left y -> Left (show y)

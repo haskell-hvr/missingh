@@ -53,11 +53,11 @@ test_splitWs =
 
 
 test_escapeRe =
-    map (\i -> TestLabel (show $ chr i) $ TestCase $ assertEqual [chr i] (Just []) 
+    map (\i -> TestLabel (show $ chr i) $ TestCase $ assertEqual [chr i] (Just [])
                 (matchRegex (mkRegex $ escapeRe $ [chr i]) [chr i]))
              [1..255]
     ++
-    [TestCase $ assertEqual "big string" 
+    [TestCase $ assertEqual "big string"
                      (Just ([], teststr, [], []))
                      (matchRegexAll (mkRegex $ escapeRe teststr) teststr)
     ]
@@ -69,7 +69,4 @@ tests = TestList [TestLabel "lstrip" (TestList test_lstrip),
                   TestLabel "splitWs" $ TestList test_splitWs,
                   TestLabel "escapeRe" $ TestList test_escapeRe
                   ]
-
-
-
 

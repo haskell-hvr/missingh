@@ -1,6 +1,6 @@
 {-# LANGUAGE CPP #-}
 
-{- 
+{-
 Copyright (C) 2006-2011 John Goerzen <jgoerzen@complete.org>
 
 All rights reserved.
@@ -30,7 +30,7 @@ sep = map (\c -> if c == '/' then pathSeparator else c)
 bp = "testtmp"
 touch x = writeFile (sep x) ""
 
-globtest thetest = 
+globtest thetest =
     bracket_ (setupfs)
              (recursiveRemove SystemFS bp)
              thetest
@@ -47,7 +47,7 @@ globtest thetest =
                  createSymbolicLink (preppath "broken") (preppath "sym1")
                  createSymbolicLink (preppath "broken") (preppath "sym2")
 #endif
-                 
+
 eq msg exp res =
     assertEqual msg (sort exp) (sort res)
 mf msg func = TestLabel msg $ TestCase $ globtest func
@@ -78,7 +78,7 @@ test_nested_dir =
          glob (preppath "a/*.foo") >>= eq "a/*.foo" [preppath "a/a.foo"]
         ]
 
-test_dirnames = 
+test_dirnames =
     map f
         [glob (preppath "*/D") >>= eq "*/D" [preppath "a/D"],
          glob (preppath "*/*a") >>= eq "*/*a" [],
@@ -96,14 +96,11 @@ test_brokensymlinks =
 #else
     []
 #endif
-         
+
 
 tests = TestList [TestLabel "test_literal" (TestList test_literal),
                   TestLabel "test_one_dir" (TestList test_one_dir),
                   TestLabel "test_nested_dir" (TestList test_nested_dir),
                   TestLabel "test_dirnames" (TestList test_dirnames),
                   TestLabel "test_brokensymlinks" (TestList test_brokensymlinks)]
-
-
-
 

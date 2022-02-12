@@ -38,7 +38,7 @@ test_bunches =
         in
         map f2 [0..1000]
 -}
-test_inflate = 
+test_inflate =
     let f fn exp conv = mf fn exp (conv . snd . forceEither . read_header) in
         [
          f "t1.gz" "Test 1" inflate_string
@@ -60,7 +60,7 @@ test_header =
                             filename = Nothing, comment = Nothing,
                           mtime = 1102111446, xfl = 2, os = 3}
         ,f "empty.gz" Header {method = 8, flags = 8, extra = Nothing,
-                              filename = Just "empty", 
+                              filename = Just "empty",
                               comment = Nothing,
                              mtime = 1102127257, xfl = 0, os = 3}
         ]

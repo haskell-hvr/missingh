@@ -7,11 +7,11 @@ import System.IO
 import MissingH.Str
 import System.Time
 
-realhandler h = 
+realhandler h =
     let loop = do e <- hIsEOF h
                   if e then return ()
                      else do c <- hGetLine h
-                             case (rstrip c) of 
+                             case (rstrip c) of
                                  "QUIT" -> hPutStr h "Goodbye!\n"
                                  "COMMANDS" -> do hPutStrLn h "You can type TIME for the current time"
                                                   loop

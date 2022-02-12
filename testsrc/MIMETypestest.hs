@@ -13,7 +13,7 @@ import Data.MIME.Types
 
 test_readMIMETypes =
     let omtd = readMIMETypes defaultmtd True "testsrc/mime.types.test"
-        f = \strict inp exp -> TestCase $ do 
+        f = \strict inp exp -> TestCase $ do
                                           mtd <- omtd
                                           exp @=? guessType mtd strict inp
         fe = \strict inp exp -> TestCase $ do mtd <- omtd
@@ -43,7 +43,7 @@ test_guessAllExtensions =
         ]
 
 test_guessType =
-    let f strict inp exp = TestCase $ exp @=? guessType defaultmtd strict inp in 
+    let f strict inp exp = TestCase $ exp @=? guessType defaultmtd strict inp in
          [
             f True "" (Nothing, Nothing)
            ,f True "foo" (Nothing, Nothing)

@@ -21,7 +21,7 @@ test_absNormPath =
                               p    = sep p'
                               exp  = fmap sep exp'
         f2 = f "/usr/1/2" in
-        [ 
+        [
          f "/" "" (Just "/")
         ,f "/usr/test" "" (Just "/usr/test")
         ,f "/usr/test" ".." (Just "/usr")
@@ -44,7 +44,7 @@ test_secureAbsNormPath =
                               p    = sep p'
                               exp  = fmap sep exp'
         f2 = f "/usr/1/2" in
-        [ 
+        [
          f "/" "" (Just "/")
         ,f "/usr/test" "" (Just "/usr/test")
         ,f "/usr/test" ".." Nothing

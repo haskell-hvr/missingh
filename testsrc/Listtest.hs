@@ -241,5 +241,3 @@ tests = TestList [-- test_merge,
                   TestLabel "subIndex" (TestList test_subIndex),
                   TestLabel "spanList" (TestList test_spanList)]
 
-
-

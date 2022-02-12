@@ -7,7 +7,7 @@ For license and copyright information, see the file LICENSE
 -}
 
 
-module Main where 
+module Main where
 
 import Test.HUnit
 import Tests

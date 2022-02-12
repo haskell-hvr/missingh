@@ -45,7 +45,7 @@ test_nice_slice =
            --,f [] "."
            ]
 
-test_content = 
+test_content =
     let f exp fp' = TestLabel fp $ TestCase $
                      do x <- newMemoryVFS testTree
                         h <- vOpen x fp ReadMode
@@ -62,7 +62,7 @@ test_content =
         ]
 
 test_chroot =
-    let f msg testfunc = TestLabel msg $ TestCase $ 
+    let f msg testfunc = TestLabel msg $ TestCase $
                          do x <- newMemoryVFS testTree
                             vSetCurrentDirectory x (sep "/emptydir")
                             y <- newHVFSChroot x (sep "/dir1")
@@ -88,7 +88,7 @@ test_chroot =
                     --vSetCurrentDirectory x ".."
                     --"/" `ioeq` vGetCurrentDirectory x
           )
-        --,f "test.txt" (\x -> "subdir test" `ioeq` 
+        --,f "test.txt" (\x -> "subdir test" `ioeq`
         --               (vOpen x "/test.txt" ReadMode >>= vGetContents))
         ]
 
@@ -109,12 +109,12 @@ test_structure =
         ,f "dir1" (\x -> ["file3.txt", "test.txt", "dir2"] `ioeq`
                    vGetDirectoryContents x "/dir1")
         ,f (sep "dir1/dir2") (\x -> [] `ioeq` vGetDirectoryContents x (sep "/dir1/dir2"))
-        ,f "relative tests" (\x -> 
+        ,f "relative tests" (\x ->
             do vSetCurrentDirectory x "dir1"
                [] `ioeq` vGetDirectoryContents x "dir2"
                             )
         ]
-                            
+
 
 tests = TestList [TestLabel "nice_slice" (TestList test_nice_slice)
                  ,TestLabel "structure" (TestList test_structure)
