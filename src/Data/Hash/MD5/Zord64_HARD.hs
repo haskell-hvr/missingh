@@ -11,7 +11,10 @@ import safe Data.Word ( Word32 )
 
 data Zord64 = W64 {lo,hi::Word32} deriving (Eq, Ord, Bounded)
 
+w64ToInteger :: Zord64 -> Integer
 w64ToInteger W64{lo=lo,hi=hi} = toInteger lo + 0x100000000 * toInteger hi
+
+integerToW64 :: Integer -> Zord64
 integerToW64 x = case x `quotRem` 0x100000000 of
                  (h,l) -> W64{lo=fromInteger l, hi=fromInteger h}
 
