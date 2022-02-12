@@ -12,7 +12,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 This module provides various Haskell utilities for dealing with times and
@@ -131,4 +131,3 @@ renderTD itd =
           zippedlist = zip quantlist suffixlist
           -- Drop all leading elements that are 0, then take at most 2
           workinglist = take 2 . dropWhile (\(q, _) -> q == 0) $ zippedlist
-

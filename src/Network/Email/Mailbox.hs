@@ -12,7 +12,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2005-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 General support for e-mail mailboxes
@@ -26,7 +26,7 @@ module Network.Email.Mailbox(Flag(..), Flags, Message,
 where
 
 {- | The flags which may be assigned to a message. -}
-data Flag = 
+data Flag =
            SEEN
            | ANSWERED
            | FLAGGED
@@ -35,14 +35,14 @@ data Flag =
            | FORWARDED
            | OTHERFLAG String
            deriving (Eq, Show)
-           
+
 {- | Convenience shortcut -}
 type Flags = [Flag]
 
 {- | A Message is represented as a simple String. -}
 type Message = String
 
-{- | Main class for readable mailboxes. 
+{- | Main class for readable mailboxes.
 
 The mailbox object /a/ represents zero or more 'Message's.  Each message
 has a unique identifier /b/ in a format specific to each given mailbox.
@@ -65,12 +65,12 @@ class (Show a, Show b, Eq b) => MailboxReader a b where
     getMessages :: a -> [b] -> IO [(b, Flags, Message)]
 
     listIDs mb = listMessageFlags mb >>= return . map fst
-    listMessageFlags mb = getAll mb >>= return . 
+    listMessageFlags mb = getAll mb >>= return .
                            map (\(i, f, _) -> (i, f))
     getMessages mb list =
         do messages <- getAll mb
            return $ filter (\(id, f, m) -> id `elem` list) messages
-    
+
 class (MailboxReader a b) => MailboxWriter a b where
     appendMessages :: a -> [(Flags, Message)] -> IO [b]
     deleteMessages :: a -> [b] -> IO ()

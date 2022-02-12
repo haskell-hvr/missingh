@@ -13,7 +13,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2006-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Tool for maintaining a status bar, supporting multiple simultaneous tasks,
@@ -219,5 +219,3 @@ renderMeterR meter =
                                             speed <- getSpeed pts
                                             return $ head (rfunc [floor (speed :: Double)]) ++ u ++
                                                        "/s " ++ renderSecs etr
-
-

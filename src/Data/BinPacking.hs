@@ -12,7 +12,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2008-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Tools for packing into bins
@@ -39,10 +39,10 @@ where
 import Data.List
 import Control.Monad.Error
 
-{- | Potential errors returned as Left values by 'BinPacker' functions. 
+{- | Potential errors returned as Left values by 'BinPacker' functions.
 Calling 'show' on this value will produce a nice error message suitable for
 display. -}
-data (Num size, Ord size, Show size, Show obj) => BinPackerError size obj = 
+data (Num size, Ord size, Show size, Show obj) => BinPackerError size obj =
     BPTooFewBins [(size, obj)]                -- ^ Ran out of bins; attached value is the list of objects that do not fit
     | BPSizeTooLarge size (size, obj)   -- ^ Bin size1 exceeded by at least the given object and size
     | BPOther String                    -- ^ Other error
@@ -63,13 +63,13 @@ instance (Num size, Ord size, Show size, Show obj) => Error (BinPackerError size
 
 These functions take a list of size of bins.  If every bin is the same size,
 you can pass @repeat binSize@ to pass an infinite list of bins if the
-same size.  Any surplus bins will simply be ignored. 
+same size.  Any surplus bins will simply be ignored.
 
 > [size] is the sizes of bins
 > [(size, obj)] is the sizes and objects
 > result is Either error or results
 -}
-type BinPacker = forall size obj. (Num size, Ord size, Show size, Show obj) => 
+type BinPacker = forall size obj. (Num size, Ord size, Show size, Show obj) =>
                   [size]        -- The sizes of bins
                -> [(size, obj)] -- The sizes and objects
                -> Either (BinPackerError size obj) [[(size, obj)]] -- Either error or results
@@ -85,7 +85,7 @@ packByOrder _ [] = Right []                     -- Ran out of sizes
 packByOrder [] remainder = Left (BPTooFewBins remainder)
 packByOrder (thisbinsize:otherbins) sizes =
     let fillBin _ [] = Right []
-        fillBin accumsize ((s, o):xs) 
+        fillBin accumsize ((s, o):xs)
             | s > thisbinsize = Left $ BPSizeTooLarge thisbinsize (s, o)
             | s + accumsize > thisbinsize = Right []
             | otherwise = do next <- fillBin (accumsize + s) xs

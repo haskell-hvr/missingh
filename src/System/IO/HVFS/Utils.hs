@@ -13,7 +13,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 This module provides various helpful utilities for dealing
@@ -145,5 +145,3 @@ lsl fs fp =
                             ) c
               linedata <- mapM (showentry fp fs) pairs
               return $ unlines $ ["total 1"] ++ linedata
-
-

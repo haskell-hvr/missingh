@@ -19,7 +19,7 @@ as described by RFC 1951.
    Copyright  : Copyright (C) 2004 Ian Lynagh
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Inflate algorithm implementation
@@ -363,5 +363,3 @@ make_tree i lcs@((l, c):lcs')
                (one_tree, lcs_o) = make_tree (i+1) lcs_z
            in (Branch zero_tree one_tree, lcs_o)
  | otherwise = error "make_tree: can't happen"
-
-

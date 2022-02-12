@@ -8,7 +8,7 @@
    SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-or-later
 
    Maintainer : Ian Lynagh <igloo@earth.li>
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Generation of MD5sums

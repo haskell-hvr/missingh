@@ -12,7 +12,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Written by John Goerzen, jgoerzen\@complete.org
@@ -98,4 +98,3 @@ notMatching p errormsg =
                              Just _  -> unexpected errormsg
         in
         try workerFunc
-
