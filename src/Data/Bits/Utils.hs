@@ -33,13 +33,13 @@ Example:
 > getBytes (0x12345678::Int) -> [0x12, 0x34, 0x56, 0x78]
 -}
 getBytes :: (Integral a, Bounded a, Bits a) => a -> [a]
-getBytes input =
-    let getByte _ 0 = []
-        getByte x remaining = (x .&. 0xff) : getByte (shiftR x 8) (remaining - 1)
-        in
-        if (bitSize input `mod` 8) /= 0
-           then error "Input data bit size must be a multiple of 8"
-           else reverse $ getByte input (bitSize input `div` 8)
+getBytes input
+  | Just size <- bitSizeMaybe input, size `mod` 8 == 0 =
+      reverse $ getByte input $ size `div` 8
+  | otherwise = error "Input data bit size must be a multiple of 8"
+  where
+    getByte _ 0 = []
+    getByte x remaining = (x .&. 0xff) : getByte (shiftR x 8) (remaining - 1)
 
 {- | The opposite of 'getBytes', this function builds a number based on
 its component bytes.
