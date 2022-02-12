@@ -39,24 +39,20 @@ module System.FileArchive.GZip (
                                  )
     where
 
-import           Control.Monad.Error
-import           Data.Bits                ((.&.))
-import           Data.Bits.Utils          (fromBytes)
-import           Data.Char                (ord)
-import           Data.Compression.Inflate (inflate_string_remainder)
-import           Data.Hash.CRC32.GZip     (update_crc)
-import           Data.Word                (Word32)
-import           System.IO                (Handle, hGetContents, hPutStr)
+import Control.Monad.Except     (MonadError(..))
+import Data.Bits                ((.&.))
+import Data.Bits.Utils          (fromBytes)
+import Data.Char                (ord)
+import Data.Compression.Inflate (inflate_string_remainder)
+import Data.Hash.CRC32.GZip     (update_crc)
+import Data.Word                (Word32)
+import System.IO                (Handle, hGetContents, hPutStr)
 
 data GZipError = CRCError               -- ^ CRC-32 check failed
                | NotGZIPFile            -- ^ Couldn't find a GZip header
                | UnknownMethod          -- ^ Compressed with something other than method 8 (deflate)
                | UnknownError String    -- ^ Other problem arose
                deriving (Eq, Show)
-
-instance Error GZipError where
-    noMsg = UnknownError ""
-    strMsg = UnknownError
 
 -- | First two bytes of file
 magic :: String

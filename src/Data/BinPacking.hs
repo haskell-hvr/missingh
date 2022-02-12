@@ -38,7 +38,6 @@ module Data.BinPacking (BinPacker,
 where
 
 import Data.List (sortOn)
-import Control.Monad.Error
 
 {- | Potential errors returned as Left values by 'BinPacker' functions.
 Calling 'show' on this value will produce a nice error message suitable for
@@ -55,10 +54,6 @@ instance (Num size, Ord size, Show size, Show obj) => Show (BinPackerError size 
         "Size " ++ show objsize ++ " greater than bin size " ++ show binsize
         ++ " at " ++ show obj
     show (BPOther x) = x
-
-{- | Let us use this as part of the Either monad -}
-instance (Num size, Ord size, Show size, Show obj) => Error (BinPackerError size obj) where
-    strMsg = BPOther
 
 {- | The primary type for bin-packing functions.
 
