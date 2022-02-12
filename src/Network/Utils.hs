@@ -95,6 +95,6 @@ showSockAddr :: SockAddr -> IO String
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 showSockAddr (SockAddrUnix x) = return $ "UNIX socket at " ++ x
 #endif
-showSockAddr sa@(SockAddrInet port host) =
+showSockAddr sa@(SockAddrInet port _host) =
     do (Just h,_) <- getNameInfo [NI_NUMERICHOST] True False sa
        return $ "IPv4 host " ++ h ++ ", port " ++ (show port)

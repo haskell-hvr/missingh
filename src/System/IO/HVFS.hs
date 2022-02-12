@@ -255,7 +255,7 @@ class (Show a) => HVFS a where
                                     return $ withStat s vIsDirectory
               ) (\(_ :: Control.Exception.IOException) -> return False)
     vDoesExist fs fp =
-        Control.Exception.catch (do s <- vGetSymbolicLinkStatus fs fp
+        Control.Exception.catch (do _ <- vGetSymbolicLinkStatus fs fp
                                     return True
               ) (\(_ :: Control.Exception.IOException) -> return False)
     vCreateDirectory fs _ = eh fs "vCreateDirectory"

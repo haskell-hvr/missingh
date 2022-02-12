@@ -41,12 +41,12 @@ triple a = (a,a,a)
 
 -- | Take the first item out of a 3 element tuple
 fst3 :: (a,b,c) -> a
-fst3 (a,b,c) = a
+fst3 (a,_,_) = a
 
 -- | Take the second item out of a 3 element tuple
 snd3 :: (a,b,c) -> b
-snd3 (a,b,c) = b
+snd3 (_,b,_) = b
 
 -- | Take the third item out of a 3 element tuple
 thd3 :: (a,b,c) -> c
-thd3 (a,b,c) = c
+thd3 (_,_,c) = c
