@@ -3,9 +3,7 @@ What is MissingH?
 -------------------------
 
 It's a collection of Haskell-related utilities.  It is an extension of my
-earlier work developing MissingLib for OCaml.  You can download
-MissingH from http://software.complete.org/missingh.  There is a mirror, with
-a few days' lag, at http://ftp.debian.org/debian/pool/main/m/missingh.
+earlier work developing MissingLib for OCaml.
 
 -------------------------
 Major Features
@@ -193,53 +191,11 @@ library and is designed to install without complexity on a variety of
 systems.  It could also easily be embedded within your own source
 trees so that users need not have it installed beforehand.
 
-** THIS IS CURRENTLY BETA-QUALITY CODE; MAJOR API FLUCTUATIONS MAY YET OCCUR.
-
 -------------------------
-Quick Start
--------------------------
-
-See the file INSTALL (Linux/Unix/BSD/Posix) or INSTALL-win.txt (Windows).
-
--------------------------
-Usage in programs
--------------------------
-
-You can simply use -package MissingH in most compilers to enable
-this library.  
-
-Hugs users will need to use -98 +o to use certain modules.
-
-GHC users will need to use this for certain modules:
- -fallow-overlapping-instances -fallow-undecidable-instances \
- -fglasgow-exts
-
-The API docs can be built with "make doc", or you can find them at:
-
-http://quux.org/devel/missingh
-
--------------------------
-Author & Homepage
+Author
 -------------------------
 
 MissingH was written by John Goerzen <jgoerzen@complete.org>.
-
-The latest version may be obtained at:
-
-   http://software.complete.org/missingh
-
-Documentation is also available on that page.
-
-This program is copyrighted under the terms of the GNU General Public License.
-See the COPYRIGHT and COPYING files for more details.
-
-If the GPL is unacceptable for your uses, please e-mail me; alternative
-terms can be negotiated for your project.
-
-Certain code in MissingH was written by third parties.  Licenses of
-these components may vary and are stated in COPYRIGHT.  All code in
-MissingH is GPL-compatible, and the work as a whole may be distributed
-as a GPL'd work.
 
 arch-tag: general information
 
