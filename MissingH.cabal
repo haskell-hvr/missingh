@@ -202,10 +202,5 @@ test-suite runtests
   build-depends:
       HUnit                  == 1.6.*
 
-  if impl(ghc < 7.8)
-    -- really, we would like to test for base < 4.7
-    build-depends:
-      errorcall-eq-instance  == 0.3.*
-
   if impl(ghc >= 8)
     ghc-options:   -Wcompat
