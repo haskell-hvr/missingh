@@ -24,10 +24,6 @@ Written by John Goerzen, jgoerzen\@complete.org
 Messages from this module are logged under @System.Daemon@.  See
 'System.Log.Logger' for details.
 
-Based on background
-from <http://www.erlenstar.demon.co.uk/unix/faq_2.html#SEC16> and
-<http://www.haskell.org/hawiki/HaskellUnixDaemon>.
-
 This module is not available on Windows.
 -}
 
