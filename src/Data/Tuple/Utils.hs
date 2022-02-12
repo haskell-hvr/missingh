@@ -4,7 +4,7 @@ Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
 All rights reserved.
 
-For license and copyright information, see the file LICENSE
+For license and copyright information, see the file LICENSE.
 -}
 
 {- |
@@ -17,7 +17,7 @@ For license and copyright information, see the file LICENSE
 
 This module provides various helpful utilities for dealing with tuples.
 
-Written by Neil Mitchell, <http://www.cs.york.ac.uk/~ndm/>
+Written by Neil Mitchell.
 -}
 
 module Data.Tuple.Utils(
