@@ -21,7 +21,8 @@ by default.
 -}
 
 module System.Posix.Consts where
-import           System.Posix.Types
+
+import safe System.Posix.Types ( FileMode )
 
 blockSpecialMode :: FileMode
 blockSpecialMode = 0o0060000

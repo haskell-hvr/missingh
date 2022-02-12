@@ -29,7 +29,16 @@ module Text.ParserCombinators.Parsec.Utils(-- * Generalized Utilities
                        notMatching
                       ) where
 
-import           Text.ParserCombinators.Parsec
+import safe Text.ParserCombinators.Parsec
+    ( (<?>),
+      (<|>),
+      getPosition,
+      many,
+      token,
+      unexpected,
+      try,
+      SourcePos,
+      GenParser )
 
 type GeneralizedToken a = (SourcePos, a)
 type GeneralizedTokenParser a st b = GenParser (GeneralizedToken a) st b

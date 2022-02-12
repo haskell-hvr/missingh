@@ -36,8 +36,10 @@ module System.IO.Utils(-- * Entire File Handle Utilities
                         ) where
 
 import           Data.List        (genericLength)
-import           System.IO
-import           System.IO.HVIO
+import           System.IO        (BufferMode (BlockBuffering, LineBuffering),
+                                   IOMode (ReadMode, WriteMode), hClose,
+                                   hSetBuffering, openFile, stdin, stdout)
+import           System.IO.HVIO   (HVIO (vGetContents, vGetLine, vIsEOF, vPutStr, vPutStrLn))
 import           System.IO.Unsafe (unsafeInterleaveIO)
 
 {- | Given a list of strings, output a line containing each item, adding

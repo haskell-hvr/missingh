@@ -75,11 +75,21 @@ import Data.Word (Word8())
 import Foreign.C.String (peekCStringLen, withCString)
 import Foreign.C.Types (CChar())
 import Foreign.ForeignPtr
+    ( ForeignPtr, mallocForeignPtrArray, withForeignPtr )
 import Foreign.Marshal.Array (peekArray, withArray)
-import Foreign.Ptr
+import Foreign.Ptr ( Ptr, castPtr )
 import System.IO
+    ( stdout,
+      hClose,
+      openBinaryFile,
+      stdin,
+      IOMode(WriteMode, ReadMode) )
 import System.IO.HVFS
+    ( SystemFS(SystemFS),
+      HVFSOpenable(vOpenBinaryFile),
+      HVFSOpenEncap(HVFSOpenEncap) )
 import System.IO.HVIO
+    ( HVIO(vClose, vGetBuf, vPutBuf, vGetContents, vPutStr) )
 import System.IO.Unsafe (unsafeInterleaveIO)
 
 {- | Provides support for handling binary blocks with convenient

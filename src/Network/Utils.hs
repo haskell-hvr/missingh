@@ -26,9 +26,25 @@ module Network.Utils (niceSocketsDo, connectTCP, connectTCPAddr,
                         listenTCPAddr, showSockAddr)
     where
 
-import           Network.BSD
-import           Network.Socket
-import           System.IO
+import Network.BSD
+    ( getHostByName,
+      getProtocolNumber,
+      hostAddress,
+      HostName,
+      Family(AF_INET),
+      PortNumber )
+import Network.Socket
+    ( getNameInfo,
+      withSocketsDo,
+      bind,
+      connect,
+      listen,
+      socket,
+      close,
+      NameInfoFlag(NI_NUMERICHOST),
+      SockAddr(SockAddrInet, SockAddrUnix),
+      Socket,
+      SocketType(Stream) )
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import qualified System.Posix.Signals
 #endif

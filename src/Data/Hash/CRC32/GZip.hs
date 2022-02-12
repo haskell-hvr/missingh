@@ -23,11 +23,10 @@ RFC1952.
 
 module Data.Hash.CRC32.GZip where
 
-import           Data.Array
-import           Data.Bits
-import           Data.Char
-import           Data.List
-import           Data.Word
+import safe Data.Array ( Array, array, (!) )
+import safe Data.Bits ( Bits(xor, (.&.), shiftR) )
+import safe Data.Char ( ord )
+import safe Data.Word ( Word32 )
 
 update_crc :: Word32 -> Char -> Word32
 update_crc crc ch =

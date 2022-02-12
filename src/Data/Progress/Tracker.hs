@@ -47,10 +47,11 @@ module Data.Progress.Tracker (
                                )
 
 where
-import Control.Concurrent.MVar
-import System.Time
-import System.Time.Utils
-import Data.Ratio
+import safe Control.Concurrent.MVar
+    ( modifyMVar_, withMVar, newMVar, MVar )
+import safe System.Time ( getClockTime )
+import safe System.Time.Utils ( clockTimeToEpoch )
+import safe Data.Ratio ( (%) )
 
 {- $introduction
 

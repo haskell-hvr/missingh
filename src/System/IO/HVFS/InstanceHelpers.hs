@@ -36,11 +36,18 @@ module System.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
 import           Data.IORef            (IORef, newIORef, readIORef, writeIORef)
 import           Data.List             (genericLength)
 import           System.FilePath       (isPathSeparator, pathSeparator, (</>))
-import           System.IO
+import safe System.IO ( IOMode(ReadMode) )
 import           System.IO.Error       (doesNotExistErrorType,
                                         illegalOperationErrorType,
                                         permissionErrorType)
-import           System.IO.HVFS
+import safe System.IO.HVFS
+    ( FileOffset,
+      HVFSOpenable(vOpen),
+      HVFS(vGetDirectoryContents, vGetFileStatus, vSetCurrentDirectory,
+           vRaiseError, vGetCurrentDirectory),
+      HVFSStat(vIsRegularFile, vFileSize, vIsDirectory),
+      HVFSOpenEncap(HVFSOpenEncap),
+      HVFSStatEncap(HVFSStatEncap) )
 import           System.IO.HVIO        (newStreamReader)
 import           System.Path           (absNormPath)
 import           System.Path.NameManip (slice_path)

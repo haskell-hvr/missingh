@@ -28,9 +28,9 @@ module Data.Hash.MD5
     , WordList(..)
     ) where
 
-import           Data.Bits
-import           Data.Char (chr, ord)
-import           Data.Word
+import safe Data.Bits (Bits (complement, rotateL, shiftL, shiftR, xor, (.&.), (.|.)))
+import safe Data.Char (chr, ord)
+import safe Data.Word (Word32, Word64)
 
 -- | Synonym for 'Word64' due to historic reasons
 type Zord64 = Word64

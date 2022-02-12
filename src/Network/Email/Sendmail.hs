@@ -31,10 +31,11 @@ where
 module Network.Email.Sendmail(sendmail)
 where
 
-import System.Cmd.Utils
-import System.Directory
-import System.IO
-import System.IO.Error
+import safe System.Cmd.Utils ( PipeMode(WriteToPipe), pOpen )
+import safe System.Directory
+    ( doesFileExist, getPermissions, Permissions(executable) )
+import safe System.IO ( hPutStr )
+import safe System.IO.Error ()
 import qualified Control.Exception(try, IOException)
 
 sendmails :: [String]

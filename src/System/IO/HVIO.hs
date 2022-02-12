@@ -120,14 +120,46 @@ module System.IO.HVIO(-- * Implementation Classes
                     )
 where
 
-import           Control.Concurrent.MVar
-import qualified Control.Exception       (IOException, catch)
-import           Data.IORef
-import           Foreign.C
-import           Foreign.Ptr
-import           Foreign.Storable
-import           System.IO
-import           System.IO.Error
+import safe Control.Concurrent.MVar
+    ( newEmptyMVar, putMVar, readMVar, takeMVar, MVar )
+import qualified Control.Exception       (catch)
+import safe Data.IORef ( IORef, modifyIORef, newIORef, readIORef )
+import safe Foreign.C ( castCharToCChar, peekCStringLen )
+import safe Foreign.Ptr ( Ptr, castPtr, plusPtr )
+import safe Foreign.Storable ( Storable(poke) )
+import safe System.IO
+    ( Handle,
+      hClose,
+      hFlush,
+      hGetBuffering,
+      hIsClosed,
+      hIsEOF,
+      hIsOpen,
+      hIsReadable,
+      hIsSeekable,
+      hIsWritable,
+      hSeek,
+      hSetBuffering,
+      hShow,
+      hTell,
+      hGetBuf,
+      hGetChar,
+      hGetContents,
+      hGetLine,
+      hPutBuf,
+      hPutChar,
+      hPutStr,
+      hPutStrLn,
+      hPrint,
+      hReady,
+      SeekMode(..),
+      BufferMode(NoBuffering) )
+import safe System.IO.Error
+    ( IOErrorType,
+      eofErrorType,
+      illegalOperationErrorType,
+      isEOFError,
+      mkIOError )
 
 {- | This is the generic I\/O support class.  All objects that are to be used
 in the HVIO system must provide an instance of 'HVIO'.

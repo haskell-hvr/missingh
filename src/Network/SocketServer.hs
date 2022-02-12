@@ -45,11 +45,30 @@ module Network.SocketServer(-- * Generic Options and Types
                                      handleHandler
                                     )
 where
-import           Control.Concurrent
-import           Network.BSD
-import           Network.Socket
-import           Network.Utils
-import           System.IO
+import Control.Concurrent ( forkIO )
+import Data.Functor (void)
+import Network.BSD
+    ( getProtocolNumber, Family(AF_INET), HostAddress, PortNumber )
+import Network.Socket
+    ( socketToHandle,
+      setSocketOption,
+      accept,
+      bind,
+      getSocketName,
+      listen,
+      socket,
+      close,
+      SocketOption(ReuseAddr),
+      SockAddr(SockAddrInet),
+      Socket,
+      SocketType(Stream) )
+import Network.Utils ( showSockAddr )
+import System.IO
+    ( Handle,
+      hClose,
+      hSetBuffering,
+      BufferMode(LineBuffering),
+      IOMode(ReadWriteMode) )
 import qualified System.Log.Logger
 
 {- | Options for your server. -}

@@ -56,8 +56,8 @@ module System.Path.WildMatch (-- * Wildcard matching
                                 wildToRegex)
     where
 
-import           Data.String.Utils
-import           Text.Regex
+import Data.String.Utils ( escapeRe )
+import Text.Regex ( matchRegex, mkRegex )
 
 {- | Convert a wildcard to an (uncompiled) regular expression.
 

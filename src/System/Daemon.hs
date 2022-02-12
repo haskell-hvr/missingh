@@ -42,11 +42,20 @@ module System.Daemon (
                        where
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 
-import           System.Directory
-import           System.Exit
-import           System.Log.Logger
-import           System.Posix.IO
-import           System.Posix.Process
+import System.Directory ( setCurrentDirectory )
+import System.Exit ( ExitCode(ExitSuccess) )
+import System.Log.Logger ( traplogging, Priority(ERROR) )
+import System.Posix.IO
+    ( openFd,
+      closeFd,
+      defaultFileFlags,
+      dupTo,
+      stdError,
+      stdInput,
+      stdOutput,
+      OpenMode(ReadWrite) )
+import System.Posix.Process
+    ( createSession, exitImmediately, forkProcess )
 
 
 trap :: IO a -> IO a

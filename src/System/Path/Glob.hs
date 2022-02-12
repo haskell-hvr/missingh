@@ -25,12 +25,13 @@ in "System.Path.WildMatch".
 
 module System.Path.Glob (glob, vGlob)
     where
+
 import           Control.Exception     (tryJust)
 import           Data.List             (isSuffixOf)
 import           Data.List.Utils       (hasAny)
-import           System.FilePath       (isPathSeparator, pathSeparator,
-                                        splitFileName, (</>))
-import           System.IO.HVFS
+import           System.FilePath       (pathSeparator, splitFileName, (</>))
+import safe      System.IO.HVFS        (HVFS (vDoesDirectoryExist, vDoesExist, vGetDirectoryContents),
+                                         SystemFS (SystemFS))
 import           System.Path.WildMatch (wildCheckCase)
 
 hasWild :: String -> Bool

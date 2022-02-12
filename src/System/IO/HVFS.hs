@@ -53,13 +53,46 @@ module System.IO.HVFS(-- * Implementation Classes \/ Types
 where
 
 import qualified Control.Exception (catch, IOException)
-import System.IO.HVIO
-import System.Time.Utils
+import System.IO.HVIO ( HVIO(vGetContents, vPutStr, vClose) )
+import System.Time.Utils ( epochToClockTime )
 import System.IO
+    ( openBinaryFile, openFile, IOMode(ReadMode, WriteMode) )
 import System.IO.Error
+    ( IOErrorType, illegalOperationErrorType, mkIOError )
 import System.IO.PlafCompat
-import System.Posix.Types
-import System.Time
+    ( DeviceID,
+      EpochTime,
+      FileID,
+      FileMode,
+      FileOffset,
+      GroupID,
+      LinkCount,
+      UserID,
+      createLink,
+      createSymbolicLink,
+      getFileStatus,
+      getSymbolicLinkStatus,
+      readSymbolicLink,
+      accessTime,
+      deviceID,
+      fileGroup,
+      fileID,
+      fileMode,
+      fileOwner,
+      fileSize,
+      isBlockDevice,
+      isCharacterDevice,
+      isDirectory,
+      isNamedPipe,
+      isRegularFile,
+      isSocket,
+      isSymbolicLink,
+      linkCount,
+      modificationTime,
+      specialDeviceID,
+      statusChangeTime,
+      FileStatus )
+import System.Time ( ClockTime(..) )
 import qualified System.Directory as D
 
 #if MIN_VERSION_directory(1,2,0)

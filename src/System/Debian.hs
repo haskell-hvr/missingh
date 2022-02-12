@@ -27,9 +27,9 @@ module System.Debian (-- * Control or Similar File Utilities
                        )
     where
 
-import           System.Exit
-import           System.IO.Unsafe (unsafePerformIO)
-import           System.Process
+import System.Exit ( ExitCode(ExitFailure, ExitSuccess) )
+import System.IO.Unsafe (unsafePerformIO)
+import System.Process ( rawSystem )
 
 {- | The type representing the contents of a Debian control file,
 or any control-like file (such as the output from apt-cache show, etc.) -}

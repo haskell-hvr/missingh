@@ -21,7 +21,18 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module Data.CSV (csvFile, genCsvFile) where
-import Text.ParserCombinators.Parsec
+import safe Text.ParserCombinators.Parsec
+    ( char,
+      noneOf,
+      string,
+      endBy,
+      sepBy,
+      (<?>),
+      (<|>),
+      many,
+      try,
+      GenParser,
+      CharParser )
 import Data.List (intersperse)
 
 eol :: forall st. GenParser Char st String

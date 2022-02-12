@@ -21,14 +21,29 @@ useful with HVFS and on Windows.  See also "System.IO.WindowsCompat".
 
 -}
 
-module System.IO.StatCompat
-where
-import           System.Posix.Consts
-import           System.Posix.Types
+module System.IO.StatCompat where
+
+import safe System.Posix.Consts
+    ( blockSpecialMode,
+      characterSpecialMode,
+      namedPipeMode,
+      regularFileMode,
+      directoryMode,
+      fileTypeModes,
+      socketMode,
+      symbolicLinkMode )
+import safe System.Posix.Types
+    ( DeviceID,
+      EpochTime,
+      FileID,
+      FileMode,
+      FileOffset,
+      GroupID,
+      LinkCount,
+      UserID )
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import           System.Posix.Files  (intersectFileModes)
 #endif
-import           Data.Bits           ((.&.))
 
 #if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 type LinkCount = Int

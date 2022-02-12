@@ -1,4 +1,5 @@
 {-# LANGUAGE Safe #-}
+
 {- arch-tag: List utilities main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -48,13 +49,11 @@ module Data.List.Utils(-- * Merging
                      -- -- * Sub-List Selection
                      -- sub,
                     ) where
+
 import           Control.Monad.State (State, get, put)
-import           Data.List           (concat, elemIndex, elemIndices,
-                                      elemIndices, find, findIndex,
-                                      intercalate, intersperse,
+import           Data.List           (elemIndices, findIndex, intercalate,
                                       isInfixOf, isPrefixOf, isSuffixOf, nub,
                                       tails)
-import           Data.Maybe          (isJust)
 
 
 {- | Merge two sorted lists into a single, sorted whole.

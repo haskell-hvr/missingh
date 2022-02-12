@@ -33,14 +33,34 @@ module System.IO.HVFS.Utils (recurseDir,
                               )
 where
 
-import           System.FilePath      (pathSeparator, (</>))
-import           System.IO.HVFS
-import           System.IO.PlafCompat
-import           System.IO.Unsafe (unsafeInterleaveIO)
-import           System.Locale
-import           System.Time
-import           System.Time.Utils
-import           Text.Printf
+import System.FilePath      (pathSeparator, (</>))
+import System.IO.HVFS
+    ( SystemFS(..),
+      HVFS(vGetSymbolicLinkStatus, vRemoveDirectory, vRemoveFile,
+           vReadSymbolicLink, vGetDirectoryContents),
+      HVFSStat(vFileSize, vIsDirectory, vIsBlockDevice,
+               vIsCharacterDevice, vIsSocket, vIsNamedPipe, vModificationTime,
+               vIsSymbolicLink, vFileMode, vFileOwner, vFileGroup),
+      HVFSStatEncap(..),
+      withStat )
+import System.IO.PlafCompat
+    ( groupExecuteMode,
+      groupReadMode,
+      groupWriteMode,
+      intersectFileModes,
+      otherExecuteMode,
+      otherReadMode,
+      otherWriteMode,
+      ownerExecuteMode,
+      ownerReadMode,
+      ownerWriteMode,
+      setGroupIDMode,
+      setUserIDMode )
+import System.IO.Unsafe (unsafeInterleaveIO)
+import System.Locale ( defaultTimeLocale )
+import System.Time ( formatCalendarTime, toCalendarTime )
+import System.Time.Utils ( epochToClockTime )
+import Text.Printf ( printf )
 
 {- | Obtain a recursive listing of all files\/directories beneath
 the specified directory.  The traversal is depth-first

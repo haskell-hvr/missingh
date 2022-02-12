@@ -6,8 +6,8 @@
 -- | Obsolete legacy module
 module Data.Hash.MD5.Zord64_HARD (Zord64) where
 
-import           Data.Bits
-import           Data.Word
+import safe Data.Bits ( Bits(complement, (.&.), (.|.), shift) )
+import safe Data.Word ( Word32 )
 
 data Zord64 = W64 {lo,hi::Word32} deriving (Eq, Ord, Bounded)
 

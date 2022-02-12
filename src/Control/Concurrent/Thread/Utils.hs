@@ -25,7 +25,7 @@ module Control.Concurrent.Thread.Utils(-- * I\/O utilities
                        )
 where
 
-import           Control.Concurrent
+import safe Control.Concurrent ( forkIO, ThreadId )
 
 {- | Takes a IO action and a function.  The IO action will be called in a
 separate thread.  When it is completed, the specified function is called with

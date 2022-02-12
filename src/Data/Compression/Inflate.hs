@@ -32,15 +32,16 @@ module Data.Compression.Inflate (inflate_string,
                                      inflate, Output, Bit,
                                     bits_to_word32) where
 
-import           Control.Applicative
-import           Control.Monad
-import           Data.Array
+import safe Control.Monad ( ap, unless )
+import safe Data.Array ( Array, array, (!), (//) )
 import qualified Data.Char
 import           Data.List
-import           Data.Maybe
+  ( mapAccumL, genericDrop, genericReplicate, genericSplitAt, genericTake
+  , sort )
+import safe Data.Maybe ()
 
-import           Data.Bits
-import           Data.Word
+import safe Data.Bits ( Bits(testBit) )
+import safe Data.Word ( Word8, Word32 )
 
 inflate_string :: String -> String
 inflate_string = fst . inflate_string_remainder

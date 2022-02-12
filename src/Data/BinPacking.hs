@@ -36,7 +36,8 @@ module Data.BinPacking (BinPacker,
                        )
 
 where
-import Data.List
+
+import Data.List (sortOn)
 import Control.Monad.Error
 
 {- | Potential errors returned as Left values by 'BinPacker' functions.

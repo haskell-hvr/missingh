@@ -26,14 +26,18 @@ module System.IO.HVFS.Combinators ( -- * Restrictions
                                     HVFSChroot, newHVFSChroot)
     where
 
-import           System.IO
-import           System.IO.Error
-import           System.IO.HVFS
+import safe System.IO ( IOMode(ReadMode) )
+import safe System.IO.Error
+    ( doesNotExistErrorType, permissionErrorType )
+import safe System.IO.HVFS
+    ( HVFSOpenable(vOpen),
+      HVFS(vRemoveFile, vCreateLink, vCreateSymbolicLink, vRenameFile,
+           vRenameDirectory, vRemoveDirectory, vCreateDirectory,
+           vGetCurrentDirectory, vGetDirectoryContents, vDoesFileExist,
+           vGetFileStatus, vGetSymbolicLinkStatus, vGetModificationTime,
+           vReadSymbolicLink, vRaiseError, vDoesDirectoryExist,
+           vSetCurrentDirectory) )
 import           System.IO.HVFS.InstanceHelpers (getFullPath)
-#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-import           System.Posix.Files
-                          -- so, but I'm not sure...
-#endif
 import           System.FilePath                (isPathSeparator, pathSeparator,
                                                  (</>))
 import           System.Path                    (secureAbsNormPath)
