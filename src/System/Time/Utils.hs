@@ -107,7 +107,7 @@ epochToClockTime x =
     where ratval = toRational x
           seconds = floor ratval
           secfrac = floor $ (ratval - (seconds % 1) ) * picosecondfactor
-          picosecondfactor = 10 ^ 12
+          picosecondfactor = 10 ^ (12 :: Integer)
 
 {- | Converts a ClockTime to something represented with an arbitrary Real.
 The result could be treated as a CTime from Foreign.C.Types or EpochTime from
