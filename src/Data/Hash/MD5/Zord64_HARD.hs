@@ -38,14 +38,15 @@ instance Bits Zord64 where
  W64{lo=lo_a,hi=hi_a} .|. W64{lo=lo_b,hi=hi_b} = W64{lo=lo', hi=hi'}
   where lo' = lo_a .|. lo_b
         hi' = hi_a .|. hi_b
- shift w 0 = w
- shift W64{lo=lo,hi=hi} x
+ shift w@W64{lo=lo,hi=hi} x
+  | x == 0 = w
   | x > 63 = W64{lo=0,hi=0}
   | x > 31 = W64{lo = 0, hi = shift lo (x-32)}
   | x > 0 = W64{lo = shift lo x, hi = shift hi x .|. shift lo (x-32)}
   | x < -63 = W64{lo=0,hi=0}
   | x < -31 = W64{lo = shift hi (x+32), hi = 0}
   | x < 0 = W64{lo = shift lo x .|. shift hi (x+32), hi = shift hi x}
+  | otherwise = error "impossible"
  complement W64{lo=lo,hi=hi} = W64{lo=complement lo,hi=complement hi}
 
 instance Integral Zord64 where
