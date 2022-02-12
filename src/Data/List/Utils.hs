@@ -50,7 +50,8 @@ module Data.List.Utils(-- * Merging
                     ) where
 import           Control.Monad.State (State, get, put)
 import           Data.List           (concat, elemIndex, elemIndices,
-                                      elemIndices, find, findIndex, intersperse,
+                                      elemIndices, find, findIndex,
+                                      intercalate, intersperse,
                                       isInfixOf, isPrefixOf, isSuffixOf, nub,
                                       tails)
 import           Data.Maybe          (isJust)
@@ -92,7 +93,7 @@ mergeBy cmp (allx@(x:xs)) (ally@(y:ys))
     | otherwise = y : mergeBy cmp allx ys
 
 {- | Returns true if the given list starts with the specified elements;
-false otherwise.  (This is an alias for "Data.List.isPrefixOf".)
+false otherwise.  (This is an alias for 'Data.List.isPrefixOf'.)
 
 Example:
 
@@ -104,7 +105,7 @@ startswith :: Eq a => [a] -> [a] -> Bool
 startswith = isPrefixOf
 
 {- | Returns true if the given list ends with the specified elements;
-false otherwise.  (This is an alias for "Data.List.isSuffixOf".)
+false otherwise.  (This is an alias for 'Data.List.isSuffixOf'.)
 
 Example:
 
@@ -123,7 +124,7 @@ hasAny [] _          = False             -- An empty search list: always false
 hasAny _ []          = False             -- An empty list to scan: always false
 hasAny search (x:xs) = if x `elem` search then True else hasAny search xs
 
-{- | Similar to Data.List.takeWhile, takes elements while the func is true.
+{- | Similar to 'Data.List.takeWhile', takes elements while the func is true.
 The function is given the remainder of the list to examine. -}
 takeWhileList :: ([a] -> Bool) -> [a] -> [a]
 takeWhileList _ [] = []
@@ -132,7 +133,7 @@ takeWhileList func list@(x:xs) =
        then x : takeWhileList func xs
        else []
 
-{- | Similar to Data.List.dropWhile, drops elements while the func is true.
+{- | Similar to 'Data.List.dropWhile', drops elements while the func is true.
 The function is given the remainder of the list to examine. -}
 dropWhileList :: ([a] -> Bool) -> [a] -> [a]
 dropWhileList _ [] = []
@@ -141,7 +142,7 @@ dropWhileList func list@(x:xs) =
        then dropWhileList func xs
        else list
 
-{- | Similar to Data.List.span, but performs the test on the entire remaining
+{- | Similar to 'Data.List.span', but performs the test on the entire remaining
 list instead of just one element.
 
 @spanList p xs@ is the same as @(takeWhileList p xs, dropWhileList p xs)@
@@ -155,7 +156,7 @@ spanList func list@(x:xs) =
        else ([],list)
     where (ys,zs) = spanList func xs
 
-{- | Similar to Data.List.break, but performs the test on the entire remaining
+{- | Similar to 'Data.List.break', but performs the test on the entire remaining
 list instead of just one element.
 -}
 breakList :: ([a] -> Bool) -> [a] -> ([a], [a])
@@ -198,14 +199,14 @@ replace :: Eq a => [a] -> [a] -> [a] -> [a]
 replace old new l = join new . split old $ l
 
 {- | Given a delimiter and a list of items (or strings), join the items
-by using the delimiter.
+by using the delimiter.  Alias for 'Data.List.intercalate'.
 
 Example:
 
 > join "|" ["foo", "bar", "baz"] -> "foo|bar|baz"
 -}
 join :: [a] -> [[a]] -> [a]
-join delim l = concat (intersperse delim l)
+join = intercalate
 
 {- | Like 'join', but works with a list of anything showable, converting
 it to a String.
@@ -219,18 +220,14 @@ Examples:
 genericJoin :: Show a => String -> [a] -> String
 genericJoin delim l = join delim (map show l)
 
-{-# DEPRECATED contains "Use Data.List.isInfixOf, will be removed in MissingH 1.1.0" #-}
 {- | Returns true if the given parameter is a sublist of the given list;
-false otherwise.
+false otherwise.  Alias for 'Data.List.isInfixOf'.
 
 Example:
 
 > contains "Haskell" "I really like Haskell." -> True
 > contains "Haskell" "OCaml is great." -> False
 
-This function was submitted to GHC and was applied as
-'Data.List.isInfixOf'.  This function therefore is deprecated and will
-be removed in future versions.
 -}
 
 contains :: Eq a => [a] -> [a] -> Bool
@@ -467,13 +464,10 @@ the current implementation happens to.
 
 This function is not compatible with infinite lists.
 
-This is presently an alias for Data.List.nub
+This is presently an alias for 'Data.List.nub'.
  -}
 uniq :: Eq a => [a] -> [a]
 uniq = nub
 
 ----- same as
 --uniq (x:xs) = x : [y | y <- uniq xs, y /= x]
-
-
-
