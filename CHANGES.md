@@ -1,3 +1,14 @@
+# 1.5.0.0
+
+_Andreas Abel, 2022-02-12_
+
+- Dropped support for GHC ≤ 7.8.
+- Support `mtl-2.3`: removed `Error` instance for `BinPackerError` and `GZipError`.
+- Use `sortOn` in `packLargeFirst` ([#41](https://github.com/haskell-hvr/missingh/issues/41)).
+- Fix warnings for `-Wall` and `-Wcompat`.
+- Hardened code by making all imports explicit.
+- Tested with GHC 7.10 - 9.2.
+
 ### 1.4.3.1
 
 _Andreas Abel, 2022-02-12_
@@ -6,7 +17,7 @@ _Andreas Abel, 2022-02-12_
 - Bump upper bounds on `base` and `time`.
 - Tested with GHC 7.0 - 9.2.
 
-### 1.4.3.0
+## 1.4.3.0
 
 _Herbert Valerio Riedel, 2020-04-09_
 

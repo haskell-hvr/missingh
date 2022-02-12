@@ -1,12 +1,12 @@
 cabal-version: 1.12
 name: MissingH
-version: 1.4.3.1
+version: 1.5.0.0
 
 build-type: Simple
 license: BSD3
 author: John Goerzen
 copyright: Copyright (c) 2004-2018 John Goerzen
-maintainer: Herbert Valerio Riedel <hvr@gnu.org>
+maintainer: Andreas Abel
 license-file: LICENSE
 
 tested-with:
@@ -144,7 +144,9 @@ library
   If !os(windows)
     Build-Depends: unix   >= 2.5.1.0 && < 2.8
 
-  ghc-options: -fno-warn-deprecations
+  ghc-options:     -Wall
+  if impl(ghc >= 8)
+    ghc-options:   -Wcompat
 
 ----------------------------------------------------------------------------
 
@@ -205,4 +207,5 @@ test-suite runtests
     build-depends:
       errorcall-eq-instance  == 0.3.*
 
-  ghc-options: -fno-warn-deprecations
+  if impl(ghc >= 8)
+    ghc-options:   -Wcompat
