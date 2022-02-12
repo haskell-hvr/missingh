@@ -21,8 +21,6 @@ Tools for writing daemons\/server processes
 
 Written by John Goerzen, jgoerzen\@complete.org
 
-Please note: Most of this module is not compatible with Hugs.
-
 Messages from this module are logged under @System.Daemon@.  See
 'System.Log.Logger' for details.
 

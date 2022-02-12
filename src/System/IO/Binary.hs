@@ -29,21 +29,6 @@ This module can work with any HVIO object, however.  See
 Versions of MissingH prior 0.11.6 lacked the 'BinaryConvertible' class
 and worked only with Strings and Handles.
 
-Important note: /binary functions are not supported in all Haskell
-implementations/.  Do not import or use this module unless you know you
-are using an implementation that supports them.  At this time, here
-is the support status:
-
- * GHC 6.2 and above: yes
-
- * GHC 6.x, earlier versions: unknown
-
- * GHC 5.x: no
-
- * nhc98: no
-
- * Hugs: partial (maybe complete; needs more testing)
-
 Non-binary functions may be found in "System.IO".
 
 See also: "System.IO.BlockIO"

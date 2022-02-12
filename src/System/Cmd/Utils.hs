@@ -22,8 +22,6 @@ Command invocation utilities.
 
 Written by John Goerzen, jgoerzen\@complete.org
 
-Please note: Most of this module is not compatible with Hugs.
-
 Command lines executed will be logged using "System.Log.Logger" at the
 DEBUG level.  Failure messages will be logged at the WARNING level in addition
 to being raised as an exception.  Both are logged under
@@ -170,7 +168,6 @@ warnFail funcname fp args msg =
               fail m
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Read data from a pipe.  Returns a Handle and a 'PipeHandle'.
 
 When done, you must hClose the handle, and then use either 'forceSuccess' or
@@ -178,7 +175,7 @@ getProcessStatus on the 'PipeHandle'.  Zombies will result otherwise.
 
 This function logs as pipeFrom.
 
-Not available on Windows or with Hugs.
+Not available on Windows.
 -}
 hPipeFrom :: FilePath -> [String] -> IO (PipeHandle, Handle)
 hPipeFrom fp args =
@@ -197,10 +194,8 @@ hPipeFrom fp args =
        h <- fdToHandle (fst pipepair)
        return (PipeHandle pid fp args "pipeFrom", h)
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Read data from a pipe.  Returns a lazy string and a 'PipeHandle'.
 
 ONLY AFTER the string has been read completely, You must call either
@@ -215,10 +210,8 @@ pipeFrom fp args =
        c <- hGetContents h
        return (pid, c)
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Write data to a pipe.  Returns a 'PipeHandle' and a new Handle to write
 to.
 
@@ -246,10 +239,8 @@ hPipeTo fp args =
        h <- fdToHandle (snd pipepair)
        return (PipeHandle pid fp args "pipeTo", h)
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Write data to a pipe.  Returns a ProcessID.
 
 You must call either
@@ -265,10 +256,8 @@ pipeTo fp args message =
                (hClose h)
        return pid
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Like a combination of 'hPipeTo' and 'hPipeFrom'; returns
 a 3-tuple of ('PipeHandle', Data From Pipe, Data To Pipe).
 
@@ -304,10 +293,8 @@ hPipeBoth fp args =
        toh <- fdToHandle (snd topair)
        return (PipeHandle pid fp args "pipeBoth", fromh, toh)
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Like a combination of 'pipeTo' and 'pipeFrom'; forks an IO thread
 to send data to the piped program, and simultaneously returns its output
 stream.
@@ -321,7 +308,6 @@ pipeBoth fp args message =
        _ <- forkIO $ finally (hPutStr toh message) (hClose toh)
        c <- hGetContents fromh
        return (pid, c)
-#endif
 #endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
@@ -361,7 +347,7 @@ safeSystem :: FilePath -> [String] -> IO ()
 safeSystem command args =
     do debugM (logbase ++ ".safeSystem")
                ("Running: " ++ command ++ " " ++ (show args))
-#if defined(__HUGS__) || defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__)
+#if defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__)
        ec <- rawSystem command args
        case ec of
             ExitSuccess -> return ()
@@ -380,7 +366,6 @@ safeSystem command args =
 #endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Invokes the specified command in a subprocess, waiting for the result.
 Return the result status.  Never raises an exception.  Only available
 on POSIX platforms.
@@ -419,10 +404,8 @@ posixRawSystem program args =
                  setSignalMask oldset
 
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Invokes the specified command in a subprocess, without waiting for
 the result.  Returns the PID of the subprocess -- it is YOUR responsibility
 to use getProcessStatus or getAnyProcessStatus on that at some point.  Failure
@@ -440,7 +423,6 @@ forkRawSystem program args =
       childaction = executeFile program True args Nothing
 
 #endif
-#endif
 
 cmdfailed :: String -> FilePath -> [String] -> Int -> IO a
 cmdfailed funcname command args failcode = do
@@ -451,7 +433,6 @@ cmdfailed funcname command args failcode = do
     ioError e
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 cmdsignalled :: String -> FilePath -> [String] -> Signal -> IO a
 cmdsignalled funcname command args failcode = do
     let errormsg = "Command " ++ command ++ " " ++ (show args) ++
@@ -460,10 +441,8 @@ cmdsignalled funcname command args failcode = do
     warningM (logbase ++ "." ++ funcname) errormsg
     ioError e
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Open a pipe to the specified command.
 
 Passes the handle on to the specified function.
@@ -500,10 +479,8 @@ pOpen pm fp args func =
                         pOpen3 (Just (fst pipepair)) Nothing Nothing fp args
                                callfunc (closeFd (snd pipepair))
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Runs a command, redirecting things to pipes.
 
 Not available on Windows.
@@ -526,10 +503,8 @@ pOpen3 pin pout perr fp args func childfunc =
        forceSuccess (PipeHandle (seq retval pid) fp args "pOpen3")
        return rv
 #endif
-#endif
 
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-#ifndef __HUGS__
 {- | Runs a command, redirecting things to pipes.
 
 Not available on Windows.
@@ -577,7 +552,6 @@ pOpen3Raw pin pout perr fp args childfunc =
                 Left (e :: Control.Exception.IOException) -> fail ("Error in fork: " ++ (show e))
         return pid
 
-#endif
 #endif
 
 showCmd :: FilePath -> [String] -> String
