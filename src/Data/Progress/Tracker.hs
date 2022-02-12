@@ -140,20 +140,8 @@ class ProgressStatuses a b where
        to the function. -}
     withStatus :: a -> (ProgressStatus -> b) -> b
 
-class ProgressRecords a b where
-    withRecord :: a -> (ProgressRecord -> b) -> b
-
-{-
-instance ProgressStatuses ProgressRecord b where
-    withStatus x func = func (status x)
-instance ProgressRecords ProgressRecord b where
-    withRecord x func = func x
--}
-
 instance ProgressStatuses Progress (IO b) where
     withStatus (Progress x) func = withMVar x (\y -> func (status y))
-instance ProgressRecords Progress (IO b) where
-    withRecord (Progress x) func = withMVar x func
 
 instance ProgressStatuses ProgressStatus b where
     withStatus x func = func x
@@ -368,9 +356,6 @@ getETA po =
 -}
 defaultTimeSource :: ProgressTimeSource
 defaultTimeSource = getClockTime >>= (return . clockTimeToEpoch)
-
-now :: ProgressRecords a ProgressTimeSource => a -> ProgressTimeSource
-now x = withRecord x (timeSource . status)
 
 modStatus :: Progress -> (ProgressStatus -> ProgressStatus) -> IO ()
 -- FIXME/TODO: handle parents

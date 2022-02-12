@@ -130,11 +130,10 @@ closeSocketServer ss =
 
 {- | Handle one incoming request from the given 'SocketServer'. -}
 handleOne :: SocketServer -> HandlerT -> IO ()
-handleOne ss func =
-    let opts = (optionsSS ss)
-        in    do a <- accept (sockSS ss)
-                 localaddr <- getSocketName (fst a)
-                 func (fst a) (snd a) localaddr
+handleOne ss func = do
+    a <- accept (sockSS ss)
+    localaddr <- getSocketName (fst a)
+    func (fst a) (snd a) localaddr
 
 {- | Handle all incoming requests from the given 'SocketServer'. -}
 serveForever :: SocketServer -> HandlerT -> IO ()
