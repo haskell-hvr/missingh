@@ -123,10 +123,10 @@ instance Monad InfM where
                                     InfM y = f x
                                 in y s'
  -- return :: a -> InfM a
-    return x = InfM $ \s -> (x, s)
+    return = pure
 
 instance Applicative InfM where
-    pure = return
+    pure x = InfM $ \s -> (x, s)
     (<*>) = ap
 
 instance Functor InfM where
