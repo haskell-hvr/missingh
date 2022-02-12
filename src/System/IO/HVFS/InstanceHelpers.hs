@@ -12,7 +12,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Utilities for creating instances of the items defined in
@@ -210,4 +210,3 @@ instance HVFSOpenable MemoryVFS where
     vOpen x fp _ = vRaiseError x permissionErrorType
                      "Only ReadMode is supported with MemoryVFS files"
                      (Just fp)
-

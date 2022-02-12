@@ -14,7 +14,7 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2005-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable to platforms with POSIX process\/signal tools
 
 Tools for writing daemons\/server processes

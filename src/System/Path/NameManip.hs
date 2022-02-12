@@ -4,7 +4,7 @@
    Copyright  : Copyright (C) 2004 Volker Wysk
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Low-level path name manipulations.

@@ -12,12 +12,12 @@ For license and copyright information, see the file LICENSE
    Copyright  : Copyright (C) 2006-2011 John Goerzen
    SPDX-License-Identifier: BSD-3-Clause
 
-   Stability  : provisional
+   Stability  : stable
    Portability: portable
 
 Tools for tracking the status of a long operation.
 
-Written by John Goerzen, jgoerzen\@complete.org 
+Written by John Goerzen, jgoerzen\@complete.org
 
 See also "Data.Progress.Meter" -}
 
@@ -66,7 +66,7 @@ a large task is composed of several individual tasks which may also be
 long-running.  Downloading many large files over the Internet is a common
 example of this.
 
-Any given ProgressTracker can be told about one or more parent trackers.  
+Any given ProgressTracker can be told about one or more parent trackers.
 When the child tracker's status is updated, the parent tracker's status is
 also updated in the same manner.  Therefore, the progress on each individual
 component, as well as the overall progress, can all be kept in sync
@@ -95,7 +95,7 @@ Here is an example use:
 -- TYPES
 ----------------------------------------------------------------------
 
-{- | A function that, when called, yields the current time. 
+{- | A function that, when called, yields the current time.
 The default is 'defaultTimeSource'. -}
 type ProgressTimeSource = IO Integer
 
@@ -112,7 +112,7 @@ callback is running, so the callback will not be able to make changes to it. -}
 type ProgressCallback = ProgressStatus -> ProgressStatus -> IO ()
 
 {- | The main progress status record. -}
-data ProgressStatus = 
+data ProgressStatus =
      ProgressStatus {completedUnits :: Integer,
                      totalUnits :: Integer,
                      startTime :: Integer,
@@ -129,7 +129,7 @@ data ProgressRecord =
 newtype Progress = Progress (MVar ProgressRecord)
 
 class ProgressStatuses a b where
-    {- | Lets you examine the 'ProgressStatus' that is contained 
+    {- | Lets you examine the 'ProgressStatus' that is contained
        within a 'Progress' object.  You can simply pass
        a 'Progress' object and a function to 'withStatus', and
        'withStatus' will lock the 'Progress' object (blocking any
@@ -184,7 +184,7 @@ newProgress name total =
                                      timeSource = defaultTimeSource})
                     []
 
-{- | Create a new 'Progress' object initialized with the given status and 
+{- | Create a new 'Progress' object initialized with the given status and
 callbacks.
 No adjustment to the 'startTime' will be made.  If you
 want to use the system clock, you can initialize 'startTime' with
@@ -200,7 +200,7 @@ newProgress' news newcb =
 {- | Adds an new callback to an existing 'Progress'.  The callback will be
 called whenever the object's status is updated, except by the call to finishP.
 
-Please note that the Progress object will be locked while the callback is 
+Please note that the Progress object will be locked while the callback is
 running, so the callback will not be able to make any modifications to it.
 -}
 addCallback :: Progress -> ProgressCallback -> IO ()
@@ -227,7 +227,7 @@ any adjustment in totalUnits to the parents, whose callbacks /will/ be
 called.
 
 This ensures that the total expected counts on the parent are always correct.
-Without doing this, if, say, a transfer ended earlier than expected, ETA 
+Without doing this, if, say, a transfer ended earlier than expected, ETA
 values on the parent would be off since it would be expecting more data than
 actually arrived. -}
 finishP :: Progress -> IO ()
@@ -235,10 +235,10 @@ finishP (Progress mp) =
     modifyMVar_ mp modfunc
     where modfunc :: ProgressRecord -> IO ProgressRecord
           modfunc oldpr =
-              do let adjustment = (completedUnits . status $ oldpr) 
+              do let adjustment = (completedUnits . status $ oldpr)
                                   - (totalUnits . status $ oldpr)
                  callParents oldpr (\x -> incrTotal x adjustment)
-                 return $ oldpr {status = (status oldpr) 
+                 return $ oldpr {status = (status oldpr)
                                  {totalUnits = completedUnits . status $ oldpr}}
 
 ----------------------------------------------------------------------
@@ -246,23 +246,23 @@ finishP (Progress mp) =
 ----------------------------------------------------------------------
 {- | Increment the completed unit count in the 'Progress' object
 by the amount given.  If the value as given exceeds the total, then
-the total will also be raised to match this value so that the 
+the total will also be raised to match this value so that the
 completed count never exceeds the total.
 
 You can decrease the completed unit count by supplying a negative number
 here. -}
 incrP :: Progress -> Integer -> IO ()
 incrP po count = modStatus po statusfunc
-    where statusfunc s = 
+    where statusfunc s =
              s {completedUnits = newcu s,
                 totalUnits = if newcu s > totalUnits s
                                  then newcu s
                                  else totalUnits s}
-          newcu s = completedUnits s + count                  
+          newcu s = completedUnits s + count
 
 {- | Like 'incrP', but never modify the total. -}
 incrP' :: Progress -> Integer -> IO ()
-incrP' po count = 
+incrP' po count =
     modStatus po (\s -> s {completedUnits = completedUnits s + count})
 
 {- | Set the completed unit count in the 'Progress' object to the specified
@@ -283,10 +283,10 @@ setP' :: Progress -> Integer -> IO ()
 setP' po count = modStatus po (\s -> s {completedUnits = count})
 
 {- | Increment the total unit count in the 'Progress' object by the amount
-given.  This would rarely be needed, but could be needed in some special cases 
+given.  This would rarely be needed, but could be needed in some special cases
 when the total number of units is not known in advance. -}
 incrTotal :: Progress -> Integer -> IO ()
-incrTotal po count = 
+incrTotal po count =
     modStatus po (\s -> s {totalUnits = totalUnits s + count})
 
 {- | Set the total unit count in the 'Progress' object to the specified
@@ -318,14 +318,14 @@ that it can take either a 'Progress' or a 'ProgressStatus' object, and returns
 a number that is valid as any Fractional type, such as a Double, Float, or
 Rational. -}
 getSpeed :: (ProgressStatuses a (IO b), Fractional b) => a -> IO b
-getSpeed po = withStatus po $ \status -> 
+getSpeed po = withStatus po $ \status ->
                 do t <- timeSource status
                    let elapsed = t - (startTime status)
                    return $ if elapsed == 0
                        then fromRational 0
                        else fromRational ((completedUnits status) % elapsed)
 
-{- | Returns the estimated time remaining, in standard time units. 
+{- | Returns the estimated time remaining, in standard time units.
 
 Returns 0 whenever 'getSpeed' would return 0.
 
@@ -333,11 +333,11 @@ See the comments under 'getSpeed' for information about this function's type
 and result. -}
 getETR :: (ProgressStatuses a (IO Integer),
            ProgressStatuses a (IO Rational)) => a -> IO Integer
-getETR po = 
+getETR po =
     do speed <- ((getSpeed po)::IO Rational)
        if speed == 0
           then return 0
-          else 
+          else
               -- FIXME: potential for a race condition here, but it should
               -- be negligible
               withStatus po $ \status ->
@@ -376,7 +376,7 @@ modStatus :: Progress -> (ProgressStatus -> ProgressStatus) -> IO ()
 modStatus (Progress mp) func =
     modifyMVar_ mp modfunc
     where modfunc :: ProgressRecord -> IO ProgressRecord
-          modfunc oldpr = 
+          modfunc oldpr =
               do let newpr = oldpr {status = func (status oldpr)}
                  mapM_ (\x -> x (status oldpr) (status newpr))
                            (callbacks oldpr)
@@ -394,4 +394,3 @@ modStatus (Progress mp) func =
 
 callParents :: ProgressRecord -> (Progress -> IO ()) -> IO ()
 callParents pr func = mapM_ func (parents pr)
-
