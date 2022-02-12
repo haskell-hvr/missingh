@@ -186,9 +186,8 @@ loggingHandler hname prio nexth socket r_sockaddr l_sockaddr =
 -- make the server multi-tasking.
 threadedHandler :: HandlerT             -- ^ Handler to call in the new thread
                 -> HandlerT             -- ^ Resulting handler
-threadedHandler nexth socket r_sockaddr l_sockaddr=
-    do forkIO (nexth socket r_sockaddr l_sockaddr)
-       return ()
+threadedHandler nexth socket r_sockaddr l_sockaddr = void $
+    forkIO (nexth socket r_sockaddr l_sockaddr)
 
 {- | Give your handler function a Handle instead of a Socket.
 

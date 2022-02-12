@@ -184,7 +184,7 @@ hPipeFrom :: FilePath -> [String] -> IO (PipeHandle, Handle)
 hPipeFrom fp args =
     do pipepair <- createPipe
        logRunning "pipeFrom" fp args
-       let childstuff = do dupTo (snd pipepair) stdOutput
+       let childstuff = do _ <- dupTo (snd pipepair) stdOutput
                            closeFd (fst pipepair)
                            executeFile fp True args Nothing
        p <- Control.Exception.try (forkProcess childstuff)
@@ -233,7 +233,7 @@ hPipeTo :: FilePath -> [String] -> IO (PipeHandle, Handle)
 hPipeTo fp args =
     do pipepair <- createPipe
        logRunning "pipeTo" fp args
-       let childstuff = do dupTo (fst pipepair) stdInput
+       let childstuff = do _ <- dupTo (fst pipepair) stdInput
                            closeFd (snd pipepair)
                            executeFile fp True args Nothing
        p <- Control.Exception.try (forkProcess childstuff)
@@ -287,9 +287,9 @@ hPipeBoth fp args =
     do frompair <- createPipe
        topair <- createPipe
        logRunning "pipeBoth" fp args
-       let childstuff = do dupTo (snd frompair) stdOutput
+       let childstuff = do _ <- dupTo (snd frompair) stdOutput
                            closeFd (fst frompair)
-                           dupTo (fst topair) stdInput
+                           _ <- dupTo (fst topair) stdInput
                            closeFd (snd topair)
                            executeFile fp True args Nothing
        p <- Control.Exception.try (forkProcess childstuff)
@@ -318,8 +318,7 @@ Not available on Windows. -}
 pipeBoth :: FilePath -> [String] -> String -> IO (PipeHandle, String)
 pipeBoth fp args message =
     do (pid, fromh, toh) <- hPipeBoth fp args
-       forkIO $ finally (hPutStr toh message)
-                        (hClose toh)
+       _ <- forkIO $ finally (hPutStr toh message) (hClose toh)
        c <- hGetContents fromh
        return (pid, c)
 #endif
@@ -415,8 +414,8 @@ posixRawSystem program args =
               do restoresignals oldint oldquit oldset
                  executeFile program True args Nothing
           restoresignals oldint oldquit oldset =
-              do installHandler sigINT oldint Nothing
-                 installHandler sigQUIT oldquit Nothing
+              do _ <- installHandler sigINT oldint Nothing
+                 _ <- installHandler sigQUIT oldquit Nothing
                  setSignalMask oldset
 
 #endif
@@ -551,7 +550,7 @@ pOpen3Raw :: Maybe Fd                      -- ^ Send stdin to this fd
 pOpen3Raw pin pout perr fp args childfunc =
     let mayberedir Nothing _ = return ()
         mayberedir (Just fromfd) tofd = do
-                                        dupTo fromfd tofd
+                                        _ <- dupTo fromfd tofd
                                         closeFd fromfd
                                         return ()
         childstuff = do

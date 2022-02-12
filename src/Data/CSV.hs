@@ -44,13 +44,13 @@ cell = quotedcell <|> many (noneOf ",\n\r")
 
 quotedchar :: GenParser Char st Char
 quotedchar = noneOf "\""
-             <|> (try $ do string "\"\""
+             <|> (try $ do _ <- string "\"\""
                            return '"'
                  )
 quotedcell :: CharParser st String
-quotedcell = do char '"'
+quotedcell = do _ <- char '"'
                 content <- many quotedchar
-                char '"'
+                _ <- char '"'
                 return content
 
 line :: GenParser Char st [String]

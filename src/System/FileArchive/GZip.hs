@@ -194,12 +194,12 @@ read_data x =
 read_header :: String -> Either GZipError (Header, String)
 read_header s =
     let ok = Right "ok" in
-    do let (mag, rem) = splitAt 2 s
-       if mag /= magic
+    do let (mag, rem1) = splitAt 2 s
+       _ <- if mag /= magic
           then throwError NotGZIPFile
           else ok
-       let (method, rem2) = split1 rem
-       if (ord(method) /= 8)
+       let (method, rem2) = split1 rem1
+       _ <- if (ord(method) /= 8)
           then throwError UnknownMethod
           else ok
        let (flag_S, rem3) = split1 rem2

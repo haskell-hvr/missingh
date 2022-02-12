@@ -65,7 +65,7 @@ niceSocketsDo :: IO a -> IO a
 niceSocketsDo func = do
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
                 -- No signals on Windows anyway
-                System.Posix.Signals.installHandler
+                _ <- System.Posix.Signals.installHandler
                       System.Posix.Signals.sigPIPE
                       System.Posix.Signals.Ignore
                       Nothing

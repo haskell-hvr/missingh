@@ -79,13 +79,13 @@ Note that this is not intended for a daemon invoked from inetd(1).
 -}
 detachDaemon :: IO ()
 detachDaemon = trap $
-               do forkProcess child1
+               do _ <- forkProcess child1
                   exitImmediately ExitSuccess
 
 child1 :: IO ()
 child1 = trap $
-    do createSession
-       forkProcess child2
+    do _ <- createSession
+       _ <- forkProcess child2
        exitImmediately ExitSuccess
 
 child2 :: IO ()
