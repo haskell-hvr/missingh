@@ -37,18 +37,20 @@ import safe System.Posix.Types
       EpochTime,
       FileID,
       FileMode,
-      FileOffset,
-      GroupID,
-      LinkCount,
-      UserID )
-#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-import           System.Posix.Files  (intersectFileModes)
-#endif
+      FileOffset )
 
-#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
+import safe System.Posix.Types ( LinkCount, UserID, GroupID )
+import safe System.Posix.Files ( intersectFileModes )
+#else
+import safe Data.Bits          ( (.&.) )
+
 type LinkCount = Int
 type UserID = Int
 type GroupID = Int
+
+intersectFileModes :: FileMode -> FileMode -> FileMode
+intersectFileModes m1 m2 = m1 .&. m2
 #endif
 
 data FileStatusCompat =
@@ -77,8 +79,3 @@ isRegularFile = sc_helper regularFileMode
 isDirectory = sc_helper directoryMode
 isSymbolicLink = sc_helper symbolicLinkMode
 isSocket = sc_helper socketMode
-
-#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-intersectFileModes :: FileMode -> FileMode -> FileMode
-intersectFileModes m1 m2 = m1 .&. m2
-#endif

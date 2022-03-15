@@ -69,11 +69,12 @@ import System.IO.PlafCompat
       GroupID,
       LinkCount,
       UserID,
+#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
       createLink,
       createSymbolicLink,
-      getFileStatus,
       getSymbolicLinkStatus,
       readSymbolicLink,
+#endif
       accessTime,
       deviceID,
       fileGroup,
@@ -81,6 +82,7 @@ import System.IO.PlafCompat
       fileMode,
       fileOwner,
       fileSize,
+      getFileStatus,
       isBlockDevice,
       isCharacterDevice,
       isDirectory,

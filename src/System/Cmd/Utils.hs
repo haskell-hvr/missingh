@@ -95,7 +95,9 @@ where
 
 import System.Exit ( ExitCode(ExitFailure, ExitSuccess) )
 import System.Log.Logger ( debugM, warningM )
-#if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
+#if (defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
+import System.Process (rawSystem)
+#else
 import System.Posix.IO
     ( closeFd,
       createPipe,

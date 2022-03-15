@@ -42,7 +42,7 @@ import Network.Socket
       socket,
       close,
       NameInfoFlag(NI_NUMERICHOST),
-      SockAddr(SockAddrInet, SockAddrUnix),
+      SockAddr(..),
       Socket,
       SocketType(Stream) )
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))

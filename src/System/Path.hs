@@ -35,13 +35,14 @@ import safe Data.List.Utils ( startswith, alwaysElemRIndex )
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
 import safe System.Directory
     ( getCurrentDirectory, removeFile, setCurrentDirectory )
-import           System.Posix.Directory (createDirectory)
+import safe System.Posix.Directory ( createDirectory )
 import safe System.Posix.Temp ( mkstemp )
 #else
-import           System.Directory
+import safe System.Directory
+import safe System.IO ( openTempFile )
 #endif
 import safe Control.Exception ( finally )
-import           System.FilePath        (pathSeparator)
+import safe System.FilePath ( pathSeparator )
 import safe System.IO ( hClose )
 import safe System.IO.HVFS.Utils
     ( SystemFS(SystemFS), recurseDir, recurseDirStat, recursiveRemove )
