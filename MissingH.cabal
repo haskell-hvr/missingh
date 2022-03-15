@@ -1,6 +1,6 @@
 cabal-version: 1.12
 name: MissingH
-version: 1.5.0.0
+version: 1.5.0.1
 
 build-type: Simple
 license: BSD3

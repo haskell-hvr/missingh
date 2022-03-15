@@ -1,3 +1,10 @@
+### 1.5.0.1
+
+_Andreas Abel, 2022-03-14_
+
+- Repair build on Windows (regression in 1.5.0.0, [#59](https://github.com/haskell-hvr/missingh/issues/59)).
+- Tested with GHC 7.10 - 9.2.
+
 # 1.5.0.0
 
 _Andreas Abel, 2022-02-12_
