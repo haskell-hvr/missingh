@@ -7,6 +7,7 @@ on:
     - master
     - ci-*
   pull_request:
+    - master
 
 defaults:
   run:
@@ -20,9 +21,10 @@ jobs:
       fail-fast: false
       matrix:
         os:    [windows-latest, macos-latest]
-        ghc:   ['9.2', '9.0', '8.10', '7.10']
+        ghc:   ['9.2', '9.0', '8.10', '8.0']
           # Minor versions are determined by setup-haskell.
           # Use quotes so that the version numbers are not interpreted as floats.
+          # GHC 7.10.3 is broken on Windows (Chocolatey)
         cabal: [latest]
 
     steps:
