@@ -7,7 +7,9 @@ on:
     - master
     - ci-*
   pull_request:
+    branches:
     - master
+    - ci-*
 
 defaults:
   run:
@@ -21,16 +23,16 @@ jobs:
       fail-fast: false
       matrix:
         os:    [windows-latest, macos-latest]
-        ghc:   ['9.2', '9.0', '8.10', '8.0']
+        ghc:   ['9.4', '9.2', '9.0', '8.10', '8.0']
           # Minor versions are determined by setup-haskell.
           # Use quotes so that the version numbers are not interpreted as floats.
           # GHC 7.10.3 is broken on Windows (Chocolatey)
         cabal: [latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: haskell/actions/setup@v1
+    - uses: haskell/actions/setup@v2
       id: setup-haskell
       with:
         ghc-version:   ${{ matrix.ghc }}
@@ -58,7 +60,7 @@ jobs:
         cabal update
         cabal configure -O0 --enable-tests --enable-benchmarks
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       name: Cache dependencies
       id: cache
       with:
