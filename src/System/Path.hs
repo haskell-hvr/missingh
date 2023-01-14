@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE Safe #-}
 {- arch-tag: Path utilities main file
 Copyright (C) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -31,22 +30,22 @@ module System.Path(-- * Name processing
                      mktmpdir, brackettmpdir, brackettmpdirCWD
                     )
 where
-import safe Data.List.Utils ( startswith, alwaysElemRIndex )
+import Data.List.Utils ( startswith, alwaysElemRIndex )
 #if !(defined(mingw32_HOST_OS) || defined(mingw32_TARGET_OS) || defined(__MINGW32__))
-import safe System.Directory
+import System.Directory
     ( getCurrentDirectory, removeFile, setCurrentDirectory )
-import safe System.Posix.Directory ( createDirectory )
-import safe System.Posix.Temp ( mkstemp )
+import System.Posix.Directory ( createDirectory )
+import System.Posix.Temp ( mkstemp )
 #else
-import safe System.Directory
-import safe System.IO ( openTempFile )
+import System.Directory
+import System.IO ( openTempFile )
 #endif
-import safe Control.Exception ( finally )
-import safe System.FilePath ( pathSeparator )
-import safe System.IO ( hClose )
-import safe System.IO.HVFS.Utils
+import Control.Exception ( finally )
+import System.FilePath ( pathSeparator )
+import System.IO ( hClose )
+import System.IO.HVFS.Utils
     ( SystemFS(SystemFS), recurseDir, recurseDirStat, recursiveRemove )
-import safe System.Path.NameManip
+import System.Path.NameManip
     ( normalise_path, absolute_path_by, guess_dotdot )
 
 {- | Splits a pathname into a tuple representing the root of the name and

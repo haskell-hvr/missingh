@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE Safe #-}
 
 {- arch-tag: Sendmail utility
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
@@ -31,11 +30,11 @@ where
 module Network.Email.Sendmail(sendmail)
 where
 
-import safe System.Cmd.Utils ( PipeMode(WriteToPipe), pOpen )
-import safe System.Directory
+import System.Cmd.Utils ( PipeMode(WriteToPipe), pOpen )
+import System.Directory
     ( doesFileExist, getPermissions, Permissions(executable) )
-import safe System.IO ( hPutStr )
-import safe System.IO.Error ()
+import System.IO ( hPutStr )
+import System.IO.Error ()
 import qualified Control.Exception(try, IOException)
 
 sendmails :: [String]

@@ -1,7 +1,6 @@
 cabal-version: 1.12
 name: MissingH
-version: 1.5.0.1
-x-revision: 2
+version: 1.6.0.0
 
 build-type: Simple
 license: BSD3
@@ -126,9 +125,7 @@ library
       array               >= 0.4.0.0 && < 0.6
     , base                >= 4.8.0.0 && < 5
     , containers          >= 0.4.2.1 && < 0.7
-    , directory           >= 1.1.0.2 && < 1.3.8
-        -- build failure with 1.3.8.0 (System.Directory is no longer safe)
-        -- see https://github.com/haskell/directory/issues/147
+    , directory           >= 1.1.0.2 && < 1.4
     , filepath            >= 1.3.0.0 && < 1.5
     , hslogger            >= 1.3.0.0 && < 1.4
     , mtl                 >= 1.1.1.0 && < 2.4

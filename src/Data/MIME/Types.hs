@@ -1,5 +1,3 @@
-{-# LANGUAGE Safe #-}
-
 {- arch-tag: MIME Types main file
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -37,14 +35,14 @@ where
 
 import qualified Data.Map as Map
 import qualified Control.Exception (try, IOException)
-import safe Control.Monad ( foldM )
-import safe System.IO
+import Control.Monad ( foldM )
+import System.IO
     ( Handle, hClose, openFile, IOMode(ReadMode) )
-import safe System.IO.Error ()
-import safe System.IO.Utils ( hGetLines )
-import safe System.Path ( splitExt )
-import safe Data.Map.Utils ( flippedLookupM )
-import safe Data.Char ( toLower )
+import System.IO.Error ()
+import System.IO.Utils ( hGetLines )
+import System.Path ( splitExt )
+import Data.Map.Utils ( flippedLookupM )
+import Data.Char ( toLower )
 
 ----------------------------------------------------------------------
 -- Basic type declarations

@@ -1,4 +1,3 @@
-{-# LANGUAGE Safe #-}
 {-# LANGUAGE LambdaCase #-}
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {- arch-tag: HVFS instance helpers
@@ -38,11 +37,11 @@ module System.IO.HVFS.InstanceHelpers(-- * HVFSStat objects
 import           Data.IORef            (IORef, newIORef, readIORef, writeIORef)
 import           Data.List             (genericLength)
 import           System.FilePath       (isPathSeparator, pathSeparator, (</>))
-import safe System.IO ( IOMode(ReadMode) )
+import           System.IO             ( IOMode(ReadMode) )
 import           System.IO.Error       (doesNotExistErrorType,
                                         illegalOperationErrorType,
                                         permissionErrorType)
-import safe System.IO.HVFS
+import System.IO.HVFS
     ( FileOffset,
       HVFSOpenable(vOpen),
       HVFS(vGetDirectoryContents, vGetFileStatus, vSetCurrentDirectory,

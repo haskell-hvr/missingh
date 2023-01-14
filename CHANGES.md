@@ -1,3 +1,18 @@
+# 1.6.0.0
+
+_Andreas Abel, 2023-01-14_
+
+- Allow `directory-1.3.8.0` which is no longer `Safe` Haskell.
+  Thus, we need to revoke `Safe` status of the following modules:
+  * `Data.MIME.Types`
+  * `Network.Email.Sendmail`
+  * `System.IO.HVFS`
+  * `System.IO.HVFS.Combinators`
+  * `System.IO.HVFS.InstanceHelpers`
+  * `System.Path`
+  * `System.Path.Glob`
+  * `System.Path.NameManip`
+
 ### 1.5.0.1
 
 _Andreas Abel, 2022-03-14_

@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE Safe #-}
 {- arch-tag: HVFS Combinators
 Copyright (c) 2004-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -26,10 +25,10 @@ module System.IO.HVFS.Combinators ( -- * Restrictions
                                     HVFSChroot, newHVFSChroot)
     where
 
-import safe System.IO ( IOMode(ReadMode) )
-import safe System.IO.Error
+import System.IO ( IOMode(ReadMode) )
+import System.IO.Error
     ( doesNotExistErrorType, permissionErrorType )
-import safe System.IO.HVFS
+import System.IO.HVFS
     ( HVFSOpenable(vOpen),
       HVFS(vRemoveFile, vCreateLink, vCreateSymbolicLink, vRenameFile,
            vRenameDirectory, vRemoveDirectory, vCreateDirectory,

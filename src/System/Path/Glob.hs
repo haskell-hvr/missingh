@@ -1,5 +1,3 @@
-{-# LANGUAGE Safe #-}
-
 {-
 Copyright (c) 2006-2011 John Goerzen <jgoerzen@complete.org>
 
@@ -30,7 +28,7 @@ import           Control.Exception     (tryJust)
 import           Data.List             (isSuffixOf)
 import           Data.List.Utils       (hasAny)
 import           System.FilePath       (pathSeparator, splitFileName, (</>))
-import safe      System.IO.HVFS        (HVFS (vDoesDirectoryExist, vDoesExist, vGetDirectoryContents),
+import           System.IO.HVFS        (HVFS (vDoesDirectoryExist, vDoesExist, vGetDirectoryContents),
                                          SystemFS (SystemFS))
 import           System.Path.WildMatch (wildCheckCase)
 
