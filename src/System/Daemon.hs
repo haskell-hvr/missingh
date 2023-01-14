@@ -86,7 +86,13 @@ child2 :: IO ()
 child2 = trap $
     do setCurrentDirectory "/"
        mapM_ closeFd [stdInput, stdOutput, stdError]
-       nullFd <- openFd "/dev/null" ReadWrite Nothing defaultFileFlags
+       nullFd <- openFd
+         "/dev/null"
+         ReadWrite
+#if !MIN_VERSION_unix(2,8,0)
+         Nothing
+#endif
+         defaultFileFlags
        mapM_ (dupTo nullFd) [stdInput, stdOutput, stdError]
        closeFd nullFd
 #endif

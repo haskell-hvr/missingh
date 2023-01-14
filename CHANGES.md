@@ -12,6 +12,8 @@ _Andreas Abel, 2023-01-14_
   * `System.Path`
   * `System.Path.Glob`
   * `System.Path.NameManip`
+- Allow `unix-2.8.0.0` (enables `directory-1.3.8.0`).
+- Tested with GHC 7.10 - 9.6 alpha1.
 
 ### 1.5.0.1
 

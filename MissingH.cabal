@@ -143,7 +143,7 @@ library
     build-depends: network >= 2.6.3.1 && <2.9
 
   If !os(windows)
-    Build-Depends: unix   >= 2.5.1.0 && < 2.8
+    Build-Depends: unix   >= 2.5.1.0 && < 2.9
 
   ghc-options:     -Wall
   if impl(ghc >= 8)
