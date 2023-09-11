@@ -1,3 +1,13 @@
+# 1.6.0.1
+
+_Andreas Abel, 2023-09-11_
+
+- Repair build on Windows with GHC 9.6 (`directory-1.3.8.*`):
+  Revoke `Safe` status of these modules:
+  * `System.IO.WindowsCompat`
+  * `System.IO.PlafCompat`
+- Tested with GHC 7.10 - 9.8 alpha1.
+
 # 1.6.0.0
 
 _Andreas Abel, 2023-01-14_
