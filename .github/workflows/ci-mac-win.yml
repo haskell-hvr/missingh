@@ -21,11 +21,17 @@ jobs:
       fail-fast: false
       matrix:
         os:    [windows-latest, macos-latest]
-        ghc:   ['9.6', '9.4', '9.2', '8.0']
+        ghc:   ['9.6', '9.4', '9.2']
           # Minor versions are determined by setup-haskell.
           # Use quotes so that the version numbers are not interpreted as floats.
-          # GHC 7.10.3 is broken on Windows (Chocolatey)
-        cabal: [latest]
+        include:
+        - os: macos-latest
+          ghc: '7.10'
+        - os: windows-latest
+          ghc: '8.4'
+          # 2022-05-26: GHC 7.10.3 is broken on Windows (Chocolatey)
+          # 2023-02-10: GHCs 8.0 and 8.2 fail to build hsc2hs-0.68.10 on Windows
+          #   see https://github.com/haskell/hsc2hs/issues/81
 
     steps:
     - uses: actions/checkout@v4
@@ -34,7 +40,7 @@ jobs:
       id: setup-haskell
       with:
         ghc-version:   ${{ matrix.ghc }}
-        cabal-version: ${{ matrix.cabal }}
+        cabal-version: latest
         cabal-update:  true
 
     # # How would you get something like steps.setup-haskell.outputs.cabal-store
