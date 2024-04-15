@@ -1,7 +1,7 @@
 cabal-version: 1.12
 name: MissingH
 version: 1.6.0.1
-x-revision: 2
+x-revision: 3
 
 build-type: Simple
 license: BSD3
@@ -142,7 +142,7 @@ library
 
   if flag(network--GE-3_0_0)
     build-depends: network-bsd >= 2.8.1 && <2.9,
-                   network >= 3.0 && <3.2
+                   network >= 3.0 && <3.3
   else
     build-depends: network >= 2.6.3.1 && <2.9
 
