@@ -25,7 +25,7 @@ jobs:
           # Minor versions are determined by setup-haskell.
           # Use quotes so that the version numbers are not interpreted as floats.
         include:
-        - os: macos-latest
+        - os: macos-13
           ghc: '7.10'
         - os: windows-latest
           ghc: '8.4'
