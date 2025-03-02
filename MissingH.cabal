@@ -1,7 +1,6 @@
-cabal-version: 1.12
+cabal-version: 1.24
 name: MissingH
-version: 1.6.0.1
-x-revision: 3
+version: 1.6.0.2
 
 build-type: Simple
 license: BSD3
@@ -11,8 +10,9 @@ maintainer: Andreas Abel
 license-file: LICENSE
 
 tested-with:
+  GHC == 9.12.1
   GHC == 9.10.1
-  GHC == 9.8.2
+  GHC == 9.8.4
   GHC == 9.6.6
   GHC == 9.4.8
   GHC == 9.2.8
@@ -32,20 +32,22 @@ description:
 category: Unclassified
 bug-reports: https://github.com/haskell-hvr/missingh/issues
 
-extra-source-files:
+extra-doc-files:
   CHANGES.md
   LICENSE
   announcements/0.10.0.txt
   announcements/0.8.0.txt
   announcements/0.9.0.txt
+  3rd-party-licenses/BSD
+  3rd-party-licenses/LGPL-2.1
+
+extra-source-files:
   testsrc/gzfiles/empty.gz
   testsrc/gzfiles/t1.gz
   testsrc/gzfiles/t1bad.gz
   testsrc/gzfiles/t2.gz
   testsrc/gzfiles/zeros.gz
   testsrc/mime.types.test
-  3rd-party-licenses/BSD
-  3rd-party-licenses/LGPL-2.1
   examples/simplegrep.hs
   examples/test2.hs
   examples/test3.hs
@@ -126,8 +128,8 @@ library
 
   build-depends:
       array               >= 0.4.0.0 && < 0.6
-    , base                >= 4.8.0.0 && < 5
-    , containers          >= 0.4.2.1 && < 0.8
+    , base                >= 4.9     && < 5
+    , containers          >= 0.4.2.1 && < 1
     , directory           >= 1.1.0.2 && < 1.4
     , filepath            >= 1.3.0.0 && < 1.6
     , hslogger            >= 1.3.0.0 && < 1.4
@@ -145,12 +147,12 @@ library
   else
     build-depends: network >= 2.6.3.1 && <2.9
 
-  If !os(windows)
-    Build-Depends: unix   >= 2.5.1.0 && < 2.9
+  if !os(windows)
+    build-depends: unix   >= 2.5.1.0 && < 2.9
 
-  ghc-options:     -Wall
-  if impl(ghc >= 8)
-    ghc-options:   -Wcompat
+  ghc-options:
+      -Wall
+      -Wcompat
 
 ----------------------------------------------------------------------------
 
@@ -206,5 +208,6 @@ test-suite runtests
   build-depends:
       HUnit                  == 1.6.*
 
-  if impl(ghc >= 8)
-    ghc-options:   -Wcompat
+  ghc-options:
+      -Wall
+      -Wcompat

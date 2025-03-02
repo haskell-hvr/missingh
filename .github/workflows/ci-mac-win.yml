@@ -21,15 +21,14 @@ jobs:
       fail-fast: false
       matrix:
         os:    [windows-latest, macos-latest]
-        ghc:   ['9.8', '9.6', '9.4']
+        ghc:   ['9.10', '9.8', '9.6', '9.4']
           # Minor versions are determined by setup-haskell.
           # Use quotes so that the version numbers are not interpreted as floats.
         include:
         - os: macos-13
-          ghc: '7.10'
+          ghc: '8.0'
         - os: windows-latest
           ghc: '8.4'
-          # 2022-05-26: GHC 7.10.3 is broken on Windows (Chocolatey)
           # 2023-02-10: GHCs 8.0 and 8.2 fail to build hsc2hs-0.68.10 on Windows
           #   see https://github.com/haskell/hsc2hs/issues/81
 

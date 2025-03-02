@@ -1,3 +1,11 @@
+# 1.6.0.2
+
+_Andreas Abel, 2025-03-02_
+
+- Drop support for GHC 7.10
+- Allow `containers < 1`
+- Tested with GHC 8.0 - 9.12.1
+
 # 1.6.0.1
 
 _Andreas Abel, 2023-09-11_
