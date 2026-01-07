@@ -1,3 +1,10 @@
+# 1.6.0.3
+
+_Andreas Abel, 2026-01-07_
+
+- Allow `time < 2`
+- Tested with GHC 8.0 - 9.14.1
+
 # 1.6.0.2
 
 _Andreas Abel, 2025-03-02_

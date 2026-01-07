@@ -1,7 +1,6 @@
 cabal-version: 1.24
 name: MissingH
-version: 1.6.0.2
-x-revision: 1
+version: 1.6.0.3
 
 build-type: Simple
 license: BSD3
@@ -201,7 +200,6 @@ test-suite runtests
     , old-time
     , parsec
     , regex-compat
-    , time
 
   if !os(windows)
     build-depends: unix
