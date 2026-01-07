@@ -21,11 +21,11 @@ jobs:
       fail-fast: false
       matrix:
         os:    [windows-latest, macos-latest]
-        ghc:   ['9.10', '9.8', '9.6', '9.4']
+        ghc:   ['9.14', '9.12', '9.10']
           # Minor versions are determined by setup-haskell.
           # Use quotes so that the version numbers are not interpreted as floats.
         include:
-        - os: macos-13
+        - os: macos-15-intel
           ghc: '8.0'
         - os: windows-latest
           ghc: '8.4'
@@ -33,7 +33,7 @@ jobs:
           #   see https://github.com/haskell/hsc2hs/issues/81
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - uses: haskell-actions/setup@v2
       id: setup-haskell
@@ -63,7 +63,7 @@ jobs:
       run: |
         cabal configure -O0 --enable-tests --enable-benchmarks
 
-    - uses: actions/cache@v4
+    - uses: actions/cache@v5
       name: Cache dependencies
       id: cache
       env:
