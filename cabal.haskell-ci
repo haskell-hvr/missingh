@@ -1,5 +1,6 @@
 branches: master
 installed: +all
+error-incomplete-patterns: False
 
 -- constraint-set containers-0.7
 --   ghc: >= 8.2
